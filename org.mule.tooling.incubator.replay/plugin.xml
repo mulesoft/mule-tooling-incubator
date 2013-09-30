@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.mule.tooling.ui.views"
+            name="Mulesoft">
+      </category>
+      <view
+            name="Mule Snaphosts View"
+            icon="icons/snapshot-16x16.png"
+            category="org.mule.tooling.ui.views"
+            class="org.mule.tooling.ui.contribution.debugger.view.impl.SnapshotsView"
+            id="org.mule.tooling.ui.contribution.debugger.view.impl.SnapshotsView">
+      </view>
+   </extension>
+   
+
+</plugin>
