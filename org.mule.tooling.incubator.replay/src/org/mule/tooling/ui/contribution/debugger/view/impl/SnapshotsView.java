@@ -6,7 +6,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
+import org.mule.tooling.core.MuleCorePlugin;
+import org.mule.tooling.core.event.CoreEventTypes;
 import org.mule.tooling.core.event.EventBus;
+import org.mule.tooling.core.event.IMuleProjectChangedListener;
+import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.ui.contribution.debugger.controller.MuleSnapshotsController;
 import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
 import org.mule.tooling.ui.contribution.debugger.service.SnapshotService;
@@ -29,7 +33,18 @@ public class SnapshotsView extends ViewPart {
     @Override
     public void init(IViewSite site) throws PartInitException {
         super.init(site);
-        snaphotService = new SnapshotService(MuleDebuggerService.getDefault().getEventBus());
+        this.snaphotService = new SnapshotService(MuleDebuggerService.getDefault().getEventBus());
+        MuleCorePlugin.getEventBus().registerListener(CoreEventTypes.ON_MULE_PROJECT_CHANGED, new IMuleProjectChangedListener() {
+
+            @Override
+            public void onMuleProjectChanged(IMuleProject muleProject) {
+                snaphotService.loadAllFromProject(muleProject);
+            }
+        });
+        IMuleProject muleProject = MuleCorePlugin.getDesignContext().getMuleProject();
+        if (muleProject != null) {
+            snaphotService.loadAllFromProject(muleProject);
+        }
     }
 
     @Override
@@ -58,6 +73,7 @@ public class SnapshotsView extends ViewPart {
 
     @Override
     public void dispose() {
+        snaphotService.store();
         super.dispose();
 
     }

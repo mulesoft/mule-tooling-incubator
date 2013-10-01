@@ -24,6 +24,8 @@ public class ReplayFromProcessorCommand extends Command {
     protected ReplayFromProcessorCommand(MessageSnapshot snapshot) {
         super();
         this.snapshot = snapshot;
+        
+        
     }
 
     @Override

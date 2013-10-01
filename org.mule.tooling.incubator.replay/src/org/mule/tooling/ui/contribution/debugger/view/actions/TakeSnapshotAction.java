@@ -1,12 +1,15 @@
 package org.mule.tooling.ui.contribution.debugger.view.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.widgets.Display;
 import org.mule.tooling.ui.contribution.debugger.controller.DebuggerEventTypes;
 import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerConnectedHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerDisconnectedHandler;
 import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
 import org.mule.tooling.ui.contribution.debugger.service.SnapshotService;
+import org.mule.tooling.ui.contribution.debugger.view.impl.CreateSnapshotDialog;
 
 import com.mulesoft.mule.debugger.client.DebuggerClient;
 import com.mulesoft.mule.debugger.client.DefaultDebuggerResponseCallback;
@@ -47,8 +50,20 @@ public class TakeSnapshotAction extends Action {
         debuggerClient.takeMessageSnapshot(new DefaultDebuggerResponseCallback() {
 
             @Override
-            public void onMessageSnapshotTaken(MessageSnapshot snapshot) {
-                service.addSnaphost("Snapshot" + service.getSnapshots().size(), snapshot);
+            public void onMessageSnapshotTaken(final MessageSnapshot snapshot) {
+                Display.getDefault().syncExec(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        CreateSnapshotDialog createSnapshotDialog = new CreateSnapshotDialog(Display.getCurrent().getActiveShell());
+                        int open = createSnapshotDialog.open();
+                        if (open == Dialog.OK) {
+                            service.addSnaphost(createSnapshotDialog.getName(), snapshot);
+                        }
+
+                    }
+                });
+
             }
 
         });

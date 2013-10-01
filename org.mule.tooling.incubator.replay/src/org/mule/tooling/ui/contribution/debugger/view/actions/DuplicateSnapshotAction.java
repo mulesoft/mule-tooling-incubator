@@ -7,12 +7,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.widgets.Display;
 import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
 import org.mule.tooling.ui.contribution.debugger.service.SnapshotService;
 import org.mule.tooling.ui.contribution.debugger.view.IMuleSnapshotEditor;
+import org.mule.tooling.ui.contribution.debugger.view.impl.CreateSnapshotDialog;
 
 import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 
@@ -66,7 +69,11 @@ public class DuplicateSnapshotAction extends Action {
             MessageSnapshot readObject;
             try {
                 readObject = (MessageSnapshot) new ObjectInputStream(byteArrayInputStream).readObject();
-                service.addSnaphost("Snapshot" + service.getSnapshots().size(), readObject);
+                CreateSnapshotDialog dialog = new CreateSnapshotDialog(Display.getDefault().getActiveShell());
+                int open = dialog.open();
+                if (Dialog.OK == open) {
+                    service.addSnaphost(dialog.getName(), readObject);
+                }
             } catch (IOException e) {
 
             } catch (ClassNotFoundException e) {

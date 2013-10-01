@@ -9,11 +9,12 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.widgets.Display;
 import org.mule.tooling.core.event.EventBus;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.core.utils.ProjectClassPathProvider;
+import org.mule.tooling.ui.contribution.debugger.controller.events.ISnapshotClearedHandler;
+import org.mule.tooling.ui.contribution.debugger.controller.events.ISnapshotRemovedHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.ISnapshotTakenHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.SnapshotEventTypes;
 import org.mule.tooling.ui.contribution.debugger.service.SnapshotService;
@@ -42,19 +43,31 @@ public class MuleSnapshotsController {
 
         editor.getSnapshotTable().setInput(service.getAllDefinedSnapshots().keySet());
 
-        eventBus.registerListener(SnapshotEventTypes.SNAPSHOT_TAKEN, new ISnapshotTakenHandler() {
+        eventBus.registerUIThreadListener(SnapshotEventTypes.SNAPSHOT_TAKEN, new ISnapshotTakenHandler() {
 
             @Override
             public void onSnapshotTaken(final String name, MessageSnapshot snapshot) {
-                Display.getDefault().asyncExec(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        editor.getSnapshotTable().add(name);
-                    }
-                });
+                editor.getSnapshotTable().add(name);
 
             }
+        });
+
+        eventBus.registerUIThreadListener(SnapshotEventTypes.SNAPSHOT_CLEARED, new ISnapshotClearedHandler() {
+
+            @Override
+            public void onSnapshotsCleared() {
+                editor.getSnapshotTable().setInput(service.getAllDefinedSnapshots().keySet());
+            }
+        });
+
+        eventBus.registerUIThreadListener(SnapshotEventTypes.SNAPSHOT_REMOVED, new ISnapshotRemovedHandler() {
+
+            @Override
+            public void onSnapshotRemoved(String name) {
+                editor.getSnapshotTable().remove(name);
+            }
+
         });
 
         editor.getSnapshotTable().addSelectionChangedListener(new ISelectionChangedListener() {

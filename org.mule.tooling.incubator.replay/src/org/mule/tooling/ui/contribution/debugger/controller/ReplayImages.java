@@ -3,7 +3,7 @@ package org.mule.tooling.ui.contribution.debugger.controller;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
-import org.mule.tooling.incubator.replay.Activator;
+import org.mule.tooling.incubator.replay.ReplayPlugin;
 
 import org.osgi.framework.Bundle;
 
@@ -34,7 +34,7 @@ public class ReplayImages {
     }
 
     public Image getImageByPath(String path) {
-        Bundle bundle = Activator.getDefault().getBundle();
+        Bundle bundle = ReplayPlugin.getDefault().getBundle();
         String key = bundle.getSymbolicName() + path;
         getImageDescriptor(path);
         return JFaceResources.getImage(key);
@@ -42,7 +42,7 @@ public class ReplayImages {
     }
 
     public ImageDescriptor getImageDescriptor(String path) {
-        Bundle bundle = Activator.getDefault().getBundle();
+        Bundle bundle = ReplayPlugin.getDefault().getBundle();
         String key = bundle.getSymbolicName() + path;
         ImageDescriptor desc = JFaceResources.getImageRegistry().getDescriptor(key);
         if (desc == null) {
