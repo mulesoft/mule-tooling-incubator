@@ -2,15 +2,16 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>mule-tooling-incubator</artifactId>
-    <groupId>org.mule.tooling.incubator</groupId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
-
-  <artifactId>org.mule.tooling.metadata</artifactId>
+  
+  <artifactId>org.mule.tooling.incubator.replay</artifactId>
   <packaging>eclipse-plugin</packaging>
   
+  <parent>
+  		<groupId>org.mule.tooling.incubator</groupId>
+  		<artifactId>org.mule.tooling.incubator.parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+  </parent>
+
   	<properties>
 		<lib-dir>lib</lib-dir>
 		<maven.clean.plugin.version>2.4.1</maven.clean.plugin.version>

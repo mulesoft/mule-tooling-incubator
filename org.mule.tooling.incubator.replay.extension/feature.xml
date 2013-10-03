@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.mule.tooling.incubator.replay.extension"
+      label="Mule Replay Project"
+      version="1.0.0.qualifier"
+      provider-name="MuleSoft Inc."
+      plugin="org.mule.tooling.incubator.replay.extension"
+      exclusive="true">
+
+   <description url="http://www.mulesoft.org/">
+      Mule Replay Project
+   </description>
+
+   <copyright url="http://www.mulesoft.org">
+      Copyright 2012 Mulesoft Inc.
+   </copyright>
+
+   <license>
+
+
+</license>
+
+   <plugin
+         id="org.mule.tooling.incubator.replay"
+         download-size="0"
+         install-size="0"
+		    unpack="true"
+         version="0.0.0"/>
+
+  
+</feature>

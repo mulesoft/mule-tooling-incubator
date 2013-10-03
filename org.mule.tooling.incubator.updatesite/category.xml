@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+    <feature id="org.mule.tooling.incubator.replay.extension">
+      <category name="org.mule.tooling.incubator.category"/>
+    </feature>
+   <category-def name="org.mule.tooling.incubator.category" label="Mule Tooling Incubator Projects">
+      <description>
+			Mule Replay Project
+      </description>
+   </category-def>
+</site>
