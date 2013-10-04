@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.mule.tooling.incubator.devkit.extension"
+      label="Mule Devkit Project Extension"
+      version="1.0.0.qualifier"
+      provider-name="MuleSoft Inc."
+      plugin="org.mule.tooling.incubator.devkit.extension"
+      exclusive="true">
+
+   <description url="http://www.mulesoft.org/">
+      Mule Devkit Project Extension.
+   </description>
+
+   <copyright url="http://www.mulesoft.org">
+      Copyright 2012 Mulesoft Inc.
+   </copyright>
+
+   <license>
+
+
+</license>
+
+   <plugin
+         id="org.mule.tooling.devkit"
+         download-size="0"
+         install-size="0"
+		    unpack="true"
+         version="0.0.0"/>
+
+  
+</feature>

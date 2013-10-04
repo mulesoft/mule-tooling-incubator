@@ -1,0 +1,23 @@
+<mule
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:devkit="http://www.mulesoft.org/schema/mule/devkit" xmlns="http://www.mulesoft.org/schema/mule/core"
+        xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/devkit http://www.mulesoft.org/schema/mule/devkit/current/mule-devkit.xsd">
+
+
+    <devkit:message-processor name="myProcessor"
+                              doc="Custom processor">
+        <devkit:configuration>
+            <devkit:attribute name="content" type="STRING"
+                              doc="Content to be processed"/>
+
+        </devkit:configuration>
+
+
+       <set-payload value="#[content]"/>
+
+    </devkit:message-processor>
+
+
+</mule>

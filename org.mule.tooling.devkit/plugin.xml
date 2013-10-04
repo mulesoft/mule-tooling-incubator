@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.newWizards">
+      
+      <wizard
+            category="org.mule.tooling.ui.muleWizards"
+            class="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard"
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard"
+            name="Mule Devkit Project"
+            project="true">
+      </wizard>
+            <!--wizard
+            category="org.mule.tooling.devkit"
+            class="org.mule.tooling.devkit.wizards.LibraryNewWizard"
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.wizards.LibraryNewWizard"
+            name="Mule Library"
+            project="false">
+      </wizard-->
+      <wizard
+             category="org.mule.tooling.ui.muleWizards"
+            class="org.mule.tooling.devkit.wizards.ConnectorNewWizard"
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.wizards.ConnectorNewWizard"
+            name="Cloud Connector"
+            project="false">
+      </wizard>
+      <wizard
+             category="org.mule.tooling.ui.muleWizards"
+            class="org.mule.tooling.devkit.wizards.ModuleNewWizard"
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.wizards.ModuleNewWizard"
+            name="Mule Module"
+            project="false">
+            
+      </wizard>
+	   </extension>
+
+      <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard" />		
+      		<newWizardShortcut id="org.mule.tooling.devkit.wizards.ModuleNewWizard" />			
+			<newWizardShortcut id="org.mule.tooling.devkit.wizards.ConnectorNewWizard" />					
+      </perspectiveExtension>
+   </extension>
+      <extension
+            id="devkitBuilder"
+            name="Devkit Project Builder"
+            point="org.eclipse.core.resources.builders">
+         <builder
+               hasNature="true">
+            <run
+                  class="org.mule.tooling.devkit.builder.DevkitBuilder">
+            </run>
+         </builder>
+      </extension>
+      
+
+      <extension
+            id="devkitNature"
+            name="Devkit Project Nature"
+            point="org.eclipse.core.resources.natures">
+         <runtime>
+            <run
+                  class="org.mule.tooling.devkit.builder.DevkitNature">
+            </run>
+         </runtime>
+         <builder
+               id="org.mule.tooling.devkit.devkitBuilder">
+         </builder>
+      </extension>
+      <extension
+            id="xmlProblem"
+            name="XML Problem"
+            point="org.eclipse.core.resources.markers">
+         <super
+               type="org.eclipse.core.resources.problemmarker">
+         </super>
+         <persistent
+               value="true">
+         </persistent>
+      </extension>
+      <extension
+            point="org.eclipse.ui.popupMenus">
+         <objectContribution
+               id="org.mule.tooling.devkit.muleExtensionsContribution"
+               objectClass="org.eclipse.jdt.core.IJavaProject">
+            <menu
+                  icon="icons/icon.png"
+                  id="org.mule.tooling.devkit.menu"
+                  label="Mule Extensions"
+                  path="additions">
+               <separator
+                     name="group">
+               </separator>
+            </menu>
+            <action
+                  class="org.mule.tooling.devkit.popup.actions.NewAction"
+                  enablesFor="1"
+                  id="org.mule.tooling.devkit.docAction"
+                  label="Create Documentation"
+                  menubarPath="org.mule.tooling.devkit.menu/group">
+            </action>
+              <action
+                  class="org.mule.tooling.devkit.popup.actions.GenerateSourcesAction"
+                  enablesFor="1"
+                  id="org.mule.tooling.devkit.sourceAction"
+                  label="Generate Sources"
+                  menubarPath="org.mule.tooling.devkit.menu/group">
+            </action>
+         </objectContribution>
+      </extension>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            category="org.mule.tooling.ui.muleExportCategory"
+            class="org.mule.tooling.devkit.export.UpdateSiteExportWizard"
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.export.updateSiteExportWizard"
+            name="Mule extension Update Site">
+      </wizard>
+   </extension>
+     
+</plugin>
