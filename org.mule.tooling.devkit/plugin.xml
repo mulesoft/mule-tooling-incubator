@@ -101,10 +101,17 @@
                </separator>
             </menu>
             <action
-                  class="org.mule.tooling.devkit.popup.actions.NewAction"
+                  class="org.mule.tooling.devkit.popup.actions.CreateDocumentationAction"
                   enablesFor="1"
                   id="org.mule.tooling.devkit.docAction"
                   label="Create Documentation"
+                  menubarPath="org.mule.tooling.devkit.menu/group">
+            </action>
+            <action
+                  class="org.mule.tooling.devkit.popup.actions.SendToPaletteAction"
+                  enablesFor="1"
+                  id="org.mule.tooling.devkit.paletteAction"
+                  label="Try it out!"
                   menubarPath="org.mule.tooling.devkit.menu/group">
             </action>
               <action
