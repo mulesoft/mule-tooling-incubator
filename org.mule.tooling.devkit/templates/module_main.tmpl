@@ -5,6 +5,15 @@ import org.mule.api.ConnectionException;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Processor;
 
+#if($metadataEnabled == true )
+import java.util.List;
+import org.mule.common.metadata.*;
+import org.mule.common.metadata.datatype.DataType;
+import org.mule.api.annotations.MetaDataKeyRetriever;
+import org.mule.api.annotations.MetaDataRetriever;
+#end
+
+
 /**
  * Generic module
  *
@@ -19,6 +28,18 @@ public class ${className}
     @Configurable
     private String myProperty;
 
+#if($metadataEnabled == true )    
+     @MetaDataKeyRetriever
+    public List<MetaDataKey> getMetaDataKeys() throws Exception {
+        return null;
+    }
+
+    @MetaDataRetriever
+    public MetaData getMetaData(MetaDataKey key) throws Exception {
+		return null;	
+    }
+#end    
+
     /**
      * Set property
      *
@@ -28,6 +49,7 @@ public class ${className}
     {
         this.myProperty = myProperty;
     }
+
 
     /**
      * Get property

@@ -10,12 +10,34 @@ import org.mule.api.ConnectionException;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Processor;
 
+#if($OAuthEnaled == true)
+import org.mule.api.annotations.oauth.OAuth2;
+import org.mule.api.annotations.oauth.OAuthAccessToken;
+import org.mule.api.annotations.oauth.OAuthConsumerKey;
+import org.mule.api.annotations.oauth.OAuthConsumerSecret;
+import org.mule.api.annotations.oauth.OAuthInvalidateAccessTokenOn;
+import org.mule.api.annotations.oauth.OAuthPostAuthorization;
+import org.mule.api.annotations.oauth.OAuthProtected;
+#end
+
+#if($metadataEnabled == true )
+import java.util.List;
+import org.mule.common.metadata.*;
+import org.mule.common.metadata.datatype.DataType;
+import org.mule.api.annotations.MetaDataKeyRetriever;
+import org.mule.api.annotations.MetaDataRetriever;
+#end
+
+
 /**
  * Cloud Connector
  *
  * @author MuleSoft, Inc.
  */
 @Connector(name="${moduleName}", schemaVersion="1.0", friendlyName="${moduleName}")
+#if($OAuthEnaled == true )
+@OAuth2(authorizationUrl = "", accessTokenUrl = "", accessTokenRegex = "", expirationRegex = "", refreshTokenRegex = "")
+#end
 public class ${className}
 {
     /**
@@ -23,6 +45,38 @@ public class ${className}
      */
     @Configurable
     private String myProperty;
+
+#if($OAuthEnaled == true )
+
+    /**
+     * The OAuth2 client id
+     */
+    @Configurable
+    @OAuthConsumerKey
+    private String clientId;
+
+    /**
+     * The OAuth2 client secret
+     */
+    @Configurable
+    @OAuthConsumerSecret
+    private String clientSecret;
+
+    @OAuthAccessToken
+    private String accessToken;
+#end
+    
+#if($metadataEnabled == true )    
+     @MetaDataKeyRetriever
+    public List<MetaDataKey> getMetaDataKeys() throws Exception {
+        return null;
+    }
+
+    @MetaDataRetriever
+    public MetaData getMetaData(MetaDataKey key) throws Exception {
+		return null;	
+    }
+#end    
 
     /**
      * Set property
@@ -92,6 +146,10 @@ public class ${className}
      * @return Some string
      */
     @Processor
+#if($OAuthEnaled == true )
+    @OAuthProtected
+    @OAuthInvalidateAccessTokenOn(exception = Exception.class)
+#end
     public String myProcessor(String content)
     {
         /*
@@ -100,4 +158,11 @@ public class ${className}
 
         return content;
     }
+    
+#if($OAuthEnaled == true )
+    @OAuthPostAuthorization
+    public void postAuth() {
+
+    }
+#end
 }

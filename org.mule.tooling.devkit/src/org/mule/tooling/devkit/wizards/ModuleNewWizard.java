@@ -55,11 +55,16 @@ public class ModuleNewWizard extends Wizard implements INewWizard {
     public boolean performFinish() {
         final IPackageFragment packageFragment = page.getPackageFragment();
         final String moduleName = page.getName();
+        final boolean isMetadataEnabled = page.isMetadataEnabled();
         IRunnableWithProgress op = new IRunnableWithProgress() {
 
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
-                    doFinish(packageFragment, moduleName, monitor);
+                    String className = getClassNameFrom(moduleName);
+                    String packageName = packageFragment.getElementName();
+                    ClassReplacer classReplacer = new ClassReplacer(packageName, moduleName, className, isMetadataEnabled);
+
+                    doFinish(packageFragment, moduleName, monitor, classReplacer, className, packageName);
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
                 } finally {
@@ -79,13 +84,12 @@ public class ModuleNewWizard extends Wizard implements INewWizard {
         return true;
     }
 
-    protected void doFinish(IPackageFragment packageFragment, String moduleName, IProgressMonitor monitor) throws CoreException {
+    protected void doFinish(IPackageFragment packageFragment, String moduleName, IProgressMonitor monitor, ClassReplacer classReplacer, String className, String packageName) throws CoreException {
 
-        String className = getClassNameFrom(moduleName);
-        String packageName = packageFragment.getElementName();
+
         IProject project = packageFragment.getJavaProject().getProject();
 
-        create(moduleName, monitor, getMainTemplatePath(), getTestResourcePath(), className, packageName, project);
+        create(moduleName, monitor, getMainTemplatePath(), getTestResourcePath(), className, packageName, project, classReplacer);
 
     }
 
@@ -102,9 +106,8 @@ public class ModuleNewWizard extends Wizard implements INewWizard {
     }
 
     protected void create(String moduleName, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className, String packageName,
-            IProject project) throws CoreException {
+            IProject project, ClassReplacer classReplacer) throws CoreException {
         monitor.beginTask("Creating " + moduleName, 2);
-        ClassReplacer classReplacer = new ClassReplacer(packageName, moduleName, className);
 
         TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
         ImageWriter imageWriter = new ImageWriter(project, monitor);

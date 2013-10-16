@@ -32,6 +32,8 @@ public class ModuleNewWizardPage extends WizardPage {
     protected IProject project;
     protected ISelection selection;
     protected String nameLabel;
+    protected Button isMetadataEnabled;
+
 
     public ModuleNewWizardPage(ISelection selection) {
         super("wizardPage");
@@ -41,12 +43,18 @@ public class ModuleNewWizardPage extends WizardPage {
         this.nameLabel = "&Module Name:";
     }
 
+    @Override
     public void createControl(Composite parent) {
-        Composite container = new Composite(parent, SWT.NULL);
+        Composite container = drawCommon(parent);
+        setControl(container);
+    }
+
+	protected Composite drawCommon(Composite parent) {
+		Composite container = new Composite(parent, SWT.NULL);
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
         GridLayout layout = new GridLayout();
         container.setLayout(layout);
         layout.numColumns = 3;
-        layout.verticalSpacing = 9;
         Label label = new Label(container, SWT.NULL);
         label.setText("&Package:");
 
@@ -72,20 +80,29 @@ public class ModuleNewWizardPage extends WizardPage {
         label.setText(nameLabel);
 
         name = new Text(container, SWT.BORDER | SWT.SINGLE);
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        name.setLayoutData(gd);
+        GridData nameGD = new GridData(GridData.FILL_HORIZONTAL);
+        nameGD.horizontalSpan = 2;
+        name.setLayoutData(nameGD);
         name.addModifyListener(new ModifyListener() {
 
             public void modifyText(ModifyEvent e) {
                 dialogChanged();
             }
         });
+        
+        GridData metadataGd = new GridData(GridData.FILL_HORIZONTAL);
+        isMetadataEnabled = new Button(container, SWT.CHECK);
+        isMetadataEnabled.setText("Enable Metadata");
+        metadataGd.horizontalSpan = 3;
+    	isMetadataEnabled.setLayoutData(metadataGd);        
+        
         initialize();
         dialogChanged();
-        setControl(container);
-    }
+        
+		return container;
+	}
 
-    private void initialize() {
+    protected void initialize() {
         if (selection != null && selection.isEmpty() == false && selection instanceof IStructuredSelection) {
             IStructuredSelection ssel = (IStructuredSelection) selection;
             if (ssel.size() > 1)
@@ -170,5 +187,9 @@ public class ModuleNewWizardPage extends WizardPage {
     public IPackageFragment getPackageFragment() {
         return packageFragment;
     }
+    
+	public boolean isMetadataEnabled() {
+		return isMetadataEnabled.getSelection();
+	}
 
 }

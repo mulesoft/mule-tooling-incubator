@@ -10,7 +10,6 @@ public class NullReplacer implements Replacer {
         while (reader.ready()) {
             writer.write(reader.read());
         }
-
     }
 
 }

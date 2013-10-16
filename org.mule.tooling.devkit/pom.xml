@@ -9,6 +9,6 @@
 	</parent>
   <artifactId>org.mule.tooling.devkit</artifactId>
   <packaging>eclipse-plugin</packaging>
-  
+
   
 </project>

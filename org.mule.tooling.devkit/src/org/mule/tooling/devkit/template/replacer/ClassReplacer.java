@@ -7,11 +7,14 @@ public class ClassReplacer extends VelocityReplacer {
     private String packageName;
     private String moduleName;
     private String className;
+	private boolean metadataEnabled;
 
-    public ClassReplacer(String packageName, String moduleName, String className) {
+    public ClassReplacer(String packageName, String moduleName, String className, boolean metadataEnabled) {
         this.packageName = packageName;
         this.moduleName = moduleName;
         this.className = className;
+		this.metadataEnabled = metadataEnabled;
+        
     }
 
     @Override
@@ -19,6 +22,7 @@ public class ClassReplacer extends VelocityReplacer {
         context.put("package", packageName);
         context.put("moduleName", moduleName.toLowerCase());
         context.put("className", className);
+        context.put("metadataEnabled", metadataEnabled);
     }
 
 }
