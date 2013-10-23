@@ -12,16 +12,67 @@
   		<artifactId>org.mule.tooling.incubator.parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
+	<profiles>
+		<profile>
+			<id>amazon</id>
+			<build>
+				<plugins>
+					<plugin>
+				        <inherited>false</inherited>
+				        <groupId>org.apache.maven.plugins</groupId>
+				        <artifactId>maven-antrun-plugin</artifactId>
+				        <executions>
+				            <execution>
+				                <id>remote-deploy</id>
+				                <phase>install</phase>
+				                <configuration>
+				                    <tasks>
+				                        <taskdef resource="org/mule/ant/tasks.properties" classpathref="maven.plugin.classpath"/>
+				                        <s3delete endpoint="s3.amazonaws.com" key="${aws.key}" secret="${aws.secret}" bucket="mule-tooling-incubator" dir="3.5"/>
+				                        <s3upload publicRead="true" endpoint="s3.amazonaws.com" key="${aws.key}" secret="${aws.secret}" bucket="mule-tooling-incubator" dest="3.5" contentType="application/x-whatever">
+				                <!-- fileset structure -->
+				                          <fileset dir="${basedir}/target/repository"/>
+				                       </s3upload>
+
+				                    </tasks>
+				                </configuration>
+				                <goals>
+				                    <goal>run</goal>
+				                </goals>
+				            </execution>
+				        </executions>
+				        <dependencies>
+				            <dependency>
+				                 <groupId>org.mule</groupId>
+				                <artifactId>s3-ant-tasks</artifactId>
+				                <version>0.1-SNAPSHOT</version>
+				            </dependency>
+				            <dependency>
+				                <groupId>org.apache.ant</groupId>
+				                <artifactId>ant</artifactId>
+				                <version>1.7.1</version>
+				            </dependency>
+				            <dependency>
+				                <groupId>org.apache.ant</groupId>
+				                <artifactId>ant-jsch</artifactId>
+				                <version>1.7.1</version>
+				            </dependency>
+				        </dependencies>
+				    </plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<build>
 		<plugins>
-			      <plugin>
-			        <groupId>org.eclipse.tycho</groupId>
-			        <artifactId>tycho-p2-publisher-plugin</artifactId>
-			        <version>${tycho-version}</version>
-			        <configuration>
-			          <publishArtifacts>true</publishArtifacts>
-			        </configuration>
-			      </plugin>
+	      <plugin>
+	        <groupId>org.eclipse.tycho</groupId>
+	        <artifactId>tycho-p2-publisher-plugin</artifactId>
+	        <version>${tycho-version}</version>
+	        <configuration>
+	          <publishArtifacts>true</publishArtifacts>
+	        </configuration>
+	      </plugin>
 		</plugins>
 	</build>
 

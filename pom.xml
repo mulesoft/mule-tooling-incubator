@@ -25,7 +25,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   </modules>
   
   <build>
-	<pluginManagement>
+  	 <pluginManagement>
 	      <plugins>
 	        <plugin>
 	          <groupId>org.apache.maven.plugins</groupId>
@@ -33,25 +33,25 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 	          <version>2.7</version>
 	        </plugin>
 	      </plugins>
-	    </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-maven-plugin</artifactId>
-        <version>${tycho-version}</version>
-        <extensions>true</extensions>
-      </plugin>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>target-platform-configuration</artifactId>
-        <version>${tycho-version}</version>
-        <configuration>
-          <resolver>p2</resolver>
-          <pomDependencies>consider</pomDependencies>
-          <ignoreTychoRepositories>true</ignoreTychoRepositories>
-        </configuration>
-      </plugin>
-    </plugins>
+      </pluginManagement>
+     <plugins>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>tycho-maven-plugin</artifactId>
+          <version>${tycho-version}</version>
+          <extensions>true</extensions>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>target-platform-configuration</artifactId>
+          <version>${tycho-version}</version>
+          <configuration>
+            <resolver>p2</resolver>
+            <pomDependencies>consider</pomDependencies>
+            <ignoreTychoRepositories>true</ignoreTychoRepositories>
+          </configuration>
+        </plugin>
+      </plugins>
   </build>
   <repositories>
     <repository>

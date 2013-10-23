@@ -19,9 +19,4 @@ Require-Bundle: org.eclipse.ui,
  org.mule.tooling.ui.widgets;bundle-version="3.5.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: lib/commons-collections.jar,
- lib/commons-io.jar,
- lib/commons-lang.jar,
- lib/jaxen.jar,
- lib/xstream.jar,
- .
+Bundle-ClassPath: .
