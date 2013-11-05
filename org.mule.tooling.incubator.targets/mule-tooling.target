@@ -73,11 +73,14 @@
 <repository location="http://dist.springsource.org/release/GRECLIPSE/e4.2"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.mule.tooling.extension.server.3.5.0.ee.feature.group" version="3.5.0.201310291912"/>
-<unit id="org.mule.tooling.datamapper.feature.group" version="3.5.0.201310311833"/>
-<unit id="org.mule.tooling.feature.group" version="3.5.0.201311010244"/>
-<unit id="org.mule.tooling.ui.extension.sap.3.5.0.feature.group" version="3.5.0.201310290234"/>
-<unit id="org.mule.tooling.ui.extension.sap.feature.group" version="3.5.0.201310290234"/>
+<unit id="org.mule.tooling.extension.server.3.5.0.ee.feature.group" version="0.0.0" />
+<unit id="org.mule.tooling.datamapper.feature.group" version="0.0.0" />
+<unit id="org.mule.tooling.feature.group" version="0.0.0" />
+<unit id="org.mule.tooling.ui.extension.sap.3.5.0.feature.group" version="0.0.0" />
+<unit id="org.mule.tooling.ui.extension.sap.feature.group" version="0.0.0" />
+<unit id="org.mule.tooling.branding" version="0.0.0" />
+<unit id="org.mule.tooling.servers.commons" version="0.0.0" />
+<unit id="com.cloveretl.gui.hadoop" version="0.0.0" />
 <repository location="http://studio-nightly-update.s3.amazonaws.com"/>
 </location>
 </locations>
