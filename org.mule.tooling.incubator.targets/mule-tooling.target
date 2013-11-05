@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
 
-<target name="MuleStudio+DataMapper Dependencies" sequenceNumber="20">
+<target name="MuleStudio+DataMapper Dependencies" sequenceNumber="21">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.wst.common.fproj.feature.group" version="0.0.0"/>
@@ -49,14 +49,6 @@
 <repository location="http://download.eclipse.org/eclipse/updates/3.8/R-3.8.2-201301310800"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.mule.tooling.extension.server.3.5.0.ee.feature.group" version="3.5.0.201310071459"/>
-<unit id="org.mule.tooling.datamapper.feature.group" version="3.5.0.201310071905"/>
-<unit id="org.mule.tooling.feature.group" version="3.5.0.201310072000"/>
-<unit id="org.mule.tooling.ui.extension.sap.3.5.0.feature.group" version="3.5.0.201310011858"/>
-<unit id="org.mule.tooling.ui.extension.sap.feature.group" version="3.5.0.201309290150"/>
-<repository location="http://studio-nightly-update.s3.amazonaws.com"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.apache.commons.collections" version="0.0.0"/>
 <unit id="org.apache.commons.io" version="0.0.0"/>
 <unit id="org.apache.commons.lang" version="0.0.0"/>
@@ -79,6 +71,14 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.codehaus.groovy" version="2.0.7.xx-20130703-1700-e42-RELEASE"/>
 <repository location="http://dist.springsource.org/release/GRECLIPSE/e4.2"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.mule.tooling.extension.server.3.5.0.ee.feature.group" version="3.5.0.201310291912"/>
+<unit id="org.mule.tooling.datamapper.feature.group" version="3.5.0.201310311833"/>
+<unit id="org.mule.tooling.feature.group" version="3.5.0.201311010244"/>
+<unit id="org.mule.tooling.ui.extension.sap.3.5.0.feature.group" version="3.5.0.201310290234"/>
+<unit id="org.mule.tooling.ui.extension.sap.feature.group" version="3.5.0.201310290234"/>
+<repository location="http://studio-nightly-update.s3.amazonaws.com"/>
 </location>
 </locations>
 </target>
