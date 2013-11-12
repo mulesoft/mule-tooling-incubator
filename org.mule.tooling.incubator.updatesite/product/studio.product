@@ -20,18 +20,7 @@
       startupMessageRect="5,295,490,15"
       startupForegroundColor="B0BDD6" />
    <launcher name="MuleStudio">
-      <linux icon="/../icons/linux/studio.xpm"/>
-      <macosx icon="/../icons/mac/studio.icns"/>
-      <solaris/>
-      <win useIco="false">
-         <bmp
-            winSmallHigh="/../icons/win/studio-16-32.bmp"
-            winSmallLow="/../icons/win/studio-16-8.bmp"
-            winMediumHigh="/../icons/win/studio-32-32.bmp"
-            winMediumLow="/../icons/win/studio-32-8.bmp"
-            winLargeHigh="/../icons/win/studio-48-32.bmp"
-            winLargeLow="/../icons/win/studio-48-8.bmp"/>
-      </win>
+      
    </launcher>
 
    <intro introId="org.eclipse.ui.intro.universal"/>
@@ -142,8 +131,7 @@ If to Customer: To the Contracts Manager at Customer’s corporate headquarters 
       <feature id="org.eclipse.xsd.mapping"/>
       <feature id="org.eclipse.xsd.mapping.editor"/>
       <feature id="org.mule.tooling"/>
-      <feature id="org.mule.tooling.datamapper" version="3.5.0.201310311833"/>
-      <feature id="org.mule.tooling.extension.server.3.5.0.ee" version="3.5.0.201310291912"/>
+      <feature id="org.mule.tooling.extension.server.3.5.0.ee" />
       <feature id="org.mule.tooling.incubator.devkit.extension" version="1.0.0.qualifier"/>
       <feature id="org.mule.tooling.incubator.replay.extension" version="1.0.0.qualifier"/>
    </features>
