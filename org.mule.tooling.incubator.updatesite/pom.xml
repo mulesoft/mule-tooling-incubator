@@ -65,12 +65,13 @@
 	</profiles>
 	<build>
 		<plugins>
+
 	      <plugin>
 	        <groupId>org.eclipse.tycho</groupId>
-	        <artifactId>tycho-p2-publisher-plugin</artifactId>
+	        <artifactId>tycho-p2-repository-plugin</artifactId>
 	        <version>${tycho-version}</version>
 	        <configuration>
-	          <publishArtifacts>true</publishArtifacts>
+	          <compress>false</compress>
 	        </configuration>
 	      </plugin>
 		</plugins>
