@@ -116,6 +116,7 @@ public class NewDevkitProjectWizard extends Wizard implements INewWizard {
         TemplateFileWriter templateFileWriter = new TemplateFileWriter(project, monitor);
         templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, new MavenParameterReplacer(mavenModel));
         templateFileWriter.apply("/templates/README.tmpl", "README.md", new NullReplacer());
+        templateFileWriter.apply("/templates/LICENSE_HEADER.txt.tmpl", "LICENSE_HEADER.txt", new NullReplacer());
         templateFileWriter.apply("/templates/LICENSE.tmpl", "LICENSE.md", new NullReplacer());
 
         monitor.worked(1);
