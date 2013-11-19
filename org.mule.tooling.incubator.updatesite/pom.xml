@@ -72,15 +72,7 @@
 		        <configuration>
 		          <compress>false</compress>
 		        </configuration>
-	      </plugin>
-	      <plugin>
-	        <groupId>org.eclipse.tycho</groupId>
-	        <artifactId>tycho-p2-repository-plugin</artifactId>
-	        <version>${tycho-version}</version>
-	        <configuration>
-	          <publishArtifacts>true</publishArtifacts>
-	        </configuration>
-	      </plugin>
+	      </plugin>	      
 		</plugins>
 	</build>
 
