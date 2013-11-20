@@ -1,0 +1,13 @@
+[ {
+  "name" : "Mule Devkit Project Extension",
+  "version" : "1.0.0.201311191854",
+  "id" : "org.mule.tooling.incubator.devkit.extension.feature.group",
+  "description" : "Mule Devkit Project Extension.",
+  "icon": "http://designmodo.github.io/Flat-UI/images/icons/svg/pencils.svg"
+}, {
+  "name" : "Mule Replay Project",
+  "version" : "1.0.0.201311191854",
+  "id" : "org.mule.tooling.incubator.replay.extension.feature.group",
+  "description" : "Mule Replay Project",
+  "icon": "http://designmodo.github.io/Flat-UI/images/icons/svg/loop.svg"
+} ]

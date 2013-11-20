@@ -1,0 +1,25 @@
+{
+  "name": "studio-addons",
+  "version": "0.0.1",
+  "authors": [
+    "Diego Fernandez <diegof79@gmail.com> (https://github.com/dfernandez79)"
+  ],
+  "description": "Web interface for the MuleSoft Studio addons list",
+  "keywords": [
+    "studio",
+    "MuleSoft",
+    "addons"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "server-config.json",
+    "app/client/scripts/libs",
+    "test"
+  ],
+  "dependencies": {
+    "jquery": "~2.0.3"
+  }
+}

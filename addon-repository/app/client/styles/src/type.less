@@ -1,0 +1,85 @@
+//
+// Type
+// --------------------------------------------------
+
+@import 'reset';
+@import 'colors';
+
+// Font faces
+// --------------------------------------------------
+
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Ubuntu'), url('http://themes.googleusercontent.com/static/fonts/ubuntu/v4/vRvZYZlUaogOuHbBTT1SNevvDin1pK8aKteLpeZ5c0A.woff') format('woff');
+}
+
+// Font sizes
+// --------------------------------------------------
+
+// Ratios used to maintain harmony between sizes
+@major-third:       5/4;
+@perfect-fifth:     3/2;
+@octave:            2;
+
+// Font sizes follows the harmony: unison, major third, perfect fifth, octave
+@font-size-normal:  1.4rem; // = 14px since html font-size is adjusted by reset
+@font-size-medium:  (@font-size-normal * @major-third);
+@font-size-large:   (@font-size-normal * @perfect-fifth);
+@font-size-xlarge:  (@font-size-normal * @octave);
+@font-size-small:   (@font-size-normal / @major-third);
+
+
+// Font definitions
+// --------------------------------------------------
+
+@font-family-base:       'Helvetica', Arial, sans-serif;
+@font-size-base:         @font-size-normal;
+@font-weight-base:       300;
+
+@line-height-base:       @perfect-fifth;
+@line-height-computed:   @font-size-base * @line-height-base;
+
+@font-family-header:     'Ubuntu', sans-serif;
+@font-weight-header:     400;
+
+// Body text
+// --------------------------------------------------
+body {
+    font-family: @font-family-base;
+    font-weight: @font-weight-base;
+    font-size: @font-size-base;
+    line-height: @line-height-base;
+    color: @text-color;
+}
+
+// Headings
+// --------------------------------------------------
+
+h1, h2, h3 {
+    font-family: @font-family-header;
+    text-rendering: optimizeLegibility;
+    font-weight: @font-weight-header;
+    margin: 0;
+}
+
+h1 {
+    font-size: @font-size-xlarge;
+}
+
+h2 {
+    font-size: @font-size-large;
+    padding: (@line-height-computed - (@font-size-large * @line-height-base)/2) 0;
+}
+
+h3 {
+    font-size: @font-size-medium;
+    padding: (@line-height-computed - (@font-size-medium * @line-height-base)/2) 0;
+}
+
+h4 {
+    font-size: @font-size-small;
+    text-transform: uppercase;
+    line-height: @line-height-computed;
+}

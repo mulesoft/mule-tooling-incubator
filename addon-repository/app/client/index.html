@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+	<head>
+		<title>MuleSoft Studio Add-ons</title>
+		<link rel="stylesheet" href="styles/all.css">
+	</head>
+	<body>
+		<div class="container">
+			<div id="addon-list">
+				<div id="addon-item-template" class="addon-item template">
+					<div class="addon-icon"><img data-attr-src="icon"></div>
+					<div class="addon-details">
+						<div class="addon-name" data-contents="name"></div>
+						<div class="addon-version">Version <span data-contents="version"></span>
+						</div><div class="addon-description" data-contents="description"></div>
+
+						<div class="action-area">
+							<button class="btn-install"
+								data-attr-data-id="id"
+								data-attr-data-version="version">Install</button>
+							<div class="install-progress">
+								<span class="progress-bar"></span>
+							</div>
+							<div class="installed-message">
+								<i class="icon-check"></i> Installed
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="scripts/all.js"></script>
+	</body>
+</html>
