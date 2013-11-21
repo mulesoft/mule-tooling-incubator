@@ -37,7 +37,7 @@ public class InstallerService implements IAdaptable {
     }
 
     public String install(final String featureId, String version) {
-        boolean featureFound = true;
+
         final IProvisioningAgent provisioningAgent = Activator.getDefault().getProvisioningAgent();
         IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) provisioningAgent.getService(IMetadataRepositoryManager.SERVICE_NAME);
         try {
@@ -54,6 +54,7 @@ public class InstallerService implements IAdaptable {
                 InstallOperation op = new InstallOperation(session, Arrays.asList(myIU));
                 IStatus result = op.resolveModal(new NullProgressMonitor());
                 if (result.isOK()) {
+
                     ProvisioningJob provisioningJob = op.getProvisioningJob(new InstallerProgressMonitor(dispatcher, featureId));
                     provisioningJob.addJobChangeListener(new JobChangeAdapter() {
 
@@ -72,7 +73,16 @@ public class InstallerService implements IAdaptable {
             e.printStackTrace();
         }
 
-        return featureFound ? "Installing " + featureId : "Unable to install " + featureId;
+        return "Installing " + featureId;
+    }
+
+    public InstallationStatus checkInstalled(final String featureId, String version) {
+        return InstallationStatus.NOT_INSTALLED;
+    }
+
+    public String update(final String featureId, String version) {
+
+        return "";
     }
 
     @Override
