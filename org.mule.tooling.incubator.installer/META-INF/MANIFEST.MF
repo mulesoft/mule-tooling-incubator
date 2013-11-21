@@ -12,3 +12,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.equinox.p2.repository;bundle-version="2.2.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Eclipse-BundleShape: dir
