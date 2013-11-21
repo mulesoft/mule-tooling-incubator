@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Mule Installer Feature
+Bundle-SymbolicName: org.mule.tooling.incubator.installer.extension
+Bundle-Version: 1.0.0.qualifier
+
