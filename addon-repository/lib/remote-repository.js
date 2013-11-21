@@ -5,8 +5,8 @@ var AbstractRepository = require('./repository');
 
 module.exports = AbstractRepository.extend({
 
-	constructor: function (requestImpl, baseUrl) {
-		this._request = requestImpl;
+	constructor: function (http, baseUrl) {
+		this._http = http;
 		this._baseUrl = baseUrl || '';
 	},
 
@@ -15,15 +15,13 @@ module.exports = AbstractRepository.extend({
 	},
 
 	_getJSON: function (path, parameters) {
-		return this._q.nfcall(this._request,
-			{
-				url: this._apiUrl(path),
-				json: true,
-				qs: parameters
-
-			}).spread(function (req, body) {
-				return body;
-			});
+		var config = {};
+		if (parameters) {
+			config.params = parameters;
+		}
+		return this._http.get(this._apiUrl(path), config).then(function (result) {
+			return result.data;
+		});
 	},
 
 	_apiUrl: function (path) {

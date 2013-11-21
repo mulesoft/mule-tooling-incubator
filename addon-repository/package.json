@@ -10,25 +10,28 @@
   ],
   "author": "Diego Fernandez <diegof79@gmail.com> (https://github.com/dfernandez79)",
   "private": true,
+  "scripts": {
+    "postinstall": "node_modules/.bin/bower install"
+  },
   "devDependencies": {
-    "grunt-simple-mocha": "~0.4.0",
-    "request": "~2.27.0",
-    "grunt": "~0.4.1",
+    "bower": "~1.2.7",
+    "browser-request": "~0.3.1",
+    "cors": "~2.1.0",
     "express": "~3.4.4",
-    "browserify": "~2.35.2",
+    "grunt": "~0.4.1",
     "grunt-browserify": "~1.2.11",
-    "grunt-contrib-concat": "~0.3.0",
     "grunt-concurrent": "~0.4.1",
     "grunt-contrib-clean": "~0.5.0",
-    "grunt-nodemon": "~0.1.2",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "~0.7.1",
+    "grunt-contrib-less": "~0.8.2",
     "grunt-contrib-uglify": "~0.2.7",
     "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-jshint": "~0.7.1",
-    "grunt-contrib-less": "~0.8.2"
+    "grunt-nodemon": "~0.1.2",
+    "request": "~2.27.0"
   },
   "dependencies": {
     "barman": "~0.3.0",
-    "q": "~0.9.7",
-    "browser-request": "~0.3.1"
+    "q": "~0.9.7"
   }
 }

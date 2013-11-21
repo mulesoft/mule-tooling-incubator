@@ -1,60 +1,19 @@
-/* global document, window */
+/* global document */
 'use strict';
 
-var Template = require('./template'),
-	repository = require('./repository'),
-	MuleStudio = require('./studio'),
-
-	studio = new MuleStudio(window),
-	addOnItemTemplate = new Template(document.getElementById('addon-item-template')),
-	addOnList = document.getElementById('addon-list');
+var angular = require('angular');
 
 
-function installAddOn(button) {
-	var id = button.dataset.id,
-		version = button.dataset.version,
-		parent = button.parentNode,
-		progressBar = parent.querySelector('.progress-bar');
+angular.element(document).ready(function () {
 
-	parent.classList.add('install-in-progress');
-	progressBar.style.setProperty('width', 0);
+	angular.
+		module('studio-addons', []).
 
-	return studio.install(id, version).
-		progress(function (data) {
-			progressBar.style.setProperty('width', Math.max(parseInt(data), 0) + '%');
-		}).
-		then(function () {
-			parent.classList.add('installed');
-		}).
-		fin(function () {
-			parent.classList.remove('install-in-progress');
-		});
-}
+		factory('studioService', require('./services/studio')).
+		factory('addOnRepositoryService', require('./services/repository')).
 
-function showAddOns(addOns) {
-	addOnList.innerHTML = '';
+		controller('addOnListController', require('./controllers/addons'));
 
-	addOns.forEach(function (addOn) {
-		addOnList.appendChild(addOnItemTemplate.createElement(addOn));
-	});
-}
+	angular.bootstrap(document, ['studio-addons']);
 
-function showLoadAddOnsError(err) {
-	console.log(err);
-}
-
-function loadAddOnsList() {
-	repository.findAddOns().
-		then(showAddOns).
-		fail(showLoadAddOnsError);
-}
-
-addOnList.addEventListener('click', function (evt) {
-	if (evt.target.classList.contains('btn-install')) {
-		installAddOn(evt.target);
-	}
-}, true);
-
-window.notifyStudioListener = studio.emit.bind(studio);
-
-loadAddOnsList();
+});

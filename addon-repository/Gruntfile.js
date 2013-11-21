@@ -28,22 +28,25 @@ module.exports = function ( grunt ) {
         browserify: {
             vendor: {
                 src: [
-                    // 'app/client/scripts/lib/jquery/jquery.js'
+                    'app/client/scripts/lib/angular/angular.js'
                 ],
                 dest: 'app/client/scripts/vendor.js',
                 options: {
-                    // shim: {
-                    //     jquery: {
-                    //         path: 'app/client/scripts/lib/jquery/jquery.js',
-                    //         exports: '$'
-                    //     }
-                    // }
+                    shim: {
+                        angular: {
+                            path: 'app/client/scripts/lib/angular/angular.js',
+                            exports: 'angular'
+                        }
+                    }
                 }
             },
 
             app: {
                 src: ['<%=meta.clientSrc%>'],
-                dest: 'app/client/scripts/app.js'
+                dest: 'app/client/scripts/app.js',
+                options: {
+                    external: ['angular']
+                }
             }
         },
 
@@ -105,6 +108,9 @@ module.exports = function ( grunt ) {
             ],
             styles: [
                 'app/client/styles/all.css'
+            ],
+            lib: [
+                'app/client/scripts/lib'
             ]
         },
 

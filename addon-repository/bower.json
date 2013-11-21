@@ -14,12 +14,10 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
-    "server-config.json",
-    "app/client/scripts/libs",
+    "app/client/scripts/lib",
     "test"
   ],
   "dependencies": {
-    "jquery": "~2.0.3"
+    "angular": "~1.2.1"
   }
 }
