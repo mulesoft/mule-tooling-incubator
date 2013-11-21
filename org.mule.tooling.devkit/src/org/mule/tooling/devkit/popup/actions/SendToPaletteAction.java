@@ -28,8 +28,6 @@ import org.mule.tooling.core.utils.BundleManifestReader;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
 import org.mule.tooling.devkit.maven.MavenDevkitProjectDecorator;
-import org.mule.tooling.messageflow.editor.MultiPageMessageFlowEditor;
-import org.mule.tooling.messageflow.util.MessageFlowUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;

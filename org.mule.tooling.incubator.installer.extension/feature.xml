@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.mule.tooling.incubator.replay.extension"
-      label="Mule Replay Project"
+      id="org.mule.tooling.incubator.installer.extension"
+      label="Mule Installer Project"
       version="1.0.0.qualifier"
       provider-name="MuleSoft Inc."
-      plugin="org.mule.tooling.incubator.replay.extension"
+      plugin="org.mule.tooling.incubator.installer.extension"
       exclusive="true">
 
    <description url="http://www.mulesoft.org/">
-      Mule Replay Project
+      Mule install Project
    </description>
 
    <copyright url="http://www.mulesoft.org">
@@ -18,7 +18,7 @@
   
 
    <plugin
-         id="org.mule.tooling.incubator.replay"
+         id="org.mule.tooling.incubator.installer"
          download-size="0"
          install-size="0"
 		    unpack="true"
