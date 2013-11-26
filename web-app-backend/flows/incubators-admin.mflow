@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="incubators-admin">
+    <global-element name="Router" type="http://www.mulesoft.org/schema/mule/apikit/config" entity-id="Router#1">
+        <properties>
+            <property name="consoleEnabled" value="true"/>
+            <property name="raml" value="incubators-admin.raml"/>
+            <property name="consolePath" value="console"/>
+            <property name="flow-mapping"/>
+            <property name="name" value="apidAdminConfig"/>
+            <property name="auxiliary;index" value="1"/>
+        </properties>
+    </global-element>
+    <global-unknown description="false" unknownName="apiKitAdminGlobalExceptionMapping" index="2" entity-id="global-unknown#1">
+        <content>&lt;apikit:mapping-exception-strategy xmlns:apikit=&quot;http://www.mulesoft.org/schema/mule/apikit&quot; name=&quot;apiKitAdminGlobalExceptionMapping&quot;&gt;
+        &lt;apikit:mapping statusCode=&quot;404&quot;&gt;
+            &lt;apikit:exception value=&quot;org.mule.module.apikit.exception.NotFoundException&quot;/&gt;
+            &lt;set-property xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; propertyName=&quot;Content-Type&quot; value=&quot;application/json&quot;/&gt;
+            &lt;set-payload xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; value=&quot;{ &amp;quot;message&amp;quot;: &amp;quot;Resource not found&amp;quot; }&quot;/&gt;
+        &lt;/apikit:mapping&gt;
+        &lt;apikit:mapping statusCode=&quot;405&quot;&gt;
+            &lt;apikit:exception value=&quot;org.mule.module.apikit.exception.MethodNotAllowedException&quot;/&gt;
+            &lt;set-property xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; propertyName=&quot;Content-Type&quot; value=&quot;application/json&quot;/&gt;
+            &lt;set-payload xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; value=&quot;{ &amp;quot;message&amp;quot;: &amp;quot;Method not allowed&amp;quot; }&quot;/&gt;
+        &lt;/apikit:mapping&gt;
+        &lt;apikit:mapping statusCode=&quot;415&quot;&gt;
+            &lt;apikit:exception value=&quot;org.mule.module.apikit.exception.UnsupportedMediaTypeException&quot;/&gt;
+            &lt;set-property xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; propertyName=&quot;Content-Type&quot; value=&quot;application/json&quot;/&gt;
+            &lt;set-payload xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; value=&quot;{ &amp;quot;message&amp;quot;: &amp;quot;Unsupported media type&amp;quot; }&quot;/&gt;
+        &lt;/apikit:mapping&gt;
+        &lt;apikit:mapping statusCode=&quot;406&quot;&gt;
+            &lt;apikit:exception value=&quot;org.mule.module.apikit.exception.NotAcceptableException&quot;/&gt;
+            &lt;set-property xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; propertyName=&quot;Content-Type&quot; value=&quot;application/json&quot;/&gt;
+            &lt;set-payload xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; value=&quot;{ &amp;quot;message&amp;quot;: &amp;quot;Not acceptable&amp;quot; }&quot;/&gt;
+        &lt;/apikit:mapping&gt;
+        &lt;apikit:mapping statusCode=&quot;400&quot;&gt;
+            &lt;apikit:exception value=&quot;org.mule.module.apikit.exception.BadRequestException&quot;/&gt;
+            &lt;set-property xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; propertyName=&quot;Content-Type&quot; value=&quot;application/json&quot;/&gt;
+            &lt;set-payload xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; value=&quot;{ &amp;quot;message&amp;quot;: &amp;quot;Bad request&amp;quot; }&quot;/&gt;
+        &lt;/apikit:mapping&gt;
+    &lt;/apikit:mapping-exception-strategy&gt;</content>
+    </global-unknown>
+    <flow SubFlow="false" name="adminMain" entity-id="3ce80acb-5c38-49d4-806f-39127f3f2b31">
+        <properties>
+            <property name="processingStrategy"/>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="23"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#1">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <endpoint direction="Inbound" message-exchange-pattern="RequestResponse" name="HTTP" type="http://www.mulesoft.org/schema/mule/http/endpoint" entity-id="HTTP#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="port"/>
+                    <property name="host"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="followRedirects"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/http/endpoint"/>
+                    <property name="keep-alive"/>
+                    <property name="contentType"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="password"/>
+                    <property name="exchange-pattern"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="ref"/>
+                    <property name="httpLabel"/>
+                    <property name="transformer-refs"/>
+                    <property name="address" value="http://localhost:${http.port}/admin"/>
+                    <property name="encoding"/>
+                    <property name="path"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="method"/>
+                    <property name="user"/>
+                    <property name="mimeType"/>
+                    <property name="responseTimeout"/>
+                    <property name="auxiliary;index" value="24"/>
+                    <property name="connector-ref"/>
+                </properties>
+            </endpoint>
+            <pattern name="APIkit Router" type="http://www.mulesoft.org/schema/mule/apikit/router" entity-id="APIkit Router#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="config-ref" value="apidAdminConfig"/>
+                    <property name="auxiliary;index" value="25"/>
+                </properties>
+            </pattern>
+            <pattern name="Reference Exception Strategy" type="http://www.mulesoft.org/schema/mule/core/exception-strategy" entity-id="Reference Exception Strategy#1">
+                <properties>
+                    <property name="ref" value="apiKitAdminGlobalExceptionMapping"/>
+                    <property name="auxiliary;index" value="26"/>
+                </properties>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="delete:/{updateSiteId}:apidAdminConfig" entity-id="94b93734-e36b-4d06-9412-2a7f309cfacd">
+        <properties>
+            <property name="processingStrategy"/>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="27"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#2">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="ObjectStore" type="http://www.mulesoft.org/schema/mule/objectstore/objectstore-connector" entity-id="ObjectStore#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="ignoreNotExists" value="false"/>
+                    <property name="updated"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/objectstore/remove"/>
+                    <property name="config-ref" value="updateSites"/>
+                    <property name="key" value="#[&quot;__us&quot; + updateSiteId]"/>
+                    <property name="auxiliary;index" value="28"/>
+                </properties>
+                <description></description>
+            </pattern>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="post:/{updateSiteId}:apidAdminConfig" entity-id="5f334a66-2be4-4ec3-80e7-4283d36565db">
+        <properties>
+            <property name="processingStrategy"/>
+            <property name="initialState"/>
+            <property name="processingStrategy2"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="29"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#3">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern name="ObjectStore" type="http://www.mulesoft.org/schema/mule/objectstore/objectstore-connector" entity-id="ObjectStore#2">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="updated"/>
+                    <property name="overwrite" value="false"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/objectstore/store"/>
+                    <property name="config-ref" value="updateSites"/>
+                    <property name="auxiliary;index" value="30"/>
+                    <property name="key" value="#[&quot;__us&quot; + updateSiteId]"/>
+                    <property name="value-ref" value="#[payload]"/>
+                </properties>
+                <description></description>
+            </pattern>
+        </lane>
+    </flow>
+    <description></description>
+</mule-configuration>

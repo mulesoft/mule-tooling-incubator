@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graph author="fernandofederico" created="Mon Nov 18 12:34:53 GMT-03:00 2013" guiVersion="3.4.0.P" id="1384792458529" licenseCode="Unlicensed" licenseType="Unknown" modified="Mon Nov 18 12:34:53 GMT-03:00 2013" modifiedBy="fernandofederico" name="new_mapping_1_grf" preview-file="${Project_Home}/src/test/resources/input.xml" revision="1.0" showComponentDetails="false">
+<Global>
+<Metadata __index="0" __referenceCounter="1" __sourcePath="{}/array" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _id="__id" _type="Output" id="80e905db-0e2b-4285-8a9f-e7f6d3e31c24">
+<Record fieldDelimiter="|" name="array" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_id" __systemManaged="true" label="__id" name="__id" type="string"/>
+<Field __sourcePath="{}/array/name" containerType="SINGLE" label="name" name="name" type="string"/>
+<Field __sourcePath="{}/array/version" containerType="SINGLE" label="version" name="version" type="string"/>
+<Field __sourcePath="{}/array/id" containerType="SINGLE" label="id" name="id" type="string"/>
+<Field __sourcePath="{}/array/description" containerType="SINGLE" label="description" name="description" type="string"/>
+<Field __sourcePath="{}/array/imageUrl" containerType="SINGLE" label="imageUrl" name="imageUrl" type="string"/>
+<Field __sourcePath="{}/array/tutorialUrl" containerType="SINGLE" label="tutorialUrl" name="tutorialUrl" type="string"/>
+<Field __sourcePath="{}/array/installationsCount" containerType="SINGLE" label="installationsCount" name="installationsCount" type="integer"/>
+<Field __sourcePath="{}/array/docUrl" containerType="SINGLE" label="docUrl" name="docUrl" type="string"/>
+</Record>
+</Metadata>
+<Metadata __index="2" __referenceCounter="0" __sourcePath="{}/repository/units/unit/touchpointData/instructions/instruction" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _id="__id" _metadataParentId="9063e37c-68fa-4d5b-b351-f5dd82b3fd2a" _parent_id="__parent_id" _type="Input" id="4939fada-6319-4fdb-8e53-609fad233857">
+<Record fieldDelimiter="|" name="instruction" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_parent_id" __systemManaged="true" name="__parent_id" type="string"/>
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/touchpointData/instructions/instruction/@key" containerType="SINGLE" label="key" name="key" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/touchpointData/instructions/instruction/@text()" containerType="SINGLE" label="text()" name="text" type="string"/>
+</Record>
+</Metadata>
+<Metadata __index="0" __referenceCounter="0" __sourcePath="{}/repository/properties/property" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _id="__id" _metadataParentId="d2e90211-6d74-41be-b96f-0d63fea63bb2" _parent_id="__parent_id" _type="Input" id="6e563015-a445-4cb5-b201-9f65c0b8dd2a">
+<Record fieldDelimiter="|" name="property" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_parent_id" __systemManaged="true" name="__parent_id" type="string"/>
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __sourcePath="{}/repository/properties/property/@name" containerType="SINGLE" label="name" name="name" type="string"/>
+<Field __sourcePath="{}/repository/properties/property/@value" containerType="SINGLE" label="value" name="value" type="string"/>
+<Field __sourcePath="{}/repository/properties/property/@text()" containerType="SINGLE" label="text()" name="text" type="string"/>
+</Record>
+</Metadata>
+<Metadata __index="0" __referenceCounter="0" __sourcePath="{}/repository/units/unit/properties/property" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _id="__id" _metadataParentId="9063e37c-68fa-4d5b-b351-f5dd82b3fd2a" _parent_id="__parent_id" _type="Input" id="6e2a2136-ea3f-4ca0-a9a4-a0252afc31fd">
+<Record fieldDelimiter="|" name="property" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_parent_id" __systemManaged="true" name="__parent_id" type="string"/>
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/properties/property/@name" containerType="SINGLE" label="name" name="name" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/properties/property/@value" containerType="SINGLE" label="value" name="value" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/properties/property/@text()" containerType="SINGLE" label="text()" name="text" type="string"/>
+</Record>
+</Metadata>
+<Metadata __index="0" __referenceCounter="0" __sourcePath="{}/repository/units/unit/provides/provided" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _id="__id" _metadataParentId="9063e37c-68fa-4d5b-b351-f5dd82b3fd2a" _parent_id="__parent_id" _type="Input" id="764a7581-f414-4c5f-b2cc-b7db03409ad2">
+<Record fieldDelimiter="|" name="provided" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_parent_id" __systemManaged="true" name="__parent_id" type="string"/>
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/provides/provided/@namespace" containerType="SINGLE" label="namespace" name="namespace" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/provides/provided/@name" containerType="SINGLE" label="name" name="name" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/provides/provided/@version" containerType="SINGLE" label="version" name="version" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/provides/provided/@text()" containerType="SINGLE" label="text()" name="text" type="string"/>
+</Record>
+</Metadata>
+<Metadata __index="0" __referenceCounter="0" __sourcePath="{}/repository" _dataStructure="OBJECT" _id="__id" _type="Input" id="d2e90211-6d74-41be-b96f-0d63fea63bb2">
+<Record fieldDelimiter="|" name="repository" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __sourcePath="{}/repository/properties/@size" containerType="SINGLE" label="size" name="size" type="integer"/>
+<Field __sourcePath="{}/repository/units/@size" containerType="SINGLE" label="size" name="size_1" type="integer"/>
+<Field __sourcePath="{}/repository/@name" containerType="SINGLE" label="name" name="name" type="string"/>
+<Field __sourcePath="{}/repository/@type" containerType="SINGLE" label="type" name="type" type="string"/>
+<Field __sourcePath="{}/repository/@version" containerType="SINGLE" label="version" name="version" type="integer"/>
+</Record>
+</Metadata>
+<Metadata __index="0" __referenceCounter="0" __sourcePath="{}/repository/units/unit/requires/required" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _id="__id" _metadataParentId="9063e37c-68fa-4d5b-b351-f5dd82b3fd2a" _parent_id="__parent_id" _type="Input" id="3293def2-74e4-4b67-b558-9c79a79cab2b">
+<Record fieldDelimiter="|" name="required" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_parent_id" __systemManaged="true" name="__parent_id" type="string"/>
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __index="0" __sourcePath="{}/repository/units/unit/requires/required/filter" containerType="SINGLE" label="filter" name="filter" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/requires/required/@namespace" containerType="SINGLE" label="namespace" name="namespace" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/requires/required/@name" containerType="SINGLE" label="name" name="name" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/requires/required/@range" containerType="SINGLE" label="range" name="range" type="string"/>
+</Record>
+</Metadata>
+<Metadata __index="0" __referenceCounter="1" __sourcePath="{}/repository/units/unit" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _id="__id" _metadataParentId="d2e90211-6d74-41be-b96f-0d63fea63bb2" _parent_id="__parent_id" _type="Input" id="9063e37c-68fa-4d5b-b351-f5dd82b3fd2a">
+<Record fieldDelimiter="|" name="unit" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_parent_id" __systemManaged="true" name="__parent_id" type="string"/>
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/update/@id" containerType="SINGLE" label="id" name="id" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/update/@range" containerType="SINGLE" label="range" name="range" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/update/@severity" containerType="SINGLE" label="severity" name="severity" type="integer"/>
+<Field __sourcePath="{}/repository/units/unit/update/@text()" containerType="SINGLE" label="text()" name="text" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/properties/@size" containerType="SINGLE" label="size" name="size" type="integer"/>
+<Field __sourcePath="{}/repository/units/unit/provides/@size" containerType="SINGLE" label="size" name="size_1" type="integer"/>
+<Field __sourcePath="{}/repository/units/unit/requires/@size" containerType="SINGLE" label="size" name="size_2" type="integer"/>
+<Field __index="1" __sourcePath="{}/repository/units/unit/filter" containerType="SINGLE" label="filter" name="filter" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/artifacts/artifact/@classifier" containerType="SINGLE" label="classifier" name="classifier" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/artifacts/artifact/@id" containerType="SINGLE" label="id" name="id_1" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/artifacts/artifact/@version" containerType="SINGLE" label="version" name="version" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/artifacts/artifact/@text()" containerType="SINGLE" label="text()" name="text_1" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/artifacts/@size" containerType="SINGLE" label="size" name="size_3" type="integer"/>
+<Field __sourcePath="{}/repository/units/unit/touchpoint/@id" containerType="SINGLE" label="id" name="id_2" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/touchpoint/@version" containerType="SINGLE" label="version" name="version_1" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/touchpoint/@text()" containerType="SINGLE" label="text()" name="text_2" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/touchpointData/instructions/@size" containerType="SINGLE" label="size" name="size_4" type="integer"/>
+<Field __sourcePath="{}/repository/units/unit/touchpointData/@size" containerType="SINGLE" label="size" name="size_5" type="integer"/>
+<Field __sourcePath="{}/repository/units/unit/copyright/@uri" containerType="SINGLE" label="uri" name="uri" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/copyright/@url" containerType="SINGLE" label="url" name="url" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/copyright/@text()" containerType="SINGLE" label="text()" name="text_3" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/@id" containerType="SINGLE" label="id" name="id_3" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/@version" containerType="SINGLE" label="version" name="version_2" type="string"/>
+<Field __sourcePath="{}/repository/units/unit/@singleton" containerType="SINGLE" label="singleton" name="singleton" type="string"/>
+<Field __artificialType="XPATH" __xpath="{=}/properties/property[@name=&quot;image.url&quot;]/@value" containerType="SINGLE" label="imageUrl" name="imageUrl" type="string"/>
+<Field __artificialType="XPATH" __xpath="{=}/properties/property[@name=&quot;doc.ur&quot;]/@value" containerType="SINGLE" label="doc" name="doc" type="string"/>
+<Field __artificialType="XPATH" __xpath="{=}/properties/property[@name=&quot;tutorial.url&quot;]/@value" containerType="SINGLE" label="tutorial" name="tutorial" type="string"/>
+<Field __artificialType="XPATH" __xpath="{=}/properties/property[@name=&quot;org.eclipse.equinox.p2.description&quot;]/@value" containerType="SINGLE" label="propertyDescription" name="propertyDescription" type="string"/>
+<Field __artificialType="XPATH" __xpath="{=}/properties/property[@name=&quot;org.eclipse.equinox.p2.name&quot;]/@value" containerType="SINGLE" label="propertyName" name="propertyName" type="string"/>
+</Record>
+</Metadata>
+<Dictionary>
+<Entry id="DictionaryEntry0" input="true" name="inputPayload" output="false" type="object"/>
+<Entry id="DictionaryEntry1" input="false" name="outputPayload" output="true" type="object"/>
+</Dictionary>
+</Global>
+<Phase number="0">
+<Node enabled="enabled" guiName="unit" guiX="460" guiY="20" id="FOREACH_UNIT_ARRAY" transformClass="com.mulesoft.datamapper.transform.MelRecordTransform" type="REFORMAT">
+<attr name="melScript"><![CDATA[//MEL
+//START -> DO NOT REMOVE
+output.__id = input.__id;
+//END -> DO NOT REMOVE
+if ( input.id_3.endsWith("feature.group") ){
+
+output.id = input.id_3;
+output.version = input.version_2;
+output.imageUrl = input.imageUrl;
+output.docUrl = input.doc;
+output.tutorialUrl = input.tutorial;
+output.description = input.propertyDescription;
+output.name = input.propertyName;
+output.installationsCount = flowRef("lookupInstallationsCount",input.id_3)
+}
+]]></attr>
+</Node>
+<Node charset="UTF-8" enabled="enabled" fileURL="dict:outputPayload" guiName="JSON WRITER" guiX="900" guiY="20" id="JSON_WRITER0" type="JSON_WRITER">
+<attr name="mapping"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<clover:collection clover:name="array" xmlns:clover="http://www.cloveretl.com/ns/xmlmapping">
+  <item clover:inPort="0">
+    <name>$0.name</name>
+    <version>$0.version</version>
+    <id>$0.id</id>
+    <description>$0.description</description>
+    <imageUrl>$0.imageUrl</imageUrl>
+    <tutorialUrl>$0.tutorialUrl</tutorialUrl>
+    <installationsCount>$0.installationsCount</installationsCount>
+    <docUrl>$0.docUrl</docUrl>
+  </item>
+</clover:collection>]]></attr>
+<attr name="_data_format"><![CDATA[JSON]]></attr>
+<attr name="jsonSchemaURL"><![CDATA[/Users/fernandofederico/Desktop/tito.json]]></attr>
+</Node>
+<Node charset="UTF-8" enabled="enabled" fileURL="dict:inputPayload" guiName="XML READER" guiX="20" guiY="20" id="XML_READER0" type="XML_READER">
+<attr name="xmlSchemaURL"><![CDATA[./src/test/resources/repository.xsd]]></attr>
+<attr name="mapping"><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Context outPort="0" sequenceField="__id" xpath="/repository/units/unit">
+  <Mapping cloverField="id" trim="true" xpath="update/@id"/>
+  <Mapping cloverField="range" trim="true" xpath="update/@range"/>
+  <Mapping cloverField="severity" trim="true" xpath="update/@severity"/>
+  <Mapping cloverField="text" trim="true" xpath="update/text()"/>
+  <Mapping cloverField="size" trim="true" xpath="properties/@size"/>
+  <Mapping cloverField="size_1" trim="true" xpath="provides/@size"/>
+  <Mapping cloverField="size_2" trim="true" xpath="requires/@size"/>
+  <Mapping cloverField="filter" trim="true" xpath="filter"/>
+  <Mapping cloverField="classifier" trim="true" xpath="artifacts/artifact/@classifier"/>
+  <Mapping cloverField="id_1" trim="true" xpath="artifacts/artifact/@id"/>
+  <Mapping cloverField="version" trim="true" xpath="artifacts/artifact/@version"/>
+  <Mapping cloverField="text_1" trim="true" xpath="artifacts/artifact/text()"/>
+  <Mapping cloverField="size_3" trim="true" xpath="artifacts/@size"/>
+  <Mapping cloverField="id_2" trim="true" xpath="touchpoint/@id"/>
+  <Mapping cloverField="version_1" trim="true" xpath="touchpoint/@version"/>
+  <Mapping cloverField="text_2" trim="true" xpath="touchpoint/text()"/>
+  <Mapping cloverField="size_4" trim="true" xpath="touchpointData/instructions/@size"/>
+  <Mapping cloverField="size_5" trim="true" xpath="touchpointData/@size"/>
+  <Mapping cloverField="uri" trim="true" xpath="copyright/@uri"/>
+  <Mapping cloverField="url" trim="true" xpath="copyright/@url"/>
+  <Mapping cloverField="text_3" trim="true" xpath="copyright/text()"/>
+  <Mapping cloverField="id_3" trim="true" xpath="@id"/>
+  <Mapping cloverField="version_2" trim="true" xpath="@version"/>
+  <Mapping cloverField="singleton" trim="true" xpath="@singleton"/>
+  <Mapping cloverField="imageUrl" trim="true" xpath="properties/property[@name=&quot;image.url&quot;]/@value"/>
+  <Mapping cloverField="doc" trim="true" xpath="properties/property[@name=&quot;doc.ur&quot;]/@value"/>
+  <Mapping cloverField="tutorial" trim="true" xpath="properties/property[@name=&quot;tutorial.url&quot;]/@value"/>
+  <Mapping cloverField="propertyDescription" trim="true" xpath="properties/property[@name=&quot;org.eclipse.equinox.p2.description&quot;]/@value"/>
+  <Mapping cloverField="propertyName" trim="true" xpath="properties/property[@name=&quot;org.eclipse.equinox.p2.name&quot;]/@value"/>
+</Context>
+]]></attr>
+<attr name="_data_format"><![CDATA[XML]]></attr>
+<attr name="__rootGlobalElementName"><![CDATA[repository]]></attr>
+</Node>
+<Edge debugMode="true" fromNode="FOREACH_UNIT_ARRAY:0" guiBendpoints="" id="Edge1" inPort="Port 0 (in)" metadata="80e905db-0e2b-4285-8a9f-e7f6d3e31c24" outPort="Port 0 (out)" toNode="JSON_WRITER0:0"/>
+<Edge debugMode="true" fromNode="XML_READER0:0" guiBendpoints="" id="Edge0" inPort="Port 0 (in)" metadata="9063e37c-68fa-4d5b-b351-f5dd82b3fd2a" outPort="Port 0 (out)" toNode="FOREACH_UNIT_ARRAY:0"/>
+</Phase>
+</Graph>
