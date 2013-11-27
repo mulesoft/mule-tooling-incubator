@@ -22,18 +22,17 @@ public class InstallerProgressMonitor extends NullProgressMonitor {
 
     @Override
     public void done() {
-        dispatcher.dispatchEvent("progress", COMPLETE);
+        dispatcher.dispatchEvent(InstallerEventTypes.PROGRESS_EVENT_TYPE, COMPLETE);
     }
 
     @Override
     public void setCanceled(boolean value) {
-        dispatcher.dispatchEvent("canceled", featureId);
-
+        dispatcher.dispatchEvent(InstallerEventTypes.CANCELED_EVENT_TYPE, featureId);
     }
 
     @Override
     public void worked(int work) {
-        dispatcher.dispatchEvent("progress", work * totalWork);
+        dispatcher.dispatchEvent(InstallerEventTypes.PROGRESS_EVENT_TYPE, work * totalWork);
     }
 
 }

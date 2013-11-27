@@ -1,0 +1,26 @@
+#%RAML 0.8
+---
+title: Addons REST api for Mulesoft Buds project
+version: v1.0
+baseUri: http://buds.cloudhub.io/{version}/admin
+
+schemas:
+  - plugins: !include plugins-schema.json
+  - plugin: !include plugin-schema.json
+  - updateSites: !include updateSites-schema.json
+  - updateSite: !include updateSite-schema.json
+
+
+/{updateSiteId}:
+  delete:
+    description: Deletes a particular update site, this means that it is not going to be managed by the Mulesoft Buds app
+    responses:
+      200: ~
+      404: ~
+  post:
+    description: Adds a particular update site, this means that it is not going to be managed by the Mulesoft Buds app
+    body:
+      application/json:
+        schema: updateSite
+    responses:
+      201: ~
