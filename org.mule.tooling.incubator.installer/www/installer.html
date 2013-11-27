@@ -16,6 +16,13 @@
     .thumbnail.installed .btn {
       display: none;
     }
+    .thumbnail {
+      position: relative;
+    }
+    .thumbnail .btn {
+      position: absolute;
+      bottom: 1.5rem;
+    }
     </style>
 </head>
 <body>
@@ -48,19 +55,17 @@
 </div>
 
     <script id="descriptionTemplate" type="text/x-handlebars-template">
-        <div class="col-sm-6 col-md-3">
+        <div class="col-sm-6 col-md-4">
             <div class="thumbnail">
                   <img src="{{imageUrl}}" alt="{{name}}">
                   <div class="caption">
                     <h3>{{name}} <span class="badge">{{installationsCount}}</span></h3>
-                    <p>{{description}}</p>
-                    <p>
-                        <button
-                            data-loading-text="Installing..."
-                            data-id="{{id}}"
-                            data-version="{{version}}"
-                            class="btn btn-primary" role="button">Install</button>
-                    </p>
+                    <div class="description">{{description}}</div>
+                    <button
+                        data-loading-text="Installing..."
+                        data-id="{{id}}"
+                        data-version="{{version}}"
+                        class="btn btn-primary" role="button">Install</button>
                   </div>
             </div>
         </div>

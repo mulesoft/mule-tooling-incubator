@@ -4,7 +4,7 @@ $(function () {
     template = Handlebars.compile($('#descriptionTemplate').html()),
     container = $('.container');
 
-  $.getJSON('http://buds.cloudhub.io/api/updateSites/buds/plugins').then(function (result) {
+  $.getJSON('http://cors.io/buds.cloudhub.io/api/updateSites/buds/plugins').then(function (result) {
 
     container.html(
       result.map(function (value, key) { return template(value); })
@@ -26,8 +26,9 @@ $(function () {
           current = parseInt(badge.text());
           badge.text(++current);
 
-      $.post('http://buds.cloudhub.io/api/updateSites/buds/plugins/'+id+'/incrementInstallationCount');
+      $.post('http://cors.io/buds.cloudhub.io/api/updateSites/buds/plugins/'+id+'/incrementInstallationCount');
       parent.addClass('installed');
+      button.removeClass('btn-primary').addClass('btn-default');
 
       show(message);
     });
