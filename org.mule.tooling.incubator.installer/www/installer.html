@@ -10,10 +10,11 @@
         min-height: 278px;
     }
     .thumbnail>img {
-        min-height: 93px;
-        min-width: 161px;
         height: 100px;
-		width: 100px;
+        width: 100px;
+    }
+    .thumbnail.installed .btn {
+      display: none;
     }
     </style>
 </head>
@@ -41,7 +42,10 @@
   </div><!-- /.navbar-collapse -->
 </nav>
 
-<div class="container"></div>
+<div class="container">
+  Loading...
+
+</div>
 
     <script id="descriptionTemplate" type="text/x-handlebars-template">
         <div class="col-sm-6 col-md-3">
@@ -52,6 +56,7 @@
                     <p>{{description}}</p>
                     <p>
                         <button
+                            data-loading-text="Installing..."
                             data-id="{{id}}"
                             data-version="{{version}}"
                             class="btn btn-primary" role="button">Install</button>
