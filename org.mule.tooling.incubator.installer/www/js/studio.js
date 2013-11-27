@@ -11,6 +11,9 @@ function invoke(message,callback){
     var id = guid();
     invokeCallbacks[id] = callback;
     window.status = "message:"+id+":"+message;
+    //
+    // setTimeout(function () { callback('HELLO') }, 500);
+    //
 }
 
 function notifyListener(topic,message){

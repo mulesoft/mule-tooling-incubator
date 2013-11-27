@@ -15,9 +15,19 @@ $(function () {
   container.on('click', '.thumbnail .btn-primary', function (evt) {
     var
       id = evt.target.dataset.id,
-      version = evt.target.dataset.version;
+      version = evt.target.dataset.version,
+      parent = $(this).parents('.thumbnail');
 
-    invoke('install->' + id + ',' + version, show);
+    invoke('install->' + id + ',' + version, function (message) {
+        var
+          badge = parent.find('.badge'),
+          current = parseInt(badge.text());
+          badge.text(++current);
+
+      $.post('http://buds.cloudhub.io/api/updateSites/buds/plugins/'+id+'/incrementInstallationCount');
+
+      show(message);
+    });
 
   });
 
