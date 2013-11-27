@@ -1,0 +1,6 @@
+properties.0.name=image.url
+properties.0.value=http://static2.wikia.nocookie.net/__cb20130415011647/legomessageboards/images/b/b6/Replay_button-df0820d0486fbc0ce54e1e938beb205b.png
+properties.1.name=doc.url
+properties.1.value=https://github.com/mulesoft/mule-tooling-incubator#mule-tooling-incubator
+properties.2.name=tutorial.url
+properties.2.value=http://www.youtube.com/watch?v=X6176iSszGM
