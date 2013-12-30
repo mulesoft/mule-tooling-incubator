@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes"
+	xmlns:mule="http://www.mulesoft.org/schema/mule/core" prefix="ws2"
+	url="http://www.mulesoft.org/schema/mule/ws2">
+
+
+
+	<flow localId="consumer" caption="Web Service Consumer" abstract="false"
+		supportsInbound="false" category="org.mule.tooling.category.endpoints"
+		icon="icons/small/ws-24x16.png" image="icons/large/ws-48x32.png"
+		xmlname="consumer" description="The element allows you to consume Web Services"
+		versions="[3.4.0,8.0.0];EE">
+		<attribute-category description="General properties."
+			caption="General">
+			<group caption="Web Service Operation" id="interfaceProperties">
+				<string name="wsdlLocation" caption="WSDL" alwaysFill="true"
+					description="WSDL File Location" xsdType="string" required="true" />
+				<custom name="wsdlService" caption="Service" javaType="java.lang.String"
+					class="org.mule.tooling.incubator.ws.WsdlServiceCustomEditor"
+					alwaysFill="true" description="WSDL Service" xsdType="string" />
+				<custom name="wsdlPort" caption="Port" javaType="java.lang.String"
+					class="org.mule.tooling.incubator.ws.WsdlPortCustomEditor"
+					alwaysFill="true" description="WSDL Port" xsdType="string" />
+				<custom name="wsdlOperation" caption="Port" javaType="java.lang.String"
+					class="org.mule.tooling.incubator.ws.WsdlOperationCustomEditor"
+					alwaysFill="true" description="WSDL Operation" xsdType="string" />
+			</group>
+			<group caption="Service Location" id="serviceProperties">
+				<string name="serviceAddress" caption="Address" alwaysFill="true"
+					description="Web Service Address" xsdType="string" required="true" />
+			</group>
+		</attribute-category>
+		<attribute-category description="Security Configuration."
+			caption="Security">
+			<childElement inplace="true"
+				name="http://www.mulesoft.org/schema/mule/ws2/security" />
+		</attribute-category>
+		<attribute-category description="Advanced" caption="Advanced">
+			<group caption="Connector" id="connector">
+				<globalRef caption="Connector Reference" description="The name of the connector to be used."
+					requiredType="http://www.mulesoft.org/schema/mule/http/connector"
+					name="connector-ref" />
+			</group>
+		</attribute-category>
+	</flow>
+	<nested localId="security">
+		<group caption="Http Basic Auth" id="basicauth">
+			<childElement inplace="true"
+				name="http://www.mulesoft.org/schema/mule/ws2/basic-auth" valuePersistence="org.mule.tooling.incubator.ws.BasicAuthValuePersistence" />
+		</group>
+		<group caption="WS-Security Timestamp" id="timestamp">
+			<childElement inplace="true"
+				name="http://www.mulesoft.org/schema/mule/ws2/wss-timestamp" valuePersistence="org.mule.tooling.incubator.ws.TimestampValuePersistence" />
+		</group>
+		<group caption="WS-Security Username Token" id="usernametokenprofile">
+			<childElement inplace="true"
+				name="http://www.mulesoft.org/schema/mule/ws2/wss-username-token" valuePersistence="org.mule.tooling.incubator.ws.UsernameTokenValuePersistence" />
+		</group>
+	</nested>
+	<nested localId="basic-auth" caption="HTTP Basic Auth">
+		<boolean name="enableBasicAuth" caption="Enable"  />
+		<string name="username" indented="true" caption="Username"
+			description="The username."
+			xsdType="string" controlled="enableBasicAuth" required="true" />
+		<string name="password" indented="true" caption="Password"
+			description="The password"
+			xsdType="string" controlled="enableBasicAuth" required="true"/>
+	</nested>
+	<nested localId="wss-timestamp" caption="WS-Security Timestamp">
+		<boolean name="enableTimestamp" caption="Enable"  />
+		<string name="ttl" indented="true" caption="Time To Live (ms)"
+			description="The period of time for which the SOAP request will be valid when received by the server."
+			xsdType="string" controlled="enableTimestamp" />
+	</nested>
+	<nested caption="WS-Security Username Token" localId="wss-username-token" >
+		<boolean name="enableUsernameToken" caption="Enable"  />
+		<string name="username" caption="Username" indented="true"
+			description="Password" xsdType="string" controlled="enableUsernameToken"
+			required="true" />
+		<string name="password" caption="Password" indented="true"
+			description="Password" xsdType="string" controlled="enableUsernameToken" required="true"/>
+		<enum caption="Password Type" indented="true" removeEmptyOption="true"
+			description="The password type" name="passwordType" allowsCustom="false"
+			controlled="enableUsernameToken" required="true">
+			<option value="TEXT" />
+			<option value="DIGEST" />
+		</enum>
+	</nested>
+
+</namespace>
