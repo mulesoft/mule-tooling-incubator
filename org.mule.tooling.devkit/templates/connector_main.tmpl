@@ -9,6 +9,7 @@ import org.mule.api.annotations.param.ConnectionKey;
 import org.mule.api.ConnectionException;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Processor;
+import org.mule.api.annotations.display.Password;
 
 #if($OAuthEnaled == true)
 import org.mule.api.annotations.oauth.OAuth2;
@@ -104,7 +105,7 @@ public class ${className}
      * @throws ConnectionException
      */
     @Connect
-    public void connect(@ConnectionKey String username, String password)
+    public void connect(@ConnectionKey String username, @Password String password)
         throws ConnectionException {
         /*
          * CODE FOR ESTABLISHING A CONNECTION GOES IN HERE
