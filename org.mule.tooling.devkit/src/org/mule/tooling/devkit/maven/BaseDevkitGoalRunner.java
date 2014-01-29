@@ -12,6 +12,7 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.internal.console.ConsoleManager;
 import org.mule.tooling.maven.MavenPlugin;
+import org.mule.tooling.maven.cmdline.MavenCommandLine;
 import org.mule.tooling.maven.runner.MavenBinarySearcher;
 import org.mule.tooling.maven.runner.MavenRunner;
 import org.mule.tooling.maven.runner.MavenRunnerBuilder;
@@ -75,7 +76,12 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
     }
 
     protected void runCommand(File pomFile, final PipedOutputStream pipedOutputStream, SyncGetResultCallback callback) {
-        mavenRunner.runBare(callback, pipedOutputStream, (String[]) ArrayUtils.addAll(commands, new String[] { "-f", pomFile.getAbsolutePath() }));
+    	StringBuilder commandString = new StringBuilder();
+    	for(String command: commands){
+    		commandString.append(command+ " ");
+    	}
+    	commandString.append("-f "+pomFile.getAbsolutePath());
+        mavenRunner.runBare(MavenCommandLine.fromString(commandString.toString()),callback, pipedOutputStream);
     }
 
     

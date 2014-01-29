@@ -60,9 +60,9 @@ public class ConnectorNewWizard extends ModuleNewWizard implements INewWizard {
         IRunnableWithProgress op = new IRunnableWithProgress() {
 
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
-                try {
-           		 String className = getClassNameFrom(moduleName);
-                 String packageName = packageFragment.getElementName();
+//                try {
+//           		 String className = getClassNameFrom(moduleName);
+//                 String packageName = packageFragment.getElementName();
 //                	if ( isFromWsdl ){
 //                		IProject project = packageFragment.getJavaProject().getProject();
 //                		Properties properties = new Properties();
@@ -85,16 +85,16 @@ public class ConnectorNewWizard extends ModuleNewWizard implements INewWizard {
 //                	}
 //                	else{
 
-                         ClassReplacer classReplacer = new ConnectorClassReplacer(packageName, moduleName, className, isMetadataEnabled, isOAuthEnabled);
-                         	
-                         doFinish(packageFragment, moduleName, monitor, classReplacer, className, packageName);
+//                         ClassReplacer classReplacer = new ConnectorClassReplacer(packageName, moduleName, className, isMetadataEnabled, isOAuthEnabled);
+//                         	
+//                         doFinish(packageFragment, moduleName, monitor, classReplacer, className, packageName);
 //                	}
                 	  
-                } catch (CoreException e) {
-                    throw new InvocationTargetException(e);
-                } finally {
-                    monitor.done();
-                }
+//                } catch (CoreException e) {
+//                    throw new InvocationTargetException(e);
+//                } finally {
+//                    monitor.done();
+//                }
             }
         };
         try {

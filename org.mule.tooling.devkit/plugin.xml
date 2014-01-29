@@ -10,7 +10,7 @@
             class="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard"
             icon="icons/icon.png"
             id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard"
-            name="Mule Devkit Project"
+            name="Mule Connector Project"
             project="true">
       </wizard>
             <!--wizard
@@ -21,7 +21,7 @@
             name="Mule Library"
             project="false">
       </wizard-->
-      <wizard
+      <!--<wizard
              category="org.mule.tooling.ui.muleWizards"
             class="org.mule.tooling.devkit.wizards.ConnectorNewWizard"
             icon="icons/icon.png"
@@ -37,7 +37,7 @@
             name="Mule Module"
             project="false">
             
-      </wizard>
+      </wizard>-->
 	   </extension>
 
       <extension
@@ -45,8 +45,8 @@
       <perspectiveExtension
             targetID="*">
             <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard" />		
-      		<newWizardShortcut id="org.mule.tooling.devkit.wizards.ModuleNewWizard" />			
-			<newWizardShortcut id="org.mule.tooling.devkit.wizards.ConnectorNewWizard" />					
+      		<!--<newWizardShortcut id="org.mule.tooling.devkit.wizards.ModuleNewWizard" />			
+			<newWizardShortcut id="org.mule.tooling.devkit.wizards.ConnectorNewWizard" />-->					
       </perspectiveExtension>
    </extension>
       <extension
@@ -133,5 +133,18 @@
             name="Mule extension Update Site">
       </wizard>
    </extension>
-     
+   <extension
+       point="org.eclipse.jdt.ui.quickFixProcessors">
+	    <quickFixProcessor
+	          class="org.mule.tooling.devkit.quickfix.Processor"
+	          id="org.eclipse.jdt.ui.text.correction.QuickFixProcessor">
+	    </quickFixProcessor>
+ 	</extension>
+ 	<extension
+       point="org.eclipse.jdt.ui.quickAssistProcessors">
+    	<quickAssistProcessor
+          class="org.mule.tooling.devkit.quickfix.AssistProcessor"
+          id="org.eclipse.jdt.ui.text.correction.QuickAssistProcessor">
+    	</quickAssistProcessor>
+ 	</extension>  
 </plugin>

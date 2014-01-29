@@ -1,5 +1,7 @@
 package ${package};
-
+#if($hasQuery == true)
+import java.util.List;
+#end
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Connect;
 import org.mule.api.annotations.ValidateConnection;
@@ -28,14 +30,16 @@ import org.mule.common.metadata.datatype.DataType;
 import org.mule.api.annotations.MetaDataKeyRetriever;
 import org.mule.api.annotations.MetaDataRetriever;
 #end
-
+#if($hasQuery == true)
+import org.mule.api.annotations.Query;
+#end
 
 /**
  * Cloud Connector
  *
  * @author MuleSoft, Inc.
  */
-@Connector(name="${moduleName}", schemaVersion="1.0", friendlyName="${moduleName}")
+@Connector(name="${moduleName}", schemaVersion="1.0", friendlyName="${moduleName}", minMuleVersion="${minMuleVersion}")
 #if($OAuthEnaled == true )
 @OAuth2(authorizationUrl = "", accessTokenUrl = "", accessTokenRegex = "", expirationRegex = "", refreshTokenRegex = "")
 #end
@@ -65,10 +69,46 @@ public class ${className}
 
     @OAuthAccessToken
     private String accessToken;
+
+    /**
+     * Set clientId
+     *
+     * @param clientId The clientId
+     */
+    public void setClientId(String clientId)
+    {
+        this.clientId = clientId;
+    }
+
+    /**
+     * Get ClientId
+     */
+    public String getClientId()
+    {
+        return this.clientId;
+    }
+
+    /**
+     * Set clientSecret
+     *
+     * @param clientSecret The clientSecret
+     */
+    public void setClientSecret(String clientSecret)
+    {
+        this.clientSecret = clientSecret;
+    }
+
+    /**
+     * Get ClientSecret
+     */
+    public String getClientSecret()
+    {
+        return this.clientSecret;
+    }
 #end
     
 #if($metadataEnabled == true )    
-     @MetaDataKeyRetriever
+    @MetaDataKeyRetriever
     public List<MetaDataKey> getMetaDataKeys() throws Exception {
         return null;
     }
@@ -164,6 +204,26 @@ public class ${className}
     @OAuthPostAuthorization
     public void postAuth() {
 
+    }
+#end
+
+#if($hasQuery == true )
+
+    /**
+     * Description for query
+     *
+     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query}
+     *
+     *  @param query The dsql query
+     *  @return List of elements that match the criteria
+     */
+    @Processor
+    public List<Object> query(@Query String query) {
+        //TODO
+        /*
+         * MESSAGE PROCESSOR CODE GOES HERE
+         */
+        return null;
     }
 #end
 }

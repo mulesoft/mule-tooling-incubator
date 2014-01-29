@@ -1,3 +1,8 @@
 <!-- BEGIN_INCLUDE(${moduleName}:myProcessor) -->
     <${moduleName}:my-processor content="#[map-payload:content]" />
 <!-- END_INCLUDE(${moduleName}:myProcessor) -->
+#if($hasQuery == true )
+<!-- BEGIN_INCLUDE(${moduleName}:query) -->
+    <${moduleName}:query query="SELECT fieldName FROM MY_TABLE" />
+<!-- END_INCLUDE(${moduleName}:query) -->
+#end

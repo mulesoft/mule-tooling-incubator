@@ -55,6 +55,7 @@ public class ModuleNewWizard extends Wizard implements INewWizard {
     public boolean performFinish() {
         final IPackageFragment packageFragment = page.getPackageFragment();
         final String moduleName = page.getName();
+        final String runtimeId = "";
         final boolean isMetadataEnabled = page.isMetadataEnabled();
         IRunnableWithProgress op = new IRunnableWithProgress() {
 
@@ -62,7 +63,7 @@ public class ModuleNewWizard extends Wizard implements INewWizard {
                 try {
                     String className = getClassNameFrom(moduleName);
                     String packageName = packageFragment.getElementName();
-                    ClassReplacer classReplacer = new ClassReplacer(packageName, moduleName, className, isMetadataEnabled);
+                    ClassReplacer classReplacer = new ClassReplacer(packageName, moduleName, className, runtimeId,isMetadataEnabled);
 
                     doFinish(packageFragment, moduleName, monitor, classReplacer, className, packageName);
                 } catch (CoreException e) {

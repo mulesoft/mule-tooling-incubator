@@ -10,7 +10,7 @@ public abstract class VelocityReplacer implements Replacer {
 
     @Override
     public void replace(Reader reader, Writer writer) throws Exception {
-        Velocity.init();
+    	Velocity.init();
         VelocityContext context = new VelocityContext();
 
         doReplace(context);

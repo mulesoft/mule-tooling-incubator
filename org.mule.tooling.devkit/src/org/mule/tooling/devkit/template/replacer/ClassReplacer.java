@@ -8,21 +8,24 @@ public class ClassReplacer extends VelocityReplacer {
     private String moduleName;
     private String className;
 	private boolean metadataEnabled;
-
-    public ClassReplacer(String packageName, String moduleName, String className, boolean metadataEnabled) {
+	private String runtimeId;
+    public ClassReplacer(String packageName, String moduleName, String className,String runtimeId, boolean metadataEnabled) {
         this.packageName = packageName;
         this.moduleName = moduleName;
         this.className = className;
 		this.metadataEnabled = metadataEnabled;
+		this.runtimeId = runtimeId;
         
     }
 
     @Override
     protected void doReplace(VelocityContext context) {
         context.put("package", packageName);
+        context.put("connectorName", moduleName);
         context.put("moduleName", moduleName.toLowerCase());
         context.put("className", className);
         context.put("metadataEnabled", metadataEnabled);
+        context.put("runtimeId", runtimeId);
     }
 
 }
