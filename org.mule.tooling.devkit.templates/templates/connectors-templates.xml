@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template id="org.mule.tooling.devkit.templates.configurable" autoinsert="true" context="java-members" deleted="false" description="Add Configurable elements to processor" enabled="true" name="configurable">${imp:import(org.mule.api.annotations.Configurable)}
+	@Configurable
+	private ${type} ${fieldName};${cursor}
+
+</template><template id="org.mule.tooling.devkit.templates.configurabledefault" autoinsert="true" context="java-members" deleted="false" description="Configurable element with default value" enabled="true" name="configurable">${imp:import(org.mule.api.annotations.Configurable,
+			org.mule.api.annotations.param.Default,
+			org.mule.api.annotations.param.Optional)}
+	@Configurable
+	@Optional
+	@Default("${defaultValue}")
+	private ${type} ${fieldName};${cursor}
+
+</template><template id="org.mule.tooling.devkit.templates.metadata" autoinsert="true" context="java-members" deleted="false" description="Add Datasense basic operation" enabled="true" name="datasense">${imp:import (java.util.List,
+	org.mule.common.metadata.MetaData,
+	org.mule.common.metadata.MetaDataKey,
+	org.mule.common.metadata.datatype.DataType,
+	org.mule.api.annotations.MetaDataKeyRetriever,
+	org.mule.api.annotations.MetaDataRetriever)}
+
+
+    @MetaDataKeyRetriever
+    public List&lt;MetaDataKey&gt; getMetaDataKeys() throws Exception {
+        return null;
+    }
+
+    @MetaDataRetriever
+    public MetaData getMetaData(MetaDataKey key) throws Exception {
+		return null;	
+    }</template><template id="org.mule.tooling.devkit.templates.processordefaultpayload" autoinsert="true" context="java-members" deleted="false" description="A simple processor that takes by default the payload as input" enabled="true" name="processor">${imp:import(org.mule.api.annotations.Processor,org.mule.api.annotations.param.Optional,org.mule.api.annotations.param.Default)}
+	/**
+	* Description for ${name}
+	*
+	* {@sample.xml ../../../${moduleName}-connector.xml.sample ${moduleName}:${name}}
+	*
+	*	@param param The comment for param
+	*	@return return comment
+	*/
+	@Processor
+	public ${return_type}  ${name}(@Optional @Default("#[payload]") ${type} param) {
+		//${todo}
+		${cursor}
+		return null;
+	}</template>
+	<template id="org.mule.tooling.devkit.templates.processorpaginated" autoinsert="true" context="java-members" deleted="false" description="Create a paginated processor" enabled="true" name="processor">${imp:import(org.mule.api.annotations.Processor,org.mule.api.annotations.Paged,org.mule.api.annotations.Query,org.mule.streaming.PagingConfiguration,org.mule.streaming.PagingDelegate)}
+		/**
+	* Description for queryPaginated
+	*
+	* {@sample.xml ../../../${moduleName}-connector.xml.sample ${moduleName}:query-paginated}
+	*
+	*	@param query The query
+	*	@param pagingConfiguration the paging configuration
+	*	@return return comment
+	*/
+    @Processor
+    @Paged
+    public PagingDelegate&lt;Object&gt; queryPaginated(@Query String query, PagingConfiguration pagingConfiguration){
+		return null;
+	}</template>
+	<template id="org.mule.tooling.devkit.templates.processorquery" autoinsert="true" context="java-members" deleted="false" description="Creates a processor that uses @Query" enabled="true" name="processor">${imp:import(java.util.List,org.mule.api.annotations.Processor,org.mule.api.annotations.Query)}
+	/**
+	* Description for ${name}
+	*
+	* {@sample.xml ../../../${moduleName}-connector.xml.sample ${moduleName}:${name}}
+	*
+	*	@param query The dsql query
+	*	@return return comment
+	*/
+	@Processor
+	public List&lt;Object&gt;  ${name}(@Query string query) {
+		//${todo}
+		${cursor}
+		return null;
+	}</template><template id="org.mule.tooling.devkit.templates.processorbasic" autoinsert="true" context="java-members" deleted="false" description="Creates a simple processor" enabled="true" name="processor">${imp:import(org.mule.api.annotations.Processor)}
+	/**
+	* Description for ${name}
+	*
+	* {@sample.xml ../../../${moduleName}-connector.xml.sample ${moduleName}:${name}}
+	*
+	*/
+	@Processor
+	public void ${name}(${}) {
+		//${todo}
+		${cursor}
+	}</template><template id="org.mule.tooling.devkit.templates.processormetadata" autoinsert="true" context="java-members" deleted="false" description="Processor with MetaDataKeyParam" enabled="true" name="processor">${imp:import(org.mule.api.annotations.Processor,org.mule.api.annotations.param.Optional,
+			org.mule.api.annotations.param.Default,
+			org.mule.api.annotations.param.MetaDataKeyParam)}
+	/**
+	* Description for ${name}
+	*
+	* {@sample.xml ../../../${moduleName}-connector.xml.sample ${moduleName}:${name}}
+	*
+	*	@param key Key that will be used to populate the record
+	*	@param param The Object or Map&lt;String,Object&gt; that will be used in the request
+	*	@return return comment
+	*/
+	@Processor
+	public Object  ${name}(@MetaDataKeyParam String key,@Optional @Default("#[payload]") Object param) {
+		//${todo}
+		${cursor}
+		return null;
+	}</template></templates>

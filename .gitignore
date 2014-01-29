@@ -1,5 +1,7 @@
 *.class
-
+*.classpath
+*.project
+*.settings
 # Package Files #
 *.jar
 *.war
@@ -7,3 +9,5 @@
 target
 .DS_Store
 */build.log
+*.iml
+*.idea

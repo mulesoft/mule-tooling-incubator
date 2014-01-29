@@ -26,6 +26,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <module>org.mule.tooling.incubator.ws</module>
     <module>org.mule.tooling.incubator.ws.extension</module>
     <module>org.mule.tooling.incubator.updatesite</module>
+    <module>org.mule.tooling.devkit.templates</module>
   </modules>
   
   <build>
