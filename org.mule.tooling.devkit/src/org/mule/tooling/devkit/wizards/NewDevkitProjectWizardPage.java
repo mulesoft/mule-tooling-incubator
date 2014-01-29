@@ -36,7 +36,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 	private static final String DEFAULT_GROUP_ID = "org.mule.modules";
 	private static final String DEFAULT_NAME = "Hello";
 	private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
-	private static final String GROUP_TITLE_CONNECTOR = "AnyPoint Connector";
+	private static final String GROUP_TITLE_CONNECTOR = "Anypoint Connector";
 	private static final String GROUP_TITLE_MAVEN_SETTINGS = "Maven Settings";
 	private static final String CREATE_POM_LABEL = "Manually set values";
 	private Text groupId;
@@ -54,7 +54,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 	public NewDevkitProjectWizardPage(ISelection selection,
 			ConnectorMavenModel model) {
 		super("wizardPage");
-		setTitle("New Connector");
+		setTitle("New Anypoint Connector Project");
 		setDescription("This wizard creates a new connector project");
 		selectedServerDefinition = new MuleStudioPreference()
 				.getDefaultRuntimeSelection();

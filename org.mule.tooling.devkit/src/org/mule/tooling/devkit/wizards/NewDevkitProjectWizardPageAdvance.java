@@ -28,9 +28,9 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 
 	protected NewDevkitProjectWizardPageAdvance(
 			ConnectorMavenModel connectorModel) {
-		super("Advance Options");
-		setTitle("New Connector");
-		setDescription("Advance configuration");
+		super("Advanced Options");
+		setTitle("New Anypoint Connector Project");
+		setDescription("Advanced configuration");
 		this.connectorModel = connectorModel;
 	}
 
@@ -54,13 +54,13 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 		container.setLayout(layout);
 
 		Group connectorGroupBox = UiUtils.createGroupWithTitle(container,
-				"Advance options", 2);
+				"Advanced options", 2);
 		checkBoxMetadata = initializeCheckBox(connectorGroupBox,
-				"Enable datasense", null);
+				"Enable DataSense", null);
 		checkBoxOAuth = initializeCheckBox(connectorGroupBox,
 				"OAuth authentication", null);
 		checkBoxQuery = initializeCheckBox(connectorGroupBox,
-				"Add dsql query method", null);
+				"Add DSQL Query method", null);
 
 		Group gitHubGroupBox = UiUtils.createGroupWithTitle(container,
 				"GitHub", 2);

@@ -130,10 +130,10 @@ public class NewDevkitProjectWizard extends Wizard implements INewWizard {
 
     private String getMinMuleVersion() {
     	String minMuleVersion = "3.3";
-    	if(advancePage.hasQuery()){
+    	if(advancePage.hasQuery() || page.getDevkitVersion().equals(DevkitUtils.DEVKIT_3_5_0)){
     		minMuleVersion = "3.5";
     	}else{
-    		if(advancePage.isMetadaEnabled()){
+    		if(advancePage.isMetadaEnabled() || page.getDevkitVersion().startsWith("3.4")){
     			minMuleVersion = "3.4";
     		}
     	}

@@ -10,7 +10,7 @@
             class="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard"
             icon="icons/icon.png"
             id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard"
-            name="Mule Connector Project"
+            name="Anypoint Connector Project"
             project="true">
       </wizard>
             <!--wizard
@@ -94,7 +94,7 @@
             <menu
                   icon="icons/icon.png"
                   id="org.mule.tooling.devkit.menu"
-                  label="Mule Extensions"
+                  label="Anypoint Connector"
                   path="additions">
                <separator
                      name="group">
