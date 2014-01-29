@@ -133,7 +133,7 @@
             name="Mule extension Update Site">
       </wizard>
    </extension>
-   <extension
+   <!--<extension
        point="org.eclipse.jdt.ui.quickFixProcessors">
 	    <quickFixProcessor
 	          class="org.mule.tooling.devkit.quickfix.Processor"
@@ -146,5 +146,5 @@
           class="org.mule.tooling.devkit.quickfix.AssistProcessor"
           id="org.eclipse.jdt.ui.text.correction.QuickAssistProcessor">
     	</quickAssistProcessor>
- 	</extension>  
+ 	</extension>-->  
 </plugin>
