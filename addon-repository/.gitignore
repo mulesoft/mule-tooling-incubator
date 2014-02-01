@@ -1,8 +1,0 @@
-node_modules
-app/client/scripts/vendor.js
-app/client/scripts/app.js
-app/client/scripts/all.js
-app/client/scripts/all.js.map
-app/client/scripts/all.src.js
-app/client/scripts/lib
-app/client/styles/all.css
