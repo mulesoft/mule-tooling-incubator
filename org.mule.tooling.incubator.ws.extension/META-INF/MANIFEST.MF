@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Mule Web Service Support Feature
-Bundle-SymbolicName: org.mule.tooling.incubator.ws.extension
-Bundle-Version: 1.0.0.qualifier
-
