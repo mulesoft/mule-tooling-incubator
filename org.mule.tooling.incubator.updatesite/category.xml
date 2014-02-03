@@ -9,9 +9,6 @@
     <feature id="org.mule.tooling.incubator.installer.extension">
       <category name="org.mule.tooling.incubator.category"/>
     </feature>
-    <feature id="org.mule.tooling.incubator.ws.extension">
-      <category name="org.mule.tooling.incubator.category"/>
-    </feature>
    <category-def name="org.mule.tooling.incubator.category" label="Mule Tooling Incubator Projects">
       <description>
 			Mule Replay Project
