@@ -27,8 +27,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.apt.core.util.AptConfig;
-import org.eclipse.jdt.apt.core.util.IFactoryPath;
+//TODO remove when devkit changes are pushed
+//import org.eclipse.jdt.apt.core.util.AptConfig;
+//import org.eclipse.jdt.apt.core.util.IFactoryPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -178,12 +179,12 @@ public class NewDevkitProjectWizard extends Wizard implements INewWizard {
 
 
         create(connectorName, monitor, getMainTemplatePath(), getTestResourcePath(), DevkitUtils.createConnectorNameFrom(connectorName), connectorPackage, project, classReplacer);
-        
-        AptConfig.setEnabled(javaProject, true);
-        IFactoryPath path=AptConfig.getFactoryPath(javaProject);
-        path.enablePlugin(org.mule.devkit.apt.Activator.PLUGIN_ID);
-        AptConfig.setFactoryPath(javaProject, path);
-        AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "true");
+// TODO remove when devkit changes are pushed       
+//        AptConfig.setEnabled(javaProject, true);
+//        IFactoryPath path=AptConfig.getFactoryPath(javaProject);
+//        path.enablePlugin(org.mule.devkit.apt.Activator.PLUGIN_ID);
+//        AptConfig.setFactoryPath(javaProject, path);
+//        AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "true");
         
         monitor.worked(1);
     }
