@@ -1,0 +1,4 @@
+# This file is used when running the processor from the apt command line.
+
+# The name of the class that implements com.sun.mirror.apt.AnnotationProcessorFactory:
+org.mule.tooling.devkit.apt.StudioAnnotationProcessor
