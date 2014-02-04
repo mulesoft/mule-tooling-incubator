@@ -34,6 +34,8 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
 
     private String[] commands;
 
+    public static int CANCELED=-37;
+    
     public BaseDevkitGoalRunner() {
         this(new String[] { "eclipse:eclipse" });
     }
@@ -64,6 +66,7 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
             while ((result = callback.getResult(100)) == SyncGetResultCallback.STILL_NOT_FINISHED) {
                 if (monitor.isCanceled()) {
                     this.cancelBuild();
+                    result = CANCELED;
                     break;
                 }
             }
