@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?> <!-- munit components definitions -->
+<namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes"
+	url="http://www.mulesoft.org/schema/mule/munit" prefix="munit">
+	
+	<global versions="[3.4.0,10.0.0]" localId="config" caption="Munit configuration"
+	 icon="icons/small/Munit-24x16.png" image="icons/small/Munit-24x16.png"
+		visible="true" abstract="false" allowMulipleChildren="true"
+		category="org.mule.tooling.category.munit" 
+		description="Defines the Munit condifiguration for the suite">
+		<attribute-category caption="General" description="">
+			<group caption="Settings">
+			<boolean caption="Mock Mule transport connectors"
+			description="Mule provides its own transport connectors, Munit mocks them by default, this flag disables this action. Useful for integration tests."
+			name="mock-connectors" defaultValue="true" value="true" />
+			<boolean caption="Mock Inbound endpoints"
+			description="Munit disables all the inbound endpoints by default, in order to disable it, select false."
+			name="mock-inbounds" defaultValue="true" value="true" />
+			</group>
+		</attribute-category>
+	</global>
+	
+	<container  category="org.mule.tooling.category.munit" 
+	versions="[3.4.0,10.0.0]" localId="test" caption="Test"
+	 icon="icons/small/Munit-24x16.png" image="icons/small/Munit-24x16.png" 
+	 acceptedByElements="http://www.mulesoft.org/schema/mule/core/mule" titleColor="255, 204, 102"
+	  displayNameAttribute="name"
+	  allowsAllExceptInbounds="true"
+	  containerBehavior="munit_behavior"
+	  pathExpression="${name}/processors" >
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="test" weight="1" />
+		</keywords>	
+		
+		<attribute-category caption="General" description="General Munit test properties">
+			<group id="jobGeneral">
+				<name name="name" caption="Name" required="true" description="Name of this Munit test"/>
+								
+				<string caption="Description" required="true" name="description" defaultValue="Munit Test" description="Test description, explain what is the test for."/>
+
+				<string caption="Expect exception that satisfies" required="false" name="expectExceptionThatSatisfies" description="Define an expression that needs to match your expected exception."/>
+				<boolean name="ignore" caption="Ignore test" description="Disable this test" defaultValue="false"/>					
+			</group>
+		</attribute-category>
+		
+		<graphical-container localId="setup" caption="Setup" description=""  prompt="Drag and drop Mock and Spy elements" abstract="true" acceptsElements="http://www.mulesoft.org/schema/mule/mock/when||http://www.mulesoft.org/schema/mule/mock/spy"/>
+		<graphical-container localId="assertions" collapsable="true" caption="Test" prompt="Run flows, verify calls, run assertions in here" description=""  abstract="true" />
+		
+	</container>
+
+	<nested localId="assertions"/>
+	<nested localId="setup"/>
+
+
+	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-not-null"
+		description="Check for not null Payload"
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		caption="Assert Not Null Payload">
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="assert-null" weight="1" />
+		</keywords>
+		<attribute-category caption="General" description="General Munit properties">
+				<string caption="Error message:" required="false" name="message" description="Error message to be shown in case assertion fails."/>
+		</attribute-category>
+	</component>
+	
+	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-null"
+		description="Check for null Payload"
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		caption="Assert Null Payload">
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="assert-not-null" weight="1" />
+		</keywords>
+		<attribute-category caption="General" description="General Munit properties">
+				<string caption="Error message:" required="false" name="message" description="Error message to be shown in case assertion fails."/>
+		</attribute-category>
+	</component>
+	
+	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-false"
+		description="Validates if a condition is false"
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		caption="Assert False">
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="assert-false" weight="1" />
+		</keywords>
+		<attribute-category caption="General" description="">
+			<group caption="Settings">
+				<string caption="Error message:" required="false" name="message" description="Error message to be shown in case assertion fails."/>
+				<string caption="Condition" name="condition" description="Condition to be evaluated" required="true"/>
+			</group>
+		</attribute-category>
+	</component>
+	
+	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-true"
+		description="Validates if a condition is true"
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		caption="Assert True">
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="assert-true" weight="1" />
+		</keywords>
+		<attribute-category caption="General" description="">
+			<group caption="Settings">
+				<string caption="Error message:" required="false" name="message" description="Error message to be shown in case assertion fails."/>
+				<string caption="Condition" name="condition" description="Condition to be evaluated" required="true"/>
+			</group>
+		</attribute-category>
+	</component>
+	
+	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-that"
+		description="Validates payload condition"
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		caption="Assert Payload">
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="assert-that" weight="1" />
+		</keywords>
+		<attribute-category caption="General" description="">
+			<group caption="Settings">
+				<string caption="Error message:" required="false" name="message" description="Error message to be shown in case assertion fails."/>
+				<string caption="Condition" name="payloadIs-ref" description="Condition that the payload must satisfy" required="true"/>
+			</group>
+		</attribute-category>
+	</component>
+	
+	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-on-equals"
+		description="Validates that two expressions are equal"
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		caption="Assert Equals">
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="assert-on-equals" weight="1" />
+		</keywords>
+		<attribute-category caption="General" description="">
+			<group caption="Settings">
+				<string caption="Error message:" required="false" name="message" description="Error message to be shown in case assertion fails."/>
+				<string caption="Expected expression" name="expected-ref" description="The expected value" required="true"/>
+				<string caption="Real Value" name="value-ref" description="The value that has to be evaluated" required="true"/>
+			</group>
+		</attribute-category>
+	</component>
+	
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="set-null-payload"
+		description="Set the payload into a null value"
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		caption="Null Payload">
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="set-null-payload" weight="1" />
+		</keywords>
+		<attribute-category caption="General" description="">
+		</attribute-category>
+	</component>
+	
+	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="fail"
+		description="Makes the test fail"
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		caption="Fail">
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="fail" weight="1" />
+		</keywords>
+		<attribute-category caption="General" description="">
+				<string caption="Error message:" required="false" name="message" description="Error message to be shown when the assertion fails."/>
+		</attribute-category>
+	</component>
+	
+	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="run-custom"
+		description="Run a custom assertion"
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		caption="Custom Assertion">
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="run-custom" weight="1" />
+		</keywords>
+		<attribute-category caption="General" description="">
+			<group caption="Settings">
+				<string caption="Custom Assertion reference" name="assertion-ref" description="Reference to the spring bean that implements MunitAssertion interface" required="true"/>
+			</group>
+		</attribute-category>
+	</component>
+	
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="set"
+		description="Set a mule message for testing"
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		caption="Set Message">
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="set" weight="1" />
+		</keywords>
+		<attribute-category caption="General" description="">
+		
+				<string caption="Payload" name="payload-ref" description="Payload value" required="true"/>
+				<group caption="Inbound properties" collapsable="true">
+				 <childElement name="http://www.mulesoft.org/schema/mule/munit/inbound-properties"
+                      inplace="true" caption="Inbound properties" allowMultiple="false"
+                      description="Message inbound properties"/>
+                      </group>
+                      <group caption="Invocation properties" collapsable="true">
+                 <childElement name="http://www.mulesoft.org/schema/mule/munit/invocation-properties"
+                      inplace="true" caption="Invocation properties" allowMultiple="false"
+                      description="Message invocation properties"/>
+                      </group>
+                      <group caption="Outbound properties" collapsable="true">
+                 <childElement name="http://www.mulesoft.org/schema/mule/munit/outbound-properties"
+                      inplace="true" caption="Outbound properties" allowMultiple="false"
+                      description="Message outbound properties"/>
+                      </group>
+		</attribute-category>
+	</component>
+	
+	<nested caption="Inbound properties" localId="inbound-properties"
+            description="Inbound properties for the mocked message"
+            doNotInherit="key,value,value-ref">
+        <childElement name="http://www.mulesoft.org/schema/mule/munit/inbound-property"
+                      inplace="true" caption="Inbound properties" allowMultiple="true"
+                      description="Message inbound properties"/>
+    </nested>
+    
+    <nested caption="Inbound property" localId="inbound-property"
+            description="Inbound property for the mocked message"
+            doNotInherit="key,value,value-ref">
+           <string caption="Key " name="key" description="Identifier of the inbound property" required="true"/>
+           <string caption="Value" name="value-ref" defaultValue="#[]"  description="Value of the inbound property" required="true"/>
+            
+    </nested>
+    
+    <nested caption="Invocation properties" localId="invocation-properties"
+            description="Invocation properties for the mocked message"
+            doNotInherit="key,value,value-ref">
+             <childElement name="http://www.mulesoft.org/schema/mule/munit/invocation-property"
+                      inplace="true" caption="Inbound properties" allowMultiple="true"
+                      description="Message invocation properties"/>
+    </nested>
+    
+     <nested caption="Invocation property" localId="invocation-property"
+            description="Invocation property for the mocked message"
+            doNotInherit="value">
+           <string caption="Key" name="key" description="Identifier of the invocation property" required="true"/>
+           <string caption="Value" name="value-ref" defaultValue="#[]" description="Value of the invocation property" required="true"/>
+            
+    </nested>
+    
+    <nested caption="Outbound properties" localId="outbound-properties"
+            description="Outbound properties for the mocked message"
+            doNotInherit="key,value,value-ref">
+            <childElement name="http://www.mulesoft.org/schema/mule/munit/outbound-property"
+                      inplace="true" caption="Inbound properties" allowMultiple="true"
+                      description="Message outbound properties"/>
+    </nested>
+    
+      <nested caption="Outbound property" localId="outbound-property"
+            description="Outbound property for the mocked message"
+            doNotInherit="key,value,value-ref">
+           <string caption="Key" name="key" description="Identifier of the outbound property" required="true"/>
+           <string caption="Value" name="value-ref" defaultValue="#[]" description="Value of the outbound property" required="true"/>
+            
+    </nested>
+
+</namespace>

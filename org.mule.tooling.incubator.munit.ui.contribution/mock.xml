@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?> <!-- munit components definitions -->
+<namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes"
+	url="http://www.mulesoft.org/schema/mule/mock" prefix="mock">
+	
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="when"
+		description="Mocking Definition" 
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		acceptedByElements="http://www.mulesoft.org/schema/mule/munit/setup"
+		
+		caption="Mock">
+		<attribute-category description="Mocking conditions and return value." caption="Mock Condition">
+      		<group caption="Message processor Mocking definition" id="when">
+      			   <string indented="true" name="messageProcessor" caption="messageProcessor" visibleInDialog="false"/>     		
+      			   <childElement visibleInDialog="false" allowMultiple="false" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/with-attributes"/>
+      			   <childElement visibleInDialog="false" allowMultiple="false" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/then-return"/>
+        		   <custom javaType="java.lang.String"
+        	  		class="org.mule.tooling.ui.contribution.munit.editors.custom.MockCustomEditor"></custom>
+        	  		
+      		</group>
+    	</attribute-category>
+	</component>
+	<nested localId="with-attributes" required="false">
+	    <childElement visibleInDialog="false" allowMultiple="true" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/with-attribute"/>
+	</nested>
+	
+	<nested localId="with-attribute" required="false">
+		<string indented="true" name="whereValue-ref" caption="whereValue-ref" visibleInDialog="false"/>
+		<string indented="true" name="name" caption="name" visibleInDialog="false"/>
+	</nested>
+	
+	<nested localId="then-return" required="false">
+		<string indented="true" name="payload-ref" caption="payload-ref" visibleInDialog="false"/>
+	    <childElement visibleInDialog="false" allowMultiple="false" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/invocation-properties"/>
+	    <childElement visibleInDialog="false" allowMultiple="false" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/inbound-properties"/>
+	    <childElement visibleInDialog="false" allowMultiple="false" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/outbound-properties"/>
+	</nested>
+	
+	<nested localId="invocation-properties" required="false">
+	    <childElement visibleInDialog="false" allowMultiple="true" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/invocation-property"/>
+	</nested>
+	
+	<nested localId="invocation-property" required="false">
+		<string indented="true" name="key" caption="key" visibleInDialog="false"/>
+		<string indented="true" name="value-ref" caption="value-ref" visibleInDialog="false"/>
+	</nested>
+	
+	
+	<nested localId="inbound-properties" required="false">
+	    <childElement visibleInDialog="false" allowMultiple="true" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/inbound-property"/>
+	</nested>
+	
+	<nested localId="inbound-property" required="false">
+		<string indented="true" name="key" caption="key" visibleInDialog="false"/>
+		<string indented="true" name="value-ref" caption="value-ref" visibleInDialog="false"/>
+	</nested>
+	
+	<nested localId="outbound-properties" required="false">
+	    <childElement visibleInDialog="false" allowMultiple="true" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/outbound-property"/>
+	</nested>
+	
+	<nested localId="outbound-property" required="false">
+		<string indented="true" name="key" caption="key" visibleInDialog="false"/>
+		<string indented="true" name="value-ref" caption="value-ref" visibleInDialog="false"/>
+	</nested>
+	 
+	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="verify-call"
+		description="Verify calls definition" 
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		caption="Verify Call">
+		<attribute-category description="Mocking conditions and return value." caption="Verify Condition">
+      		<group caption="Message processor Verify definition" id="verify-call">
+      			   <string indented="true" name="messageProcessor" caption="messageProcessor" visibleInDialog="false"/>     		
+      			   <childElement visibleInDialog="false" allowMultiple="false" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/attributes"/>
+        		     <custom javaType="java.lang.String"
+        	  		class="org.mule.tooling.ui.contribution.munit.editors.custom.VerifyCustomEditor"></custom>
+      		</group>
+    	</attribute-category>
+	</component>
+	
+	<nested localId="attributes" required="false">
+	    <childElement visibleInDialog="false" allowMultiple="true" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/attribute"/>
+	</nested>
+	
+	<nested localId="attribute" required="false">
+		<string indented="true" name="whereValue-ref" caption="whereValue-ref" visibleInDialog="false"/>
+		<string indented="true" name="name" caption="name" visibleInDialog="false"/>
+	</nested>
+	
+	
+	<container category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="spy"
+		description="Spy calls definition" 
+		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		titleColor="255, 204, 102"
+		acceptedByElements="http://www.mulesoft.org/schema/mule/munit/setup"
+		caption="Spy"
+		pathExpression="${index}">
+		<nested-container pathExpression="${index}" localId="assertions-before-call" caption="Assertions Before Call" description="" />
+		<nested-container pathExpression="${index}" localId="assertions-after-call" caption="Assertions After Call" description=""/>
+		
+		<attribute-category description="Spy conditions" caption="Spy Condition">
+      		<group caption="Message processor Spy definition" id="spy">
+      			   <string indented="true" name="messageProcessor" caption="messageProcessor" visibleInDialog="false"/>     		
+      			   <childElement visibleInDialog="false" allowMultiple="false" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/with-attributes"/>
+        		     <custom javaType="java.lang.String"
+        	  		class="org.mule.tooling.ui.contribution.munit.editors.custom.SpyCustomEditor"></custom>
+      		</group>
+    	</attribute-category>
+	</container>
+	
+</namespace>

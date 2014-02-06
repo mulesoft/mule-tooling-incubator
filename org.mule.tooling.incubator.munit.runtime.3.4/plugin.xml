@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.mule.tooling.ui.contribution.munit.munitRuntime">
+      <runtime muleVersion="org.mule.tooling.server.3.4.2.ee" munitVersion="3.4-M5-SNAPSHOT">
+         <library
+            path="lib/munit-assert.jar">
+         <mavenProperties
+               artifactId="munit-assert"
+               groupId="org.mule.munit"
+               version="3.4-M5-SNAPSHOT">
+         </mavenProperties>
+      </library>
+      <library
+            path="lib/munit-mock.jar">
+         <mavenProperties
+               artifactId="munit-mock"
+               groupId="org.mule.munit"
+               version="3.4-M5-SNAPSHOT">
+         </mavenProperties>
+      </library>
+      <library
+            path="lib/munit-common.jar">
+         <mavenProperties
+               artifactId="munit-common"
+               groupId="org.mule.munit"
+               version="3.4-M5-SNAPSHOT">
+         </mavenProperties>
+      </library>
+      <library
+            path="lib/munit-runner.jar">
+         <mavenProperties
+               artifactId="munit-runner"
+               groupId="org.mule.munit"
+               version="3.4-M5-SNAPSHOT">
+         </mavenProperties>
+      </library>
+      <library
+            path="lib/mule-interceptor-module.jar">
+         <mavenProperties
+               artifactId="mule-interceptor-module"
+               groupId="org.mule.modules"
+               version="3.4-M5-SNAPSHOT">
+         </mavenProperties>
+      </library>
+      <library
+            path="lib/munit-mule-extension-loader.jar">
+         <mavenProperties
+               artifactId="munit-mule-extension-loader"
+               groupId="org.mule.munit.plugins"
+               version="1.0-SNAPSHOT">
+         </mavenProperties>
+      </library>
+      </runtime>
+   </extension>
+
+
+</plugin>
