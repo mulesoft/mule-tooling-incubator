@@ -54,23 +54,18 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<repositories>
-		<repository>
-			<id>mule-ee-releases</id>
-			<url>http://repository.mulesoft.org/nexus/content/repositories/ci-releases/</url>
-		</repository>
-		<repository>
-			<id>mule-ee-snapshots</id>
-			<url>http://repository.mulesoft.org/nexus/content/repositories/ci-snapshots/</url>
-		</repository>
-		<repository>
-			<id>mule-ee-dependencies</id>
-			<url>http://repository.mulesoft.org/nexus/content/repositories/mule-ee-dependencies/</url>
-		</repository>
-		<repository>
-			<id>Snapshots</id>
-			<url>http://snapshots.repository.codehaus.org</url>
-		</repository>
-	</repositories>
+  <repositories>
+        <repository>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Releases Repository</name>
+            <url>http://repository.mulesoft.org/releases/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>mulesoft-snapshots</id>
+            <name>MuleSoft Snapshots Repository</name>
+            <url>https://repository.mulesoft.org/snapshots/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
 </project>
