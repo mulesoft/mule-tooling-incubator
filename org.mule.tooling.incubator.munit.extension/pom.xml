@@ -13,7 +13,6 @@
     <groupId>org.mule.tooling.munit</groupId>
     <artifactId>org.mule.tooling.incubator.munit.extension</artifactId>
     <packaging>eclipse-feature</packaging>
-    <name>Studio feature</name>
 
     <build>
         <plugins>
