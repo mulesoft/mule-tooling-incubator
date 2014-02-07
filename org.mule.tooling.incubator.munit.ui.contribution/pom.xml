@@ -7,9 +7,9 @@
 	<artifactId>org.mule.tooling.ui.contribution.munit</artifactId>
 	<packaging>eclipse-plugin</packaging>
     <parent>
-        <groupId>org.mule.tooling</groupId>
-        <artifactId>org.mule.tooling.munit</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+   <groupId>org.mule.tooling.incubator</groupId>
+  <artifactId>org.mule.tooling.incubator.parent</artifactId>     
+	<version>1.0.0-SNAPSHOT</version>
     </parent>
 	<build>
 		<plugins>
