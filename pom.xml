@@ -67,11 +67,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
       <url>${eclipse-updatesite}</url>
     </repository>
     <repository>
-      <id>juno</id>
-      <layout>p2</layout>
-      <url>${eclipse-gef-updatesite}</url>
-    </repository>
-    <repository>
       <id>studio</id>
       <layout>p2</layout>
       <url>${studio-updatesite}</url>

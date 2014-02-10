@@ -51,7 +51,103 @@
 	<nested localId="assertions"/>
 	<nested localId="setup"/>
 
+	<container  category="org.mule.tooling.category.munit" 
+	versions="[3.4.0,10.0.0]" localId="before-suite" caption="Before Suite"
+	 icon="icons/small/Munit-24x16.png" image="icons/small/Munit-24x16.png" 
+	 acceptedByElements="http://www.mulesoft.org/schema/mule/core/mule" titleColor="255, 204, 102"
+	  displayNameAttribute="name"
+	  allowsAllExceptInbounds="true"
+	  pathExpression="${name}/processors" >
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="before-suite" weight="1" />
+		</keywords>	
+		
+		<attribute-category caption="General" description="General properties">
+			<group id="jobGeneral">
+				<name name="name" caption="Name" required="true" description="Name of this before suite"/>
+				<string caption="Description" required="true" name="description" defaultValue="Munit Test" description="Describe what are your doing in the before suite"/>
+			</group>
+		</attribute-category>
+		
+		<graphical-container localId="beforeSuite" caption="Before Suite" description=""  prompt="Actions to be set before the Suite runs" abstract="true" />
+		
+	</container>
+	<nested localId="beforeSuite"/>
 
+	<container  category="org.mule.tooling.category.munit" 
+	versions="[3.4.0,10.0.0]" localId="after-suite" caption="After Suite"
+	 icon="icons/small/Munit-24x16.png" image="icons/small/Munit-24x16.png" 
+	 acceptedByElements="http://www.mulesoft.org/schema/mule/core/mule" titleColor="255, 204, 102"
+	  displayNameAttribute="name"
+	  allowsAllExceptInbounds="true"
+	  pathExpression="${name}/processors" >
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="after-suite" weight="1" />
+		</keywords>	
+		
+		<attribute-category caption="General" description="General properties">
+			<group id="jobGeneral">
+				<name name="name" caption="Name" required="true" description="Name of the after suite"/>
+				<string caption="Description" required="true" name="description" defaultValue="Ater suite actions" description="Describe what are your doing in the after suite"/>
+			</group>
+		</attribute-category>
+		
+		<graphical-container localId="afterSuite" caption="After Suite" description=""  prompt="Actions to be set after the Suite runs" abstract="true" />
+		
+	</container>
+	<nested localId="afterSuite"/>
+	
+		<container  category="org.mule.tooling.category.munit" 
+	versions="[3.4.0,10.0.0]" localId="after-test" caption="After Test"
+	 icon="icons/small/Munit-24x16.png" image="icons/small/Munit-24x16.png" 
+	 acceptedByElements="http://www.mulesoft.org/schema/mule/core/mule" titleColor="255, 204, 102"
+	  displayNameAttribute="name"
+	  allowsAllExceptInbounds="true"
+	  pathExpression="${name}/processors" >
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="after-test" weight="1" />
+		</keywords>	
+		
+		<attribute-category caption="General" description="General properties">
+			<group id="jobGeneral">
+				<name name="name" caption="Name" required="true" description="Name of the after test"/>
+				<string caption="Description" required="true" name="description" defaultValue="After tests actions" description="Describe what are your doing in the after each test"/>
+			</group>
+		</attribute-category>
+		
+		<graphical-container localId="afterTest" caption="After Test" description=""  prompt="Actions to be set after each test" abstract="true" />
+		
+	</container>
+	<nested localId="afterTest"/>
+
+
+	<container  category="org.mule.tooling.category.munit" 
+	versions="[3.4.0,10.0.0]" localId="before-test" caption="Before Test"
+	 icon="icons/small/Munit-24x16.png" image="icons/small/Munit-24x16.png" 
+	 acceptedByElements="http://www.mulesoft.org/schema/mule/core/mule" titleColor="255, 204, 102"
+	  displayNameAttribute="name"
+	  allowsAllExceptInbounds="true"
+	  pathExpression="${name}/processors" >
+		<keywords>
+			<keyword value="munit" weight="1" />
+			<keyword value="before-test" weight="1" />
+		</keywords>	
+		
+		<attribute-category caption="General" description="General properties">
+			<group id="jobGeneral">
+				<name name="name" caption="Name" required="true" description="Name of the before test"/>
+				<string caption="Description" required="true" name="description" defaultValue="Before tests actions" description="Describe what are your doing in the before each test"/>
+			</group>
+		</attribute-category>
+		
+		<graphical-container localId="beforeTest" caption="Before Test" description=""  prompt="Actions to be set before each test" abstract="true" />
+		
+	</container>
+	<nested localId="afterTest"/>
+	
 	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-not-null"
 		description="Check for not null Payload"
 		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
