@@ -198,6 +198,23 @@
        </module>
    
       </extension>
+       <extension
+         point="org.mule.tooling.module">
+         <module
+            description="Munit Tools Category"
+            icon="icons/studio16x16.png"
+            id="org.mule.tooling.ui.modules.munitTools"
+            name="Tools Pallete">
+         <category
+               expandByDefault="true"
+               icon="icons/studio16x16.png"
+               id="org.mule.tooling.category.munit.utils"
+               name="Munit Integration Test Tools"
+               paletteWeight="100">
+         </category>
+       </module>
+   
+      </extension>
       
       <extension
          point="org.eclipse.ui.commands">

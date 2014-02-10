@@ -10,20 +10,25 @@
       <category name="org.mule.tooling.incubator.category"/>
     </feature>
     <feature id="org.mule.tooling.incubator.munit.extension">
-      <category name="org.mule.tooling.incubator.category"/>
+      <category name="org.mule.tooling.incubator.category.munit"/>
     </feature>
     <feature id="org.mule.tooling.ui.extension.munit-mclient-module">
-      <category name="org.mule.tooling.incubator.category"/>
+      <category name="org.mule.tooling.incubator.category.munit"/>
     </feature>
    <feature id="org.mule.tooling.ui.extension.munit-ftpserver-module">
-      <category name="org.mule.tooling.incubator.category"/>
+      <category name="org.mule.tooling.incubator.category.munit"/>
     </feature>
    <feature id="org.mule.tooling.ui.extension.munit-dbserver-module">
-      <category name="org.mule.tooling.incubator.category"/>
+      <category name="org.mule.tooling.incubator.category.munit"/>
     </feature>
    <category-def name="org.mule.tooling.incubator.category" label="Mule Tooling Incubator Projects">
       <description>
 			Mule Replay Project
+      </description>
+   </category-def>
+   <category-def name="org.mule.tooling.incubator.category.munit" label="Munit">
+      <description>
+            Munit Studio integration
       </description>
    </category-def>
 </site>
