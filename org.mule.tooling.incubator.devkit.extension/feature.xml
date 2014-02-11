@@ -20,7 +20,19 @@
          download-size="0"
          install-size="0"
 		    unpack="true"
+         version="0.0.0"/> 
+   <plugin
+         id="org.mule.tooling.devkit.apt"
+         download-size="0"
+         install-size="0"
+                    unpack="true"
          version="0.0.0"/>
 
+    <plugin
+         id="org.mule.tooling.devkit.templates"
+         download-size="0"
+         install-size="0"
+                    unpack="true"
+         version="0.0.0"/>
   
 </feature>
