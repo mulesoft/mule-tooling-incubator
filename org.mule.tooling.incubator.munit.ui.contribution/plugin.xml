@@ -126,6 +126,7 @@
                 id="org.eclipse.jdt.munit.ResultView">
         </view>
     </extension>
+      
     <extension
             point="org.eclipse.debug.core.launchConfigurationTypes">
         <launchConfigurationType
@@ -137,6 +138,13 @@
                 id="org.eclipse.jdt.munit.launchconfig">
         </launchConfigurationType>
     </extension>
+     <extension
+         point="org.mule.tooling.messageflow.figuredecorator">
+      <figuredecorator
+            class="org.mule.tooling.ui.contribution.munit.coverage.CoverageFigureDecorator">
+      </figuredecorator>
+
+   </extension>
     <extension
             point="org.eclipse.debug.ui.launchConfigurationTypeImages">
         <launchConfigurationTypeImage

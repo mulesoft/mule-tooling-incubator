@@ -6,6 +6,10 @@
  */
 package org.mule.tooling.ui.contribution.munit.runner;
 
+import java.text.DecimalFormat;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -15,6 +19,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -22,6 +27,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -32,20 +38,32 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
+import org.mule.tooling.core.MuleCorePlugin;
+import org.mule.tooling.core.event.EventType;
+import org.mule.tooling.messageflow.events.RefreshRequestedEvent;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
+import org.mule.tooling.ui.contribution.munit.coverage.CoverageReport;
+import org.mule.tooling.ui.contribution.munit.coverage.CoverageUpdatedEvent;
+import org.mule.tooling.ui.contribution.munit.coverage.ICoverageUpdatedHandler;
 import org.mule.tooling.ui.contribution.munit.editors.MunitMessageFlowEditor;
 import org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor;
 
 public class MunitTestRunnerViewPart extends ViewPart
 {
-
+    public static CoverageReport coverageReport = null;
+    private static final String OVERAL_COVERAGE = "Overal coverage:";
     static final int REFRESH_INTERVAL = 200;
     public static final String NAME = "org.eclipse.jdt.munit.ResultView";
     static final int LAYOUT_FLAT = 0;
@@ -66,6 +84,41 @@ public class MunitTestRunnerViewPart extends ViewPart
     private boolean fIsDisposed;
     private Action reRunAction;
 	private Action reDebugAction;
+	private TabFolder folder;
+
+	  DecimalFormat numberFormat = new DecimalFormat("#.00");
+
+	    Label label;
+	    TreeViewer treeViewer;
+	
+    public MunitTestRunnerViewPart() {
+  MunitPlugin.getEventBus().registerListener(CoverageUpdatedEvent.MULE_MESSAGE_ARRIVED, new ICoverageUpdatedHandler() {
+            
+            @Override
+            public void onCoverageUpdated(final CoverageReport report) {
+                Display.getDefault().syncExec(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        
+                        if ( !treeViewer.getControl().isDisposed() ){
+                            coverageReport = report;
+                                    
+                            label.setText(OVERAL_COVERAGE + String.valueOf(numberFormat.format(report.getCoverage())));
+                            treeViewer.setInput(report.getContainersCoverage());
+                            
+                            MuleCorePlugin.getEventBus().fireEvent(new RefreshRequestedEvent());
+                            
+                        }
+                    }
+
+                });
+                
+                
+            }
+        });
+    }
+
 
     public static IFile getConfigFileFromFlowFile(final IProject muleProject, final IFile flowFile) {
         String filename = flowFile.getName();
@@ -198,8 +251,10 @@ public class MunitTestRunnerViewPart extends ViewPart
 			}
 		};
 		reDebugAction.setImageDescriptor(MunitPlugin.DEBUG_ICON_DESCRIPTOR);
+		
 		getViewSite().getActionBars().getToolBarManager().add(reRunAction);	
 		getViewSite().getActionBars().getToolBarManager().add(reDebugAction);	
+		
 		getViewSite().getActionBars().getToolBarManager().update(true);
         fProgressBar = new MunitProgressBar(composite);
         fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
@@ -214,22 +269,48 @@ public class MunitTestRunnerViewPart extends ViewPart
     {
         Composite composite = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(1).applyTo(composite);
-
+        composite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
+                | GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_VERTICAL));
 
         fCounterComposite = createProgressCountPanel(composite);
         fCounterComposite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
                                                      | GridData.HORIZONTAL_ALIGN_FILL));
 
         fViewerComposite = createViewerComposite(composite);
-        fViewerComposite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-                                                    | GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL
-                                                    | GridData.GRAB_VERTICAL));
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(1, 1).grab(true, true).applyTo(fViewerComposite);
 
-        composite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-                                          | GridData.HORIZONTAL_ALIGN_FILL));
+        
+        folder = new TabFolder(composite, SWT.NONE);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).applyTo(folder);
+        
+        TabItem error = new TabItem(folder, SWT.NONE);
+        error.setText("Errors");
+        
+        Composite pepe = new Composite(folder, SWT.NONE);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(1, 1).grab(true, true).applyTo(pepe);
+        GridLayoutFactory.fillDefaults().applyTo(pepe);
+        errorViewer = new Text(pepe, SWT.MULTI | SWT.V_SCROLL
+                | SWT.H_SCROLL | SWT.READ_ONLY);
+       
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).applyTo(errorViewer);
+        
+        error.setControl(pepe);
+        
+        
+        TabItem coverage = new TabItem(folder, SWT.NONE);
+        coverage.setText("Coverage");
+        
+        Composite coverageComposite = createCoverageComposite(folder);
+        
+  
+        
+        coverage.setControl(coverageComposite);
+ 
 
         updateUIJob = new UpdateUIJob("Munit Job");
         updateUIJob.schedule(REFRESH_INTERVAL);
+        
+
     }
 
     private Composite createViewerComposite(Composite parent)
@@ -238,19 +319,31 @@ public class MunitTestRunnerViewPart extends ViewPart
 
         FillLayout layout = new FillLayout();
         layout.type = SWT.VERTICAL;
-        layout.spacing = 20;
+        layout.spacing = 0;
         
         
         composite.setLayout(layout);
         
         fTreeViewer = buildTreeViewer(composite);
-        
-        errorViewer = new Text(composite, SWT.MULTI | SWT.V_SCROLL
-                | SWT.H_SCROLL | SWT.READ_ONLY);
-
 
         return composite;
     }
+    
+    private  Composite createCoverageComposite(Composite parent)
+    {
+        Composite composite = new Composite(parent, SWT.NONE);
+         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(1, 1).grab(true, true).applyTo(composite);
+        GridLayoutFactory.fillDefaults().applyTo(composite);
+        label = new Label(composite, SWT.NONE);
+        label.setText(OVERAL_COVERAGE);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).grab(true, false).applyTo(label);
+        treeViewer = new TreeViewer(composite);
+        treeViewer.setLabelProvider(new CoverageLabelProvider());
+        treeViewer.setContentProvider(new ContentProvider());
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).applyTo(treeViewer.getControl());
+return composite;
+    }
+
 
     private TreeViewer buildTreeViewer(Composite composite)
     {
@@ -298,29 +391,22 @@ public class MunitTestRunnerViewPart extends ViewPart
             @Override
             public void addListener(ILabelProviderListener listener)
             {
-                // TODO Auto-generated method stub
-
             }
 
             @Override
             public void dispose()
             {
-                // TODO Auto-generated method stub
-
             }
 
             @Override
             public boolean isLabelProperty(Object element, String property)
             {
-                // TODO Auto-generated method stub
                 return false;
             }
 
             @Override
             public void removeListener(ILabelProviderListener listener)
             {
-                // TODO Auto-generated method stub
-
             }
 
             @Override
@@ -376,7 +462,7 @@ public class MunitTestRunnerViewPart extends ViewPart
                                      Object newInput)
             {
                 SuiteStatus status = (SuiteStatus) newInput;
-                if ( status.getNumberOfTests() > 0){
+                if ( status != null && status.getNumberOfTests() > 0){
                     reRunAction.setEnabled(true);
                     reDebugAction.setEnabled(true);
                 }
@@ -483,5 +569,63 @@ public class MunitTestRunnerViewPart extends ViewPart
 
 
     }
+    
+    private class CoverageLabelProvider extends LabelProvider{
+
+        @Override
+        public Image getImage(Object arg0) {
+            Map.Entry<String,Double> entry = (Entry<String, Double>) arg0;
+            if (entry.getValue()<50.0){
+                return AbstractUIPlugin.imageDescriptorFromPlugin("org.mule.tooling.messageflow", "icons/bullet-red-alt.png").createImage();
+            }else if (entry.getValue()<70.0){
+                return AbstractUIPlugin.imageDescriptorFromPlugin("org.mule.tooling.messageflow", "icons/bullet-yellow-alt.png").createImage();
+            }
+            return AbstractUIPlugin.imageDescriptorFromPlugin("org.mule.tooling.messageflow", "icons/bullet-green-alt.png").createImage();
+        }
+
+        @Override
+        public String getText(Object arg0) {
+            Map.Entry<String,Double> entry = (Entry<String, Double>) arg0;
+            return entry.getKey().replace("/", "") + "(" + numberFormat.format(entry.getValue()) + "%)";
+        }
+
+    }
+    
+    private class ContentProvider implements ITreeContentProvider{
+
+        @Override
+        public Object[] getElements(Object arg0) {
+            Map<String, Double> map = (Map<String, Double>) arg0;
+            Entry<String, Double>[] entries = new Map.Entry[0];
+            return map.entrySet().toArray(entries);
+        }
+
+        @Override
+        public void dispose() {
+            
+        }
+
+        @Override
+        public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
+            
+        }
+
+        @Override
+        public Object[] getChildren(Object arg0) {
+            return new Object[0];
+        }
+
+        @Override
+        public Object getParent(Object arg0) {
+            return null;
+        }
+
+        @Override
+        public boolean hasChildren(Object arg0) {
+            return false;
+        }
+        
+    }
+
 
 }

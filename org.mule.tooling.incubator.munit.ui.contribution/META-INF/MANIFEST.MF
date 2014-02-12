@@ -46,13 +46,8 @@ Import-Package: org.dom4j,
  org.eclipse.jdt.ui.dialogs,
  org.eclipse.wst.xml.ui.internal.tabletree
 Eclipse-BundleShape: dir
-Bundle-ClassPath: lib/eclipse-jface-2.1.0.jar,
- lib/org.eclipse.core.commands_3.5.0.jar,
- .,
- lib/mule-interceptor-module.jar,
- lib/munit-assert.jar,
- lib/munit-common.jar,
- lib/munit-mock.jar,
+Bundle-ClassPath: .,
  lib/munit-runner.jar,
- lib/munit-mule-extension-loader.jar
-Export-Package: org.mule.tooling.ui.contribution.munit
+ lib/gson.jar
+Export-Package: com.google.gson,
+ org.mule.tooling.ui.contribution.munit

@@ -32,6 +32,7 @@ import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
+import org.mule.tooling.ui.contribution.munit.coverage.MunitCoverageUpdater;
 
 
 public class MunitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate
@@ -92,7 +93,8 @@ public class MunitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
 
 
             MunitEclipseUpdater.launch();
-
+            MunitCoverageUpdater.launch();
+            
             IVMRunner runner = getVMRunner(configuration, mode);
 
             File workingDir = verifyWorkingDirectory(configuration);
@@ -179,6 +181,9 @@ public class MunitLaunchConfigurationDelegate extends AbstractJavaLaunchConfigur
                 launch.setAttribute("mule-launch", "true");
                 MuleDebuggerService.getDefault().connect(launch);
             }
+//            else{
+                vmArguments.add("-Dcobertura.port="+MunitCoverageUpdater.getInstance().getPort());
+//            }
 
             // Create VM config
             VMRunnerConfiguration runConfig = new VMRunnerConfiguration("org.mule.munit.runner.remote.MunitRemoteRunner", classPathAsList.toArray(new String[] {}));

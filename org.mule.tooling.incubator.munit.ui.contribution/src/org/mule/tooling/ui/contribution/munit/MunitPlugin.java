@@ -30,6 +30,7 @@ public class MunitPlugin extends AbstractUIPlugin {
 
 
 	public static final ImageDescriptor TEST_ICON_DESCRIPTOR = AbstractUIPlugin.imageDescriptorFromPlugin(MunitPlugin.PLUGIN_ID, "/icons/Suite.png");
+	public static final ImageDescriptor CHECK_ICON_DESCRIPTOR = AbstractUIPlugin.imageDescriptorFromPlugin(MunitPlugin.PLUGIN_ID, "/icons/check.png");
 	public static final ImageDescriptor PROD_ICON_DESCRIPTOR = AbstractUIPlugin.imageDescriptorFromPlugin(MunitPlugin.PLUGIN_ID, "/icons/Prod.png");
 	public static final ImageDescriptor ZOOM_ICON_DESCRIPTOR = AbstractUIPlugin.imageDescriptorFromPlugin(MunitPlugin.PLUGIN_ID, "/icons/Zoom_in.png");
 	public static final ImageDescriptor RUN_ICON_DESCRIPTOR = AbstractUIPlugin.imageDescriptorFromPlugin(DebugUIPlugin.getUniqueIdentifier(), "$nl$/icons/full/etool16/run_exc.gif");

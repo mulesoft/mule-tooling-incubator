@@ -45,11 +45,19 @@
          </mavenProperties>
       </library>
       <library
-            path="lib/munit-mule-extension-loader.jar">
+            path="lib/munit-coverage-plugin.jar">
          <mavenProperties
-               artifactId="munit-mule-extension-loader"
+               artifactId="munit-coverage-plugin"
                groupId="org.mule.munit.plugins"
-               version="1.0-SNAPSHOT">
+               version="3.4-SNAPSHOT">
+         </mavenProperties>
+      </library>
+ 	<library
+            path="lib/munit-coverage-plugin.jar">
+         <mavenProperties
+               artifactId="munit-coverage-plugin"
+               groupId="org.mule.munit.plugins"
+               version="3.4-SNAPSHOT">
          </mavenProperties>
       </library>
       </runtime>
