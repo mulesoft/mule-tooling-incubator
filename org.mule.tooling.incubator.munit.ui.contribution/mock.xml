@@ -4,7 +4,7 @@
 	
 	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="when"
 		description="Mocking Definition" 
-		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		image="icons/large/Mock.png" icon="icons/small/Mock-Palette.png"
 		acceptedByElements="http://www.mulesoft.org/schema/mule/munit/setup"
 		
 		caption="Mock">
@@ -65,7 +65,7 @@
 	 
 	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="verify-call"
 		description="Verify calls definition" 
-		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		image="icons/large/Verify-Call.png" icon="icons/small/Verify-Call-Palette.png"
 		caption="Verify Call">
 		<attribute-category description="Mocking conditions and return value." caption="Verify Condition">
       		<group caption="Message processor Verify definition" id="verify-call">
@@ -89,7 +89,7 @@
 	
 	<container category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="spy"
 		description="Spy calls definition" 
-		image="icons/large/Munit-48x32.png" icon="icons/small/Munit-24x16.png"
+		image="icons/large/Spy.png" icon="icons/small/Spy-Palette.png"
 		titleColor="255, 204, 102"
 		acceptedByElements="http://www.mulesoft.org/schema/mule/munit/setup"
 		caption="Spy"
