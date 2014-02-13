@@ -3,7 +3,7 @@
 <plugin>
    <extension
          point="org.mule.tooling.ui.contribution.munit.munitRuntime">
-      <runtime muleVersion="org.mule.tooling.server.3.4.2.ee" munitVersion="3.4-M5-SNAPSHOT">
+      <runtime muleVersion="org.mule.tooling.server.3.4.2.ee,org.mule.tooling.server.3.4.1.ee" munitVersion="3.4-M5-SNAPSHOT">
          <library
             path="lib/munit-assert.jar">
          <mavenProperties

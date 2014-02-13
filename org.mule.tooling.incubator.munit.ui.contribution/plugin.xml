@@ -26,7 +26,7 @@
             contributorClass="org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditorContributor"
             matchingStrategy="org.mule.tooling.messageflow.editor.MuleEditorMatchingStrategy"
             extensions="xml"
-            icon="icons/sample.gif"
+            icon="icons/munit-16x16.png"
             id="org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor"
            
             name="Munit Page Editor">

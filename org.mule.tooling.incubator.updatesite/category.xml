@@ -21,6 +21,9 @@
    <feature id="org.mule.tooling.ui.extension.munit-dbserver-module">
       <category name="org.mule.tooling.incubator.category.munit"/>
     </feature>
+   <feature id="org.mule.tooling.ui.synchronize.extension">
+       <category name="org.mule.tooling.incubator.category.munit"/>
+   </feature>
    <category-def name="org.mule.tooling.incubator.category" label="Mule Tooling Incubator Projects">
       <description>
 			Mule Replay Project
