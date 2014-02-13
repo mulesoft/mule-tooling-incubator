@@ -19,6 +19,7 @@ Bundle-ClassPath: .,
  lib/munit-common.jar,
  lib/munit-mock.jar,
  lib/munit-mule-extension-loader.jar,
- lib/munit-runner.jar
+ lib/munit-runner.jar,
+ lib/munit-coverage-plugin.jar
 Eclipse-BundleShape: dir
 Export-Package: org.mule.tooling.munit
