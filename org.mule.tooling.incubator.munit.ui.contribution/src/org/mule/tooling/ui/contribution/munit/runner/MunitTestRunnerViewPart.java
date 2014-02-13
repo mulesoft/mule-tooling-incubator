@@ -395,6 +395,8 @@ public class MunitTestRunnerViewPart extends ViewPart
                     if ( flowPair != null ){
                         ShowFlowHandler.openConfigWithConfigName(muleProject, flowPair.getLeft().getName());
                         ShowFlowHandler.selectFlow(flowPair.getRight().getName());
+                        MuleCorePlugin.getEventBus().fireEvent(new RefreshRequestedEvent());
+
                     }
                    
 
