@@ -60,7 +60,7 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 		checkBoxOAuth = initializeCheckBox(connectorGroupBox,
 				"OAuth authentication", null);
 		checkBoxQuery = initializeCheckBox(connectorGroupBox,
-				"Add DSQL Query method", null);
+				"Add DataSense Query method", null);
 
 		Group gitHubGroupBox = UiUtils.createGroupWithTitle(container,
 				"GitHub", 2);
@@ -89,7 +89,7 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 					}
 				});
 		manuallyEditCheckBox = initializeCheckBox(gitHubGroupBox,
-				"Edit manually", new SelectionListener() {
+				"Manually set values", new SelectionListener() {
 
 					@Override
 					public void widgetSelected(SelectionEvent e) {
