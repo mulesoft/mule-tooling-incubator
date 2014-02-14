@@ -4,7 +4,8 @@
     <scope icon="icons/small/mule-synchronize-connector-24x16.png"
            image="icons/large/mule-synchronize-connector-48x32.png"
            localId="run-and-wait"
-           description="The Synchronize scope."
+           category="org.mule.tooling.category.munit.utils"
+ 	   description="The Synchronize scope."
            caption="Synchronize"
            versions="[3.4.0,8.0.0]"
            allowMulipleChildren="true"
@@ -19,7 +20,7 @@
     </scope>
 
     <scope extends="http://www.mulesoft.org/schema/mule/core/abstractScopeType" abstract="true" image="icons/large/mule-synchronize-connector-48x32.png" localId="multi-synchronize" icon="icons/small/mule-synchronize-connector-24x16.png" caption="Synchronize" completionProposalDocName="Synchronize" allowMulipleChildren="true"
-           allowsAllExceptInbounds="true">
+           allowsAllExceptInbounds="true" category="org.mule.tooling.category.munit.utils">
         <attribute-category description="General." caption="General">
         <group caption="Settings" id="settings">
             <integer caption="Timeout" name="timeout" description="Maximum timeout that it has to stop current thread"/>

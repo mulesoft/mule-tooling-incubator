@@ -63,7 +63,7 @@
 		<string indented="true" name="value-ref" caption="value-ref" visibleInDialog="false"/>
 	</nested>
 	 
-	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="verify-call"
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="verify-call"
 		description="Verify calls definition" 
 		image="icons/large/Verify-Call.png" icon="icons/small/Verify-Call-Palette.png"
 		caption="Verify Call">

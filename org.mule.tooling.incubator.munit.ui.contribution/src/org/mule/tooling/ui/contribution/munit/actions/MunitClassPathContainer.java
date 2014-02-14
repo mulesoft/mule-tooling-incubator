@@ -16,10 +16,13 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.MuleRuntime;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.CoreUtils;
+import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 import org.osgi.framework.Bundle;
 
 public class MunitClassPathContainer implements IClasspathContainer{
@@ -56,9 +59,14 @@ public class MunitClassPathContainer implements IClasspathContainer{
                     break;
                 }
             }
+            
+            if (munitVersion==null){
+                MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "No Munit Runtime", "No Munit runtime found for the current mule runtime"); 
+            }
         }
         catch(IOException e){
-
+            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Unexpected Error", "Erro while creating Munit Runtime."); 
+            MunitPlugin.log(e);
         }
     }
 

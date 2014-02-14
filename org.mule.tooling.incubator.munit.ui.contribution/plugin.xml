@@ -184,7 +184,7 @@
                expandByDefault="true"
                icon="icons/studio16x16.png"
                id="org.mule.tooling.category.munit"
-               name="Munit Setup"
+               name="Munit"
                paletteWeight="100">
          </category>
        </module>

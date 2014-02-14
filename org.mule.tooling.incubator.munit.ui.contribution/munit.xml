@@ -148,7 +148,7 @@
 	</container>
 	<nested localId="afterTest"/>
 	
-	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-not-null"
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="assert-not-null"
 		description="Check for not null Payload"
 		image="icons/large/Assert-Not-Null.png" icon="icons/small/Assert-Palette.png"
 		caption="Assert Not Null Payload">
@@ -161,7 +161,7 @@
 		</attribute-category>
 	</component>
 	
-	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-null"
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="assert-null"
 		description="Check for null Payload"
 		image="icons/large/Assert-Null.png" icon="icons/small/Assert-Palette.png"
 		caption="Assert Null Payload">
@@ -174,7 +174,7 @@
 		</attribute-category>
 	</component>
 	
-	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-false"
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="assert-false"
 		description="Validates if a condition is false"
 		image="icons/large/Assert-False.png" icon="icons/small/Assert-Palette.png"
 		caption="Assert False">
@@ -190,7 +190,7 @@
 		</attribute-category>
 	</component>
 	
-	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-true"
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="assert-true"
 		description="Validates if a condition is true"
 		image="icons/large/Assert-True.png" icon="icons/small/Assert-Palette.png"
 		caption="Assert True">
@@ -206,7 +206,7 @@
 		</attribute-category>
 	</component>
 	
-	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-that"
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="assert-that"
 		description="Validates payload condition"
 		image="icons/large/Assert-Payload.png" icon="icons/small/Assert-Palette.png"
 		caption="Assert Payload">
@@ -222,7 +222,7 @@
 		</attribute-category>
 	</component>
 	
-	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="assert-on-equals"
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="assert-on-equals"
 		description="Validates that two expressions are equal"
 		image="icons/large/Assert-Equals.png" icon="icons/small/Assert-Palette.png"
 		caption="Assert Equals">
@@ -251,7 +251,7 @@
 		</attribute-category>
 	</component>
 	
-	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="fail"
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="fail"
 		description="Makes the test fail"
 		image="icons/large/Fail.png" icon="icons/small/Fail-Palette.png"
 		caption="Fail">
@@ -264,7 +264,7 @@
 		</attribute-category>
 	</component>
 	
-	<component category="org.mule.tooling.category.munit.assertions" versions="[3.4.0,10.0.0]" localId="run-custom"
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="run-custom"
 		description="Run a custom assertion"
 		image="icons/large/Assert-Custom.png" icon="icons/small/Assert-Palette.png"
 		caption="Custom Assertion">

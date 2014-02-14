@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -62,7 +63,7 @@ public class MunitResourceUtils {
 
     public static void configureMaven(IMuleProject muleProject) {
         MavenMuleProjectDecorator mavenProject = MavenMuleProjectDecorator.decorate(muleProject);
-        String munitVersion = "";
+        String munitVersion = null;
         IConfigurationElement[] configurationElementsFor = Platform.getExtensionRegistry().getConfigurationElementsFor("org.mule.tooling.ui.contribution.munit.munitRuntime");
         for (IConfigurationElement configElement : configurationElementsFor) {
             if ( Arrays.asList(configElement.getAttribute("muleVersion").split(",")).contains(muleProject.getRuntimeId()) ){
@@ -77,7 +78,11 @@ public class MunitResourceUtils {
                 break;
             }
         }
-
+        
+        if ( munitVersion == null ){
+            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "No Munit Runtime", "No Munit runtime found for the current mule runtime"); 
+            return;
+        }
 
         mavenProject.addTestResource(MunitPlugin.MUNIT_FOLDER_PATH);
         mavenProject.addPlugin("org.mule.munit", "munit-maven-plugin", munitVersion, new  XmlEditionCallable() {
