@@ -60,6 +60,9 @@
                version="3.4-SNAPSHOT">
          </mavenProperties>
       </library>
+      <library
+            path="lib/gson.jar">
+      </library>
       </runtime>
    </extension>
 

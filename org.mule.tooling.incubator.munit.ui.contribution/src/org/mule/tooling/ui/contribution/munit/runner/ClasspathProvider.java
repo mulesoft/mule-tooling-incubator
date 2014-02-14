@@ -31,12 +31,8 @@ public class ClasspathProvider
     {
         Collection<URL> urls = new HashSet<URL>();
         addClassPath(javaProject, urls);
-        urls.add(getClass().getClassLoader().getResource("/lib/mule-interceptor-module.jar"));
-        urls.add(getClass().getClassLoader().getResource("/lib/munit-assert.jar"));
-        urls.add(getClass().getClassLoader().getResource("/lib/munit-mock.jar"));
-        urls.add(getClass().getClassLoader().getResource("/lib/munit-common.jar"));
+        urls.add(getClass().getClassLoader().getResource("/lib/gson.jar"));
         urls.add(getClass().getClassLoader().getResource("/lib/munit-runner.jar"));
-        urls.add(getClass().getClassLoader().getResource("/lib/munit-mule-extension-loader.jar"));
         return urls.toArray(new URL[urls.size()]);
     }
 

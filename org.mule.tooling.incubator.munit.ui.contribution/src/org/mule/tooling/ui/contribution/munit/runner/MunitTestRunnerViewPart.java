@@ -73,7 +73,7 @@ import org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor;
 public class MunitTestRunnerViewPart extends ViewPart
 {
     public static CoverageReport coverageReport = null;
-    private static final String OVERAL_COVERAGE = "Overal coverage:";
+    private static final String OVERAL_COVERAGE = "Overall coverage:";
     static final int REFRESH_INTERVAL = 200;
     public static final String NAME = "org.eclipse.jdt.munit.ResultView";
     static final int LAYOUT_FLAT = 0;
@@ -390,7 +390,15 @@ public class MunitTestRunnerViewPart extends ViewPart
 
                 MuleConfigurationsCache configurationsCache = MuleConfigurationsCache.getDefaultInstance();
                 try {
-                    IMuleProject muleProject = MuleRuntime.create(file.getProject());
+                    IMuleProject muleProject = null;
+                    IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(file.getFullPath().toFile().toURI());
+                    if ( files.length > 0 ){
+                        muleProject = MuleRuntime.create(files[0].getProject());
+                    }
+                    else{
+                        return;
+                    }
+                    
                     Pair<MuleConfiguration, Flow> flowPair = configurationsCache.searchMuleFlowByName(muleProject, getCoveredFlow(event));
                     if ( flowPair != null ){
                         ShowFlowHandler.openConfigWithConfigName(muleProject, flowPair.getLeft().getName());
@@ -422,10 +430,17 @@ public class MunitTestRunnerViewPart extends ViewPart
             @Override
             public void doubleClick(DoubleClickEvent event)
             {
-
-                IFile input = getConfigFileFromFlowFile(file.getProject(), file);
-                try
-                {
+                IFile input =null; 
+                try {
+                    IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(file.getFullPath().toFile().toURI());
+                    if ( files.length > 0 ){
+                        input = getConfigFileFromFlowFile(files[0].getProject(), files[0]);
+                    }
+                    else{
+                        return;
+                    }
+                    
+           
                     IWorkbenchPage activePage = PlatformUI
                             .getWorkbench()
                             .getActiveWorkbenchWindow()

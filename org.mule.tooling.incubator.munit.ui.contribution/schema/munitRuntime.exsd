@@ -50,7 +50,7 @@
    <element name="library">
       <complexType>
          <sequence>
-            <element ref="mavenProperties"/>
+            <element ref="mavenProperties" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="path" type="string">
             <annotation>
