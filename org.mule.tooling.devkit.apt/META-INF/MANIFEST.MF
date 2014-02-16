@@ -6,7 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.mule.tooling.devkit.apt.Activator
 Bundle-Vendor: MuleSoft Inc.
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.jdt.apt.core;bundle-version="3.3.500"
+ org.eclipse.jdt.apt.core;bundle-version="3.3.500",
+ org.eclipse.core.resources;bundle-version="3.8.1",
+ org.eclipse.jdt.apt.pluggable.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
@@ -81,7 +83,8 @@ Bundle-ClassPath: .,
  lib/plexus-io.jar,
  lib/plexus-utils.jar,
  lib/junit.jar
-Export-Package: org.mule.tooling.devkit.apt;
+Export-Package: org.mule.devkit.generation.utils,
+ org.mule.tooling.devkit.apt;
   uses:="javax.lang.model.util,
    javax.lang.model.type,
    org.mule.devkit.model.visitor,

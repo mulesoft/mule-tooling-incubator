@@ -19,7 +19,8 @@ import org.mule.tooling.devkit.apt.plugin.StudioPluginScanner;
 
 @SupportedAnnotationTypes(value = { "org.mule.api.annotations.Connector",
 		"org.mule.api.annotations.ExpressionLanguage",
-		"org.mule.api.annotations.Module" })
+		"org.mule.api.annotations.Module",
+		"org.mule.api.annotations.MetaDataCategory"})
 @SupportedSourceVersion(javax.lang.model.SourceVersion.RELEASE_6)
 @SupportedOptions(value = { "enabledStudioPluginPackage",
 		"enableJavaDocValidation", "mavenInformationFile" })

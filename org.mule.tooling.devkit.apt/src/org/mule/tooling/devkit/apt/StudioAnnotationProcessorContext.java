@@ -41,7 +41,7 @@ public class StudioAnnotationProcessorContext implements Context {
         studioModel = new StudioModel(new FilerCodeWriter(env.getFiler()));
         manifest = new AnnotationProcessorManifest(this);
         messager = env.getMessager();
-       FactoryHolder.setPathUtils(new StudioPathUtils());
+       FactoryHolder.setPathUtils(new StudioPathUtils(env));
        FactoryHolder.setGenericTypeFactory(new StudioGenericTypeFactory());    }
 
     @Override
