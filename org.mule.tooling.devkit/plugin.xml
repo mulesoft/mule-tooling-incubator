@@ -95,9 +95,13 @@
                   icon="icons/icon.png"
                   id="org.mule.tooling.devkit.menu"
                   label="Anypoint Connector"
+                  mnemonic="A"
                   path="additions">
                <separator
                      name="group">
+               </separator>
+               <separator
+                     name="javadoc">
                </separator>
             </menu>
             <action
@@ -105,6 +109,7 @@
                   enablesFor="1"
                   id="org.mule.tooling.devkit.docAction"
                   label="Create Documentation"
+                  icon="icons/generate_doc.gif"
                   menubarPath="org.mule.tooling.devkit.menu/group">
             </action>
             <action
@@ -112,6 +117,7 @@
                   enablesFor="1"
                   id="org.mule.tooling.devkit.paletteAction"
                   label="Try it out!"
+                  icon="icons/mule.png"
                   menubarPath="org.mule.tooling.devkit.menu/group">
             </action>
               <action
@@ -119,7 +125,16 @@
                   enablesFor="1"
                   id="org.mule.tooling.devkit.sourceAction"
                   label="Generate Sources"
+                  icon="icons/generate_sources.gif"
                   menubarPath="org.mule.tooling.devkit.menu/group">
+            </action>
+            <action
+                  class="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckAction"
+                  enablesFor="1"
+                  id="org.mule.tooling.devkit.toggleJavadocAction"
+                  label="Enable/Disable Javadoc Check"
+                  icon="icons/javadoc.gif"
+                  menubarPath="org.mule.tooling.devkit.menu/javadoc">
             </action>
          </objectContribution>
       </extension>
@@ -133,18 +148,27 @@
             name="Mule extension Update Site">
       </wizard>
    </extension>
-   <!--<extension
-       point="org.eclipse.jdt.ui.quickFixProcessors">
-	    <quickFixProcessor
-	          class="org.mule.tooling.devkit.quickfix.Processor"
-	          id="org.eclipse.jdt.ui.text.correction.QuickFixProcessor">
-	    </quickFixProcessor>
- 	</extension>
- 	<extension
-       point="org.eclipse.jdt.ui.quickAssistProcessors">
-    	<quickAssistProcessor
-          class="org.mule.tooling.devkit.quickfix.AssistProcessor"
-          id="org.eclipse.jdt.ui.text.correction.QuickAssistProcessor">
-    	</quickAssistProcessor>
- 	</extension>-->  
+   <!--<extension point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+         markerType="org.eclipse.core.resources.problemmarker"
+         class="org.mule.tooling.devkit.quickfix.Processor"/>
+   </extension>-->
+ 	<extension	
+         point="org.eclipse.ui.perspectives">
+         <perspective
+                name="Devkit"
+                icon="icons/icon.png"
+                class="org.mule.tooling.devkit.perspective.DevkitPerspectiveFactory"
+                id="org.mule.tooling.devkit.perspective">
+        </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Devkit"
+            icon="icons/icon.png"
+            class="org.mule.tooling.devkit.treeview.DevkitView"
+            id="org.mule.tooling.devkit.treeview.DevkitView">
+      </view>
+   </extension>
 </plugin>
