@@ -11,23 +11,22 @@ import org.mule.tooling.model.messageflow.MessageFlowNode;
 /**
  * <p>
  * Munit menu for the production view in the Munit test editor.
- * </p> 
+ * </p>
  */
-public class MunitMessageFlowContextMenuProvider extends MessageFlowContextMenuProvider{
+public class MunitMessageFlowContextMenuProvider extends MessageFlowContextMenuProvider {
 
-	public MunitMessageFlowContextMenuProvider(IEditorPart editor,
-			EditPartViewer viewer, ActionRegistry registry) {
-		super(editor, viewer, registry);
-	}
+    public MunitMessageFlowContextMenuProvider(IEditorPart editor, EditPartViewer viewer, ActionRegistry registry) {
+        super(editor, viewer, registry);
+    }
 
-	@Override
-	public void buildContextMenu(IMenuManager menu) {
-		final MessageFlowNode selected = getSelectedNode();
+    @Override
+    public void buildContextMenu(IMenuManager menu) {
+        final MessageFlowNode selected = getSelectedNode();
 
-		if (selected != null) {
-			final MessageFlowNodeContextMenuProviderManager defaultMenuProvider = MessageFlowNodeContextMenuProviderManager.getDefault();
-			defaultMenuProvider.addActionsForNode(menu, selected);
-		}
-	}
+        if (selected != null) {
+            final MessageFlowNodeContextMenuProviderManager defaultMenuProvider = MessageFlowNodeContextMenuProviderManager.getDefault();
+            defaultMenuProvider.addActionsForNode(menu, selected);
+        }
+    }
 
 }

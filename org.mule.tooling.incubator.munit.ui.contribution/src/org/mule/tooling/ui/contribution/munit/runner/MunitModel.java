@@ -17,85 +17,67 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.IWorkbenchPage;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 
-public class MunitModel
-{
+public class MunitModel {
 
     private final ILaunchListener fLaunchListener = new MunitLaunchListener();
 
-    public void start()
-    {
+    public void start() {
         ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
         launchManager.addLaunchListener(fLaunchListener);
     }
 
-    public void stop()
-    {
+    public void stop() {
         ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
         launchManager.removeLaunchListener(fLaunchListener);
     }
 
-
-    private final class MunitLaunchListener implements ILaunchListener
-    {
+    private final class MunitLaunchListener implements ILaunchListener {
 
         private HashSet<ILaunch> fTrackedLaunches = new HashSet<ILaunch>(20);
 
-        public void launchAdded(ILaunch launch)
-        {
+        public void launchAdded(ILaunch launch) {
             fTrackedLaunches.add(launch);
         }
 
-        public void launchRemoved(final ILaunch launch)
-        {
+        public void launchRemoved(final ILaunch launch) {
             fTrackedLaunches.remove(launch);
         }
 
-        public void launchChanged(final ILaunch launch)
-        {
-            if (!fTrackedLaunches.contains(launch))
-            {
+        public void launchChanged(final ILaunch launch) {
+            if (!fTrackedLaunches.contains(launch)) {
                 return;
             }
 
             ILaunchConfiguration config = launch.getLaunchConfiguration();
-            if (config == null)
-            {
+            if (config == null) {
                 return;
             }
 
             final IJavaProject javaProject = MunitLaunchConfigurationConstants.getJavaProject(config);
-            if (javaProject == null)
-            {
+            if (javaProject == null) {
                 return;
             }
 
-            try
-            {
+            try {
                 fTrackedLaunches.remove(launch);
                 connectTestRunner(launch, javaProject);
-            }
-            catch (NumberFormatException e)
-            {
+            } catch (NumberFormatException e) {
                 return;
             }
         }
 
-        private void connectTestRunner(ILaunch launch, IJavaProject javaProject)
-        {
+        private void connectTestRunner(ILaunch launch, IJavaProject javaProject) {
             MunitPlugin.asyncShowTestRunnerViewPart();
 
             IWorkbenchPage page = MunitPlugin.getActivePage();
-            if (page != null)
-            {
-                MunitTestRunnerViewPart view = (MunitTestRunnerViewPart) page.findView(MunitTestRunnerViewPart.NAME);
-                if (view == null)
-                {
+            if (page != null) {
+                MunitTestRunnerViewPart view = (MunitTestRunnerViewPart) page.findView(MunitPlugin.RUNNER_ID);
+                if (view == null) {
                     page.hideView(view);
                 }
             }
 
-
         }
     }
-    
+
 }

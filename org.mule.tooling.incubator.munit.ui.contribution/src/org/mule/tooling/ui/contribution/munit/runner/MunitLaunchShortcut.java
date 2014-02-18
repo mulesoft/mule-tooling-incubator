@@ -34,124 +34,89 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 
-public class MunitLaunchShortcut implements ILaunchShortcut2
-{
+public class MunitLaunchShortcut implements ILaunchShortcut2 {
 
-
-    public void launch(IEditorPart editor, String mode)
-    {
+    public void launch(IEditorPart editor, String mode) {
         ITypeRoot element = JavaUI.getEditorInputTypeRoot(editor.getEditorInput());
-        if (element != null)
-        {
+        if (element != null) {
             IMethod selectedMethod = resolveSelectedMethodName(editor, element);
-            if (selectedMethod != null)
-            {
-                launch(new Object[] {selectedMethod}, mode);
+            if (selectedMethod != null) {
+                launch(new Object[] { selectedMethod }, mode);
+            } else {
+                launch(new Object[] { element }, mode);
             }
-            else
-            {
-                launch(new Object[] {element}, mode);
-            }
-        }
-        else
-        {
+        } else {
             showNoTestsFoundDialog();
         }
     }
 
-    private IMethod resolveSelectedMethodName(IEditorPart editor, ITypeRoot element)
-    {
+    private IMethod resolveSelectedMethodName(IEditorPart editor, ITypeRoot element) {
 
         return null;
     }
 
-    public void launch(ISelection selection, String mode)
-    {
-        if (selection instanceof IStructuredSelection)
-        {
+    public void launch(ISelection selection, String mode) {
+        if (selection instanceof IStructuredSelection) {
             launch(((IStructuredSelection) selection).toArray(), mode);
-        }
-        else
-        {
+        } else {
             showNoTestsFoundDialog();
         }
     }
 
-    private void launch(Object[] elements, String mode)
-    {
-        try
-        {
+    private void launch(Object[] elements, String mode) {
+        try {
             File elementToLaunch = null;
 
-            if (elements.length == 1)
-            {
+            if (elements.length == 1) {
                 Object selected = elements[0];
-                if (selected instanceof File)
-                {
+                if (selected instanceof File) {
                     elementToLaunch = (File) selected;
                 }
             }
-            if (elementToLaunch == null)
-            {
+            if (elementToLaunch == null) {
                 showNoTestsFoundDialog();
                 return;
             }
             performLaunch(elementToLaunch, mode);
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             // OK, silently move on
-        }
-        catch (CoreException e)
-        {
+        } catch (CoreException e) {
             MessageDialog.openError(getShell(), "Munit Launch", "Launching of JUnit tests unexpectedly failed. Check log for details.");
         }
     }
 
-    private void showNoTestsFoundDialog()
-    {
+    private void showNoTestsFoundDialog() {
         MessageDialog.openInformation(getShell(), "Munit Launch", "No Munit tests found.");
     }
 
-
-    private void performLaunch(File element, String mode) throws InterruptedException, CoreException
-    {
+    private void performLaunch(File element, String mode) throws InterruptedException, CoreException {
         ILaunchConfigurationWorkingCopy temparary = createLaunchConfiguration(element);
         ILaunchConfiguration config = temparary.doSave();
-        DebugUITools.openLaunchConfigurationDialog(
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                config,
-                DebugUITools.getLaunchGroup(config, mode).getIdentifier(),
-                null);
+        DebugUITools.openLaunchConfigurationDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), config, DebugUITools.getLaunchGroup(config, mode)
+                .getIdentifier(), null);
     }
 
-    private Shell getShell()
-    {
+    private Shell getShell() {
         return MunitPlugin.getActiveWorkbenchShell();
     }
 
-    private ILaunchManager getLaunchManager()
-    {
+    private ILaunchManager getLaunchManager() {
         return DebugPlugin.getDefault().getLaunchManager();
     }
 
-    protected String getLaunchConfigurationTypeId()
-    {
+    protected String getLaunchConfigurationTypeId() {
         return "org.eclipse.jdt.munit.launchconfig";
     }
 
-    protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(IResource resource) throws CoreException
-    {
+    protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(IResource resource) throws CoreException {
         final String testName = resource.getName();
         String resources = testName;
 
         ILaunchConfigurationType configType = getLaunchManager().getLaunchConfigurationType(getLaunchConfigurationTypeId());
         ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateLaunchConfigurationName(testName));
 
-
         wc.setAttribute(MunitLaunchConfigurationConstants.TEST_RESOURCE, resources);
         wc.setAttribute(MunitLaunchConfigurationConstants.MUNIT_TEST_PATH, resource.getFullPath().toString());
-
 
         wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, resource.getProject().getName());
         String userVm = "";
@@ -160,96 +125,72 @@ public class MunitLaunchShortcut implements ILaunchShortcut2
         return wc;
     }
 
-    protected String[] getAttributeNamesToCompare()
-    {
-        return new String[] {
-                IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, MunitLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
-                IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, MunitLaunchConfigurationConstants.ATTR_TEST_METHOD_NAME
-        };
+    protected String[] getAttributeNamesToCompare() {
+        return new String[] { IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, MunitLaunchConfigurationConstants.ATTR_TEST_CONTAINER,
+                IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, MunitLaunchConfigurationConstants.ATTR_TEST_METHOD_NAME };
     }
 
-    private static boolean hasSameAttributes(ILaunchConfiguration config1, ILaunchConfiguration config2, String[] attributeToCompare)
-    {
-        try
-        {
-            for (int i = 0; i < attributeToCompare.length; i++)
-            {
+    private static boolean hasSameAttributes(ILaunchConfiguration config1, ILaunchConfiguration config2, String[] attributeToCompare) {
+        try {
+            for (int i = 0; i < attributeToCompare.length; i++) {
                 String val1 = config1.getAttribute(attributeToCompare[i], "");
                 String val2 = config2.getAttribute(attributeToCompare[i], "");
-                if (!val1.equals(val2))
-                {
+                if (!val1.equals(val2)) {
                     return false;
                 }
             }
             return true;
-        }
-        catch (CoreException e)
-        {
+        } catch (CoreException e) {
             // ignore access problems here, return false
         }
         return false;
     }
 
-
-
-    private List<ILaunchConfiguration> findExistingLaunchConfigurations(ILaunchConfigurationWorkingCopy temporary) throws CoreException
-    {
+    private List<ILaunchConfiguration> findExistingLaunchConfigurations(ILaunchConfigurationWorkingCopy temporary) throws CoreException {
         ILaunchConfigurationType configType = temporary.getType();
 
         ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations(configType);
         String[] attributeToCompare = getAttributeNamesToCompare();
 
         List<ILaunchConfiguration> candidateConfigs = new ArrayList<ILaunchConfiguration>(configs.length);
-        for (int i = 0; i < configs.length; i++)
-        {
+        for (int i = 0; i < configs.length; i++) {
             ILaunchConfiguration config = configs[i];
-            if (hasSameAttributes(config, temporary, attributeToCompare))
-            {
+            if (hasSameAttributes(config, temporary, attributeToCompare)) {
                 candidateConfigs.add(config);
             }
         }
         return candidateConfigs;
     }
 
-    public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection)
-    {
-        if (selection instanceof IStructuredSelection)
-        {
+    public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
+        if (selection instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection) selection;
-            if (ss.size() == 1)
-            {
+            if (ss.size() == 1) {
                 return findExistingLaunchConfigurations(ss.getFirstElement());
             }
         }
         return null;
     }
 
-    public ILaunchConfiguration[] getLaunchConfigurations(final IEditorPart editor)
-    {
+    public ILaunchConfiguration[] getLaunchConfigurations(final IEditorPart editor) {
         final ITypeRoot element = JavaUI.getEditorInputTypeRoot(editor.getEditorInput());
-        if (element != null)
-        {
+        if (element != null) {
             IMethod selectedMethod = null;
-            if (Display.getCurrent() == null)
-            {
+            if (Display.getCurrent() == null) {
                 final IMethod[] temp = new IMethod[1];
-                Runnable runnable = new Runnable()
-                {
-                    public void run()
-                    {
+                Runnable runnable = new Runnable() {
+
+                    public void run() {
                         temp[0] = resolveSelectedMethodName(editor, element);
                     }
                 };
                 Display.getDefault().syncExec(runnable);
                 selectedMethod = temp[0];
-            }
-            else
-            {
+            } else {
                 selectedMethod = resolveSelectedMethodName(editor, element);
             }
             Object candidate = element;
-            if (selectedMethod != null)
-            {
+            if (selectedMethod != null) {
                 candidate = selectedMethod;
             }
             return findExistingLaunchConfigurations(candidate);
@@ -257,20 +198,15 @@ public class MunitLaunchShortcut implements ILaunchShortcut2
         return null;
     }
 
-    private ILaunchConfiguration[] findExistingLaunchConfigurations(Object candidate)
-    {
-        if (!(candidate instanceof IJavaElement) && candidate instanceof IAdaptable)
-        {
+    private ILaunchConfiguration[] findExistingLaunchConfigurations(Object candidate) {
+        if (!(candidate instanceof IJavaElement) && candidate instanceof IAdaptable) {
             candidate = ((IAdaptable) candidate).getAdapter(IJavaElement.class);
         }
-        if (candidate instanceof IJavaElement)
-        {
+        if (candidate instanceof IJavaElement) {
             IJavaElement element = (IJavaElement) candidate;
             IJavaElement elementToLaunch = null;
-            try
-            {
-                switch (element.getElementType())
-                {
+            try {
+                switch (element.getElementType()) {
                 case IJavaElement.JAVA_PROJECT:
                 case IJavaElement.PACKAGE_FRAGMENT_ROOT:
                 case IJavaElement.PACKAGE_FRAGMENT:
@@ -285,16 +221,13 @@ public class MunitLaunchShortcut implements ILaunchShortcut2
                     elementToLaunch = ((ICompilationUnit) element).findPrimaryType();
                     break;
                 }
-                if (elementToLaunch == null)
-                {
+                if (elementToLaunch == null) {
                     return null;
                 }
                 ILaunchConfigurationWorkingCopy workingCopy = createLaunchConfiguration(elementToLaunch);
                 List<ILaunchConfiguration> list = findExistingLaunchConfigurations(workingCopy);
                 return (ILaunchConfiguration[]) list.toArray(new ILaunchConfiguration[list.size()]);
-            }
-            catch (CoreException e)
-            {
+            } catch (CoreException e) {
             }
         }
         return null;
@@ -305,53 +238,46 @@ public class MunitLaunchShortcut implements ILaunchShortcut2
         final String mainTypeQualifiedName;
 
         switch (element.getElementType()) {
-            case IJavaElement.JAVA_PROJECT:
-            case IJavaElement.PACKAGE_FRAGMENT_ROOT:
-            case IJavaElement.PACKAGE_FRAGMENT: {
-                String name= JavaElementLabels.getTextLabel(element, JavaElementLabels.ALL_FULLY_QUALIFIED);
-                mainTypeQualifiedName= "";
-                testName= name.substring(name.lastIndexOf(IPath.SEPARATOR) + 1);
-            }
+        case IJavaElement.JAVA_PROJECT:
+        case IJavaElement.PACKAGE_FRAGMENT_ROOT:
+        case IJavaElement.PACKAGE_FRAGMENT: {
+            String name = JavaElementLabels.getTextLabel(element, JavaElementLabels.ALL_FULLY_QUALIFIED);
+            mainTypeQualifiedName = "";
+            testName = name.substring(name.lastIndexOf(IPath.SEPARATOR) + 1);
+        }
             break;
-            case IJavaElement.TYPE: {
-                mainTypeQualifiedName= ((IType) element).getFullyQualifiedName('.'); // don't replace, fix for binary inner types
-                testName= element.getElementName();
-            }
+        case IJavaElement.TYPE: {
+            mainTypeQualifiedName = ((IType) element).getFullyQualifiedName('.'); // don't replace, fix for binary inner types
+            testName = element.getElementName();
+        }
             break;
-            case IJavaElement.METHOD: {
-                IMethod method= (IMethod) element;
-                mainTypeQualifiedName= method.getDeclaringType().getFullyQualifiedName('.');
-                testName= method.getDeclaringType().getElementName() + '.' + method.getElementName();
-            }
+        case IJavaElement.METHOD: {
+            IMethod method = (IMethod) element;
+            mainTypeQualifiedName = method.getDeclaringType().getFullyQualifiedName('.');
+            testName = method.getDeclaringType().getElementName() + '.' + method.getElementName();
+        }
             break;
-            default:
-                throw new IllegalArgumentException("Invalid element type to create a launch configuration: " + element.getClass().getName()); //$NON-NLS-1$
+        default:
+            throw new IllegalArgumentException("Invalid element type to create a launch configuration: " + element.getClass().getName()); //$NON-NLS-1$
         }
 
-
-        ILaunchConfigurationType configType= getLaunchManager().getLaunchConfigurationType(getLaunchConfigurationTypeId());
-        ILaunchConfigurationWorkingCopy wc= configType.newInstance(null, getLaunchManager().generateLaunchConfigurationName(testName));
+        ILaunchConfigurationType configType = getLaunchManager().getLaunchConfigurationType(getLaunchConfigurationTypeId());
+        ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateLaunchConfigurationName(testName));
 
         wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeQualifiedName);
         wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, element.getJavaProject().getElementName());
         return wc;
     }
 
-    
-    public IResource getLaunchableResource(ISelection selection)
-    {
-        if (selection instanceof IStructuredSelection)
-        {
+    public IResource getLaunchableResource(ISelection selection) {
+        if (selection instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection) selection;
-            if (ss.size() == 1)
-            {
+            if (ss.size() == 1) {
                 Object selected = ss.getFirstElement();
-                if (!(selected instanceof IJavaElement) && selected instanceof IAdaptable)
-                {
+                if (!(selected instanceof IJavaElement) && selected instanceof IAdaptable) {
                     selected = ((IAdaptable) selected).getAdapter(IJavaElement.class);
                 }
-                if (selected instanceof IJavaElement)
-                {
+                if (selected instanceof IJavaElement) {
                     return ((IJavaElement) selected).getResource();
                 }
             }
@@ -359,17 +285,12 @@ public class MunitLaunchShortcut implements ILaunchShortcut2
         return null;
     }
 
-    public IResource getLaunchableResource(IEditorPart editor)
-    {
+    public IResource getLaunchableResource(IEditorPart editor) {
         ITypeRoot element = JavaUI.getEditorInputTypeRoot(editor.getEditorInput());
-        if (element != null)
-        {
-            try
-            {
+        if (element != null) {
+            try {
                 return element.getCorrespondingResource();
-            }
-            catch (JavaModelException e)
-            {
+            } catch (JavaModelException e) {
             }
         }
         return null;

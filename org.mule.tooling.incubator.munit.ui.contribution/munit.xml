@@ -3,7 +3,7 @@
 	url="http://www.mulesoft.org/schema/mule/munit" prefix="munit">
 	
 	<global versions="[3.4.0,10.0.0]" localId="config" caption="Munit configuration"
-	 icon="icons/small/Munit-24x16.png" image="icons/small/Munit-24x16.png"
+	 icon="icons/small/MUnit-Palette.png" image="icons/small/MUnit-Palette.png"
 		visible="true" abstract="false" allowMulipleChildren="true"
 		category="org.mule.tooling.category.munit" 
 		description="Defines the Munit condifiguration for the suite">
@@ -21,7 +21,7 @@
 	
 	<container  category="org.mule.tooling.category.munit" 
 	versions="[3.4.0,10.0.0]" localId="test" caption="Test"
-	 icon="icons/small/Munit-24x16.png" image="icons/small/Munit-24x16.png" 
+	 icon="icons/small/MUnit-Palette.png" image="icons/small/MUnit-Palette.png" 
 	 acceptedByElements="http://www.mulesoft.org/schema/mule/core/mule" titleColor="255, 204, 102"
 	  displayNameAttribute="name"
 	  allowsAllExceptInbounds="true"

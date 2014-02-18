@@ -11,7 +11,11 @@ import org.mule.tooling.model.messageflow.MessageFlowEntity;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 import org.mule.tooling.ui.contribution.munit.runner.MunitTestRunnerViewPart;
 
-
+/**
+ * <p>
+ * Figure decorator to show the coverage check over the Message flow node
+ * </p>
+ */
 public class CoverageFigureDecorator implements IFigureDecoratorFactory {
 
     public CoverageFigureDecorator() {
@@ -29,15 +33,15 @@ public class CoverageFigureDecorator implements IFigureDecoratorFactory {
         MessageFlowUtils messageFlowUtils = MessageFlowUtils.getInstance();
 
         MessageFlowEntityRef path = messageFlowUtils.findMulePathForEntityInOpenEditors(entity);
-        CoverageReport report = MunitTestRunnerViewPart.coverageReport;
+        CoverageReport report = MunitTestRunnerViewPart.getCoverageReport();
         if (path == null || report == null) {
             return null;
         }
 
-        if ( report.getCoveredPaths().contains(path.getMulePath().toString()) ){
-                    final ImageDescriptor breakpointImg = MunitPlugin.CHECK_ICON_DESCRIPTOR;
-                    OverlayIcon breakpointOverlay = new OverlayIcon(breakpointImg, null);
-                    return new DefaultFigureDecorator(null, null, breakpointOverlay, null);
+        if (report.getCoveredPaths().contains(path.getMulePath().toString())) {
+            final ImageDescriptor breakpointImg = MunitPlugin.CHECK_ICON_DESCRIPTOR;
+            OverlayIcon breakpointOverlay = new OverlayIcon(breakpointImg, null);
+            return new DefaultFigureDecorator(null, null, breakpointOverlay, null);
         }
         return null;
 

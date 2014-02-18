@@ -21,8 +21,13 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleConstants;
 
-
+/**
+ * <p>
+ * Util launch configuration class to run the tests
+ * </p>
+ */
 public class MunitLaunchConfigurationConstants {
+
     private static final String MUNIT_LAUNCH_CONFIG = "org.eclipse.jdt.munit.launchconfig";
     public static final String ATTR_TEST_METHOD_NAME = "methodName";
     public static final String CONFIGURATION_TAB_NAME = "Test";
@@ -34,7 +39,7 @@ public class MunitLaunchConfigurationConstants {
 
     public static IJavaProject getJavaProject(ILaunchConfiguration configuration) {
         try {
-            String projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+            String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
             if (projectName != null && projectName.length() > 0) {
                 return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(projectName));
             }
@@ -51,28 +56,25 @@ public class MunitLaunchConfigurationConstants {
                 activePage.showView(IConsoleConstants.ID_CONSOLE_VIEW);
                 ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 
-                if ( !runPresentContainer(inputFile, launchManager, mode) ){
+                if (!runPresentContainer(inputFile, launchManager, mode)) {
                     ILaunchConfiguration doSave = crateNewConfig(inputFile, launchManager);
-                    DebugUITools.openLaunchConfigurationDialog(
-                            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                            doSave,
-                            DebugUITools.getLaunchGroup(doSave, mode).getIdentifier(),
-                            null);
+                    DebugUITools.openLaunchConfigurationDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), doSave, DebugUITools.getLaunchGroup(doSave, mode)
+                            .getIdentifier(), null);
                 }
 
             } catch (PartInitException e) {
-                MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Munit could not run", "Munit could not run the tests, " +
-                        "try closing the editor, refreshing your workspace and opening the editor again."); 
+                MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Munit could not run", "Munit could not run the tests, "
+                        + "try closing the editor, refreshing your workspace and opening the editor again.");
             } catch (CoreException e) {
-                MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Munit could not run", "Munit could not run the tests, " +
-                        "try closing the editor, refreshing your workspace and opening the editor again."); 
+                MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Munit could not run", "Munit could not run the tests, "
+                        + "try closing the editor, refreshing your workspace and opening the editor again.");
             }
         }
     }
 
     private static ILaunchConfiguration crateNewConfig(IFile inputFile, ILaunchManager launchManager) throws CoreException {
         ILaunchConfigurationType launchConfiguration = launchManager.getLaunchConfigurationType(MUNIT_LAUNCH_CONFIG);
-        ILaunchConfigurationWorkingCopy newInstance = launchConfiguration.newInstance(null,  launchManager.generateLaunchConfigurationName(inputFile.getName()));
+        ILaunchConfigurationWorkingCopy newInstance = launchConfiguration.newInstance(null, launchManager.generateLaunchConfigurationName(inputFile.getName()));
         newInstance.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, inputFile.getProject().getName());
         newInstance.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, inputFile.getName());
         newInstance.setAttribute(MunitLaunchConfigurationConstants.TEST_RESOURCE, inputFile.getName());
@@ -84,8 +86,9 @@ public class MunitLaunchConfigurationConstants {
 
     private static boolean runPresentContainer(IFile inputFile, ILaunchManager launchManager, String mode) throws CoreException {
         ILaunchConfiguration[] launchConfigurations = launchManager.getLaunchConfigurations();
-        for ( ILaunchConfiguration configuration : launchConfigurations ){
-            if ( !configuration.getAttribute(MunitLaunchConfigurationConstants.TEST_RESOURCE, "").isEmpty() && configuration.getAttribute(MunitLaunchConfigurationConstants.TEST_RESOURCE, "").equals(inputFile.getName())){
+        for (ILaunchConfiguration configuration : launchConfigurations) {
+            if (!configuration.getAttribute(MunitLaunchConfigurationConstants.TEST_RESOURCE, "").isEmpty()
+                    && configuration.getAttribute(MunitLaunchConfigurationConstants.TEST_RESOURCE, "").equals(inputFile.getName())) {
                 DebugUIPlugin.buildAndLaunch(configuration, mode, new NullProgressMonitor());
                 return true;
             }

@@ -3,43 +3,42 @@ package org.mule.tooling.ui.contribution.munit.editors.custom;
 /**
  * <p>
  * The returned message properties of the "then-return" configuration for the mock:when message processor.
- * </p> 
+ * </p>
  */
 public class MockProperties {
-	String name;
-	String value;
-	String type;
-	
-	public MockProperties(String name, String value, String type) {
-		this.name = name;
-		this.value = value;
-		this.type = type;
-	}
 
-	public String getName() {
-		return name;
-	}
+    private String name;
+    private String value;
+    private String type;
 
-	public String getValue() {
-		return value;
-	}
+    public MockProperties(String name, String value, String type) {
+        this.name = name;
+        this.value = value;
+        this.type = type;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	
-	
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
 }

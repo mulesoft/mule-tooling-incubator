@@ -12,32 +12,31 @@ import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 import org.mule.tooling.ui.contribution.munit.actions.RunTestAction;
 import org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor;
 
-
+/**
+ * <p>
+ * Menu extension to run tests
+ * </p>
+ */
 public class RunTestExtension implements IMessageFlowNodeContextMenuProvider {
 
     @Override
     public void addActionsForNode(IMenuManager menu, MessageFlowNode selected) {
-    	if ( comesFromRightEditor(menu) )
-		{
-    		menu.add( new Separator("Test"));
-			MenuManager wrapInMenu = new MenuManager("Munit", "Munit");
-	        menu.appendToGroup("Test", wrapInMenu);
-	        wrapInMenu.add(new RunTestAction(selected, "Run Suite", "run", null, MunitPlugin.RUN_ICON_DESCRIPTOR));
-	        wrapInMenu.add(new RunTestAction(selected, "Debug Suite", "debug", IDebuggerConstants.DEBUG_PERSPECTIVE_ID, MunitPlugin.DEBUG_ICON_DESCRIPTOR));
-		}
+        if (comesFromRightEditor(menu)) {
+            menu.add(new Separator("Test"));
+            MenuManager wrapInMenu = new MenuManager("Munit", "Munit");
+            menu.appendToGroup("Test", wrapInMenu);
+            wrapInMenu.add(new RunTestAction(selected, "Run Suite", "run", null, MunitPlugin.RUN_ICON_DESCRIPTOR));
+            wrapInMenu.add(new RunTestAction(selected, "Debug Suite", "debug", IDebuggerConstants.DEBUG_PERSPECTIVE_ID, MunitPlugin.DEBUG_ICON_DESCRIPTOR));
+        }
     }
 
     protected boolean comesFromRightEditor(IMenuManager menu) {
-        IWorkbenchPage activePage = PlatformUI
-                .getWorkbench()
-                .getActiveWorkbenchWindow()
-                .getActivePage();
-        if (activePage != null ){
+        IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        if (activePage != null) {
             return (activePage.getActiveEditor() instanceof MunitMultiPageEditor);
         }
-        
+
         return false;
     }
 
- 
 }

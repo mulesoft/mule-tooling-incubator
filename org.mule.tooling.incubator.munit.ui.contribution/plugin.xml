@@ -109,7 +109,7 @@
    <extension
          point="org.eclipse.jdt.core.classpathContainerInitializer">
       <classpathContainerInitializer
-            class="org.mule.tooling.ui.contribution.munit.actions.MunitClassPathInitializer"
+            class="org.mule.tooling.ui.contribution.munit.classpath.MunitClassPathInitializer"
             id="MUNIT_RUNTIME">
       </classpathContainerInitializer>      
    </extension>
@@ -119,7 +119,7 @@
             point="org.eclipse.ui.views">
         <view
                 name="Munit"
-                icon="icons/studio16x16.png"
+                icon="icons/munit-16x16.png"
                 category="org.eclipse.jdt.ui.java"
                 fastViewWidthRatio="0.40"
                 class="org.mule.tooling.ui.contribution.munit.runner.MunitTestRunnerViewPart"
@@ -148,7 +148,7 @@
     <extension
             point="org.eclipse.debug.ui.launchConfigurationTypeImages">
         <launchConfigurationTypeImage
-                icon="$nl$/icons/studio16x16.png"
+                icon="$nl$/icons/munit-16x16.png"
                 configTypeID="org.eclipse.jdt.munit.launchconfig"
                 id="org.eclipse.jdt.munit.launchimage">
         </launchConfigurationTypeImage>
@@ -177,12 +177,12 @@
          point="org.mule.tooling.module">
       <module
             description="Munit Pallete"
-            icon="icons/studio16x16.png"
+            icon="icons/munit-16x16.png"
             id="org.mule.tooling.ui.modules.munitModule"
             name="Munit Pallete">
          <category
                expandByDefault="true"
-               icon="icons/studio16x16.png"
+               icon="icons/munit-16x16.png"
                id="org.mule.tooling.category.munit"
                name="Munit"
                paletteWeight="100">
@@ -193,12 +193,12 @@
          point="org.mule.tooling.module">
          <module
             description="Munit assertions category"
-            icon="icons/studio16x16.png"
+            icon="icons/munit-16x16.png"
             id="org.mule.tooling.ui.modules.munitAssertions"
             name="Assertions Pallete">
          <category
                expandByDefault="true"
-               icon="icons/studio16x16.png"
+               icon="icons/munit-16x16.png"
                id="org.mule.tooling.category.munit.assertions"
                name="Munit Assertions"
                paletteWeight="100">
@@ -210,12 +210,12 @@
          point="org.mule.tooling.module">
          <module
             description="Munit Tools Category"
-            icon="icons/studio16x16.png"
+            icon="icons/munit-16x16.png"
             id="org.mule.tooling.ui.modules.munitTools"
             name="Tools Pallete">
          <category
                expandByDefault="true"
-               icon="icons/studio16x16.png"
+               icon="icons/munit-16x16.png"
                id="org.mule.tooling.category.munit.utils"
                name="Munit Integration Test Tools"
                paletteWeight="100">
@@ -284,8 +284,8 @@
          <extension
             point="org.eclipse.debug.ui.launchShortcuts">
         <shortcut
-                label="MUnit"
-                icon="icons/studio16x16.png"
+        		label="MUnit"
+                icon="icons/munit-16x16.png"
                 class="org.mule.tooling.ui.contribution.munit.runner.MunitLaunchShortcut"
                 modes="run, debug"
                 id="org.eclipse.jdt.munit.munitShortcut">
@@ -336,7 +336,7 @@
        		 canFinishEarly="false"
              category="org.mule.tooling.ui.muleWizards"
              class="org.mule.tooling.ui.contribution.munit.wizards.NewTestWizard"
-             icon="icons/studio16x16.png"
+             icon="icons/munit-16x16.png"
              hasPages="true"
              project="false"
              id="org.mule.tooling.ui.contribution.munit.wizards.NewTestWizard"

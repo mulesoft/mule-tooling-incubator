@@ -5,10 +5,10 @@ import org.mule.tooling.model.messageflow.decorator.PropertyCollectionMap;
 /**
  * <p>
  * General interface to accumulative add properties into the {@link PropertyCollectionMap}
- * </p> 
+ * </p>
  */
 public interface PropertyAgregator {
 
-	void agregate(PropertyCollectionMap map);
-	
+    void agregate(PropertyCollectionMap map);
+
 }

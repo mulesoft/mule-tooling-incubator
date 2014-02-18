@@ -20,10 +20,13 @@ import org.mule.tooling.model.messageflow.SplitterNode;
 import org.mule.tooling.model.messageflow.UnknownNode;
 import org.mule.tooling.model.messageflow.util.MessageFlowEntityVisitor;
 
+/**
+ * <p>
+ * Gets the files that are imported from an Munit test, it reads all the import statements from the Munit suite
+ * </p>
+ */
+public class ImportedFilesVisitor implements MessageFlowEntityVisitor {
 
-public class ImportedFilesVisitor implements MessageFlowEntityVisitor{
-
-    
     private List<String> files;
 
     public ImportedFilesVisitor() {
@@ -31,58 +34,70 @@ public class ImportedFilesVisitor implements MessageFlowEntityVisitor{
     }
 
     @Override
-    public void visitMuleConfiguration(MuleConfiguration muleConfiguration) {}
+    public void visitMuleConfiguration(MuleConfiguration muleConfiguration) {
+    }
 
     @Override
     public void visitGlobalElement(GlobalElement globalElement) {
-        if ( "http://www.springframework.org/schema/beans/import".equals(globalElement.getType()) ){
+        if ("http://www.springframework.org/schema/beans/import".equals(globalElement.getType())) {
             files.add(globalElement.getProperties().getProperty("resource").getValue());
         }
     }
 
     @Override
-    public void visitContainer(Container container) {}
+    public void visitContainer(Container container) {
+    }
 
     @Override
-    public void visitNestedContainer(NestedContainer nestedContainer) {}
+    public void visitNestedContainer(NestedContainer nestedContainer) {
+    }
 
     @Override
-    public void visitFlow(Flow flow) {}
+    public void visitFlow(Flow flow) {
+    }
 
     @Override
-    public void visitCompartment(Compartment compartment) {}
+    public void visitCompartment(Compartment compartment) {
+    }
 
     @Override
-    public void visitCompartmentLane(CompartmentLane lane) {}
+    public void visitCompartmentLane(CompartmentLane lane) {
+    }
 
     @Override
-    public void visitMultiSourceNode(MultiSourceNode multiSourceNode) {}
+    public void visitMultiSourceNode(MultiSourceNode multiSourceNode) {
+    }
 
     @Override
-    public void visitScopeNode(ScopeNode scopeNode) {}
+    public void visitScopeNode(ScopeNode scopeNode) {
+    }
 
     @Override
-    public void visitResponseNode(ResponseNode responseNode) {}
+    public void visitResponseNode(ResponseNode responseNode) {
+    }
 
     @Override
-    public void visitEndpointNode(EndpointNode endpointNode) { }
+    public void visitEndpointNode(EndpointNode endpointNode) {
+    }
 
     @Override
-    public void visitPatternNode(PatternNode patternNode) {}
+    public void visitPatternNode(PatternNode patternNode) {
+    }
 
     @Override
-    public void visitSplitterNode(SplitterNode splitterNode) {}
+    public void visitSplitterNode(SplitterNode splitterNode) {
+    }
 
     @Override
-    public void visitGlobalUnknown(GlobalUnknown globalUnknown) {}
+    public void visitGlobalUnknown(GlobalUnknown globalUnknown) {
+    }
 
     @Override
-    public void visitUnknownNode(UnknownNode unknownNode) {}
+    public void visitUnknownNode(UnknownNode unknownNode) {
+    }
 
-    
     public List<String> getFiles() {
         return files;
     }
-    
-    
+
 }

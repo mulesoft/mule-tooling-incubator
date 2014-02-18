@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<!--
+	to change this see puglin.xml.template
+ -->
+   <extension
+         point="org.mule.tooling.server">
+      <server
+            enterpriseRuntime="true"
+            id="org.mule.tooling.server.@muleVersionNumber@.ee"
+            label="@muleServerLabel@"
+            schemaLocationLookup="org.mule.tooling.server.SchemaLocationLookup"
+            sourcePath="mule/src/mule-sources-@muleVersion@.zip"
+            version="@muleVersionNumber@"
+            versionSuffix="@muleVersionSuffix@"
+            cloudhubEnabled="true"
+            onpremiseEnabled="false">
+         <libraryFolder
+               includeInContainer="false"
+               label="Tooling Support"
+               path="mule/tooling/"
+               populateContentsInMavenRepo="false"
+               runtimeLauncherClasspathOrder="1">
+         </libraryFolder>
+         <libraryFolder
+               includeInContainer="true"
+               label="Boot Libraries"
+               path="mule/lib/boot/"
+               populateContentsInMavenRepo="true"
+               runtimeLauncherClasspathOrder="2">
+               <inclusion
+                     regex=".*\.jar">
+               </inclusion>
+               <exclusion
+                     regex=".*licm-studio.*\.jar">
+               </exclusion>
+         </libraryFolder>
+         <classpath
+            label="Resources directory"
+            path="mule/data-mapper"
+            runtimeLauncherClasspathOrder="3">
+         </classpath>
+         <libraryFolder
+               includeInContainer="true"
+               label="User"
+               path="mule/lib/user/"
+               populateContentsInMavenRepo="true"
+               runtimeLauncherClasspathOrder="4">
+               <inclusion
+                     regex=".*mule-tests-functional.*\.jar">
+               </inclusion>
+         </libraryFolder>
+         <libraryFolder
+               includeInContainer="true"
+               label="Optional Libraries"
+               path="mule/lib/opt/"
+               populateContentsInMavenRepo="true"
+               runtimeLauncherClasspathOrder="5">
+               <inclusion
+                     regex=".*\.jar">
+               </inclusion>
+         </libraryFolder>
+         <libraryFolder
+               includeInContainer="true"
+               label="Mule Core Libraries"
+               path="mule/lib/mule/"
+               populateContentsInMavenRepo="true"
+               runtimeLauncherClasspathOrder="6">
+		        <exclusion
+		              regex=".*mule-ee-parent-poms.*">
+		        </exclusion>
+		        <exclusion
+		              regex=".*mule-local-install\.jar">
+		        </exclusion>
+		        <inclusion
+		              regex=".*mule.*\.jar">
+		        </inclusion>
+         </libraryFolder>         
+         <libraryFolder
+               includeInContainer="true"
+               label="Endorsed Libraries"
+               path="mule/lib/endorsed/"
+               populateContentsInMavenRepo="false"
+               runtimeLauncherClasspathOrder="-1">
+         </libraryFolder>
+         <libraryFolder
+               includeInContainer="false"
+               label="Mule Addons"
+               path="mule/addons/"
+               populateContentsInMavenRepo="true"
+               runtimeLauncherClasspathOrder="-1">
+               <inclusion
+                     regex=".*">
+               </inclusion>
+         </libraryFolder>
+         <libraryFolder
+               includeInContainer="true"
+               label="Mule Core Libraries (per app)"
+               path="mule/lib/mule/per-app/"
+               populateContentsInMavenRepo="true"
+               runtimeLauncherClasspathOrder="-1">
+               <inclusion
+                     regex=".*mule.*\.jar">
+               </inclusion>
+         </libraryFolder>
+         
+         <!-- examples -->
+         <example
+               description="Demonstrates Mule in action with a simple HTTP request-response application."
+               label="Hello World"
+               path="mule/examples/hello-world.zip">
+         </example>         
+         <example
+               description="Demonstrates logger functionality in a simple HTTP request-response application."
+               label="HTTP Request-Response with Logger"
+               path="mule/examples/http-request-response-with-logger.zip">
+         </example>
+         <example
+               description="Demonstrates DataMapper's ability to reference an independent flow and easily extract, transform and map data."
+               label="DataMapper with FlowRefLookup"
+               path="mule/examples/datamapper-with-flowreflookup.zip">
+         </example>
+         <example
+               description="Facilitates connectivity between an on-prem system and a SaaS application."
+               label="Connect with Salesforce"
+               path="mule/examples/connect-with-salesforce.zip">
+         </example>
+         <example
+               description="Connects a a new HTTP order acceptance service to a legacy FTP fullfillment system."
+               label="Legacy Modernization"
+               path="mule/examples/legacy-modernization.zip">
+         </example>
+         <example
+               description="Iteratively processes collections, enriches payloads and intelligently employs content-based routing."
+               label="Foreach Processing and Choice Routing"
+               path="mule/examples/foreach-processing-and-choice-routing.zip">
+         </example> 
+         <example
+               description="Sends, receives and processes messages in cooperation with WMQ."
+               label="WebSphere MQ"
+               path="mule/examples/websphere-mq.zip">
+         </example>
+         <example
+               description="Orchestrates calls between Web services without using Java."
+               label="XML-only SOAP Web Service"
+               path="mule/examples/xml-only-soap-webservice.zip">
+         </example> 
+         <example
+               description="Applies increasingly tighter security measures to a SOAP Web service."
+               label="SOAP Web Service Security"
+               path="mule/examples/soap-webservice-security.zip">
+         </example>
+        <example
+               description="Illustrates complex Web service orchestration involving content-based routing, and iterative foreach processing."
+               label="Service Orchestration and Choice Routing"
+               path="mule/examples/service-orchestration-and-choice-routing.zip">
+         </example>
+      </server>
+   </extension>
+   <extension
+         point="org.mule.tooling.server.artifacts">
+       <artifactCollection
+               serverId="org.mule.tooling.server.3.5.0.ee">
+            <artifact
+                  groupId="de.schlichtherle.io"
+                  artifactId="truezip"
+                  version="6.6"
+                  fileName="truezip-6.6.jar">
+            </artifact>
+            <artifact
+                  groupId="de.schlichtherle"
+                  artifactId="truelicense"
+                  version="1.29"
+                  fileName="truelicense-1.29.jar">
+            </artifact>
+            <artifact
+                  groupId="de.schlichtherle"
+                  artifactId="truexml"
+                  version="1.29"
+                  fileName="truexml-1.29.jar">
+            </artifact>
+            <artifact
+                  groupId="commons-jxpath"
+                  artifactId="commons-jxpath"
+                  version="1.3-osgi"
+                  fileName="commons-jxpath-1.3-osgi.jar">
+            </artifact>
+            <artifact
+                  groupId="commons-codec"
+                  artifactId="commons-codec"
+                  version="1.3-osgi"
+                  fileName="commons-codec-1.3-osgi.jar">
+            </artifact>
+            <artifact
+                  groupId="xpp3"
+                  artifactId="xpp3_min"
+                  version="1.1.3.4.O-osgi"
+                  fileName="xpp3_min-1.1.3.4.O-osgi.jar">
+            </artifact>
+            <artifact
+                  groupId="jaxen"
+                  artifactId="jaxen"
+                  version="1.1.1-osgi"
+                  fileName="jaxen-1.1.1-osgi.jar">
+            </artifact>
+            <artifact
+                  groupId="net.java.dev.stax-utils"
+                  artifactId="stax-utils"
+                  version="20080702-osgi"
+                  fileName="stax-utils-20080702-osgi.jar">
+            </artifact>
+            <artifact
+                  groupId="commons-httpclient"
+                  artifactId="commons-httpclient"
+                  version="3.1-osgi"
+                  fileName="commons-httpclient-3.1-osgi.jar">
+            </artifact>
+            <artifact
+                  groupId="org.springmodules"
+                  artifactId="spring-modules-cache"
+                  version="0.9"
+                  fileName="spring-modules-cache-0.9.jar">
+            </artifact>
+            <artifact
+                  groupId="com.ibm.icu"
+                  artifactId="icu4j-normalizer_transliterator"
+                  version="4.8.1.1"
+                  fileName="icu4j-normalizer_transliterator-4.8.1.1.jar">
+            </artifact>
+            <artifact
+                  groupId="com.googlecode.sardine"
+                  artifactId="sardine"
+                  version="248"
+                  fileName="sardine-248.jar">
+            </artifact>
+         </artifactCollection>
+   </extension>
+</plugin>

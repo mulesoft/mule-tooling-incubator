@@ -1,4 +1,4 @@
-package org.mule.tooling.ui.contribution.munit.actions;
+package org.mule.tooling.ui.contribution.munit.classpath;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -7,6 +7,11 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 
+/**
+ * <p>
+ * {@link ClasspathContainerInitializer} for the {@link MunitClassPathContainer}
+ * </p>
+ */
 public class MunitClassPathInitializer extends ClasspathContainerInitializer {
 
     @Override
@@ -18,5 +23,5 @@ public class MunitClassPathInitializer extends ClasspathContainerInitializer {
     @Override
     public boolean canUpdateClasspathContainer(IPath containerPath, IJavaProject project) {
         return true;
-    }        
+    }
 }

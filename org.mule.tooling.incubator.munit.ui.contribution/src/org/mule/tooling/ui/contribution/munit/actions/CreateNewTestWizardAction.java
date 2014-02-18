@@ -9,7 +9,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 
-
+/**
+ * <p>
+ * Menu action to create a new tests using the test wizard
+ * </p>
+ */
 public class CreateNewTestWizardAction extends Action {
 
     public CreateNewTestWizardAction() {
@@ -23,21 +27,17 @@ public class CreateNewTestWizardAction extends Action {
     @Override
     public void run() {
         IWorkbench workbench = PlatformUI.getWorkbench();
-        IWizardDescriptor descriptor = workbench
-                .getNewWizardRegistry().findWizard("org.mule.tooling.ui.contribution.munit.wizards.NewTestWizard");
-        try  {
-            // Then if we have a wizard, open it.
-            if  (descriptor != null) {
+        IWizardDescriptor descriptor = workbench.getNewWizardRegistry().findWizard(MunitPlugin.TEST_WIZARD_ID);
+        try {
+            if (descriptor != null) {
                 IWizard wizard = descriptor.createWizard();
-                WizardDialog wd = new  WizardDialog(workbench.getActiveWorkbenchWindow().getShell(), wizard);
+                WizardDialog wd = new WizardDialog(workbench.getActiveWorkbenchWindow().getShell(), wizard);
                 wd.setTitle(wizard.getWindowTitle());
                 wd.open();
             }
-        } catch  (CoreException e) {
-            e.printStackTrace();
+        } catch (CoreException e) {
+            MunitPlugin.log(e);
         }
     }
 
 }
-
-

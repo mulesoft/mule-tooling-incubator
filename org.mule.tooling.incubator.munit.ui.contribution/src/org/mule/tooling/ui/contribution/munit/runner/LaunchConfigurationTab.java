@@ -1,9 +1,3 @@
-/*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
- */
 package org.mule.tooling.ui.contribution.munit.runner;
 
 import org.eclipse.core.resources.IProject;
@@ -40,9 +34,12 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-
-public class LaunchConfigurationTab extends AbstractLaunchConfigurationTab
-{
+/**
+ * <p>
+ * The tab for the Munit launch configuration where the test and project is set, UI only
+ * </p>
+ */
+public class LaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
     private Label fProjLabel;
     private Text fProjText;
@@ -50,9 +47,7 @@ public class LaunchConfigurationTab extends AbstractLaunchConfigurationTab
     private Text fTestText;
     private Label fTestLabel;
 
-
-    public void createControl(Composite parent)
-    {
+    public void createControl(Composite parent) {
         Composite comp = new Composite(parent, SWT.NONE);
         setControl(comp);
 
@@ -66,16 +61,14 @@ public class LaunchConfigurationTab extends AbstractLaunchConfigurationTab
         validatePage();
     }
 
-    private void createSpacer(Composite comp)
-    {
+    private void createSpacer(Composite comp) {
         Label label = new Label(comp, SWT.NONE);
         GridData gd = new GridData();
         gd.horizontalSpan = 2;
         label.setLayoutData(gd);
     }
 
-    private void createSingleTestSection(Composite comp)
-    {
+    private void createSingleTestSection(Composite comp) {
         GridData gd = new GridData();
         gd.horizontalSpan = 2;
 
@@ -97,136 +90,117 @@ public class LaunchConfigurationTab extends AbstractLaunchConfigurationTab
         fTestText = new Text(comp, SWT.SINGLE | SWT.BORDER);
         fTestText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        fProjText.addModifyListener(new ModifyListener()
-        {
-            public void modifyText(ModifyEvent evt)
-            {
+        fProjText.addModifyListener(new ModifyListener() {
+
+            public void modifyText(ModifyEvent evt) {
                 validatePage();
                 updateLaunchConfigurationDialog();
             }
         });
 
-        fTestText.addModifyListener(new ModifyListener()
-        {
-            public void modifyText(ModifyEvent evt)
-            {
+        fTestText.addModifyListener(new ModifyListener() {
+
+            public void modifyText(ModifyEvent evt) {
                 validatePage();
                 updateLaunchConfigurationDialog();
             }
         });
     }
 
-    public void initializeFrom(ILaunchConfiguration config)
-    {
+    public void initializeFrom(ILaunchConfiguration config) {
         updateProjectFromConfig(config);
         updateTestFromConfig(config);
         validatePage();
     }
 
-    private void updateProjectFromConfig(ILaunchConfiguration config)
-    {
+    private void updateProjectFromConfig(ILaunchConfiguration config) {
         String projectName = "";
-        try{
-            projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); 
-        }
-        catch (CoreException ce){
+        try {
+            projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+        } catch (CoreException ce) {
         }
 
         fProjText.setText(projectName);
     }
 
-    private void updateTestFromConfig(ILaunchConfiguration config)
-    {
-        String testName = ""; 
-        try{
-            testName = config.getAttribute("resource", ""); 
-        }
-        catch (CoreException ce){
+    private void updateTestFromConfig(ILaunchConfiguration config) {
+        String testName = "";
+        try {
+            testName = config.getAttribute("resource", "");
+        } catch (CoreException ce) {
         }
         fTestText.setText(testName);
     }
 
-    protected void updateLaunchConfigurationDialog()
-    {
-        if (getLaunchConfigurationDialog() != null)
-        {
+    protected void updateLaunchConfigurationDialog() {
+        if (getLaunchConfigurationDialog() != null) {
             getLaunchConfigurationDialog().updateButtons();
             getLaunchConfigurationDialog().updateMessage();
         }
     }
 
-    public void performApply(ILaunchConfigurationWorkingCopy config)
-    {
+    public void performApply(ILaunchConfigurationWorkingCopy config) {
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText());
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, fTestText.getText());
-        config.setAttribute(MunitLaunchConfigurationConstants.TEST_RESOURCE, fTestText.getText()); 
-        config.setAttribute(MunitLaunchConfigurationConstants.MUNIT_TEST_PATH, "/" + fProjText.getText() + "/src/test/munit/" + fTestText.getText()); 
+        config.setAttribute(MunitLaunchConfigurationConstants.TEST_RESOURCE, fTestText.getText());
+        config.setAttribute(MunitLaunchConfigurationConstants.MUNIT_TEST_PATH, "/" + fProjText.getText() + "/src/test/munit/" + fTestText.getText());
     }
 
-    public void dispose()
-    {
+    public void dispose() {
         super.dispose();
     }
 
-    public Image getImage()
-    {
+    public Image getImage() {
         return null;
     }
 
-
-    private IWorkspaceRoot getWorkspaceRoot()
-    {
+    private IWorkspaceRoot getWorkspaceRoot() {
         return ResourcesPlugin.getWorkspace().getRoot();
     }
 
-    public boolean isValid(ILaunchConfiguration config)
-    {
+    public boolean isValid(ILaunchConfiguration config) {
         validatePage();
         return true;
     }
 
-
-    protected void setErrorMessage(String errorMessage)
-    {
+    protected void setErrorMessage(String errorMessage) {
         super.setErrorMessage(errorMessage);
     }
 
-    private void validatePage()
-    {
+    private void validatePage() {
         setErrorMessage(null);
         setMessage(null);
         String projectName = fProjText.getText().trim();
 
-        if ( !isProjectConfigured(projectName) ) return;
-        if ( !isValidProjectName(projectName) ) return;
+        if (!isProjectConfigured(projectName))
+            return;
+        if (!isValidProjectName(projectName))
+            return;
 
         IProject project = getWorkspaceRoot().getProject(projectName);
 
-        if (!doesProjectExtist(project)) return;
-        if (!checkTestFileIsCorrect(project)) return;
+        if (!doesProjectExtist(project))
+            return;
+        if (!checkTestFileIsCorrect(project))
+            return;
 
     }
 
     private boolean checkTestFileIsCorrect(IProject project) {
         IJavaProject javaProject = JavaCore.create(project);
 
-        try
-        {
+        try {
             String className = fTestText.getText().trim();
-            if (className.length() == 0)
-            {
+            if (className.length() == 0) {
                 setErrorMessage("Test file is not specified. You must enter the name of the file in the munit folder that you want to run");
                 return false;
             }
             IType type = javaProject.findType(className);
-            if (type == null)
-            {
+            if (type == null) {
                 return false;
             }
 
-        }
-        catch (CoreException e)
-        {
+        } catch (CoreException e) {
             setErrorMessage("File not found in munit folder");
             return false;
         }
@@ -235,8 +209,7 @@ public class LaunchConfigurationTab extends AbstractLaunchConfigurationTab
     }
 
     private boolean doesProjectExtist(IProject project) {
-        if (!project.exists())
-        {
+        if (!project.exists()) {
             setErrorMessage("Project does not Exists.");
             return false;
         }
@@ -246,8 +219,7 @@ public class LaunchConfigurationTab extends AbstractLaunchConfigurationTab
 
     private boolean isValidProjectName(String projectName) {
         IStatus status = ResourcesPlugin.getWorkspace().validatePath(IPath.SEPARATOR + projectName, IResource.PROJECT);
-        if (!status.isOK() || !Path.ROOT.isValidSegment(projectName))
-        {
+        if (!status.isOK() || !Path.ROOT.isValidSegment(projectName)) {
             setErrorMessage("Invalid Project name");
             return false;
         }
@@ -256,50 +228,43 @@ public class LaunchConfigurationTab extends AbstractLaunchConfigurationTab
     }
 
     private boolean isProjectConfigured(String projectName) {
-        if (projectName.length() == 0){
+        if (projectName.length() == 0) {
             setErrorMessage("Project not specified");
             return false;
         }
         return true;
     }
 
-
-    public void setDefaults(ILaunchConfigurationWorkingCopy config)
-    {
+    public void setDefaults(ILaunchConfigurationWorkingCopy config) {
         IJavaElement javaElement = getContext();
-        if (javaElement != null){
+        if (javaElement != null) {
             initializeJavaProject(javaElement, config);
-        }
-        else{
+        } else {
             config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
-            config.setAttribute(MunitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, ""); 
+            config.setAttribute(MunitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, "");
         }
         initializeTestAttributes(javaElement, config);
     }
 
-    private void initializeTestAttributes(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config)
-    {
-        if (javaElement != null && javaElement.getElementType() < IJavaElement.COMPILATION_UNIT){
+    private void initializeTestAttributes(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
+        if (javaElement != null && javaElement.getElementType() < IJavaElement.COMPILATION_UNIT) {
 
-            initializeTestContainer(javaElement,  config);
+            initializeTestContainer(javaElement, config);
         }
     }
 
-    private void initializeTestContainer(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config)
-    {
+    private void initializeTestContainer(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
         config.setAttribute(MunitLaunchConfigurationConstants.ATTR_TEST_CONTAINER, javaElement.getHandleIdentifier());
         initializeName(config, javaElement.getElementName());
     }
 
-    private void initializeName(ILaunchConfigurationWorkingCopy config, String name)
-    {
-        if (name == null){
-            name = ""; 
+    private void initializeName(ILaunchConfigurationWorkingCopy config, String name) {
+        if (name == null) {
+            name = "";
         }
-        if (name.length() > 0){
+        if (name.length() > 0) {
             int index = name.lastIndexOf('.');
-            if (index > 0)
-            {
+            if (index > 0) {
                 name = name.substring(index + 1);
             }
             name = getLaunchConfigurationDialog().generateName(name);
@@ -307,50 +272,39 @@ public class LaunchConfigurationTab extends AbstractLaunchConfigurationTab
         }
     }
 
-    public String getName()
-    {
+    public String getName() {
         return MunitLaunchConfigurationConstants.CONFIGURATION_TAB_NAME;
     }
 
-    private IJavaElement getContext()
-    {
+    private IJavaElement getContext() {
         IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        if (activeWorkbenchWindow == null)
-        {
+        if (activeWorkbenchWindow == null) {
             return null;
         }
         IWorkbenchPage page = activeWorkbenchWindow.getActivePage();
-        if (page != null)
-        {
+        if (page != null) {
             ISelection selection = page.getSelection();
-            if (selection instanceof IStructuredSelection)
-            {
+            if (selection instanceof IStructuredSelection) {
                 IStructuredSelection ss = (IStructuredSelection) selection;
-                if (!ss.isEmpty())
-                {
+                if (!ss.isEmpty()) {
                     Object obj = ss.getFirstElement();
-                    if (obj instanceof IJavaElement)
-                    {
+                    if (obj instanceof IJavaElement) {
                         return (IJavaElement) obj;
                     }
-                    if (obj instanceof IResource)
-                    {
+                    if (obj instanceof IResource) {
                         IJavaElement je = JavaCore.create((IResource) obj);
-                        if (je == null)
-                        {
+                        if (je == null) {
                             IProject pro = ((IResource) obj).getProject();
                             je = JavaCore.create(pro);
                         }
-                        if (je != null)
-                        {
+                        if (je != null) {
                             return je;
                         }
                     }
                 }
             }
             IEditorPart part = page.getActiveEditor();
-            if (part != null)
-            {
+            if (part != null) {
                 IEditorInput input = part.getEditorInput();
                 return (IJavaElement) input.getAdapter(IJavaElement.class);
             }
@@ -358,21 +312,17 @@ public class LaunchConfigurationTab extends AbstractLaunchConfigurationTab
         return null;
     }
 
-    private void initializeJavaProject(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config)
-    {
+    private void initializeJavaProject(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
         IJavaProject javaProject = javaElement.getJavaProject();
         String name = null;
-        if (javaProject != null && javaProject.exists())
-        {
+        if (javaProject != null && javaProject.exists()) {
             name = javaProject.getElementName();
         }
         config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
     }
 
-    public String getId()
-    {
-        return MunitLaunchConfigurationConstants.MUNIT_TEST_ID; 
+    public String getId() {
+        return MunitLaunchConfigurationConstants.MUNIT_TEST_ID;
     }
-
 
 }

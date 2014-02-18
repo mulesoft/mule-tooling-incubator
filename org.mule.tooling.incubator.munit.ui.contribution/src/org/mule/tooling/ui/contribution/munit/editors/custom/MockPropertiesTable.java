@@ -1,6 +1,5 @@
 package org.mule.tooling.ui.contribution.munit.editors.custom;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,14 +31,14 @@ import org.mule.tooling.ui.widgets.util.WidgetUtils;
 /**
  * <p>
  * Visual table to show {@link MockProperties}
- * </p> 
+ * </p>
  */
 public class MockPropertiesTable extends Composite {
 
     private static final String VALUE_PROPERTY = "Value";
     private static final String NAME_PROPERTY = "Key";
     private static final String TYPE_PROPERTY = "Type";
-    
+
     private String[] columns;
     private Action delete;
     private Action add;
@@ -55,7 +54,7 @@ public class MockPropertiesTable extends Composite {
         this.setLayout(widgetUtils.createNoBorderGridLayout(1, true));
         createControl(this, widgetUtils);
         this.listeners = new ArrayList<IModificationListener>();
-        
+
     }
 
     public void addModificationListener(IModificationListener listener) {
@@ -78,8 +77,9 @@ public class MockPropertiesTable extends Composite {
         ComboBoxViewerCellEditor comboBoxViewerCellEditor = new ComboBoxViewerCellEditor(tableViewer.getTable(), SWT.NONE);
         comboBoxViewerCellEditor.setContentProvider(new ArrayContentProvider());
         comboBoxViewerCellEditor.setLabelProvider(new LabelProvider());
-        comboBoxViewerCellEditor.setInput(new String[]{"INBOUND", "OUTBOUND", "INVOCATION"});
-		tableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(tableViewer.getTable(), SWT.NONE), new TextCellEditor(tableViewer.getTable(), SWT.NONE), comboBoxViewerCellEditor });
+        comboBoxViewerCellEditor.setInput(new String[] { "INBOUND", "OUTBOUND", "INVOCATION" });
+        tableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(tableViewer.getTable(), SWT.NONE), new TextCellEditor(tableViewer.getTable(), SWT.NONE),
+                comboBoxViewerCellEditor });
         tableViewer.setContentProvider(new ArrayContentProvider());
         tableViewer.setLabelProvider(new PairLabelProvider());
         tableViewer.setCellModifier(new PairCellModifier());
@@ -127,7 +127,7 @@ public class MockPropertiesTable extends Composite {
 
             @Override
             public void run() {
-            	MockProperties element = new MockProperties("Name", "Value", "INVOCATION");
+                MockProperties element = new MockProperties("Name", "Value", "INVOCATION");
                 tableViewer.add(element);
                 data.add(element);
                 notifyModified(element);
@@ -138,7 +138,7 @@ public class MockPropertiesTable extends Composite {
         manager.update(true);
         return ts;
     }
-  
+
     private static class PairLabelProvider extends LabelProvider implements ITableLabelProvider {
 
         @Override
@@ -177,11 +177,10 @@ public class MockPropertiesTable extends Composite {
             if (element instanceof MockProperties) {
                 if (property.equals(NAME_PROPERTY)) {
                     return ((MockProperties) element).getName();
-                } else if (property.equals(VALUE_PROPERTY)){
+                } else if (property.equals(VALUE_PROPERTY)) {
                     return ((MockProperties) element).getValue();
-                }
-                else{
-                	return ((MockProperties) element).getType();
+                } else {
+                    return ((MockProperties) element).getType();
                 }
             }
             return null;
@@ -192,20 +191,18 @@ public class MockPropertiesTable extends Composite {
             TableItem item = (TableItem) element;
             Object data = item.getData();
             if (data instanceof MockProperties) {
-            	if (property.equals(NAME_PROPERTY)) {
+                if (property.equals(NAME_PROPERTY)) {
                     ((MockProperties) data).setName(String.valueOf(value));
-                } else if (property.equals(VALUE_PROPERTY)){
+                } else if (property.equals(VALUE_PROPERTY)) {
                     ((MockProperties) data).setValue(String.valueOf(value));
+                } else {
+                    ((MockProperties) data).setType(String.valueOf(value));
                 }
-                else{
-                	((MockProperties) data).setType(String.valueOf(value));
-                }
-              
+
                 tableViewer.update(data, new String[] { property });
                 notifyModified(data);
             }
 
         }
     }
-
 }

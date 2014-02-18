@@ -26,6 +26,7 @@ import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.ui.contribution.munit.MunitResourceUtils;
 
 public class NewTestWizard extends Wizard implements INewWizard {
+
     private NewTestWizardPage page;
     private ISelection selection;
 
@@ -43,6 +44,7 @@ public class NewTestWizard extends Wizard implements INewWizard {
         final String containerName = page.getContainerName();
         final String fileName = page.getFileName();
         IRunnableWithProgress op = new IRunnableWithProgress() {
+
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
                     doFinish(containerName, fileName, monitor);
@@ -65,12 +67,7 @@ public class NewTestWizard extends Wizard implements INewWizard {
         return true;
     }
 
-
-    private void doFinish(
-            String containerName,
-            String fileName,
-            IProgressMonitor monitor)
-                    throws CoreException {
+    private void doFinish(String containerName, String fileName, IProgressMonitor monitor) throws CoreException {
         monitor.beginTask("Creating " + fileName, 2);
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         final IResource resource = root.getFile(new Path(containerName));
@@ -86,7 +83,7 @@ public class NewTestWizard extends Wizard implements INewWizard {
                 try {
                     IMuleProject muleProject = new MuleProjectImpl();
                     muleProject.initialize(JavaCore.create(container.getProject()));
-                    MunitResourceUtils.configreProjectForMunit(muleProject);
+                    MunitResourceUtils.configureProjectForMunit(muleProject);
                     IFolder munitFolder = MunitResourceUtils.createMunitFolder(muleProject);
                     IFile munitFile = MunitResourceUtils.createXMLConfigurationFromTemplate(muleProject, page.getFileName(), resource.getName(), munitFolder);
                     MunitResourceUtils.open(munitFile);
@@ -102,8 +99,7 @@ public class NewTestWizard extends Wizard implements INewWizard {
     }
 
     private void throwCoreException(String message) throws CoreException {
-        IStatus status =
-                new Status(IStatus.ERROR, "org.mule.tooling.ui.contribution.munit", IStatus.OK, message, null);
+        IStatus status = new Status(IStatus.ERROR, "org.mule.tooling.ui.contribution.munit", IStatus.OK, message, null);
         throw new CoreException(status);
     }
 

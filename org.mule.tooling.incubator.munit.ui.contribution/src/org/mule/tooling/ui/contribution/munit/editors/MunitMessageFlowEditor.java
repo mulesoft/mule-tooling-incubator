@@ -36,25 +36,23 @@ import org.mule.tooling.ui.contribution.munit.MunitPlugin;
  * <li>Handles the production code and test code at the same time</li>
  * </ol>
  */
-public class MunitMessageFlowEditor extends MessageFlowEditor{
+public class MunitMessageFlowEditor extends MessageFlowEditor {
 
     private static boolean showTestsOnly = false;
 
-    public static synchronized void showTestsOnly(boolean value){
+    public static synchronized void showTestsOnly(boolean value) {
         showTestsOnly = value;
     }
-    
+
     @Override
-    protected MunitConfigurationDecorator createModelRoot(
-            MuleConfiguration config) {
+    protected MunitConfigurationDecorator createModelRoot(MuleConfiguration config) {
         return new MunitConfigurationDecorator(config);
     }
 
- 
     @Override
     protected void initListeners() {
         super.initListeners();
-       
+
         addSelectionChangedListener(new ISelectionChangedListener() {
 
             @Override
@@ -80,36 +78,33 @@ public class MunitMessageFlowEditor extends MessageFlowEditor{
 
     public void reloadTests() {
         EntityEditPart<?> editPart = ((EntityEditPart<?>) viewer.getContents());
-        for ( Object child : editPart.getChildren()){
-            if ( child instanceof FlowEditPart){
-                    IFigure figure = ((EntityEditPart) child).getFigure();
-                    figure.setVisible(!showTestsOnly);
-                    
-                    if ( showTestsOnly ){
-                            hideConnections((EntityEditPart) child);
-                    }
-                    else{
-                        showConnections((EntityEditPart) child);
-                    }
-                    
+        for (Object child : editPart.getChildren()) {
+            if (child instanceof FlowEditPart) {
+                IFigure figure = ((EntityEditPart) child).getFigure();
+                figure.setVisible(!showTestsOnly);
+
+                if (showTestsOnly) {
+                    hideConnections((EntityEditPart) child);
+                } else {
+                    showConnections((EntityEditPart) child);
                 }
-               
+
             }
+
+        }
         getProductionMuleConfiguration();
-        StudioDesignContextRunner.runSilentWithMuleProjectInUI( new Callable<Void>() {
-			
-			@Override
-			public Void call() throws Exception {
-			      ((EntityEditPart) viewer.getContents()).refresh();
-			      ((EntityEditPart) viewer.getContents()).getFigure().repaint();
-				return null;
-			}
-		}, project);
-  
+        StudioDesignContextRunner.runSilentWithMuleProjectInUI(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                ((EntityEditPart) viewer.getContents()).refresh();
+                ((EntityEditPart) viewer.getContents()).getFigure().repaint();
+                return null;
+            }
+        }, project);
+
     }
-    
-    
-    
+
     @Override
     protected void createForms(Composite parent) {
         super.createForms(parent);
@@ -151,12 +146,11 @@ public class MunitMessageFlowEditor extends MessageFlowEditor{
         }
     }
 
-
     public MuleConfiguration getProductionMuleConfiguration() {
         List<JAXBElement<? extends MessageFlowEntity>> globalEntries = modelRoot.getEntity().getGlobalEntries();
 
         ImportedFilesVisitor visitor = new ImportedFilesVisitor();
-        for ( JAXBElement<? extends MessageFlowEntity> globalEntry : globalEntries){
+        for (JAXBElement<? extends MessageFlowEntity> globalEntry : globalEntries) {
             globalEntry.getValue().accept(visitor);
         }
 
@@ -164,28 +158,24 @@ public class MunitMessageFlowEditor extends MessageFlowEditor{
         MuleConfigurationsCache cache = MuleConfigurationsCache.getDefaultInstance();
         MuleConfiguration productionConfigurationFlows = new MuleConfiguration();
         List<MuleConfigurationEntry> configurationEntries = cache.getConfigurationEntries(getMuleProject());
-        for ( MuleConfigurationEntry entry : configurationEntries){
+        for (MuleConfigurationEntry entry : configurationEntries) {
             String fileName = entry.getConfigurationFile().getName().replace(".mflow", "");
-            for ( String importedFile : importedFiles){
-                if ( importedFile.contains(fileName) ){
+            for (String importedFile : importedFiles) {
+                if (importedFile.contains(fileName)) {
                     productionConfigurationFlows.getFlows().addAll(entry.getMuleConfiguration().getFlows());
                 }
             }
         }
         return productionConfigurationFlows;
     }
-    
 
-    private static class MunitPalleteFilter extends MessageFlowEditorPaletteCategoryFilter
-    {
+    private static class MunitPalleteFilter extends MessageFlowEditorPaletteCategoryFilter {
 
         @Override
         public boolean accepts(CategoryDefinition category) {
-            return super.accepts(category) || (category.getId()!=null && category.getId().startsWith("org.mule.tooling.category.munit"));
+            return super.accepts(category) || (category.getId() != null && category.getId().startsWith("org.mule.tooling.category.munit"));
         }
 
     }
-    
-    
 
 }

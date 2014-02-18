@@ -6,10 +6,10 @@ import org.mule.tooling.model.messageflow.decorator.PropertyCollectionMap;
 /**
  * <p>
  * Mapper for a single {@link PropertyCollectionMap}
- * </p> 
+ * </p>
  */
 public interface PropertyMapper {
 
-	void mapTo(MessageFlowNode node, PropertyCollectionMap props);
+    void mapTo(MessageFlowNode node, PropertyCollectionMap props);
 
 }

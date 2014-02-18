@@ -13,42 +13,40 @@ import org.mule.tooling.ui.modules.core.widgets.AttributesPropertyPage;
 import org.mule.tooling.ui.modules.core.widgets.meta.AttributeHelper;
 
 /**
- * Custom editor for the Spy message processor of the mock module 
+ * Custom editor for the Spy message processor of the mock module
  */
-public class SpyCustomEditor extends MunitMockModuleCustomEditor{
+public class SpyCustomEditor extends MunitMockModuleCustomEditor {
 
-	public SpyCustomEditor(AttributesPropertyPage parentPage,
-			AttributeHelper helper) {
-		super(parentPage, helper);
-	}
+    public SpyCustomEditor(AttributesPropertyPage parentPage, AttributeHelper helper) {
+        super(parentPage, helper);
+    }
 
-	@Override
-	protected MessageProcessorMatchingForm createMatchingForm(
-			MessageFlowEditor messageFlowEditor) {
-		return MessageProcessorMatchingForm.newVerifyInstance(messageFlowEditor, getParentPage());
+    @Override
+    protected MessageProcessorMatchingForm createMatchingForm(MessageFlowEditor messageFlowEditor) {
+        return MessageProcessorMatchingForm.newVerifyInstance(messageFlowEditor, getParentPage());
 
-	}
+    }
 
-	@Override
-	protected void drawCustomFormIn(Composite parentEditorGroup) {
-		
-	}
+    @Override
+    protected void drawCustomFormIn(Composite parentEditorGroup) {
 
-	@Override
-	protected String getParentIdentifier() {
-		return "Message processor Spy definition";
-	}
+    }
 
-	@Override
-	protected List<MunitMockModuleMapper> buildLoaders(){
-		List<MunitMockModuleMapper> loaders = new ArrayList<MunitMockModuleMapper>();
-		loaders.add(MessageProcessorAttributeCollectionMapper.mockAttributeCollectionMapper(messageProcessorMatchingForm));
-		return loaders;
-	}
+    @Override
+    protected String getParentIdentifier() {
+        return "Message processor Spy definition";
+    }
 
-	@Override
-	public void saveTo(MessageFlowNode node, PropertyCollectionMap props) {
-		MessageProcessorAttributeCollectionMapper.mockAttributeCollectionMapper(messageProcessorMatchingForm).mapTo(node, props);		
-	}
+    @Override
+    protected List<MunitMockModuleMapper> buildLoaders() {
+        List<MunitMockModuleMapper> loaders = new ArrayList<MunitMockModuleMapper>();
+        loaders.add(MessageProcessorAttributeCollectionMapper.mockAttributeCollectionMapper(messageProcessorMatchingForm));
+        return loaders;
+    }
+
+    @Override
+    public void saveTo(MessageFlowNode node, PropertyCollectionMap props) {
+        MessageProcessorAttributeCollectionMapper.mockAttributeCollectionMapper(messageProcessorMatchingForm).mapTo(node, props);
+    }
 
 }

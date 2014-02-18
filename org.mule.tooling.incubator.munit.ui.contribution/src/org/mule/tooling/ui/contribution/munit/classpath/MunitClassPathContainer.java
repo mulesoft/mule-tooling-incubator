@@ -1,15 +1,13 @@
-package org.mule.tooling.ui.contribution.munit.actions;
+package org.mule.tooling.ui.contribution.munit.classpath;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -23,13 +21,21 @@ import org.mule.tooling.core.MuleRuntime;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
+import org.mule.tooling.ui.contribution.munit.runtime.MunitLibrary;
+import org.mule.tooling.ui.contribution.munit.runtime.MunitRuntime;
+import org.mule.tooling.ui.contribution.munit.runtime.MunitRuntimeExtension;
 import org.osgi.framework.Bundle;
 
-public class MunitClassPathContainer implements IClasspathContainer{
+/**
+ * <p>
+ * The class path container for all the Munit jars in case the project is not maven based
+ * </p>
+ */
+public class MunitClassPathContainer implements IClasspathContainer {
 
-    /** Unique container id */
     public static Path CONTAINER_ID = new Path("MUNIT_RUNTIME");
-    List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
+
+    private List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
     private IMuleProject muleProject;
     private String munitVersion;
 
@@ -41,31 +47,22 @@ public class MunitClassPathContainer implements IClasspathContainer{
             MuleCorePlugin.getLog().log(e.getStatus());
         }
 
-
         addLibraries();
     }
 
     private void addLibraries() {
-        try{
-            IConfigurationElement[] configurationElementsFor = Platform.getExtensionRegistry().getConfigurationElementsFor("org.mule.tooling.ui.contribution.munit.munitRuntime");
-            for (IConfigurationElement configElement : configurationElementsFor) {
-                if ( Arrays.asList(configElement.getAttribute("muleVersion").split(",")).contains(muleProject.getRuntimeId()) ){
-                    this.munitVersion = configElement.getAttribute("munitVersion");
-                    Bundle bundle = Platform.getBundle(configElement.getContributor().getName());
-                    for ( IConfigurationElement library : configElement.getChildren() ){
-                        addClassPath(bundle, library.getAttribute("path"));
-                    }
-
-                    break;
+        try {
+            MunitRuntime munitRuntime = MunitRuntimeExtension.getInstance().getMunitRuntimeFor(muleProject);
+            if (munitRuntime != null) {
+                Bundle bundle = Platform.getBundle(munitRuntime.getBundleId());
+                for (MunitLibrary munitLibrary : munitRuntime.getLibraries()) {
+                    addClassPath(bundle, munitLibrary.getPath());
                 }
+            } else {
+                MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "No Munit Runtime", "No Munit runtime found for the current mule runtime");
             }
-            
-            if (munitVersion==null){
-                MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "No Munit Runtime", "No Munit runtime found for the current mule runtime"); 
-            }
-        }
-        catch(IOException e){
-            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Unexpected Error", "Erro while creating Munit Runtime."); 
+        } catch (IOException e) {
+            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Unexpected Error", "Erro while creating Munit Runtime.");
             MunitPlugin.log(e);
         }
     }
@@ -79,12 +76,12 @@ public class MunitClassPathContainer implements IClasspathContainer{
 
     @Override
     public IClasspathEntry[] getClasspathEntries() {
-        return entries.toArray(new IClasspathEntry[]{});
+        return entries.toArray(new IClasspathEntry[] {});
     }
 
     @Override
     public String getDescription() {
-        return "Munit Runtime ("+munitVersion+")";
+        return "Munit Runtime (" + munitVersion + ")";
     }
 
     @Override

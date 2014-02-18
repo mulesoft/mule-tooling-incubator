@@ -15,99 +15,64 @@
       Copyright 2011-2012 MuleSoft Inc.
    </copyright>
 
-   <license url="http://www.mulesoft.com/downloads/legal/studio-license.html">
+   <license >
 <![CDATA[
-READ THIS AGREEMENT CAREFULLY. BY CLICKING ON THE "I Agree" BUTTON OR INSTALLING OR USING ALL OR ANY PORTION OF THE SOFTWARE, YOU ARE ACCEPTING ALL OF THE TERMS AND CONDITIONS OF THIS AGREEMENT. YOU AGREE THAT THIS AGREEMENT IS ENFORCEABLE LIKE ANY WRITTEN NEGOTIATED AGREEMENT SIGNED BY YOU. IF YOU DO NOT AGREE TO ALL OF THESE TERMS AND CONDITIONS, CLICK "I Do Not Agree". YOU WILL NOT BE GIVEN ACCESS TO THE SOFTWARE UNLESS YOU ACCEPT THE TERMS OF THIS AGREEMENT. IF YOU HAVE PAID A LICENSE FEE FOR USE OF THE SOFTWARE AND DO NOT AGREE TO THESE TERMS, YOU MAY RETURN THE SOFTWARE FOR A FULL REFUND PROVIDED YOU (A) DO NOT USE THE SOFTWARE AND (B) RETURN THE SOFTWARE WITHIN THIRTY (30) DAYS OF YOUR INITIAL PURCHASE. IF YOU WISH TO USE THE SOFTWARE AS AN EMPLOYEE, CONTRACTOR, OR AGENT OF A CORPORATION, PARTNERSHIP OR SIMILAR ENTITY, THEN YOU MUST BE AUTHORIZED TO SIGN FOR AND BIND THE ENTITY IN ORDER TO ACCEPT THE TERMS OF THIS AGREEMENT. THE LICENSES GRANTED UNDER THIS AGREEMENT ARE EXPRESSLY CONDITIONED UPON ACCEPTANCE BY SUCH AUTHORIZED PERSONNEL. IF YOU HAVE ENTERED INTO A SEPARATE WRITTEN LICENSE AGREEMENT WITH MuleSoft FOR USE OF THE SOFTWARE, THE TERMS AND CONDITIONS OF SUCH OTHER AGREEMENT SHALL PREVAIL OVER ANY CONFLICTING TERMS OR CONDITIONS IN THIS AGREEMENT.
-
-This Software Evaluation License Agreement ("Agreement") is between MuleSoft, Inc., located at 30 Maiden Lane, Suite 500, San Francisco, CA 94108 ("MuleSoft") and the customer (individual or entity) that has procured the licensed Software (as defined below) for use as an end user ("you").  
-
-1. Definitions. 
-
-Documentation: means any supporting technical documentation provided with the Software. Effective Date: means the date on which the Software is first made available to you. Software: means the MuleSoft software product(s) provided in connection with this Agreement in object code form. Unless otherwise noted, the Software and Documentation are referred to collectively herein as "Software". 
-
-2. License.
-2.1 Grant of License.
-Grant of License. Subject to all of the terms and conditions of this Agreement, MuleSoft grants you a limited, non-exclusive, non-transferable, non-sublicensable license to use the Software internally solely for the purpose of evaluating the Software during a limited evaluation period of thirty (30) days, beginning on the day that you first download the Software (the "Evaluation Period"). Unless you enter into a separate written agreement with MuleSoft for ongoing use of the Software, the Software will become inoperable, and your right to use the Software automatically expires, at the end of the Evaluation Period. Your license to use the Software during the Evaluation Period is limited to using the Software internally at your designated evaluation site, solely to test the Software in an evaluation environment. Any other use of the Software during the Evaluation Period is expressly prohibited.
-2.2 Installation and Copies.
-Installation and Copies. MuleSoft shall make the Software and Documentation available for download in electronic form. You may copy and install the Software on up to twenty (20) CPU's in your development environment. You may also make one copy of the Software solely for back-up purposes. All other copying is prohibited.
-2.3 License Restrictions. 
-You shall not: 
-(a) copy the Software or any portion thereof, except for the one permitted backup copy; 
-(b) distribute, sell, rent, lease, sublicense or transfer any copies of the Software, or portions thereof, to a third party or allow a third party to use the Software; 
-(c) modify, decompile, disassemble or otherwise reverse engineer the Software or attempt to reconstruct or discover any source code, underlying ideas, algorithms, file formats or programming interfaces of the Software by any means whatsoever if the Software to the extent the Software is not provided in source code form (except and only to the extent that applicable law prohibits or restricts reverse engineering restrictions); 
-(d) use the Software to develop services or products for sale or include any components of the Software in any product; 
-(e) use any portion of the Software to create a competitive service, product or technology; 
-(f) make the functionality of the Software available to the public in any manner; 
-(g) use the Software in a production environment; 
-(h) remove any product identification, proprietary, copyright or other notices contained in the Software; or 
-(i) publicly disseminate performance information or analysis (including, without limitation, benchmarks) from any source relating to the Software.
- 
-3. Ownership.
-
-Notwithstanding anything to the contrary contained herein, except for the limited license rights expressly provided herein, MuleSoft and its suppliers have and will retain all rights, title and interest (including, without limitation, all patent, copyright, trademark, trade secret and other intellectual property rights) in and to the Software and all copies, modifications and derivative works thereof. You acknowledge that you are obtaining only a limited license right to the Software and that irrespective of any use of the words "purchase", "sale" or like terms hereunder no ownership rights are being conveyed to you under this Agreement or otherwise. 
-
-4. Payment.
-
-No payment from you shall be due for any Software licensed hereunder unless MuleSoft specifically identifies any applicable fees prior to making the Software available to you for download. If any fees are so indicated, you shall pay all such fees in U.S. Dollars. If MuleSoft will be invoicing you for payment, all payments shall be made within thirty (30) days of your receipt of the applicable invoice, unless otherwise specified in writing by MuleSoft. Except as expressly set forth herein, all fees are non-refundable once paid. You shall be responsible for all taxes, withholdings, duties and levies arising from your use of the Software (if any)(excluding taxes based on the net income of MuleSoft). Any late payments shall be subject to a service charge equal to 1.5% per month of the amount due or the maximum amount allowed by law, whichever is less. 
- 
-5. Term of Agreement.
-5.1 Term.
-This Agreement is effective as of the Effective Date and expires at the end of the Evaluation Period (the "Term"). MuleSoft may terminate this Agreement and seek injunctive relief immediately upon any breach by you. In addition, either party may terminate this Agreement if the other party: 
-(a) ceases operation without a successor; or 
-(b) seeks protection under any bankruptcy, receivership, trust deed, creditors arrangement, composition or comparable proceeding, or if any such proceeding is instituted against such party (and not dismissed within sixty (60) days)). Termination is not an exclusive remedy and the exercise by either party of any remedy under this Agreement will be without prejudice to any other remedies it may have under this Agreement, by law, or otherwise.
-5.2 Termination.
-Upon any expiration or termination of this Agreement, you shall cease any and all use of any Software and destroy all copies thereof (including the backup copy, if made).
-5.3 No Obligation to Enter Into Further Agreement.
-No Obligation to Enter Into Further Agreement. Nothing herein obligates either party to enter into any further agreement with the other party. 5.4 Survival. Sections 2.3 (License Restrictions), 3 (Ownership), 4 (Payment), 5 (Term of Agreement), 6 (No Warranty), 8 (Limitation of Remedies and Damages), 9 (Confidential Information), 10 (Export Compliance) and 11 (General) shall survive any termination or expiration of this Agreement.
-
-6. No Warranty.
-
-THE SOFTWARE AND ALL SERVICES ARE PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING, BUT NOT LIMITED TO WARRANTIES OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. YOU MAY HAVE OTHER STATUTORY RIGHTS; HOWEVER, TO THE FULL EXTENT PERMITTED BY LAW, THE DURATION OF STATUTORILY REQUIRED WARRANTIES, IF ANY, SHALL BE LIMITED TO THE MAXIMUM EXTENT PERMITTED BY LAW. 
-
-7. No Support & Maintenance.
-MuleSoft shall have no support or maintenance obligations with respect to the Software hereunder. 
-
-8. Limitation of Remedies and Damages.
-
-IN NO EVENT SHALL MuleSoft BE LIABLE FOR ANY LOSS OF USE, LOST DATA, FAILURE OF SECURITY MECHANISMS, INTERRUPTION OF BUSINESS, OR ANY INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY KIND (INCLUDING LOST PROFITS), REGARDLESS OF THE FORM OF ACTION, WHETHER IN CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, EVEN IF INFORMED OF THE POSSIBILITY OF SUCH DAMAGES IN ADVANCE. NOTWITHSTANDING ANY OTHER PROVISION OF THIS AGREEMENT, MuleSoft'S ENTIRE LIABILITY TO YOU UNDER THIS AGREEMENT SHALL NOT EXCEED THE GREATER OF (I) THE AMOUNT ACTUALLY PAID BY YOU TO MuleSoft UNDER THIS AGREEMENT OR (II) $10,000. The parties agree that the limitations specified in this Section 9 will survive and apply even if any limited remedy specified in this Agreement is found to have failed of its essential purpose. 
-9. Confidential Information.
-
-Any software, documentation or technical information provided by MuleSoft (or its agents) shall be deemed "MuleSoft Confidential Information" without any marking or further designation. Except as expressly authorized herein, you will hold in confidence and not use or disclose any MuleSoft Confidential Information. You acknowledge that disclosure of MuleSoft Confidential Information would cause substantial harm to MuleSoft that could not be remedied by the payment of damages alone and therefore that upon any such disclosure by you, MuleSoft shall be entitled to appropriate equitable relief in addition to whatever remedies it might have at law. 
-10. Export Compliance.
-
-You acknowledge that the Software is subject to export restrictions by the United States government and import restrictions by certain foreign governments. You shall not, and shall not allow any third-party to, remove or export from the United States or allow the export or re-export of any part of the Software or any direct product thereof: 
-(i) into (or to a national or resident of) any embargoed or terrorist-supporting country; 
-(ii) to anyone on the U.S. Commerce Department's Table of Denial Orders or U.S. Treasury Department's list of Specially Designated Nationals; 
-(iii) to any country to which such export or re-export is restricted or prohibited, or as to which the United States government or any agency thereof requires an export license or other governmental approval at the time of export or re-export without first obtaining such license or approval; or (iv) otherwise in violation of any export or import restrictions, laws or regulations of any United States or foreign agency or authority. You agree to the foregoing and warrant that you are not located in, under the control of, or a national or resident of any such prohibited country or on any such prohibited party list. The Software is further restricted from being used for the design or development of nuclear, chemical, or biological weapons or missile technology, or for terrorist activity, without the prior permission of the United States government. 
-
-11. General. 
-11.1 Assignment.
-This Agreement will bind and inure to the benefit of each party's permitted successors and assigns. MuleSoft may assign this Agreement to any affiliate or in connection with a merger, reorganization, acquisition or other transfer of all or substantially all of MuleSoft's assets or voting securities. You may not assign or transfer this Agreement, in whole or in part, without MuleSoft's written consent. Any attempt to transfer or assign this Agreement without such written consent will be null and void.
-11.2 Severability. 
-If any provision of this Agreement shall be adjudged by any court of competent jurisdiction to be unenforceable or invalid, that provision shall be limited to the minimum extent necessary so that this Agreement shall otherwise remain in effect.
-11.3 Governing Law; Jurisdiction and Venue.
-This Agreement shall be governed by the laws of the State of California and the United States without regard to conflicts of laws provisions thereof, and without regard to the United Nations Convention on the International Sale of Goods. The jurisdiction and venue for actions related to the subject matter hereof shall be the California state and United States federal courts located in San Francisco, California, and both parties hereby submit to the personal jurisdiction of such courts.
-11.4 Attorneys' Fees and Costs.
-The prevailing party in any action to enforce this Agreement will be entitled to recover its attorneys' fees and costs in connection with such action.
-11.5 Notices and Reports.
-Any notice or report hereunder shall be in writing. If to MuleSoft, such notice or report shall be sent to MuleSoft at the address above to the attention of "Legal Department". If to you, such notice or report shall be sent to the address you provided prior to downloading the Software. Notices and reports shall be deemed given: 
-(i) upon receipt if by personal delivery; 
-(ii) upon receipt if sent by certified or registered U.S. mail (return receipt requested); or 
-(iii) one day after it is sent if by next day delivery by a major commercial delivery service.  
-11.6 Amendments; Waivers. 
-No supplement, modification, or amendment of this Agreement shall be binding, unless executed in writing by a duly authorized representative of each party to this Agreement. No waiver will be implied from conduct or failure to enforce or exercise rights under this Agreement, nor will any waiver be effective unless in a writing signed by a duly authorized representative on behalf of the party claimed to have waived.
-11.7 Entire Agreement.
-This Agreement is the complete and exclusive statement of the mutual understanding of the parties and supersedes and cancels all previous written and oral agreements and communications relating to the subject matter of this Agreement. No provision of any purchase order or in any other business form employed by you will supersede the terms and conditions of this Agreement, and any such document issued by a party hereto relating to this Agreement shall be for administrative purposes only and shall have no legal effect. Notwithstanding the foregoing, if you have entered into a separate written license agreement signed by MuleSoft for use of the Software, the terms and conditions of such other agreement shall prevail over any conflicting terms or conditions in this Agreement.
-11.8 Independent Contractors.
-The parties to this Agreement are independent contractors. There is no relationship of partnership, joint venture, employment, franchise or agency created hereby between the parties. Neither party will have the power to bind the other or incur obligations on the other party's behalf without the other party's prior written consent.
-11.9 Force Majeure.
-Neither party shall be liable to the other for any delay or failure to perform any obligation under this Agreement (except for a failure to pay fees) if the delay or failure is due to unforeseen events, which occur after the signing of this Agreement and which are beyond the reasonable control of the parties, such as strikes, blockade, war, terrorism, riots, natural disasters, refusal of license by the government or other governmental agencies, in so far as such an event prevents or delays the affected party from fulfilling its obligations and such party is not able to prevent or remove the force majeure at reasonable cost.
-11.10 Government End-Users.
-The Software is commercial computer software. If the user or licensee of the Software is an agency, department, or other entity of the United States Government, the use, duplication, reproduction, release, modification, disclosure, or transfer of the Software, or any related documentation of any kind, including technical data and manuals, is restricted by a license agreement or by the terms of this Agreement in accordance with Federal Acquisition Regulation 12.212 for civilian purposes and Defense Federal Acquisition Regulation Supplement 227.7202 for military purposes. The Software was developed fully at private expense. All other use is prohibited.
-11.11 Third-Party Code.
-If designated in the Documentation, the Software may contain or be provided with certain third-party code (including code which may be made available to you in source code form). Ownership, use, warranty and modification rights with respect to any such designated code shall be as expressly set forth in the Documentation.
-BY CLICKING ON THE "I Agree" BUTTON OR INSTALLING OR USING ALL OR ANY PORTION OF THE SOFTWARE, YOU ARE ACCEPTING ALL OF THE TERMS AND CONDITIONS OF THIS AGREEMENT. YOU AGREE THAT THIS AGREEMENT IS ENFORCEABLE LIKE ANY WRITTEN NEGOTIATED AGREEMENT SIGNED BY YOU. IF YOU DO NOT AGREE TO ALL OF THESE TERMS AND CONDITIONS, CLICK "I Do Not Agree". YOU WILL NOT BE GIVEN ACCESS TO THE SOFTWARE UNLESS YOU ACCEPT THE TERMS OF THIS AGREEMENT. IF YOU HAVE PAID A LICENSE FEE FOR USE OF THE SOFTWARE AND DO NOT AGREE TO THESE TERMS, YOU MAY RETURN THE SOFTWARE FOR A FULL REFUND PROVIDED YOU (A) DO NOT USE THE SOFTWARE AND (B) RETURN THE SOFTWARE WITHIN THIRTY (30) DAYS OF YOUR INITIAL PURCHASE. IF YOU WISH TO USE THE SOFTWARE AS AN EMPLOYEE, CONTRACTOR, OR AGENT OF A CORPORATION, PARTNERSHIP OR SIMILAR ENTITY, THEN YOU MUST BE AUTHORIZED TO SIGN FOR AND BIND THE ENTITY IN ORDER TO ACCEPT THE TERMS OF THIS AGREEMENT. THE LICENSES GRANTED UNDER THIS AGREEMENT ARE EXPRESSLY CONDITIONED UPON ACCEPTANCE BY SUCH AUTHORIZED PERSONNEL. IF YOU HAVE ENTERED INTO A SEPARATE WRITTEN LICENSE AGREEMENT WITH VENDOR FOR USE OF THE SOFTWARE, THE TERMS AND CONDITIONS OF SUCH OTHER AGREEMENT SHALL PREVAIL OVER ANY CONFLICTING TERMS OR CONDITIONS IN THIS AGREEMENT.   
-]]>
+    Apache License
+    ==============
+    
+    Version 2.0, January 2004
+    
+    http://www.apache.org/licenses/
+    
+    *TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION*
+    
+    1. Definitions.
+    
+    "License" shall mean the terms and conditions for use, reproduction, and distribution as defined by Sections 1 through 9 of this document.
+    
+    "Licensor" shall mean the copyright owner or entity authorized by the copyright owner that is granting the License.
+    
+    "Legal Entity" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. For the purposes of this definition, "control" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity.
+    
+    "You" (or "Your") shall mean an individual or Legal Entity exercising permissions granted by this License.
+    
+    "Source" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files.
+    
+    "Object" form shall mean any form resulting from mechanical transformation or translation of a Source form, including but not limited to compiled object code, generated documentation, and conversions to other media types.
+    
+    "Work" shall mean the work of authorship, whether in Source or Object form, made available under the License, as indicated by a copyright notice that is included in or attached to the work (an example is provided in the Appendix below).
+    
+    "Derivative Works" shall mean any work, whether in Source or Object form, that is based on (or derived from) the Work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. For the purposes of this License, Derivative Works shall not include works that remain separable from, or merely link (or bind by name) to the interfaces of, the Work and Derivative Works thereof.
+    
+    "Contribution" shall mean any work of authorship, including the original version of the Work and any modifications or additions to that Work or Derivative Works thereof, that is intentionally submitted to Licensor for inclusion in the Work by the copyright owner or by an individual or Legal Entity authorized to submit on behalf of the copyright owner. For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to the Licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the Licensor for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright owner as "Not a Contribution."
+    
+    "Contributor" shall mean Licensor and any individual or Legal Entity on behalf of whom a Contribution has been received by Licensor and subsequently incorporated within the Work.
+    
+    2. Grant of Copyright License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare Derivative Works of, publicly display, publicly perform, sublicense, and distribute the Work and such Derivative Works in Source or Object form.
+    
+    3. Grant of Patent License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the Work, where such license applies only to those patent claims licensable by such Contributor that are necessarily infringed by their Contribution(s) alone or by combination of their Contribution(s) with the Work to which such Contribution(s) was submitted. If You institute patent litigation against any entity (including a cross-claim or counterclaim in a lawsuit) alleging that the Work or a Contribution incorporated within the Work constitutes direct or contributory patent infringement, then any patent licenses granted to You under this License for that Work shall terminate as of the date such litigation is filed.
+    
+    4. Redistribution. You may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or Object form, provided that You meet the following conditions:
+    
+    You must give any other recipients of the Work or Derivative Works a copy of this License; and
+    
+    You must cause any modified files to carry prominent notices stating that You changed the files; and
+    
+    You must retain, in the Source form of any Derivative Works that You distribute, all copyright, patent, trademark, and attribution notices from the Source form of the Work, excluding those notices that do not pertain to any part of the Derivative Works; and
+    
+    If the Work includes a "NOTICE" text file as part of its distribution, then any Derivative Works that You distribute must include a readable copy of the attribution notices contained within such NOTICE file, excluding those notices that do not pertain to any part of the Derivative Works, in at least one of the following places: within a NOTICE text file distributed as part of the Derivative Works; within the Source form or documentation, if provided along with the Derivative Works; or, within a display generated by the Derivative Works, if and wherever such third-party notices normally appear. The contents of the NOTICE file are for informational purposes only and do not modify the License. You may add Your own attribution notices within Derivative Works that You distribute, alongside or as an addendum to the NOTICE text from the Work, provided that such additional attribution notices cannot be construed as modifying the License. You may add Your own copyright statement to Your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of Your modifications, or for any such Derivative Works as a whole, provided Your use, reproduction, and distribution of the Work otherwise complies with the conditions stated in this License.
+    
+    5. Submission of Contributions. Unless You explicitly state otherwise, any Contribution intentionally submitted for inclusion in the Work by You to the Licensor shall be under the terms and conditions of this License, without any additional terms or conditions. Notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with Licensor regarding such Contributions.
+    
+    6. Trademarks. This License does not grant permission to use the trade names, trademarks, service marks, or product names of the Licensor, except as required for reasonable and customary use in describing the origin of the Work and reproducing the content of the NOTICE file.
+    
+    7. Disclaimer of Warranty. Unless required by applicable law or agreed to in writing, Licensor provides the Work (and each Contributor provides its Contributions) on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely responsible for determining the appropriateness of using or redistributing the Work and assume any risks associated with Your exercise of permissions under this License.
+    
+    8. Limitation of Liability. In no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this License or out of the use or inability to use the Work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such Contributor has been advised of the possibility of such damages.
+    
+    9. Accepting Warranty or Additional Liability. While redistributing the Work or Derivative Works thereof, You may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this License. However, in accepting such obligations, You may act only on Your own behalf and on Your sole responsibility, not on behalf of any other Contributor, and only if You agree to indemnify, defend, and hold each Contributor harmless for any liability incurred by, or claims asserted against, such Contributor by reason of your accepting any such warranty or additional liability.
+    
+    END OF TERMS AND CONDITIONS]]>
    </license>
 
    <plugin

@@ -5,7 +5,11 @@ import org.eclipse.jface.action.Action;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 import org.mule.tooling.ui.contribution.munit.MunitResourceUtils;
 
-
+/**
+ * <p>
+ * Menu action to go directly to the test flow of the production code
+ * </p>
+ */
 public class JumpToTestAction extends Action {
 
     private IFile file;
@@ -22,7 +26,6 @@ public class JumpToTestAction extends Action {
     @Override
     public void run() {
         MunitResourceUtils.open(file);
-
     }
 
 }

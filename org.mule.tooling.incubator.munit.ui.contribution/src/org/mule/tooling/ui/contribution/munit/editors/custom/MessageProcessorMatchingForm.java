@@ -33,194 +33,192 @@ import org.mule.tooling.ui.modules.core.widgets.AttributesPropertyPage;
 import org.mule.tooling.ui.widgets.table.MapTableComposite;
 import org.mule.tooling.ui.widgets.util.WidgetUtils;
 
+/**
+ * <p>
+ * The part of every Munit custom editor that allows the user to match a message processor
+ * </p>
+ */
 public class MessageProcessorMatchingForm {
-	private static final String DOC_NAME = "doc:name";
 
-	private static final String ALL_MESSAGE_PROCESSORS_REGEX = ".*:.*";
+    private static final String DOC_NAME = "doc:name";
 
-	private static final int ATTRIBUTE_VIEWER_COLUMNS = 3;
+    private static final String ALL_MESSAGE_PROCESSORS_REGEX = ".*:.*";
 
-	private MessageFlowEditor messageFlowEditor;
+    private static final int ATTRIBUTE_VIEWER_COLUMNS = 3;
 
-	private Text messageProcessorMatchingRegex;
-	private MapTableComposite attributeMatchingTable;
-	
-	private Action showOutline;
-	private OutlinePage outlinePage;
+    private MessageFlowEditor messageFlowEditor;
 
-	private String initialMessage;
+    private Text messageProcessorMatchingRegex;
+    private MapTableComposite attributeMatchingTable;
+
+    private Action showOutline;
+    private OutlinePage outlinePage;
+
+    private String initialMessage;
 
     private AttributesPropertyPage propertyPage;
     private MessageProcessorMatcherValidator messageProcessorMatcherValidator;
 
+    public static MessageProcessorMatchingForm newMockingInstance(MessageFlowEditor messageFlowEditor, AttributesPropertyPage propertyPage) {
+        return new MessageProcessorMatchingForm(messageFlowEditor, "When message processor matches:", propertyPage);
+    }
 
-	public static MessageProcessorMatchingForm newMockingInstance(MessageFlowEditor messageFlowEditor,  AttributesPropertyPage propertyPage)
-	{
-		return new MessageProcessorMatchingForm(messageFlowEditor, "When message processor matches:", propertyPage);
-	}
-	
-	public static MessageProcessorMatchingForm newVerifyInstance(MessageFlowEditor messageFlowEditor,  AttributesPropertyPage propertyPage)
-	{
-		return new MessageProcessorMatchingForm(messageFlowEditor, "Verify call of message processor that matches:", propertyPage);
-	}
-	
-	public MessageProcessorMatchingForm(MessageFlowEditor messageFlowEditor, String initialMessage, AttributesPropertyPage propertyPage) {
-		this.messageFlowEditor = messageFlowEditor;
-		this.initialMessage = initialMessage;
+    public static MessageProcessorMatchingForm newVerifyInstance(MessageFlowEditor messageFlowEditor, AttributesPropertyPage propertyPage) {
+        return new MessageProcessorMatchingForm(messageFlowEditor, "Verify call of message processor that matches:", propertyPage);
+    }
+
+    public MessageProcessorMatchingForm(MessageFlowEditor messageFlowEditor, String initialMessage, AttributesPropertyPage propertyPage) {
+        this.messageFlowEditor = messageFlowEditor;
+        this.initialMessage = initialMessage;
         this.propertyPage = propertyPage;
-	}
+    }
 
-	public void drawInto(Composite parentPage) {
-		Composite messageProcessorMatchingForm = createMockingConditionForm(parentPage);
-		outlinePage = createOutlinePage(messageFlowEditor, parentPage);
+    public void drawInto(Composite parentPage) {
+        Composite messageProcessorMatchingForm = createMockingConditionForm(parentPage);
+        outlinePage = createOutlinePage(messageFlowEditor, parentPage);
 
-		drawMockingConditionForm(messageProcessorMatchingForm);
-	}
+        drawMockingConditionForm(messageProcessorMatchingForm);
+    }
 
-	public String getMessageProcessorRegexMatching()
-	{
-		return messageProcessorMatchingRegex.getText();
-	}
+    public String getMessageProcessorRegexMatching() {
+        return messageProcessorMatchingRegex.getText();
+    }
 
-	public Map<String, String> getAttributeMatching()
-	{
-		return attributeMatchingTable.getInputData();
-	}
-	
-	public void setMessageProcessorRegexMatching(String regex)
-	{
-		messageProcessorMatchingRegex.setText(regex);
-	}
+    public Map<String, String> getAttributeMatching() {
+        return attributeMatchingTable.getInputData();
+    }
 
-	public void setAttributeMatching(Map<String, String> attrbiutes)
-	{
-		attributeMatchingTable.setInputData(attrbiutes);
-	}
-	
-	private void createAttributeTable(Composite parentForm) {
-		Label attributesLabel = new Label(parentForm, SWT.NONE);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).span(3, 1).grab(true, false).applyTo(attributesLabel);
-		attributesLabel.setText("And attributes satisfy:");
-		attributeMatchingTable = new WidgetUtils().createTableForMap(parentForm);
+    public void setMessageProcessorRegexMatching(String regex) {
+        messageProcessorMatchingRegex.setText(regex);
+    }
 
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(ATTRIBUTE_VIEWER_COLUMNS, 3).grab(true, true).applyTo(attributeMatchingTable);
-	}
+    public void setAttributeMatching(Map<String, String> attrbiutes) {
+        attributeMatchingTable.setInputData(attrbiutes);
+    }
 
-	private void drawMockingConditionForm(final Composite parentForm) {
-		Label messageProcessorNameLabel = new Label(parentForm, SWT.NONE);
-		messageProcessorNameLabel.setText(initialMessage);
-		messageProcessorMatchingRegex = new Text(parentForm, SWT.BORDER);
-		messageProcessorMatcherValidator = new MessageProcessorMatcherValidator(messageProcessorMatchingRegex);
-		messageProcessorMatchingRegex.addFocusListener(new FocusListener() {
-            
+    private void createAttributeTable(Composite parentForm) {
+        Label attributesLabel = new Label(parentForm, SWT.NONE);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).span(3, 1).grab(true, false).applyTo(attributesLabel);
+        attributesLabel.setText("And attributes satisfy:");
+        attributeMatchingTable = new WidgetUtils().createTableForMap(parentForm);
+
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(ATTRIBUTE_VIEWER_COLUMNS, 3).grab(true, true).applyTo(attributeMatchingTable);
+    }
+
+    private void drawMockingConditionForm(final Composite parentForm) {
+        Label messageProcessorNameLabel = new Label(parentForm, SWT.NONE);
+        messageProcessorNameLabel.setText(initialMessage);
+        messageProcessorMatchingRegex = new Text(parentForm, SWT.BORDER);
+        messageProcessorMatcherValidator = new MessageProcessorMatcherValidator(messageProcessorMatchingRegex);
+        messageProcessorMatchingRegex.addFocusListener(new FocusListener() {
+
             @Override
             public void focusLost(FocusEvent e) {
-              messageProcessorMatcherValidator.validate(propertyPage);
+                messageProcessorMatcherValidator.validate(propertyPage);
             }
-            
+
             @Override
             public void focusGained(FocusEvent e) {
-                messageProcessorMatcherValidator.validate(propertyPage);  
+                messageProcessorMatcherValidator.validate(propertyPage);
             }
         });
-		
-		messageProcessorMatchingRegex.addPaintListener(new PaintListener() {
-            
+
+        messageProcessorMatchingRegex.addPaintListener(new PaintListener() {
+
             @Override
             public void paintControl(PaintEvent e) {
-                messageProcessorMatcherValidator.validate(propertyPage);  
-                
+                messageProcessorMatcherValidator.validate(propertyPage);
+
             }
         });
-		
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).grab(true, false).applyTo(messageProcessorMatchingRegex);
-		
-		hideOutlinePageIn(parentForm);
-		createShowOutlineToolbar(parentForm);
-		createAttributeTable(parentForm);
-	}
 
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).grab(true, false).applyTo(messageProcessorMatchingRegex);
 
-	private void createShowOutlineToolbar(final Composite parentForm) {
-		ToolBar fieldToolBar = new ToolBar(parentForm, SWT.NONE);
-		ToolBarManager fieldTBManager = new ToolBarManager(fieldToolBar);
+        hideOutlinePageIn(parentForm);
+        createShowOutlineToolbar(parentForm);
+        createAttributeTable(parentForm);
+    }
 
-		showOutline = new Action("Show outline to select a message processor", Action.AS_CHECK_BOX) {
-			@Override
-			public void run() {
-				if ( showOutline.isChecked() ){
-					showOutlinePageIn(parentForm);
-					parentForm.getParent().layout();	
-				}
-				else{
-					hideOutlinePageIn(parentForm);
-					parentForm.getParent().layout();
-				}
-			}
-		};
+    private void createShowOutlineToolbar(final Composite parentForm) {
+        ToolBar fieldToolBar = new ToolBar(parentForm, SWT.NONE);
+        ToolBarManager fieldTBManager = new ToolBarManager(fieldToolBar);
 
-		showOutline.setImageDescriptor(MunitPlugin.ZOOM_ICON_DESCRIPTOR);
+        showOutline = new Action("Show outline to select a message processor", Action.AS_CHECK_BOX) {
 
-		fieldTBManager.add(showOutline);
-		fieldTBManager.update(true);
-	}
+            @Override
+            public void run() {
+                if (showOutline.isChecked()) {
+                    showOutlinePageIn(parentForm);
+                    parentForm.getParent().layout();
+                } else {
+                    hideOutlinePageIn(parentForm);
+                    parentForm.getParent().layout();
+                }
+            }
+        };
 
-	private void showOutlinePageIn(Composite parentForm) {
-		((GridData) outlinePage.getControl().getLayoutData()).exclude = false;
-		outlinePage.getControl().setVisible(true);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(1, 1).grab(true, true).applyTo(parentForm);
+        showOutline.setImageDescriptor(MunitPlugin.ZOOM_ICON_DESCRIPTOR);
 
-	}
-	private void hideOutlinePageIn(Composite parentForm) {
-		((GridData) outlinePage.getControl().getLayoutData()).exclude = true;
-		outlinePage.getControl().setVisible(false);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(2, 1).grab(true, true).applyTo(parentForm);
+        fieldTBManager.add(showOutline);
+        fieldTBManager.update(true);
+    }
 
-	}
+    private void showOutlinePageIn(Composite parentForm) {
+        ((GridData) outlinePage.getControl().getLayoutData()).exclude = false;
+        outlinePage.getControl().setVisible(true);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(1, 1).grab(true, true).applyTo(parentForm);
 
-	private Composite createMockingConditionForm(Composite composite) {
-		Composite attributeViewer = new Composite(composite, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(ATTRIBUTE_VIEWER_COLUMNS).equalWidth(false).applyTo(attributeViewer);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(1, 1).grab(true, true).applyTo(attributeViewer);
-		return attributeViewer;
-	}
+    }
 
-	private OutlinePage createOutlinePage(final MessageFlowEditor messageFlowEditor, Composite parentEditorGroup) {
-		OutlinePage page = new OutlinePage(messageFlowEditor){
+    private void hideOutlinePageIn(Composite parentForm) {
+        ((GridData) outlinePage.getControl().getLayoutData()).exclude = true;
+        outlinePage.getControl().setVisible(false);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(2, 1).grab(true, true).applyTo(parentForm);
 
-			@Override
-			protected MuleConfiguration getMuleConfiguration() {
-				return ((MunitMessageFlowEditor) messageFlowEditor).getProductionMuleConfiguration();
-			}
+    }
 
-		};
+    private Composite createMockingConditionForm(Composite composite) {
+        Composite attributeViewer = new Composite(composite, SWT.NONE);
+        GridLayoutFactory.fillDefaults().numColumns(ATTRIBUTE_VIEWER_COLUMNS).equalWidth(false).applyTo(attributeViewer);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(1, 1).grab(true, true).applyTo(attributeViewer);
+        return attributeViewer;
+    }
 
-		page.setTreeViewerOpenLister(new IOpenListener() {
+    private OutlinePage createOutlinePage(final MessageFlowEditor messageFlowEditor, Composite parentEditorGroup) {
+        OutlinePage page = new OutlinePage(messageFlowEditor) {
 
-			@Override
-			public void open(OpenEvent arg0) {
+            @Override
+            protected MuleConfiguration getMuleConfiguration() {
+                return ((MunitMessageFlowEditor) messageFlowEditor).getProductionMuleConfiguration();
+            }
 
-				IStructuredSelection selection = (IStructuredSelection) ((org.eclipse.jface.viewers.TreeViewer) arg0.getSource()).getSelection();
-				IMessageProcessorNode<?> selectedElement =(IMessageProcessorNode<?>) selection.getFirstElement();
-				if (selectedElement != null) {
-					MessageProcessorNode<?> node = (MessageProcessorNode<?>) selectedElement;
-					LabelRetrieverEntityVisitor visitor = new LabelRetrieverEntityVisitor(node);
-					MessageFlowEntity entity = node.getValue();
-					entity.accept(visitor);
-					messageProcessorMatchingRegex.setText(ALL_MESSAGE_PROCESSORS_REGEX);
-					Map<String, String> inputData = attributeMatchingTable.getInputData();
-					inputData.put(DOC_NAME, String.format("#[string:%s]",visitor.getLabel()));
-					attributeMatchingTable.setInputData(inputData);
-//					}
-				}
+        };
 
-			}
-		});
+        page.setTreeViewerOpenLister(new IOpenListener() {
 
-		page.createControl(parentEditorGroup);
+            @Override
+            public void open(OpenEvent arg0) {
 
-		return page;
-	}
+                IStructuredSelection selection = (IStructuredSelection) ((org.eclipse.jface.viewers.TreeViewer) arg0.getSource()).getSelection();
+                IMessageProcessorNode<?> selectedElement = (IMessageProcessorNode<?>) selection.getFirstElement();
+                if (selectedElement != null) {
+                    MessageProcessorNode<?> node = (MessageProcessorNode<?>) selectedElement;
+                    LabelRetrieverEntityVisitor visitor = new LabelRetrieverEntityVisitor(node);
+                    MessageFlowEntity entity = node.getValue();
+                    entity.accept(visitor);
+                    messageProcessorMatchingRegex.setText(ALL_MESSAGE_PROCESSORS_REGEX);
+                    Map<String, String> inputData = attributeMatchingTable.getInputData();
+                    inputData.put(DOC_NAME, String.format("#[string:%s]", visitor.getLabel()));
+                    attributeMatchingTable.setInputData(inputData);
+                    // }
+                }
 
+            }
+        });
+
+        page.createControl(parentEditorGroup);
+
+        return page;
+    }
 
 }

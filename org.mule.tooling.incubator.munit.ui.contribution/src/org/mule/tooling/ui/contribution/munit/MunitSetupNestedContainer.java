@@ -7,18 +7,19 @@ import org.mule.tooling.messageflow.editpart.NestedContainerEditPart;
 import org.mule.tooling.model.messageflow.decorator.EntityDecorator;
 import org.mule.tooling.model.messageflow.decorator.NestedContainerDecorator;
 
-public class MunitSetupNestedContainer extends NestedContainerEditPart{
+/**
+ * <p>
+ * The Setup containter of the Munit test, the only difference with the {@link NestedContainerEditPart} is that it doesn't draw the connections
+ * </p>
+ */
+public class MunitSetupNestedContainer extends NestedContainerEditPart {
 
-
-	public MunitSetupNestedContainer(
-			NestedContainerDecorator nestedContainerDecorator,
-			IMuleProject project, EditPart context) {
-		super(nestedContainerDecorator, project, new CollapsableNestedContainerFigureFactory(context));
-	}
+    public MunitSetupNestedContainer(NestedContainerDecorator nestedContainerDecorator, IMuleProject project, EditPart context) {
+        super(nestedContainerDecorator, project, new CollapsableNestedContainerFigureFactory(context));
+    }
 
     @Override
     protected void drawConnections(EntityDecorator<?> last, EntityDecorator<?> wrappedEntity) {
     }
 
-	
 }
