@@ -137,7 +137,7 @@ public class MunitResourceUtils {
         }
 
         mavenProject.addTestResource(MunitPlugin.MUNIT_FOLDER_PATH);
-        mavenProject.addPlugin("org.mule.munit", "munit-maven-plugin", munitRuntime.getMunitVersion(), new XmlEditionCallable() {
+        mavenProject.addPlugin("org.mule.munit.tools", "munit-maven-plugin", munitRuntime.getMunitVersion(), new XmlEditionCallable() {
 
             @Override
             public boolean editXml(XmlEditingHelper xmlEditorHelper) {

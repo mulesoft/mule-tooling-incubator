@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.mule.tooling.core.contribution">
-      <externalContribution
-      		contributionJar="mule-module-synchronize-1.0-SNAPSHOT.jar"
+    <extension
+        point="org.mule.tooling.core.contribution">
+        <externalContribution
+      		contributionJar="munit-synchronize-module.jar"
             contributionLibPathInMule="/lib"
-            contributionLibs="org.mule.tooling.ui.contribution.synchronize.externalContribution1"
+            contributionLibs="munit-synchronize-module.jar"
             contributionNamespace="http://www.mulesoft.org/schema/mule/synchronize"
             contributionNamespaceFile="http://www.mulesoft.org/schema/mule/synchronize/current/mule-synchronize.xsd"
             contributionNamespacePrefix="synchronize"
@@ -14,7 +14,9 @@
             name="Synchronize"
             path="synchronize.xml"
             version="1.0">
-      </externalContribution>
+        </externalContribution>
+    </extension>
+
    </extension>
 
 </plugin>

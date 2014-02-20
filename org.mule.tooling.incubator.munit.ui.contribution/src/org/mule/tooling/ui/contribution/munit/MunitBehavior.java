@@ -42,7 +42,7 @@ public class MunitBehavior implements ContainerBehavior {
     }
 
     private boolean isMockOrSpyElement(Element element) {
-        return MunitPlugin.MOCK_NAMESPACE.equals(element.getNamespace()) && ("when".equals(element.getName()) || "spy".equals(element.getName()));
+        return MunitPlugin.MOCK_NAMESPACE.equals(element.getNamespace()) && ("when".equals(element.getName()) || "spy".equals(element.getName()) || "outbound-endpoint".equals(element.getName()));
     }
 
     private NestedContainer getSetupContainer(Container container, ContainerDefinition containerDefinition) {

@@ -43,7 +43,7 @@
 			</group>
 		</attribute-category>
 		
-		<graphical-container localId="setup" caption="Setup" description=""  prompt="Add mocks and spys here." abstract="true" acceptsElements="http://www.mulesoft.org/schema/mule/mock/when||http://www.mulesoft.org/schema/mule/mock/spy"/>
+		<graphical-container localId="setup" caption="Setup" description=""  prompt="Add mocks and spys here." abstract="true" acceptsElements="http://www.mulesoft.org/schema/mule/mock/when||http://www.mulesoft.org/schema/mule/mock/spy||http://www.mulesoft.org/schema/mule/mock/outbound-endpoint"/>
 		<graphical-container localId="assertions" collapsable="true" caption="Test" prompt="Run flows, verify calls, run assertions in here" description=""  abstract="true" />
 		
 	</container>

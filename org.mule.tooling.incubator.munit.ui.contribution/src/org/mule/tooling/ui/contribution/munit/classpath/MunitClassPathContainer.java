@@ -54,6 +54,7 @@ public class MunitClassPathContainer implements IClasspathContainer {
         try {
             MunitRuntime munitRuntime = MunitRuntimeExtension.getInstance().getMunitRuntimeFor(muleProject);
             if (munitRuntime != null) {
+                munitVersion = munitRuntime.getMunitVersion();
                 Bundle bundle = Platform.getBundle(munitRuntime.getBundleId());
                 for (MunitLibrary munitLibrary : munitRuntime.getLibraries()) {
                     addClassPath(bundle, munitLibrary.getPath());

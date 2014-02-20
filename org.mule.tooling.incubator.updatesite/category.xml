@@ -13,16 +13,16 @@
       <category name="org.mule.tooling.incubator.category.munit"/>
     </feature>
     <feature id="org.mule.tooling.ui.extension.munit-mclient-module">
-      <category name="org.mule.tooling.incubator.category.munit"/>
+      <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
     </feature>
    <feature id="org.mule.tooling.ui.extension.munit-ftpserver-module">
-      <category name="org.mule.tooling.incubator.category.munit"/>
+      <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
     </feature>
    <feature id="org.mule.tooling.ui.extension.munit-dbserver-module">
-      <category name="org.mule.tooling.incubator.category.munit"/>
+      <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
     </feature>
    <feature id="org.mule.tooling.ui.synchronize.extension">
-       <category name="org.mule.tooling.incubator.category.munit"/>
+       <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
    </feature>
    <category-def name="org.mule.tooling.incubator.category" label="Mule Tooling Incubator Projects">
       <description>
@@ -33,5 +33,10 @@
       <description>
             Munit Studio integration
       </description>
+   </category-def>
+   <category-def name="org.mule.tooling.incubator.category.munit.tools.34" label="Munit Tools for Mule 3.4.x">
+       <description>
+           Munit Tools for mule 3.4.x
+       </description>
    </category-def>
 </site>

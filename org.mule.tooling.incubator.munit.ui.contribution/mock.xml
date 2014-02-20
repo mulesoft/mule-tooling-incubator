@@ -107,4 +107,20 @@
     	</attribute-category>
 	</container>
 	
+	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="outbound-endpoint"
+		description="Mocking outbound endpoint by address"
+		image="icons/large/Mock.png" icon="icons/small/Mock-Palette.png"
+		acceptedByElements="http://www.mulesoft.org/schema/mule/munit/setup"
+		
+		caption="Mock Endpoint">
+		<keywords>
+			<keyword value="mock" weight="1" />
+			<keyword value="outbound-endpoint" weight="1" />
+		</keywords>
+		<attribute-category caption="General" description="General Endpoint Mock properties">
+			<string caption="When Address" required="true" name="address" description="Endpoint address"/>
+			<string caption="Then Return" required="false" name="returnPayload-ref" description="Return Payload"/>
+		</attribute-category>
+	</component>
+	
 </namespace>
