@@ -59,8 +59,10 @@ public class CreateDocumentationAction implements IObjectActionDelegate {
      			
      			if(errorCount>0){
      				String errorText= "Your project has ("+errorCount+") " + ((errorCount>1) ? "errors":"error" + ".");
-     				MessageDialog.openError(null, "Error", errorText+ "\nCannot generate documentation until all errors are fixed.");
-     				return;
+     				boolean result = MessageDialog.openConfirm(null, "Warning", errorText+ "\n\nDo you want to continue with this operation?.");
+     				if( !result ){
+     					return;
+     				}
      			}
                 final String convertingMsg = "Generating Documentation...";
                 final WorkspaceJob createDocumentationJob = new WorkspaceJob(convertingMsg) {
