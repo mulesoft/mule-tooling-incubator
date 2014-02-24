@@ -219,4 +219,9 @@ public class StudioAnnotationProcessorContext implements Context {
 	public void note(String msg, Identifiable element) {
 		messager.printMessage(Diagnostic.Kind.NOTE, msg, element.unwrap());
 	}
+
+	@Override
+	public Messager getMessager() {
+		return messager;
+	}
 }

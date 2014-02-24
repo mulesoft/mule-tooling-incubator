@@ -3,10 +3,10 @@ package org.mule.tooling.devkit.apt;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.Diagnostic.Kind;
 
-import org.mule.devkit.apt.PrinterGatherer;
 import org.mule.devkit.generation.api.Context;
 import org.mule.devkit.generation.api.gatherer.Notification;
 import org.mule.devkit.generation.api.gatherer.NotificationGatherer;
+import org.mule.devkit.generation.api.gatherer.printing.PrinterGatherer;
 
 public class StudioPrinterGatherer implements PrinterGatherer {
 
@@ -29,7 +29,7 @@ public class StudioPrinterGatherer implements PrinterGatherer {
 	}
 
 	@Override
-	public void printInfos(NotificationGatherer notificationGatherer,
+	public void printNotes(NotificationGatherer notificationGatherer,
 			ProcessingEnvironment processingEnv, Context context) {
 		for(Notification notification : notificationGatherer.getNotes()){
 			processingEnv.getMessager().printMessage(Kind.NOTE, notification.getDetails().getMessage(), notification.getDetails().getElement().unwrap());
