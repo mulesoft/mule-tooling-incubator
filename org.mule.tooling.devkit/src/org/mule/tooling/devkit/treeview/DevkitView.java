@@ -244,7 +244,16 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 	private void handleNewProjectSelectedChange(Object selected) {
 		try {
 			final IProject selectedProject = (IProject) selected;
-			analyseMethods(selectedProject);
+			if (selectedProject.isOpen()) {
+				analyseMethods(selectedProject);
+			} else {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						viewer.setInput(new ProjectRoot());
+					}
+				});
+			}
+
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
