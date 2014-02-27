@@ -86,58 +86,6 @@
                value="true">
          </persistent>
       </extension>
-      <extension
-            point="org.eclipse.ui.popupMenus">
-         <objectContribution
-               id="org.mule.tooling.devkit.muleExtensionsContribution"
-               objectClass="org.eclipse.jdt.core.IJavaProject">
-            <menu
-                  icon="icons/icon.png"
-                  id="org.mule.tooling.devkit.menu"
-                  label="Anypoint Connector"
-                  mnemonic="A"
-                  path="additions">
-               <separator
-                     name="group">
-               </separator>
-               <separator
-                     name="javadoc">
-               </separator>
-            </menu>
-            <action
-                  class="org.mule.tooling.devkit.popup.actions.CreateDocumentationAction"
-                  enablesFor="1"
-                  id="org.mule.tooling.devkit.docAction"
-                  label="Create Documentation"
-                  icon="icons/generate_doc.gif"
-                  menubarPath="org.mule.tooling.devkit.menu/group">
-            </action>
-            <action
-                  class="org.mule.tooling.devkit.popup.actions.SendToPaletteAction"
-                  enablesFor="1"
-                  id="org.mule.tooling.devkit.paletteAction"
-                  label="Try it out!"
-                  icon="icons/mule.png"
-                  menubarPath="org.mule.tooling.devkit.menu/group">
-            </action>
-              <action
-                  class="org.mule.tooling.devkit.popup.actions.GenerateSourcesAction"
-                  enablesFor="1"
-                  id="org.mule.tooling.devkit.sourceAction"
-                  label="Generate Sources"
-                  icon="icons/generate_sources.gif"
-                  menubarPath="org.mule.tooling.devkit.menu/group">
-            </action>
-            <action
-                  class="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckAction"
-                  enablesFor="1"
-                  id="org.mule.tooling.devkit.toggleJavadocAction"
-                  label="Enable/Disable Javadoc Check"
-                  icon="icons/javadoc.gif"
-                  menubarPath="org.mule.tooling.devkit.menu/javadoc">
-            </action>
-         </objectContribution>
-      </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
       <wizard
@@ -182,4 +130,116 @@
             id="org.mule.tooling.devkit.sample.editor.editors.XMLEditor">
       </editor>
    </extension>
+   
+	<extension point="org.eclipse.ui.commands">
+		<command id="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
+			name="Enable/Disable Javadoc Check"
+			defaultHandler="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand">
+		</command>
+	</extension>
+	<extension point="org.eclipse.ui.commands">
+		<command id="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand"
+			name="Try it out!"
+			defaultHandler="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand">
+		</command>
+	</extension>
+	<extension point="org.eclipse.ui.commands">
+		<command id="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
+			name="Generate Sources"
+			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand">
+		</command>
+	</extension>
+	<extension point="org.eclipse.ui.commands">
+		<command id="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
+			name="Create documentation"
+			defaultHandler="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand">
+		</command>
+	</extension>
+	<extension point="org.eclipse.core.expressions.propertyTesters">
+		<propertyTester
+			id="org.mule.tooling.devkit.javadoc.check.tester"
+			type="org.eclipse.core.resources.IProject"
+			namespace="org.mule.tooling.devkit"
+			properties="enabled"
+			class="org.mule.tooling.devkit.popup.actions.JavadocCheckPropertyTester">
+		</propertyTester>
+	</extension>
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution
+			locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+			<menu icon="icons/icon.png" label="Anypoint Connector">
+			<visibleWhen>
+				<with variable="activeMenuSelection">
+					<iterate>
+						<adapt type="org.eclipse.core.resources.IProject"/>
+					</iterate>
+				</with>
+			</visibleWhen>
+			<separator name="group">
+			</separator>
+			<command commandId="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand" 
+				label="Generate Sources"
+				icon="icons/generate_sources.gif"
+				style="push">
+			</command>
+			<command commandId="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand" 
+				label="Try it out!"
+				icon="icons/mule.png" 
+				style="push">
+			</command>
+			<command commandId="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand" 
+				label="Preview Documentation"
+				icon="icons/generate_doc.gif" 
+				style="push">
+			</command>
+			       
+			<separator name="javadoc" visible="true">
+			</separator>
+			<command commandId="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand" 
+				label="Enable Javadoc check"
+				icon="icons/javadoc.gif" 
+				style="push">
+				<visibleWhen checkEnabled="false">
+					<with variable="selection">
+						<count value="1"/>
+						<iterate>
+							<and>
+								<with variable="activeMenuSelection">
+									<iterate>
+										<adapt type="org.eclipse.core.resources.IProject">
+											<test value="true" property="org.mule.tooling.devkit.enabled" forcePluginActivation="true">
+											</test>
+										</adapt>
+									</iterate>
+								</with>
+							</and>
+						</iterate>
+					</with>
+				</visibleWhen>
+			</command>
+			<command commandId="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
+				label="Disable Javadoc check"
+				icon="icons/javadoc.gif"
+				style="push">
+				<visibleWhen checkEnabled="false">
+					<with variable="selection">
+						<count value="1"/>
+						<iterate>
+							<not>
+								<with variable="activeMenuSelection">
+									<iterate>
+										<adapt type="org.eclipse.core.resources.IProject">
+											<test value="true" property="org.mule.tooling.devkit.enabled" forcePluginActivation="true">
+											</test>
+										</adapt>
+									</iterate>
+								</with>
+							</not>
+						</iterate>
+					</with>
+				</visibleWhen>
+			</command>
+			</menu>
+		</menuContribution>
+	</extension>
 </plugin>
