@@ -182,11 +182,11 @@
 				icon="icons/generate_sources.gif"
 				style="push">
 			</command>
-			<command commandId="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand" 
+			<!--<command commandId="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand" 
 				label="Try it out!"
 				icon="icons/mule.png" 
 				style="push">
-			</command>
+			</command>-->
 			<command commandId="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand" 
 				label="Preview Documentation"
 				icon="icons/generate_doc.gif" 
