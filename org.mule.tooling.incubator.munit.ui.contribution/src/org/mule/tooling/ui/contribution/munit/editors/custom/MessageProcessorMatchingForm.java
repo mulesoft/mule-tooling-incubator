@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.mule.tooling.messageflow.editor.MessageFlowEditor;
 import org.mule.tooling.messageflow.outline.LabelRetrieverEntityVisitor;
-import org.mule.tooling.messageflow.outline.OutlinePage;
+import org.mule.tooling.messageflow.outline.MessageFlowOutlinePage;
 import org.mule.tooling.model.messageflow.MessageFlowEntity;
 import org.mule.tooling.model.messageflow.MuleConfiguration;
 import org.mule.tooling.model.messageflow.util.IMessageProcessorNode;
@@ -52,7 +52,7 @@ public class MessageProcessorMatchingForm {
     private MapTableComposite attributeMatchingTable;
 
     private Action showOutline;
-    private OutlinePage outlinePage;
+    private MessageFlowOutlinePage outlinePage;
 
     private String initialMessage;
 
@@ -184,8 +184,8 @@ public class MessageProcessorMatchingForm {
         return attributeViewer;
     }
 
-    private OutlinePage createOutlinePage(final MessageFlowEditor messageFlowEditor, Composite parentEditorGroup) {
-        OutlinePage page = new OutlinePage(messageFlowEditor) {
+    private MessageFlowOutlinePage createOutlinePage(final MessageFlowEditor messageFlowEditor, Composite parentEditorGroup) {
+        MessageFlowOutlinePage page = new MessageFlowOutlinePage(messageFlowEditor) {
 
             @Override
             protected MuleConfiguration getMuleConfiguration() {
