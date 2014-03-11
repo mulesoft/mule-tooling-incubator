@@ -97,12 +97,12 @@ public class ModuleMethod extends DefaultNodeItem {
 	public Object[] getChildren() {
 
 		List<Object> list = new ArrayList<Object>();
-		boolean hasFriendlyName = false;
+		boolean hasName = false;
 		for (Property prop : getProperties()) {
-			if (prop.getName().equals("friendlyName"))
-				hasFriendlyName = true;
+			if (prop.getName().equals("name"))
+				hasName = true;
 		}
-		if (!hasFriendlyName && !(isConnectionMethod() || isMetadataMethod())) {
+		if (!hasName && !(isConnectionMethod() || isMetadataMethod())) {
 			Property property = new Property(this,cu,node);
 			property.setName("XSD Name");
 			property.setValue(NameUtils.uncamel(getMethod().getName()
@@ -110,7 +110,7 @@ public class ModuleMethod extends DefaultNodeItem {
 			list.add(property);
 		} else {
 			for (Property pro : getProperties()) {
-				if (pro.getName().equals("friendlyName")) {
+				if (pro.getName().equals("name")) {
 					Property property = new Property(this,cu,node);
 					property.setName("XSD Name");
 					property.setValue(pro.getValue());
