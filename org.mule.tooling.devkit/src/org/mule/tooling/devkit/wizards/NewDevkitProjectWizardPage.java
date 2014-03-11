@@ -43,7 +43,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 	private Text artifactId;
 	private Text version;
 	private Text name;
-	private String devkitVersion;
 	private String connectorCategory = DEFAULT_CATEGORY;
 	private final Pattern connectorName = Pattern.compile("[A-Z]+[a-zA-Z]+");
 
@@ -130,9 +129,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 				DEFAULT_VERSION, versionListener);
 
 		mavenGroupBox.layout();
-
-		devkitVersion = DevkitUtils.devkitVersions[0];
-
 		
 		ServerChooserComponent serverChooserComponent = new ServerChooserComponent(
 				"Please select a Runtime");

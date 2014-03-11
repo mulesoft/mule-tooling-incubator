@@ -242,4 +242,9 @@
 			</menu>
 		</menuContribution>
 	</extension>
+	<extension point="org.eclipse.ui.ide.markerResolution">
+		<markerResolutionGenerator
+			markerType="org.eclipse.jdt.apt.pluggable.core.compileProblem"
+			class="org.mule.tooling.devkit.quickfix.QuickFixer"/>
+   	</extension>
 </plugin>

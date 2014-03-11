@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -25,13 +24,8 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.ui.JavaUI;
@@ -50,20 +44,17 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.texteditor.ITextEditor;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.treeview.model.Module;
-import org.mule.tooling.devkit.treeview.model.ModuleField;
-import org.mule.tooling.devkit.treeview.model.ModuleMethod;
 import org.mule.tooling.devkit.treeview.model.NodeItem;
 import org.mule.tooling.devkit.treeview.model.ProjectRoot;
 import org.mule.tooling.devkit.treeview.model.Property;
 
+@SuppressWarnings("restriction")
 public class DevkitView extends ViewPart implements IResourceChangeListener,
 		ISelectionListener {
 
@@ -136,6 +127,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 				}
 			}
 
+			@SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
 			private void goToSampleInDocSampleFile(
 					IStructuredSelection thisSelection) {
 				IFile file = null;

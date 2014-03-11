@@ -150,7 +150,6 @@ public class NewDevkitProjectWizard extends Wizard implements INewWizard {
 
     private void doFinish(ConnectorMavenModel mavenModel,String runtimeId,String connectorPackage,String connectorName, IProgressMonitor monitor, boolean isMetaDataEnabled, boolean isOAuth, boolean hasQuery, String minMuleVersion) throws CoreException {
         String artifactId = mavenModel.getArtifactId();
-        String groupId = mavenModel.getGroupId();
         monitor.beginTask("Creating project" + artifactId, 2);
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
