@@ -287,6 +287,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 			return "3.4.1";
 		if (selectedServerDefinition.getId().contains("3.4.0"))
 			return "3.4.0";
-		return "3.5.0-cascade";
+		return "3.5.0-M4";
 	}
 }
