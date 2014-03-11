@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -73,13 +74,14 @@ public class GenerateSourcesCommand extends AbstractHandler {
 						public IStatus runInWorkspace(final IProgressMonitor monitor)
 								throws CoreException {
 							monitor.beginTask(convertingMsg, 100);
+							IJavaProject javaProject= JavaCore.create(selectedProject);
 							MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator
-									.decorate(JavaCore.create(selectedProject));
+									.decorate(javaProject);
 							new BaseDevkitGoalRunner(new String[] { "clean",
 									"package", "-DskipTests",
 									"-Ddevkit.studio.package.skip=true",
 									"-Ddevkit.javadoc.check.skip=true",
-									"-Dmaven.javadoc.skip=true" }).run(
+									"-Dmaven.javadoc.skip=true" },javaProject).run(
 									mavenProject.getPomFile(), monitor);
 
 							return Status.OK_STATUS;

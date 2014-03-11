@@ -335,4 +335,7 @@ public class MavenDevkitProjectDecorator {
         return project.getProject().getFolder(folderPath);
     }
 
+    public IJavaProject getProject() {
+		return project;
+	}
 }

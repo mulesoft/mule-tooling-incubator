@@ -27,7 +27,7 @@ public class UpdateProjectClasspathWorkspaceJob extends WorkspaceJob {
 
     @Override
     public IStatus runInWorkspace(IProgressMonitor jobmonitor) throws CoreException {
-        runner = new BaseDevkitGoalRunner();
+        runner = new BaseDevkitGoalRunner(project.getProject());
         int result = runner.run(project.getPomFile(), jobmonitor);
         if (result != 0) {
             return new Status(Status.CANCEL, DevkitUIPlugin.PLUGIN_ID, "There was an error running the eclipse:eclipse goal on project " + this.getName());

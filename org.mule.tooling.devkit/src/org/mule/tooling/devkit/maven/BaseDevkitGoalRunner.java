@@ -8,9 +8,11 @@ import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.internal.console.ConsoleManager;
+import org.mule.tooling.core.utils.VMUtils;
 import org.mule.tooling.maven.MavenPlugin;
 import org.mule.tooling.maven.cmdline.MavenCommandLine;
 import org.mule.tooling.maven.runner.MavenBinarySearcher;
@@ -33,15 +35,17 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
     private OutputRedirectorThread redirectOutputToConsoleThread;
 
     private String[] commands;
+	private IJavaProject project;
 
     public static int CANCELED=-37;
     
-    public BaseDevkitGoalRunner() {
-        this(new String[] { "eclipse:eclipse" });
+    public BaseDevkitGoalRunner(IJavaProject project) {
+        this(new String[] { "eclipse:eclipse" },project);
     }
 
-    public BaseDevkitGoalRunner(String[] commands) {
+    public BaseDevkitGoalRunner(String[] commands,IJavaProject project) {
         this.commands = commands;
+        this.project = project;
     }
 
     @Override
@@ -50,6 +54,7 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
 
         mavenRunnerBuilder.setMavenInstallationHome(getMavenInstallationHome());
         mavenRunnerBuilder.addMavenOpts("");
+        mavenRunnerBuilder.setJavaHome(VMUtils.getDefaultJvmHome(project));
         final PipedOutputStream pipedOutputStream = new PipedOutputStream();
 
         mavenRunner = mavenRunnerBuilder.build();

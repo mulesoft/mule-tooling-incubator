@@ -145,7 +145,7 @@ public class DevkitExportPage extends WizardPage {
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
                     MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator.decorate(project);
-                    new BaseDevkitGoalRunner(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=false" }).run(mavenProject.getPomFile(), monitor);
+                    new BaseDevkitGoalRunner(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=false" },project).run(mavenProject.getPomFile(), monitor);
                     IFile updateSiteFile = project.getProject().getFile("/target/UpdateSite.zip");
 
                     FileUtils.moveFile(new File(updateSiteFile.getLocationURI()), outputFile);

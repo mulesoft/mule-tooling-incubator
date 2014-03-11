@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.ui.internal.DefaultHelpUI;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -81,11 +82,12 @@ public class CreateDocumentationCommand extends AbstractHandler {
 								final IProgressMonitor monitor)
 								throws CoreException {
 							monitor.beginTask(convertingMsg, 100);
+							IJavaProject javaProject=JavaCore.create(selectedProject);
 							MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator
-									.decorate(JavaCore.create(selectedProject));
+									.decorate(javaProject);
 							final Integer result = new BaseDevkitGoalRunner(
 									new String[] { "clean", "package",
-											"-DskipTests", "javadoc:javadoc" })
+											"-DskipTests", "javadoc:javadoc" },javaProject)
 									.run(mavenProject.getPomFile(), monitor);
 
 							Display.getDefault().syncExec(new Runnable() {
