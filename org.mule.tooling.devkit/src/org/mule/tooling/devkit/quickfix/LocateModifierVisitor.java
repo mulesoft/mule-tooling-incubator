@@ -6,17 +6,28 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-public class LocateFieldOrMethodVisitor extends ASTVisitor {
+public class LocateModifierVisitor extends ASTVisitor {
 
 	private ASTNode node;
-	private ASTNode currentMethod;
+
 	private int chartStart;
 
-	public LocateFieldOrMethodVisitor(int chartStart) {
+	private ModifierKeyword modifier;
+
+	public LocateModifierVisitor(int chartStart, ModifierKeyword modifier) {
 		this.chartStart = chartStart;
+		this.modifier = modifier;
+	}
+
+	public boolean visit(Modifier node) {
+		if(node.getKeyword().equals(modifier)){
+			setNode(node);
+		}
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -24,8 +35,7 @@ public class LocateFieldOrMethodVisitor extends ASTVisitor {
 		List<VariableDeclarationFragment> fragments = node.fragments();
 		for (VariableDeclarationFragment obj : fragments) {
 			if (obj.getStartPosition() == chartStart) {
-				this.setNode(node);
-				break;
+				return true;
 			}
 		}
 		return false;
@@ -33,14 +43,7 @@ public class LocateFieldOrMethodVisitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(MethodDeclaration node) {
-		currentMethod = node;
-		return (this.node == null);
-	}
-
-	@Override
-	public boolean visit(SingleVariableDeclaration node) {
 		if (node.getName().getStartPosition() == chartStart) {
-			setNode(currentMethod);
 			return true;
 		}
 		return false;

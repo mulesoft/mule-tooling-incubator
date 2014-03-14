@@ -16,14 +16,18 @@ import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-public class QuickFix implements IMarkerResolution2 {
+public abstract class QuickFix implements IMarkerResolution2, DevkitQuickFix {
 	String label;
 
 	IResource resource;
 
-	QuickFix(String label) {
+	ConditionMarkerEvaluator evaluator;
+
+	QuickFix(String label, ConditionMarkerEvaluator evaluator) {
 		this.label = label;
+		this.evaluator = evaluator;
 	}
+	
 
 	public String getLabel() {
 		return label;
@@ -36,8 +40,9 @@ public class QuickFix implements IMarkerResolution2 {
 			IJavaElement javaElement = JavaCore.create(resource);
 			ICompilationUnit cu = (ICompilationUnit) javaElement
 					.getAdapter(ICompilationUnit.class);
-			Integer charStart = (Integer) marker.getAttribute(IMarker.CHAR_START);
-			createAST(cu,charStart);
+			Integer charStart = (Integer) marker
+					.getAttribute(IMarker.CHAR_START);
+			createAST(cu, charStart);
 
 			marker.delete();
 		} catch (CoreException e) {
@@ -46,9 +51,11 @@ public class QuickFix implements IMarkerResolution2 {
 		}
 	}
 
-	protected void createAST(ICompilationUnit unit,Integer charStart) throws JavaModelException {
+	protected void createAST(ICompilationUnit unit, Integer charStart)
+			throws JavaModelException {
 		CompilationUnit parse = parse(unit);
-		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(charStart);
+		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
+				charStart, "Optional");
 
 		parse.accept(visitor);
 
@@ -85,5 +92,9 @@ public class QuickFix implements IMarkerResolution2 {
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages()
 				.getImage(ISharedImages.IMG_TOOL_DELETE);
+	}
+
+	public boolean hasFixForMarker(IMarker marker) {
+		return evaluator.hasFixForMarker(marker);
 	}
 }

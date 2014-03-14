@@ -11,9 +11,11 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 public class LocateAnnotationVisitor extends ASTVisitor {
 
 	private MarkerAnnotation node;
+	private final String annotation;
 	private int chartStart;
 
-	public LocateAnnotationVisitor(int chartStart) {
+	public LocateAnnotationVisitor(int chartStart, String annotation) {
+		this.annotation = annotation;
 		this.chartStart = chartStart;
 	}
 
@@ -33,7 +35,7 @@ public class LocateAnnotationVisitor extends ASTVisitor {
 	}
 	@Override
 	public boolean visit(MarkerAnnotation node) {
-		if (node.getTypeName().toString().equals("Optional")) {
+		if (node.getTypeName().toString().equals(annotation)) {
 			this.setNode(node);
 		}
 		return false;

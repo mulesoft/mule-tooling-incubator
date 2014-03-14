@@ -6,7 +6,7 @@ public class ModelUtils {
 	public static String[] SUPPORTED_CLASS_ANNOTATIONS = { "Connector",
 			"Module","MetaDataCategory" };
 
-	public static String[] SUPPORTED_METHOD_ANNOTATIONS = { "Processor",
+	public static String[] SUPPORTED_METHOD_ANNOTATIONS = { "Processor","Source",
 			"Connect", "Disconnect", "ValidateConnection",
 			"ConnectionIdentifier" };
 
@@ -23,7 +23,7 @@ public class ModelUtils {
 	}
 
 	public static boolean isConnectionAnnotation(String annotation) {
-		return !annotation.equals(SUPPORTED_METHOD_ANNOTATIONS[0]) && !isMetadaMethod(annotation);
+		return !(annotation.equals(SUPPORTED_METHOD_ANNOTATIONS[0])||annotation.equals(SUPPORTED_METHOD_ANNOTATIONS[1])) && !isMetadaMethod(annotation);
 	}
 	
 	public static boolean isMetadaMethod(String annotation) {

@@ -16,8 +16,8 @@ import org.eclipse.swt.graphics.Image;
 @SuppressWarnings("restriction")
 public class AddDatasenseMethodQuickFix extends QuickFix{
 
-	AddDatasenseMethodQuickFix(String label) {
-		super(label);
+	AddDatasenseMethodQuickFix(String label,ConditionMarkerEvaluator evaluator) {
+		super(label,evaluator);
 	}
 	
 	protected void createAST(ICompilationUnit unit,Integer charStart) throws JavaModelException {
@@ -35,26 +35,6 @@ public class AddDatasenseMethodQuickFix extends QuickFix{
 			
 			ListRewrite list = rewrite.getListRewrite(typeDecl,
 					TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
-			
-//			MethodDeclaration method = ast.newMethodDeclaration();
-//			method.setName(ast.newSimpleName("getMetaData"));
-//			method.setBody(ast.newBlock());
-//			Block block = method.getBody();
-//			List<Modifier> modifiers = method.modifiers();
-//			modifiers.add(ast.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
-//			method.setReturnType2(ast.newPrimitiveType(PrimitiveType.VOID));
-//			
-//			MarkerAnnotation ann=ast.newMarkerAnnotation();
-//			ann.setTypeName(ast.newName("Optional"));
-//			ListRewrite lr = rewrite.getListRewrite(method, MethodDeclaration.MODIFIERS2_PROPERTY);
-//		    lr.insertFirst(ann, null);
-//			
-//			ListRewrite listRewrite = rewrite.getListRewrite(block, Block.STATEMENTS_PROPERTY);
-//			//notice here, we just create a string placeholder, and string is simply as empty
-//			Statement placeHolder = (Statement) rewrite.createStringPlaceholder("//TODO implement datasense", ASTNode.EMPTY_STATEMENT);
-//			listRewrite.insertFirst(placeHolder, null);
-//			placeHolder = (Statement) rewrite.createStringPlaceholder("return null;", ASTNode.EMPTY_STATEMENT);
-//			listRewrite.insertLast(placeHolder, null);
 			
 			Statement placeHolder = (Statement) rewrite.createStringPlaceholder("@MetaDataKeyRetriever\npublic List<MetaDataKey> getKeys() throws Exception {\n\treturn null;\n}", ASTNode.EMPTY_STATEMENT);
 			list.insertLast(placeHolder, null);

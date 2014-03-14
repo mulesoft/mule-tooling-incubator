@@ -83,7 +83,8 @@ Bundle-ClassPath: .,
  lib/plexus-io.jar,
  lib/plexus-utils.jar,
  lib/junit.jar
-Export-Package: org.mule.devkit.generation.utils,
+Export-Package: org.mule.devkit.generation.api.gatherer,
+ org.mule.devkit.generation.utils,
  org.mule.tooling.devkit.apt;
   uses:="javax.lang.model.util,
    javax.lang.model.type,

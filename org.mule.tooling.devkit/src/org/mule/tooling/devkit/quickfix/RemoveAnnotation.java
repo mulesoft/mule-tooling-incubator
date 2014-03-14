@@ -4,20 +4,29 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IMarkerResolution2;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
-@SuppressWarnings("restriction")
-public class AddMethodQuickFix extends QuickFix implements IMarkerResolution2{
+public class RemoveAnnotation extends QuickFix {
 
-	AddMethodQuickFix(String label) {
-		super(label);
+	private final String annotation;
+
+	public RemoveAnnotation(String label, String annotation,ConditionMarkerEvaluator evaluator) {
+		super(label,evaluator);
+		this.annotation = annotation;
+
 	}
-	
-	protected void createAST(ICompilationUnit unit,Integer charStart) throws JavaModelException {
+
+	public String getLabel() {
+		return label;
+	}
+
+	protected void createAST(ICompilationUnit unit, Integer charStart)
+			throws JavaModelException {
 		CompilationUnit parse = parse(unit);
-		LocateMethodVisitor visitor = new LocateMethodVisitor(charStart);
+		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
+				charStart, annotation);
 
 		parse.accept(visitor);
 
@@ -32,12 +41,8 @@ public class AddMethodQuickFix extends QuickFix implements IMarkerResolution2{
 	}
 
 	@Override
-	public String getDescription() {
-		return "You can either add datanse or remove this operation";
-	}
-
-	@Override
 	public Image getImage() {
-		return JavaPluginImages.get(JavaPluginImages.IMG_CORRECTION_REMOVE);
+		return PlatformUI.getWorkbench().getSharedImages()
+				.getImage(ISharedImages.IMG_TOOL_DELETE);
 	}
 }

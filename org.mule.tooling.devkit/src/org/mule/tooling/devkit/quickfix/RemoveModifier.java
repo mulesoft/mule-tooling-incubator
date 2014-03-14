@@ -3,21 +3,30 @@ package org.mule.tooling.devkit.quickfix;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-public class RemoveMethodQuickFix extends QuickFix {
+public class RemoveModifier extends QuickFix {
 
-	RemoveMethodQuickFix(String label,ConditionMarkerEvaluator evaluator) {
+	private ModifierKeyword modifier;
+	public RemoveModifier(String label, ModifierKeyword modifier,ConditionMarkerEvaluator evaluator) {
 		super(label,evaluator);
+		this.modifier = modifier;
+
 	}
-	
+
+	public String getLabel() {
+		return label;
+	}
+
 	protected void createAST(ICompilationUnit unit, Integer charStart)
 			throws JavaModelException {
 		CompilationUnit parse = parse(unit);
-		LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(charStart);
+		LocateModifierVisitor visitor = new LocateModifierVisitor(
+				charStart, modifier);
 
 		parse.accept(visitor);
 
@@ -29,11 +38,6 @@ public class RemoveMethodQuickFix extends QuickFix {
 			unit.commitWorkingCopy(true, null);
 			unit.discardWorkingCopy();
 		}
-	}
-
-	@Override
-	public String getDescription() {
-		return "You can either add datanse or remove this operation";
 	}
 
 	@Override

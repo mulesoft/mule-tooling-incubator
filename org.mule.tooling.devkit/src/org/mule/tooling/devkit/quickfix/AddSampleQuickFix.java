@@ -34,10 +34,22 @@ import org.mule.tooling.devkit.treeview.model.ModuleUtils;
 
 public class AddSampleQuickFix extends QuickFix {
 
-	public AddSampleQuickFix(String label) {
-		super(label);
+	public AddSampleQuickFix(String label,ConditionMarkerEvaluator evaluator) {
+		super(label,evaluator);
 	}
-
+	
+	@Override
+	public boolean hasFixForMarker(IMarker marker) {
+		String problem="";
+		try {
+			problem = (String) marker.getAttribute(IMarker.MESSAGE);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		
+		return problem.contains("{@sample.xml}");
+	}
+	
 	protected void createAST(ICompilationUnit unit, Integer charStart)
 			throws JavaModelException {
 		CompilationUnit parse = parse(unit);
@@ -148,5 +160,10 @@ public class AddSampleQuickFix extends QuickFix {
 
 	private IProject getCurrent() {
 		return resource.getProject();
+	}
+	
+	@Override
+	public String getDescription() {
+		return "This will add a sample in the sample file with a basic structure.";
 	}
 }
