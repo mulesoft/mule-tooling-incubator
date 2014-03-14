@@ -8,7 +8,7 @@
       exclusive="true">
 
    <description url="http://www.mulesoft.org/">
-      Mule Devkit Project Extension.
+       Anypoint Devkit Plugin.
    </description>
 
    <copyright url="http://www.mulesoft.org">
