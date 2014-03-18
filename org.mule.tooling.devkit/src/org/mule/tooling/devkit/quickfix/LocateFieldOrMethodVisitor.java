@@ -34,6 +34,10 @@ public class LocateFieldOrMethodVisitor extends ASTVisitor {
 	@Override
 	public boolean visit(MethodDeclaration node) {
 		currentMethod = node;
+		if (node.getName().getStartPosition() == chartStart) {
+			setNode(node);
+			return false;
+		}
 		return (this.node == null);
 	}
 
