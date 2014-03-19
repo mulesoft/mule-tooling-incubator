@@ -247,4 +247,12 @@
 			markerType="org.eclipse.jdt.apt.pluggable.core.compileProblem"
 			class="org.mule.tooling.devkit.quickfix.QuickFixer"/>
    	</extension>
+   	<extension point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+  		<hyperlinkDetector
+    		id="org.mule.tooling.devkit.links.DevkitSampleHyperlinkDetector"
+    		targetId="org.eclipse.jdt.ui.javaCode"
+    		class="org.mule.tooling.devkit.links.DevkitSampleHyperlinkDetector"
+    		name="Devkit Sample Link Detector">
+		</hyperlinkDetector>
+	</extension>
 </plugin>
