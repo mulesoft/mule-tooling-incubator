@@ -90,7 +90,7 @@ public class QuickFixer implements IMarkerResolutionGenerator {
 		fixes.add(new RemoveAnnotation("Remove @Configurable annotation.", "Configurable",
 				new MessageEquals(notifications)));
 		
-		fixes.add(new AddParamAnnotationQuickFix("Add annotation.",
-				new MessageContains("@Default implies @Optional")));
+		fixes.add(new AddParamSourceCallbackQuickFix("Add SourceCallback parameter.",
+				new MessageEquals(Message.DEVKIT_120)));
 	}
 }
