@@ -6,9 +6,9 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.internal.console.ConsoleManager;
@@ -22,6 +22,7 @@ import org.mule.tooling.maven.runner.SyncGetResultCallback;
 import org.mule.tooling.maven.ui.actions.StudioGoalRunner;
 import org.mule.tooling.maven.utils.MavenOutputToMonitorRedirectorThread;
 import org.mule.tooling.maven.utils.OutputRedirectorThread;
+import org.mule.tooling.maven.utils.RunnableUtils;
 import org.mule.tooling.ui.utils.UiUtils;
 
 @SuppressWarnings("restriction")
@@ -35,10 +36,10 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
     private OutputRedirectorThread redirectOutputToConsoleThread;
 
     private String[] commands;
-	private IJavaProject project;
+    private IJavaProject project;
 
     public static int CANCELED=-37;
-    
+
     public BaseDevkitGoalRunner(IJavaProject project) {
         this(new String[] { "eclipse:eclipse" },project);
     }
@@ -84,11 +85,11 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
     }
 
     protected void runCommand(File pomFile, final PipedOutputStream pipedOutputStream, SyncGetResultCallback callback) {
-    	StringBuilder commandString = new StringBuilder();
-    	for(String command: commands){
-    		commandString.append(command+ " ");
-    	}
-    	commandString.append("-f "+pomFile.getAbsolutePath());
+        StringBuilder commandString = new StringBuilder();
+        for(String command: commands){
+            commandString.append(command+ " ");
+        }
+        commandString.append("-f "+pomFile.getAbsolutePath());
         mavenRunner.runBare(MavenCommandLine.fromString(commandString.toString()),callback, pipedOutputStream);
     }
 
