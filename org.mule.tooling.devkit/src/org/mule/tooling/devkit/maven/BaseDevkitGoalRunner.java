@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.internal.console.ConsoleManager;
-import org.mule.tooling.core.utils.VMUtils;
+//import org.mule.tooling.core.utils.VMUtils;
 import org.mule.tooling.maven.MavenPlugin;
 import org.mule.tooling.maven.cmdline.MavenCommandLine;
 import org.mule.tooling.maven.runner.MavenBinarySearcher;
@@ -54,7 +54,7 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
 
         mavenRunnerBuilder.setMavenInstallationHome(getMavenInstallationHome());
         mavenRunnerBuilder.addMavenOpts("");
-        mavenRunnerBuilder.setJavaHome(VMUtils.getDefaultJvmHome(project));
+        //mavenRunnerBuilder.setJavaHome(VMUtils.getDefaultJvmHome(project));
         final PipedOutputStream pipedOutputStream = new PipedOutputStream();
 
         mavenRunner = mavenRunnerBuilder.build();
