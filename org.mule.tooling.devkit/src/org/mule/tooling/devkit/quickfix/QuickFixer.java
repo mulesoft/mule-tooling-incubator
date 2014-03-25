@@ -80,17 +80,24 @@ public class QuickFixer implements IMarkerResolutionGenerator {
 		notifications.add(Message.DEVKIT_004);
 		notifications.add(Message.DEVKIT_116);
 		fixes.add(new RemoveModifier("Remove final modifier.",
-				ModifierKeyword.FINAL_KEYWORD, new MessageEquals(
-						notifications)));
-		
+				ModifierKeyword.FINAL_KEYWORD, new MessageEquals(notifications)));
+
 		notifications = new ArrayList<DevkitNotification>();
 		notifications.add(Message.DEVKIT_004);
 		notifications.add(Message.DEVKIT_005);
 		notifications.add(Message.DEVKIT_006);
-		fixes.add(new RemoveAnnotation("Remove @Configurable annotation.", "Configurable",
-				new MessageEquals(notifications)));
-		
-		fixes.add(new AddParamSourceCallbackQuickFix("Add SourceCallback parameter.",
-				new MessageEquals(Message.DEVKIT_120)));
+		fixes.add(new RemoveAnnotation("Remove @Configurable annotation.",
+				"Configurable", new MessageEquals(notifications)));
+
+		fixes.add(new AddParamSourceCallbackQuickFix(
+				"Add SourceCallback parameter.", new MessageEquals(
+						Message.DEVKIT_120)));
+		fixes.add(new AddJavadocSampleReferenceQuickFix(
+				"Add sample reference.", new MessageMatches(
+						Message.DEVKIT_212)));
+		fixes.add(new AddJavadocForElementQuickFix(
+				"Add Javadoc for param.", new MessageMatches(
+						Message.DEVKIT_208)));
+
 	}
 }
