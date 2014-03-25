@@ -92,21 +92,20 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
         mavenRunner.runBare(MavenCommandLine.fromString(commandString.toString()),callback, pipedOutputStream);
     }
 
-    
     private void redirectOutputToConsole(PipedOutputStream nextOutput) {
         MessageConsole messageConsole = UiUtils.getMessageConsole("Mule Extensions");
-        IOConsoleOutputStream consoleStream = messageConsole.newOutputStream();
+        final IOConsoleOutputStream consoleStream = messageConsole.newOutputStream();
         PipedInputStream inputStream = null;
         try {
             inputStream = new PipedInputStream(nextOutput);
         } catch (IOException e) {
             throw new RuntimeException("IO exception creating piped streams (should not happen)", e);
         }
-        redirectOutputToConsoleThread = new OutputRedirectorThread(inputStream, consoleStream);
+        redirectOutputToConsoleThread = new OutputRedirectorThread(inputStream, consoleStream, RunnableUtils.newRunnableClosing(inputStream, consoleStream));
 
         UiUtils.showConsoleView();
         // STUDIO-2676 - bring new console to front
-        new ConsoleManager().showConsoleView(messageConsole);
+        ConsolePlugin.getDefault().getConsoleManager().showConsoleView(messageConsole);
         redirectOutputToConsoleThread.start();
     }
 
