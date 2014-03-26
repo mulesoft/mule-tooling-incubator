@@ -13,8 +13,8 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
     <properties>
-        <aws.key>${settings.servers.studio-s3-releases.username}</aws.key>
-        <aws.secret>${settings.servers.studio-s3-releases.password}</aws.secret>
+        <aws.key>${settings.servers.mulesoft-s3.username}</aws.key>
+        <aws.secret>${settings.servers.mulesoft-s3.password}</aws.secret>
     </properties>
 	<profiles>
 		<profile>
