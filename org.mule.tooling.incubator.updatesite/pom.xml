@@ -12,6 +12,10 @@
   		<artifactId>org.mule.tooling.incubator.parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
+    <properties>
+        <aws.key>${settings.servers.studio-s3-releases.username}</aws.key>
+        <aws.secret>${settings.servers.studio-s3-releases.password}</aws.secret>
+    </properties>
 	<profiles>
 		<profile>
 			<id>amazon</id>
@@ -28,12 +32,11 @@
 				                <configuration>
 				                    <tasks>
 				                        <taskdef resource="org/mule/ant/tasks.properties" classpathref="maven.plugin.classpath"/>
-				                        <s3delete endpoint="s3.amazonaws.com" key="${aws.key}" secret="${aws.secret}" bucket="mule-tooling-incubator" dir="3.5"/>
-				                        <s3upload publicRead="true" endpoint="s3.amazonaws.com" key="${aws.key}" secret="${aws.secret}" bucket="mule-tooling-incubator" dest="3.5" contentType="application/x-whatever">
-				                <!-- fileset structure -->
-				                          <fileset dir="${basedir}/target/repository"/>
-				                       </s3upload>
-
+                                        <s3delete endpoint="s3.amazonaws.com" key="${aws.key}" secret="${aws.secret}" bucket="mule-tooling-incubator" dir="3.5-M4"/>
+                                        <s3upload publicRead="true" endpoint="s3.amazonaws.com" key="${aws.key}" secret="${aws.secret}" bucket="mule-tooling-incubator" dest="3.5-M4" contentType="application/x-whatever">
+                                        <!-- fileset structure -->
+                                        <fileset dir="${basedir}/target/repository"/>
+                                        </s3upload>
 				                    </tasks>
 				                </configuration>
 				                <goals>
@@ -64,6 +67,13 @@
 		</profile>
 	</profiles>
 	<build>
+        <extensions>
+            <extension>
+                <groupId>com.github.shyiko.servers-maven-extension</groupId>
+                <artifactId>servers-maven-extension</artifactId>
+                <version>1.2.0</version>
+            </extension>
+        </extensions>
 		<plugins>
 			<plugin>
 		        <groupId>org.eclipse.tycho</groupId>

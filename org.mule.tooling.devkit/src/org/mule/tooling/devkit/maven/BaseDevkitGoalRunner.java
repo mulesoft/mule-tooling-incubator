@@ -1,18 +1,20 @@
 package org.mule.tooling.devkit.maven;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.MessageConsole;
-import org.eclipse.ui.internal.console.ConsoleManager;
-import org.mule.tooling.core.utils.VMUtils;
 import org.mule.tooling.maven.MavenPlugin;
 import org.mule.tooling.maven.cmdline.MavenCommandLine;
 import org.mule.tooling.maven.runner.MavenBinarySearcher;
@@ -22,7 +24,6 @@ import org.mule.tooling.maven.runner.SyncGetResultCallback;
 import org.mule.tooling.maven.ui.actions.StudioGoalRunner;
 import org.mule.tooling.maven.utils.MavenOutputToMonitorRedirectorThread;
 import org.mule.tooling.maven.utils.OutputRedirectorThread;
-import org.mule.tooling.maven.utils.RunnableUtils;
 import org.mule.tooling.ui.utils.UiUtils;
 
 @SuppressWarnings("restriction")
@@ -55,7 +56,7 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
 
         mavenRunnerBuilder.setMavenInstallationHome(getMavenInstallationHome());
         mavenRunnerBuilder.addMavenOpts("");
-        mavenRunnerBuilder.setJavaHome(VMUtils.getDefaultJvmHome(project));
+        //mavenRunnerBuilder.setJavaHome(getDefaultJvmHome(project));
         final PipedOutputStream pipedOutputStream = new PipedOutputStream();
 
         mavenRunner = mavenRunnerBuilder.build();
@@ -102,7 +103,7 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
         } catch (IOException e) {
             throw new RuntimeException("IO exception creating piped streams (should not happen)", e);
         }
-        redirectOutputToConsoleThread = new OutputRedirectorThread(inputStream, consoleStream, RunnableUtils.newRunnableClosing(inputStream, consoleStream));
+        redirectOutputToConsoleThread = new OutputRedirectorThread(inputStream, consoleStream);
 
         UiUtils.showConsoleView();
         // STUDIO-2676 - bring new console to front
@@ -159,4 +160,33 @@ public class BaseDevkitGoalRunner implements StudioGoalRunner {
 
         return mavenHome;
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //TODO REMOVE WHEN VMUTILS IS ADDED TO STUDIO
+    public static final String JAVA_HOME = "JAVA_HOME";
+    /**
+     * Returns the default project JVM home. If project is null, then the default workspace JVM will be used.
+     * In case of exception the JAVA_HOME system property will be returned.
+     * @param project
+     * @return The default jvm home for the given project or null if nothing was found
+     */
+    public static String getDefaultJvmHome(IJavaProject project) {
+        try {
+            IVMInstall jvm = project != null ? JavaRuntime.getVMInstall(project) : JavaRuntime.getDefaultVMInstall();
+            return jvm.getInstallLocation().getAbsolutePath();
+        } catch (Exception ex) {
+            return System.getProperty(JAVA_HOME);
+        }
+    }
+    public static Runnable newRunnableClosing(final Closeable... closeables) {
+        return new Runnable() {
+
+            @Override
+            public void run() {
+                for (Closeable closeable : closeables) {
+                    IOUtils.closeQuietly(closeable);
+                }
+            }
+        };
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 }
