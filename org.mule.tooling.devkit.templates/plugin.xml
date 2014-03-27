@@ -4,7 +4,4 @@
 	<extension point="org.eclipse.ui.editors.templates">
 		<include file="templates/connectors-templates.xml"/>
 	</extension>
-	<extension point="org.eclipse.ui.editors.templates">
-		<include file="templates/connectors-templates.xml"/>
-	</extension>
 </plugin>
