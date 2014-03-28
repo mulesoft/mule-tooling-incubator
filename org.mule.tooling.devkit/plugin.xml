@@ -149,6 +149,12 @@
 			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand">
 		</command>
 	</extension>
+		<extension point="org.eclipse.ui.commands">
+	<command id="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand"
+			name="Generate Testdata"
+			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand">
+		</command>
+	</extension>
 	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
 			name="Create documentation"
@@ -179,6 +185,11 @@
 			</separator>
 			<command commandId="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand" 
 				label="Generate Sources"
+				icon="icons/generate_sources.gif"
+				style="push">
+			</command>
+			<command commandId="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand" 
+				label="Generate TestData"
 				icon="icons/generate_sources.gif"
 				style="push">
 			</command>
