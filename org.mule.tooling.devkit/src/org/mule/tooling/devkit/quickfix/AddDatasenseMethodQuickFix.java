@@ -46,6 +46,10 @@ public class AddDatasenseMethodQuickFix extends QuickFix{
 			boolean hasUtilsList = false;
 			boolean hasMetaDataKey = false;
 			boolean hasMetaData = false;
+
+			ListRewrite listImports = rewrite.getListRewrite(parse, CompilationUnit.IMPORTS_PROPERTY);
+			ImportDeclaration id=null;
+			
 			for(Object obj:parse.imports()){
 				ImportDeclaration importDec=(ImportDeclaration) obj;
 				if(importDec.getName().getFullyQualifiedName().equals("org.mule.api.annotations.MetaDataKeyRetriever")){
@@ -66,8 +70,6 @@ public class AddDatasenseMethodQuickFix extends QuickFix{
 				
 			}
 		    
-			ListRewrite listImports = rewrite.getListRewrite(parse, CompilationUnit.IMPORTS_PROPERTY);
-			ImportDeclaration id=null;
 			
 			if(!hasMetaDataKeyRetriever){
 				id=ast.newImportDeclaration();

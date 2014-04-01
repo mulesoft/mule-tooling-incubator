@@ -26,23 +26,22 @@ public class MessageMatches implements ConditionMarkerEvaluator {
 		String problem = "";
 		try {
 			problem = (String) marker.getAttribute(IMarker.MESSAGE);
+			for (DevkitNotification notification : notifications) {
+				Pattern p = Pattern.compile(escapeRE(notification.getMessage())
+						.replaceAll("%s", ".*"));
+				Matcher m = p.matcher(problem);
+				if (m.matches()) {
+					return true;
+				}
+			}
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
-		for (DevkitNotification notification : notifications) {
-			Pattern p = Pattern.compile(escapeRE(notification.getMessage()).replaceAll(
-					"%s", ".*"));
-			Matcher m = p.matcher(problem);
-			if (m.matches()) {
-				return true;
-			}
-		}
 		return false;
 	}
-	
+
 	public static String escapeRE(String str) {
-        //Pattern escaper = Pattern.compile("([^a-zA-z0-9])");
-        //return escaper.matcher(str).replaceAll("\\\\$1");
-        return str.replaceAll("\\[.*\\][^ ].*", "[%s]").replaceAll("([{}.\\[\\]])", "\\\\$1");
-    }
+		return str.replaceAll("\\[.*\\][^ \\.].*", "[%s]").replaceAll(
+				"([{}\\.\\[\\]\\(\\)])", "\\\\$1");
+	}
 }

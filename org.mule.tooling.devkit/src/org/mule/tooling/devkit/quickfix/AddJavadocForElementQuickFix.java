@@ -70,7 +70,7 @@ public class AddJavadocForElementQuickFix extends QuickFix {
 		SimpleName arg = ast.newSimpleName(paramName); //$NON-NLS-1$
 		newTagElement.fragments().add(arg);
 		TextElement comment = ast.newTextElement();
-		comment.setText("TODO: Comment for "+paramName);
+		comment.setText("Comment for "+paramName);
 		newTagElement.fragments().add(comment);
 		ListRewrite tagsRewriter = rewrite.getListRewrite(javadoc,
 				Javadoc.TAGS_PROPERTY);

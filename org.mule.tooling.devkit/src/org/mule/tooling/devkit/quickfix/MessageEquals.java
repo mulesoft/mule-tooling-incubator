@@ -24,13 +24,13 @@ public class MessageEquals implements ConditionMarkerEvaluator {
 		String problem = "";
 		try {
 			problem = (String) marker.getAttribute(IMarker.MESSAGE);
+			for (DevkitNotification notification : notifications) {
+				if (problem.equals(notification.getMessage())) {
+					return true;
+				}
+			}
 		} catch (CoreException e) {
 			e.printStackTrace();
-		}
-		for (DevkitNotification notification : notifications) {
-			if (problem.equals(notification.getMessage())) {
-				return true;
-			}
 		}
 		return false;
 	}

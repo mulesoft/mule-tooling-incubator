@@ -10,7 +10,9 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.ISharedImages;
@@ -69,6 +71,32 @@ public abstract class QuickFix implements IMarkerResolution2, DevkitQuickFix {
 		}
 	}
 
+	protected void addImportIfRequired(CompilationUnit parse, AST ast,
+			ASTRewrite rewrite, String fullyQualifiedName) {
+
+		boolean hasConnectorAnnotationImport = false;
+
+		ListRewrite listImports = rewrite.getListRewrite(parse,
+				CompilationUnit.IMPORTS_PROPERTY);
+
+		for (Object obj : parse.imports()) {
+			ImportDeclaration importDec = (ImportDeclaration) obj;
+			if (importDec.getName().getFullyQualifiedName()
+					.equals(fullyQualifiedName)) {
+				hasConnectorAnnotationImport = true;
+			}
+		}
+
+		ImportDeclaration id = null;
+
+		if (!hasConnectorAnnotationImport) {
+			id = ast.newImportDeclaration();
+			id.setName(ast.newName(fullyQualifiedName));
+			listImports.insertLast(id, null);
+		}
+	}
+
+	
 	/**
 	 * * Reads a ICompilationUnit and creates the AST DOM for manipulating the *
 	 * Java source file * * @param unit * @return
