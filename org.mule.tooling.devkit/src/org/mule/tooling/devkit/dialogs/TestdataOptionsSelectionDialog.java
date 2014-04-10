@@ -26,14 +26,18 @@ import org.mule.tooling.ui.utils.UiUtils;
 
 public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 
+	private static final String GENERATION_TYPE_SELECTION = "Generation type selection";
+	private static final String TITTLE = "TestData generation properties";
+	private static final String SUBTITLE = "Configure the generation type and its arguments";
 	private static final String CREDENTIALS = "Credentials:";
 	private static final String BROWSE = "Browse";
 	private static final String REPLACE_FILES = "Replace Files:";
 	private static final String INTEROP_FILES = "Interop files";
 	private static final String GENERATION_TYPE = "Generation Type:";
-	private static final String TESTDATA_XML = "testdata.xml";
+	private static final String TESTDATA_XML = "testData.xml";
 	private static final String GROUP_TITLE_INTEROP_INPUT = "Interop Testing";
 	private static final String LABEL_INTEROP_NAME = "Output File:";
+	private static final String EXTENSION_FILTER = "*.properties";
 	
 	private Text txtOutputFileName;
 	private String outputFileName;
@@ -59,8 +63,8 @@ public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		setTitle("TestData generation properties");
-		setMessage("Configure the generation type and its arguments");
+		setTitle(TITTLE);
+		setMessage(SUBTITLE);
 	}
 
 	@Override
@@ -87,7 +91,7 @@ public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 
 	private void createGlobalPropertiesGroup(Composite container) {
 		Group typeSelectionGroup = UiUtils.createGroupWithTitle(container,
-						"Generation type selection", 3);
+						GENERATION_TYPE_SELECTION, 3);
 		
 		createGenerationTypeCheckboxInput(typeSelectionGroup);
 		createOverrideTypeCheckboxInput(typeSelectionGroup);
@@ -156,7 +160,7 @@ public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 				FileDialog fileDialog = new FileDialog(Display.getCurrent().getActiveShell());
 				fileDialog.setText("Select File");
 				
-				fileDialog.setFilterExtensions(new String[] { "*.properties" });
+				fileDialog.setFilterExtensions(new String[] { EXTENSION_FILTER });
 				fileDialog.setFilterNames(new String[] { "Properties(*.properties)" });
 				
 				String selected = fileDialog.open();
