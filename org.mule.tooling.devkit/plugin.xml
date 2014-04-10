@@ -126,7 +126,7 @@
             extensions="sample"
             icon="icons/sample.gif"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            class="org.mule.tooling.devkit.sample.editor.editors.XMLEditor"
+            class="org.mule.tooling.devkit.sample.editor.XMLEditor"
             id="org.mule.tooling.devkit.sample.editor.editors.XMLEditor">
       </editor>
    </extension>

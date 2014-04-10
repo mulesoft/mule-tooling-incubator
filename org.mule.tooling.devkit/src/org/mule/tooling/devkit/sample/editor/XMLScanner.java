@@ -1,4 +1,4 @@
-package org.mule.tooling.devkit.sample.editor.editors;
+package org.mule.tooling.devkit.sample.editor;
 
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;

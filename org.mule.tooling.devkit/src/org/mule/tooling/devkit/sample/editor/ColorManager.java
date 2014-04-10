@@ -1,4 +1,4 @@
-package org.mule.tooling.devkit.sample.editor.editors;
+package org.mule.tooling.devkit.sample.editor;
 
 import java.util.HashMap;
 import java.util.Iterator;

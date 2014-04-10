@@ -171,7 +171,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 					HashMap map = new HashMap();
 					map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
 					map.put(IWorkbenchPage.EDITOR_ID_ATTR,
-							"org.mule.tooling.devkit.sample.editor.editors.XMLEditor");
+							"org.mule.tooling.devkit.sample.editor.XMLEditor");
 					IMarker marker;
 
 					marker = file.createMarker(IMarker.TEXT);

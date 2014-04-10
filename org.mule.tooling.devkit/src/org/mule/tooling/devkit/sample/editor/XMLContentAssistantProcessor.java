@@ -6,7 +6,7 @@
  * which is available at http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 
-package org.mule.tooling.devkit.sample.editor.editors;
+package org.mule.tooling.devkit.sample.editor;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;

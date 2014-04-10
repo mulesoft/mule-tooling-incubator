@@ -138,7 +138,7 @@ public class AddSampleQuickFix extends QuickFix {
 			HashMap map = new HashMap();
 			map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
 			map.put(IWorkbenchPage.EDITOR_ID_ATTR,
-					"org.mule.tooling.devkit.sample.editor.editors.XMLEditor");
+					"org.mule.tooling.devkit.sample.editor.XMLEditor");
 			IMarker marker;
 
 			marker = file.createMarker(IMarker.TEXT);
@@ -148,7 +148,7 @@ public class AddSampleQuickFix extends QuickFix {
 			IWorkbenchPage page = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getActivePage();
 			// page.openEditor(new SampleDocEditorInput(file, module),
-			// "org.mule.tooling.devkit.sample.editor.editors.XMLEditor");
+			// "org.mule.tooling.devkit.sample.editor.XMLEditor");
 			IDE.openEditor(page, marker); // 3.0 API
 			marker.delete();
 
