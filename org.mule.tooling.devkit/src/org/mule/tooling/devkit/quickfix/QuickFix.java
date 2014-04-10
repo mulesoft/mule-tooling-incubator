@@ -8,7 +8,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -17,6 +16,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.mule.tooling.devkit.ASTUtils;
 
 public abstract class QuickFix implements IMarkerResolution2, DevkitQuickFix {
 	String label;
@@ -55,7 +55,7 @@ public abstract class QuickFix implements IMarkerResolution2, DevkitQuickFix {
 
 	protected void createAST(ICompilationUnit unit, Integer charStart)
 			throws JavaModelException {
-		CompilationUnit parse = parse(unit);
+		CompilationUnit parse = ASTUtils.parse(unit);
 		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
 				charStart, "Optional");
 
@@ -64,11 +64,17 @@ public abstract class QuickFix implements IMarkerResolution2, DevkitQuickFix {
 		if (visitor.getNode() != null) {
 			ASTRewrite rewrite = ASTRewrite.create(parse.getAST());
 			rewrite.remove(visitor.getNode(), null);
-			unit.applyTextEdit(rewrite.rewriteAST(), null);
-			unit.becomeWorkingCopy(null);
-			unit.commitWorkingCopy(true, null);
-			unit.discardWorkingCopy();
+			applyChange(unit, rewrite);
 		}
+	}
+
+
+	protected void applyChange(ICompilationUnit unit, ASTRewrite rewrite)
+			throws JavaModelException {
+		unit.applyTextEdit(rewrite.rewriteAST(), null);
+		unit.becomeWorkingCopy(null);
+		unit.commitWorkingCopy(true, null);
+		unit.discardWorkingCopy();
 	}
 
 	protected void addImportIfRequired(CompilationUnit parse, AST ast,
@@ -94,21 +100,6 @@ public abstract class QuickFix implements IMarkerResolution2, DevkitQuickFix {
 			id.setName(ast.newName(fullyQualifiedName));
 			listImports.insertLast(id, null);
 		}
-	}
-
-	
-	/**
-	 * * Reads a ICompilationUnit and creates the AST DOM for manipulating the *
-	 * Java source file * * @param unit * @return
-	 */
-
-	protected CompilationUnit parse(ICompilationUnit unit) {
-		@SuppressWarnings("deprecation")
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		parser.setSource(unit);
-		parser.setResolveBindings(true);
-		return (CompilationUnit) parser.createAST(null); // parse
 	}
 
 	@Override

@@ -2,15 +2,14 @@ package org.mule.tooling.devkit.quickfix;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.mule.tooling.devkit.ASTUtils;
 
 public class ChangeModifier extends QuickFix {
 
@@ -25,7 +24,7 @@ public class ChangeModifier extends QuickFix {
 
 	protected void createAST(ICompilationUnit unit, Integer charStart)
 			throws JavaModelException {
-		CompilationUnit parse = parse(unit);
+		CompilationUnit parse = ASTUtils.parse(unit);
 		LocateModifierVisitor visitor = new LocateModifierVisitor(charStart,
 				ModifierKeyword.PROTECTED_KEYWORD);
 
@@ -45,12 +44,9 @@ public class ChangeModifier extends QuickFix {
 							Modifier.ModifierKeyword.PUBLIC_KEYWORD), null);
 		} else {
 			// No modifier
-			//TODO check how to add a modifier to an existing class
+			// TODO check how to add a modifier to an existing class
 		}
-		unit.applyTextEdit(rewrite.rewriteAST(), null);
-		unit.becomeWorkingCopy(null);
-		unit.commitWorkingCopy(true, null);
-		unit.discardWorkingCopy();
+		applyChange(unit, rewrite);
 	}
 
 	@Override

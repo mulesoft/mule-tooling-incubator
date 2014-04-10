@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
+import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
@@ -28,13 +30,18 @@ public class LocateAnnotationVisitor extends ASTVisitor {
 		List<VariableDeclarationFragment> fragments = node.fragments();
 		for (VariableDeclarationFragment obj : fragments) {
 			currentChartStart = obj.getStartPosition();
+			if (chartStart == currentChartStart) {
+				return true;
+			}
 		}
 		return currentChartStart == chartStart;
 	}
 
 	public boolean visit(MethodDeclaration node) {
-		boolean visitChilds = (node.getName().getStartPosition() <= chartStart) && (node.getName().getStartPosition() + node.getLength() > chartStart) && getNode()==null;
-		return visitChilds ;
+		boolean visitChilds = (node.getName().getStartPosition() <= chartStart)
+				&& (node.getName().getStartPosition() + node.getLength() > chartStart)
+				&& getNode() == null;
+		return visitChilds;
 	}
 
 	@Override
@@ -44,6 +51,14 @@ public class LocateAnnotationVisitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(NormalAnnotation node) {
+		if (node.getTypeName().toString().equals(annotation)) {
+			this.setNode(node);
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean visit(SingleMemberAnnotation node) {
 		if (node.getTypeName().toString().equals(annotation)) {
 			this.setNode(node);
 		}

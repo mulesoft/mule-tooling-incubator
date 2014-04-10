@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.mule.tooling.devkit.ASTUtils;
 
 public class RemoveMethodQuickFix extends QuickFix {
 
@@ -16,7 +17,7 @@ public class RemoveMethodQuickFix extends QuickFix {
 	
 	protected void createAST(ICompilationUnit unit, Integer charStart)
 			throws JavaModelException {
-		CompilationUnit parse = parse(unit);
+		CompilationUnit parse = ASTUtils.parse(unit);
 		LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(charStart);
 
 		parse.accept(visitor);
@@ -24,10 +25,7 @@ public class RemoveMethodQuickFix extends QuickFix {
 		if (visitor.getNode() != null) {
 			ASTRewrite rewrite = ASTRewrite.create(parse.getAST());
 			rewrite.remove(visitor.getNode(), null);
-			unit.applyTextEdit(rewrite.rewriteAST(), null);
-			unit.becomeWorkingCopy(null);
-			unit.commitWorkingCopy(true, null);
-			unit.discardWorkingCopy();
+			applyChange(unit, rewrite);
 		}
 	}
 

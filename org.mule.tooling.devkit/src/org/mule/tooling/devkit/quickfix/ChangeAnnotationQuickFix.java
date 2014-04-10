@@ -12,7 +12,9 @@ import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
+import org.mule.tooling.devkit.ASTUtils;
 
+@SuppressWarnings("restriction")
 public class ChangeAnnotationQuickFix extends QuickFix {
 
 	private final String annotation;
@@ -31,7 +33,7 @@ public class ChangeAnnotationQuickFix extends QuickFix {
 
 	protected void createAST(ICompilationUnit unit, Integer charStart)
 			throws JavaModelException {
-		CompilationUnit parse = parse(unit);
+		CompilationUnit parse = ASTUtils.parse(unit);
 		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
 				charStart, annotation);
 
@@ -55,10 +57,7 @@ public class ChangeAnnotationQuickFix extends QuickFix {
 				addImportIfRequired(parse, ast, rewrite,
 						"org.mule.api.annotations.Connector");
 
-				unit.applyTextEdit(rewrite.rewriteAST(), null);
-				unit.becomeWorkingCopy(null);
-				unit.commitWorkingCopy(true, null);
-				unit.discardWorkingCopy();
+				applyChange(unit, rewrite);
 			}
 		}
 	}

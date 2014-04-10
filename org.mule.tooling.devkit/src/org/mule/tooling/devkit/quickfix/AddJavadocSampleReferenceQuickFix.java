@@ -1,7 +1,5 @@
 package org.mule.tooling.devkit.quickfix;
 
-import java.util.List;
-
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
@@ -9,12 +7,12 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TextElement;
-import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
 import org.mule.devkit.generation.utils.NameUtils;
+import org.mule.tooling.devkit.ASTUtils;
 
 @SuppressWarnings("restriction")
 public class AddJavadocSampleReferenceQuickFix extends QuickFix {
@@ -26,12 +24,15 @@ public class AddJavadocSampleReferenceQuickFix extends QuickFix {
 
 	protected void createAST(ICompilationUnit unit, Integer charStart)
 			throws JavaModelException {
-		CompilationUnit parse = parse(unit);
+		CompilationUnit parse = ASTUtils.parse(unit);
 		LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(
 				charStart);
 
 		parse.accept(visitor);
 
+		LocateModuleNameVisitor nameFinder = new LocateModuleNameVisitor();
+		parse.accept(nameFinder);
+		String namespace = nameFinder.getValue();
 		if (visitor.getNode() != null) {
 			AST ast = parse.getAST();
 			ASTRewrite rewrite = ASTRewrite.create(ast);
@@ -40,32 +41,25 @@ public class AddJavadocSampleReferenceQuickFix extends QuickFix {
 
 			ast = method.getAST();
 
-			List parameters = method.parameters();
-			String paramName = "";
-			for (Object node : parameters) {
-				VariableDeclaration item = (VariableDeclaration) node;
-				if (item.getName().getStartPosition() == charStart) {
-					paramName = item.getName().toString();
-				}
-			}
-
 			Javadoc javadoc = method.getJavadoc();
 			if (javadoc != null) {
-				addJavadocForParam(ast, rewrite, method, paramName, javadoc);
+				addJavadocForParam(ast, rewrite, method, namespace, javadoc);
 			}
 
-			unit.applyTextEdit(rewrite.rewriteAST(), null);
-			unit.becomeWorkingCopy(null);
-			unit.commitWorkingCopy(true, null);
-			unit.discardWorkingCopy();
+			applyChange(unit, rewrite);
 		}
 	}
 
 	private void addJavadocForParam(AST ast, ASTRewrite rewrite,
-			MethodDeclaration method, String paramName, Javadoc javadoc) {
+			MethodDeclaration method, String namespace, Javadoc javadoc) {
 
 		TextElement comment = ast.newTextElement();
-		comment.setText("\n{@sample.xml ../../../doc/${namespace}-connector.xml.sample ${namespace}:"
+		String defaultNamespace = "${namespace}";
+		if (!namespace.isEmpty()) {
+			defaultNamespace = namespace;
+		}
+		comment.setText("\n{@sample.xml ../../../doc/" + defaultNamespace
+				+ "-connector.xml.sample " + defaultNamespace + ":"
 				+ NameUtils.uncamel(method.getName().toString()) + "}");
 
 		ListRewrite tagsRewriter = rewrite.getListRewrite(javadoc,

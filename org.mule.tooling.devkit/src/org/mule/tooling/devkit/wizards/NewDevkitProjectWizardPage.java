@@ -32,7 +32,7 @@ import org.mule.tooling.ui.wizards.extensible.WizardPagePartExtension;
 public class NewDevkitProjectWizardPage extends WizardPage {
 
 	private static final String DEFAULT_VERSION = "1.0.0-SNAPSHOT";
-	private static final String DEFAULT_ARTIFACT_ID = "hello-module";
+	private static final String DEFAULT_ARTIFACT_ID = "hello-connector";
 	private static final String DEFAULT_GROUP_ID = "org.mule.modules";
 	private static final String DEFAULT_NAME = "Hello";
 	private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
@@ -89,7 +89,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 					artifactId.setText(DEFAULT_ARTIFACT_ID);
 				} else {
 					artifactId
-							.setText(name.getText().toLowerCase() + "-module");
+							.setText(name.getText().toLowerCase() + "-connector");
 				}
 				model.setConnectorName(name.getText());
 				dialogChanged();

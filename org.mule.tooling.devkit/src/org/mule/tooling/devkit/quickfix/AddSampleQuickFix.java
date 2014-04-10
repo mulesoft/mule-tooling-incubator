@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.treeview.ModuleVisitor;
@@ -52,7 +53,7 @@ public class AddSampleQuickFix extends QuickFix {
 	
 	protected void createAST(ICompilationUnit unit, Integer charStart)
 			throws JavaModelException {
-		CompilationUnit parse = parse(unit);
+		CompilationUnit parse = ASTUtils.parse(unit);
 		LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(
 				charStart);
 
@@ -119,7 +120,7 @@ public class AddSampleQuickFix extends QuickFix {
 			isr = new InputStreamReader(file.getContents());
 			BufferedReader ir = new BufferedReader(isr);
 			int lineNumber = 0;
-
+			
 			while ((ir.readLine()) != null) {
 				lineNumber++;
 

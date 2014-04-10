@@ -48,6 +48,7 @@ import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
+import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.treeview.model.Module;
 import org.mule.tooling.devkit.treeview.model.NodeItem;
@@ -324,7 +325,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 		ModuleVisitor visitor = new ModuleVisitor();
 		for (ICompilationUnit unit : mypackage.getCompilationUnits()) {
 			// now create the AST for the ICompilationUnits
-			CompilationUnit parse = parse(unit);
+			CompilationUnit parse = ASTUtils.parse(unit);
 
 			parse.accept(visitor);
 
@@ -339,19 +340,5 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 				}
 			});
 		}
-	}
-
-	/**
-	 * * Reads a ICompilationUnit and creates the AST DOM for manipulating the *
-	 * Java source file * * @param unit * @return
-	 */
-
-	private CompilationUnit parse(ICompilationUnit unit) {
-		@SuppressWarnings("deprecation")
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		parser.setSource(unit);
-		parser.setResolveBindings(true);
-		return (CompilationUnit) parser.createAST(null); // parse
 	}
 }

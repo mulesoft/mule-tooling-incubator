@@ -6,13 +6,12 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TextElement;
+import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
@@ -20,9 +19,9 @@ import org.eclipse.swt.graphics.Image;
 import org.mule.tooling.devkit.ASTUtils;
 
 @SuppressWarnings("restriction")
-public class AddParamSourceCallbackQuickFix extends QuickFix {
+public class AddReturnJavadocQuickFix extends QuickFix {
 
-	AddParamSourceCallbackQuickFix(String label, ConditionMarkerEvaluator evaluator) {
+	AddReturnJavadocQuickFix(String label, ConditionMarkerEvaluator evaluator) {
 		super(label, evaluator);
 	}
 
@@ -38,59 +37,42 @@ public class AddParamSourceCallbackQuickFix extends QuickFix {
 			AST ast = parse.getAST();
 			ASTRewrite rewrite = ASTRewrite.create(ast);
 
-			ListRewrite listImports = rewrite.getListRewrite(parse, CompilationUnit.IMPORTS_PROPERTY);
-			ImportDeclaration id=null;
-			
 			MethodDeclaration method = (MethodDeclaration) visitor.getNode();
 
 			ast = method.getAST();
 
 			List parameters = method.parameters();
-
-			ListRewrite list = rewrite.getListRewrite(method,
-					MethodDeclaration.PARAMETERS_PROPERTY);
-
-			SingleVariableDeclaration newNode = ast
-					.newSingleVariableDeclaration();
-			newNode.setName(ast.newSimpleName("sourceCallback"));
-			
-			newNode.setType(ast.newSimpleType(ast.newName("SourceCallback")));
-			list.insertLast(newNode, null);
-
-			boolean hasImport = false;
-			for(Object obj:parse.imports()){
-				ImportDeclaration importDec=(ImportDeclaration) obj;
-				if(importDec.getName().getFullyQualifiedName().equals("org.mule.api.callback.SourceCallback")){
-					hasImport = true;
+			String paramName = "";
+			for (Object node : parameters) {
+				VariableDeclaration item = (VariableDeclaration) node;
+				if (item.getName().getStartPosition() == charStart) {
+					paramName = item.getName().toString();
 				}
 			}
-			
-			if(!hasImport){
-				id=ast.newImportDeclaration();
-				id.setName(ast.newName("org.mule.api.callback.SourceCallback"));
-				listImports.insertLast(id, null);
-			}
-			
+
 			Javadoc javadoc = method.getJavadoc();
 			if (javadoc != null) {
-				TagElement newTagElement = ast.newTagElement();
-				newTagElement.setTagName(TagElement.TAG_PARAM);
-				SimpleName arg = ast.newSimpleName("sourceCallback"); //$NON-NLS-1$
-				newTagElement.fragments().add(arg);
-				TextElement comment = ast.newTextElement();
-				comment.setText("Comment for callback");
-				newTagElement.fragments().add(comment);
-				ListRewrite tagsRewriter = rewrite.getListRewrite(javadoc,
-						Javadoc.TAGS_PROPERTY);
-				TagElement after = getLastParamTag(javadoc);
-				if (after != null) {
-					tagsRewriter.insertAfter(newTagElement, after, null);
-				} else {
-					tagsRewriter.insertLast(newTagElement, null);
-				}
+				addJavadocForParam(ast, rewrite, method, paramName, javadoc);
 			}
 
 			applyChange(unit, rewrite);
+		}
+	}
+
+	private void addJavadocForParam(AST ast, ASTRewrite rewrite,
+			MethodDeclaration method, String paramName, Javadoc javadoc) {
+		TagElement newTagElement = ast.newTagElement();
+		newTagElement.setTagName(TagElement.TAG_RETURN);
+		TextElement comment = ast.newTextElement();
+		comment.setText("Return comments");
+		newTagElement.fragments().add(comment);
+		ListRewrite tagsRewriter = rewrite.getListRewrite(javadoc,
+				Javadoc.TAGS_PROPERTY);
+		TagElement after = getLastParamTag(javadoc);
+		if (after != null && method.getReturnType2().equals(PrimitiveType.VOID)) {
+			tagsRewriter.insertBefore(newTagElement, after, null);
+		} else {
+			tagsRewriter.insertLast(newTagElement, null);
 		}
 	}
 

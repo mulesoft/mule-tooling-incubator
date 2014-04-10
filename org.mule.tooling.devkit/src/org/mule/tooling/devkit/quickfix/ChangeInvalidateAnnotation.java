@@ -1,25 +1,21 @@
 package org.mule.tooling.devkit.quickfix;
 
-import java.util.List;
-
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
-import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.SimpleType;
-import org.eclipse.jdt.core.dom.StringLiteral;
-import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
+import org.mule.tooling.devkit.ASTUtils;
 
+@SuppressWarnings("restriction")
 public class ChangeInvalidateAnnotation extends QuickFix {
 
 	private final String annotation;
@@ -38,7 +34,7 @@ public class ChangeInvalidateAnnotation extends QuickFix {
 
 	protected void createAST(ICompilationUnit unit, Integer charStart)
 			throws JavaModelException {
-		CompilationUnit parse = parse(unit);
+		CompilationUnit parse = ASTUtils.parse(unit);
 		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
 				charStart, annotation);
 
@@ -48,9 +44,9 @@ public class ChangeInvalidateAnnotation extends QuickFix {
 			AST ast = parse.getAST();
 
 			ASTRewrite rewrite = ASTRewrite.create(ast);
-			NormalAnnotation replacement = ast.newNormalAnnotation();
 			Annotation annotation = (Annotation) visitor.getNode();
 			if (annotation.isNormalAnnotation()) {
+				NormalAnnotation replacement = ast.newNormalAnnotation();
 				NormalAnnotation original = (NormalAnnotation) annotation;
 				MemberValuePair value2 = (MemberValuePair) original.values()
 						.get(0);
@@ -72,10 +68,7 @@ public class ChangeInvalidateAnnotation extends QuickFix {
 				addImportIfRequired(parse, ast, rewrite,
 						"org.mule.api.annotations.ReconnectOn");
 
-				unit.applyTextEdit(rewrite.rewriteAST(), null);
-				unit.becomeWorkingCopy(null);
-				unit.commitWorkingCopy(true, null);
-				unit.discardWorkingCopy();
+				applyChange(unit, rewrite);
 			}
 		}
 	}
