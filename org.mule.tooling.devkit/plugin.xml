@@ -255,4 +255,10 @@
     		name="Devkit Sample Link Detector">
 		</hyperlinkDetector>
 	</extension>
+	<extension point="org.eclipse.jdt.ui.quickAssistProcessors">
+		<quickAssistProcessor
+			class="org.mule.tooling.devkit.assist.AssistProcessor"
+			id="org.eclipse.jdt.ui.text.correction.QuickAssistProcessor">
+		</quickAssistProcessor>
+    </extension>
 </plugin>
