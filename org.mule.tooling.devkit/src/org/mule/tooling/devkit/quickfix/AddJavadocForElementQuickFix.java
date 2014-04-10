@@ -2,8 +2,6 @@ package org.mule.tooling.devkit.quickfix;
 
 import java.util.List;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -18,7 +16,6 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
-import org.mule.tooling.devkit.ASTUtils;
 
 @SuppressWarnings("restriction")
 public class AddJavadocForElementQuickFix extends QuickFix {
@@ -28,17 +25,18 @@ public class AddJavadocForElementQuickFix extends QuickFix {
 		super(label, evaluator);
 	}
 
-	protected void createAST(ICompilationUnit unit, Integer charStart)
-			throws JavaModelException {
-		CompilationUnit parse = ASTUtils.parse(unit);
+	@SuppressWarnings("rawtypes")
+	@Override
+	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+		ASTRewrite rewrite = null;
 		LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(
-				charStart);
+				errorMarkerStart);
 
-		parse.accept(visitor);
+		unit.accept(visitor);
 
 		if (visitor.getNode() != null) {
-			AST ast = parse.getAST();
-			ASTRewrite rewrite = ASTRewrite.create(ast);
+			AST ast = unit.getAST();
+			rewrite = ASTRewrite.create(ast);
 
 			MethodDeclaration method = (MethodDeclaration) visitor.getNode();
 
@@ -48,7 +46,7 @@ public class AddJavadocForElementQuickFix extends QuickFix {
 			String paramName = "";
 			for (Object node : parameters) {
 				VariableDeclaration item = (VariableDeclaration) node;
-				if (item.getName().getStartPosition() == charStart) {
+				if (item.getName().getStartPosition() == errorMarkerStart) {
 					paramName = item.getName().toString();
 				}
 			}
@@ -58,15 +56,16 @@ public class AddJavadocForElementQuickFix extends QuickFix {
 				addJavadocForParam(ast, rewrite, method, paramName, javadoc);
 			} else {
 				final Javadoc doc = (Javadoc) rewrite.createStringPlaceholder(
-						"/**\n" + " * Comment for method\n" + " */", ASTNode.JAVADOC);
+						"/**\n" + " * Comment for method\n" + " */",
+						ASTNode.JAVADOC);
 				rewrite.set(method, MethodDeclaration.JAVADOC_PROPERTY, doc,
 						null);
 			}
-
-			applyChange(unit, rewrite);
 		}
+		return rewrite;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addJavadocForParam(AST ast, ASTRewrite rewrite,
 			MethodDeclaration method, String paramName, Javadoc javadoc) {
 		TagElement newTagElement = ast.newTagElement();
@@ -95,6 +94,7 @@ public class AddJavadocForElementQuickFix extends QuickFix {
 		return JavaPluginImages.get(JavaPluginImages.IMG_CORRECTION_ADD);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static TagElement getLastParamTag(Javadoc javadoc) {
 
 		List tags = javadoc.tags();

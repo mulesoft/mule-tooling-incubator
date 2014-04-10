@@ -1,7 +1,5 @@
 package org.mule.tooling.devkit.quickfix;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -13,7 +11,6 @@ import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
-import org.mule.tooling.devkit.ASTUtils;
 
 @SuppressWarnings("restriction")
 public class ChangeInvalidateAnnotation extends QuickFix {
@@ -28,22 +25,19 @@ public class ChangeInvalidateAnnotation extends QuickFix {
 		this.newAnnotation = "ReconnectOn";
 	}
 
-	public String getLabel() {
-		return label;
-	}
-
-	protected void createAST(ICompilationUnit unit, Integer charStart)
-			throws JavaModelException {
-		CompilationUnit parse = ASTUtils.parse(unit);
+	@SuppressWarnings("unchecked")
+	@Override
+	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+		ASTRewrite rewrite = null;
 		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
-				charStart, annotation);
+				errorMarkerStart, annotation);
 
-		parse.accept(visitor);
+		unit.accept(visitor);
 
 		if (visitor.getNode() != null) {
-			AST ast = parse.getAST();
+			AST ast = unit.getAST();
 
-			ASTRewrite rewrite = ASTRewrite.create(ast);
+			rewrite = ASTRewrite.create(ast);
 			Annotation annotation = (Annotation) visitor.getNode();
 			if (annotation.isNormalAnnotation()) {
 				NormalAnnotation replacement = ast.newNormalAnnotation();
@@ -65,12 +59,12 @@ public class ChangeInvalidateAnnotation extends QuickFix {
 				replacement.values().add(memberValuePair);
 				rewrite.replace(visitor.getNode(), replacement, null);
 
-				addImportIfRequired(parse, ast, rewrite,
+				addImportIfRequired(unit, rewrite,
 						"org.mule.api.annotations.ReconnectOn");
 
-				applyChange(unit, rewrite);
 			}
 		}
+		return rewrite;
 	}
 
 	@Override

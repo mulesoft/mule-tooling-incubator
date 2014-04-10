@@ -2,8 +2,6 @@ package org.mule.tooling.devkit.quickfix;
 
 import java.util.List;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
@@ -12,7 +10,6 @@ import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
-import org.mule.tooling.devkit.ASTUtils;
 
 @SuppressWarnings("restriction")
 public class ChangeAnnotationQuickFix extends QuickFix {
@@ -27,22 +24,19 @@ public class ChangeAnnotationQuickFix extends QuickFix {
 		this.newAnnotation = "Connector";
 	}
 
-	public String getLabel() {
-		return label;
-	}
-
-	protected void createAST(ICompilationUnit unit, Integer charStart)
-			throws JavaModelException {
-		CompilationUnit parse = ASTUtils.parse(unit);
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+		ASTRewrite rewrite = null;
 		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
-				charStart, annotation);
+				errorMarkerStart, annotation);
 
-		parse.accept(visitor);
+		unit.accept(visitor);
 
 		if (visitor.getNode() != null) {
-			AST ast = parse.getAST();
+			AST ast = unit.getAST();
 
-			ASTRewrite rewrite = ASTRewrite.create(ast);
+			rewrite = ASTRewrite.create(ast);
 			NormalAnnotation replacement = ast.newNormalAnnotation();
 			Annotation annotation = (Annotation) visitor.getNode();
 			if (annotation.isNormalAnnotation()) {
@@ -54,12 +48,12 @@ public class ChangeAnnotationQuickFix extends QuickFix {
 								(List) original.values()));
 				rewrite.replace(visitor.getNode(), replacement, null);
 
-				addImportIfRequired(parse, ast, rewrite,
+				addImportIfRequired(unit, rewrite,
 						"org.mule.api.annotations.Connector");
 
-				applyChange(unit, rewrite);
 			}
 		}
+		return rewrite;
 	}
 
 	@Override

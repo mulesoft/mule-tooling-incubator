@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
@@ -34,27 +33,22 @@ public class ChangeAnnotationValueQuickFix extends QuickFix {
 		this.annotation = "Default";
 	}
 
-	public String getLabel() {
-		return label;
-	}
-
-	protected void createAST(ICompilationUnit unit, Integer charStart)
-			throws JavaModelException {
-
-		CompilationUnit parse = ASTUtils.parse(unit);
+	@Override
+	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+		ASTRewrite rewrite = null;
 		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
-				charStart, annotation);
+				errorMarkerStart, annotation);
 
 		LocateFieldOrMethodVisitor visitorField = new LocateFieldOrMethodVisitor(
-				charStart);
+				errorMarkerStart);
 
-		parse.accept(visitor);
+		unit.accept(visitor);
 
 		if (visitor.getNode() != null) {
-			parse.accept(visitorField);
-			AST ast = parse.getAST();
+			unit.accept(visitorField);
+			AST ast = unit.getAST();
 
-			ASTRewrite rewrite = ASTRewrite.create(ast);
+			rewrite = ASTRewrite.create(ast);
 			Annotation annotation = (Annotation) visitor.getNode();
 
 			// TODO get first element in enum
@@ -62,15 +56,15 @@ public class ChangeAnnotationValueQuickFix extends QuickFix {
 					.getNode()).getType();
 
 			StringLiteral literal = ast.newStringLiteral();
-			String value = getFirstItemOrDefault(unit, type);
+			String value = getFirstItemOrDefault(compilationUnit, type);
 			literal.setLiteralValue(value);
 
 			rewrite.replace(
 					(ASTNode) ((SingleMemberAnnotation) annotation).getValue(),
 					literal, null);
 
-			applyChange(unit, rewrite);
 		}
+		return rewrite;
 	}
 
 	private String getFirstItemOrDefault(ICompilationUnit unit, SimpleType type) {

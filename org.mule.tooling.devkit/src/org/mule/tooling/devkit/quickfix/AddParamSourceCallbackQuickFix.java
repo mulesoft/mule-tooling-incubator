@@ -2,11 +2,8 @@ package org.mule.tooling.devkit.quickfix;
 
 import java.util.List;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -17,80 +14,73 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
-import org.mule.tooling.devkit.ASTUtils;
 
 @SuppressWarnings("restriction")
 public class AddParamSourceCallbackQuickFix extends QuickFix {
 
-	AddParamSourceCallbackQuickFix(String label, ConditionMarkerEvaluator evaluator) {
+	AddParamSourceCallbackQuickFix(String label,
+			ConditionMarkerEvaluator evaluator) {
 		super(label, evaluator);
 	}
 
-	protected void createAST(ICompilationUnit unit, Integer charStart)
-			throws JavaModelException {
-		CompilationUnit parse = ASTUtils.parse(unit);
+	@Override
+	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+		ASTRewrite rewrite = null;
 		LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(
-				charStart);
+				errorMarkerStart);
 
-		parse.accept(visitor);
+		unit.accept(visitor);
 
 		if (visitor.getNode() != null) {
-			AST ast = parse.getAST();
-			ASTRewrite rewrite = ASTRewrite.create(ast);
+			AST ast = unit.getAST();
+			rewrite = ASTRewrite.create(ast);
 
-			ListRewrite listImports = rewrite.getListRewrite(parse, CompilationUnit.IMPORTS_PROPERTY);
-			ImportDeclaration id=null;
-			
 			MethodDeclaration method = (MethodDeclaration) visitor.getNode();
 
 			ast = method.getAST();
 
-			List parameters = method.parameters();
+			addSourceCallbackParameter(unit, rewrite, ast, method);
 
-			ListRewrite list = rewrite.getListRewrite(method,
-					MethodDeclaration.PARAMETERS_PROPERTY);
-
-			SingleVariableDeclaration newNode = ast
-					.newSingleVariableDeclaration();
-			newNode.setName(ast.newSimpleName("sourceCallback"));
-			
-			newNode.setType(ast.newSimpleType(ast.newName("SourceCallback")));
-			list.insertLast(newNode, null);
-
-			boolean hasImport = false;
-			for(Object obj:parse.imports()){
-				ImportDeclaration importDec=(ImportDeclaration) obj;
-				if(importDec.getName().getFullyQualifiedName().equals("org.mule.api.callback.SourceCallback")){
-					hasImport = true;
-				}
-			}
-			
-			if(!hasImport){
-				id=ast.newImportDeclaration();
-				id.setName(ast.newName("org.mule.api.callback.SourceCallback"));
-				listImports.insertLast(id, null);
-			}
-			
 			Javadoc javadoc = method.getJavadoc();
 			if (javadoc != null) {
-				TagElement newTagElement = ast.newTagElement();
-				newTagElement.setTagName(TagElement.TAG_PARAM);
-				SimpleName arg = ast.newSimpleName("sourceCallback"); //$NON-NLS-1$
-				newTagElement.fragments().add(arg);
-				TextElement comment = ast.newTextElement();
-				comment.setText("Comment for callback");
-				newTagElement.fragments().add(comment);
-				ListRewrite tagsRewriter = rewrite.getListRewrite(javadoc,
-						Javadoc.TAGS_PROPERTY);
-				TagElement after = getLastParamTag(javadoc);
-				if (after != null) {
-					tagsRewriter.insertAfter(newTagElement, after, null);
-				} else {
-					tagsRewriter.insertLast(newTagElement, null);
-				}
+				addJavadoc(rewrite, ast, javadoc);
 			}
+		}
+		return rewrite;
+	}
 
-			applyChange(unit, rewrite);
+	private void addSourceCallbackParameter(CompilationUnit unit,
+			ASTRewrite rewrite, AST ast, MethodDeclaration method) {
+
+		ListRewrite list = rewrite.getListRewrite(method,
+				MethodDeclaration.PARAMETERS_PROPERTY);
+
+		SingleVariableDeclaration newNode = ast.newSingleVariableDeclaration();
+		newNode.setName(ast.newSimpleName("sourceCallback"));
+
+		newNode.setType(ast.newSimpleType(ast.newName("SourceCallback")));
+		list.insertLast(newNode, null);
+
+		this.addImportIfRequired(unit, rewrite,
+				"org.mule.api.callback.SourceCallback");
+	}
+
+	@SuppressWarnings("unchecked")
+	private void addJavadoc(ASTRewrite rewrite, AST ast, Javadoc javadoc) {
+		TagElement newTagElement = ast.newTagElement();
+		newTagElement.setTagName(TagElement.TAG_PARAM);
+		SimpleName arg = ast.newSimpleName("sourceCallback"); //$NON-NLS-1$
+		newTagElement.fragments().add(arg);
+		TextElement comment = ast.newTextElement();
+		comment.setText("Comment for callback");
+		newTagElement.fragments().add(comment);
+		ListRewrite tagsRewriter = rewrite.getListRewrite(javadoc,
+				Javadoc.TAGS_PROPERTY);
+		TagElement after = getLastParamTag(javadoc);
+		if (after != null) {
+			tagsRewriter.insertAfter(newTagElement, after, null);
+		} else {
+			tagsRewriter.insertLast(newTagElement, null);
 		}
 	}
 
@@ -99,6 +89,7 @@ public class AddParamSourceCallbackQuickFix extends QuickFix {
 		return JavaPluginImages.get(JavaPluginImages.IMG_CORRECTION_ADD);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static TagElement getLastParamTag(Javadoc javadoc) {
 
 		List tags = javadoc.tags();

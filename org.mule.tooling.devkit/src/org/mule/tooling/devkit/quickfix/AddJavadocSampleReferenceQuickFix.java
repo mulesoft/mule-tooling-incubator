@@ -1,7 +1,5 @@
 package org.mule.tooling.devkit.quickfix;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Javadoc;
@@ -12,7 +10,6 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
 import org.mule.devkit.generation.utils.NameUtils;
-import org.mule.tooling.devkit.ASTUtils;
 
 @SuppressWarnings("restriction")
 public class AddJavadocSampleReferenceQuickFix extends QuickFix {
@@ -22,20 +19,20 @@ public class AddJavadocSampleReferenceQuickFix extends QuickFix {
 		super(label, evaluator);
 	}
 
-	protected void createAST(ICompilationUnit unit, Integer charStart)
-			throws JavaModelException {
-		CompilationUnit parse = ASTUtils.parse(unit);
+	@Override
+	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+		ASTRewrite rewrite = null;
 		LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(
-				charStart);
+				errorMarkerStart);
 
-		parse.accept(visitor);
+		unit.accept(visitor);
 
 		LocateModuleNameVisitor nameFinder = new LocateModuleNameVisitor();
-		parse.accept(nameFinder);
+		unit.accept(nameFinder);
 		String namespace = nameFinder.getValue();
 		if (visitor.getNode() != null) {
-			AST ast = parse.getAST();
-			ASTRewrite rewrite = ASTRewrite.create(ast);
+			AST ast = unit.getAST();
+			rewrite = ASTRewrite.create(ast);
 
 			MethodDeclaration method = (MethodDeclaration) visitor.getNode();
 
@@ -45,9 +42,8 @@ public class AddJavadocSampleReferenceQuickFix extends QuickFix {
 			if (javadoc != null) {
 				addJavadocForParam(ast, rewrite, method, namespace, javadoc);
 			}
-
-			applyChange(unit, rewrite);
 		}
+		return rewrite;
 	}
 
 	private void addJavadocForParam(AST ast, ASTRewrite rewrite,

@@ -1,7 +1,5 @@
 package org.mule.tooling.devkit.quickfix;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Modifier.ModifierKeyword;
@@ -9,7 +7,6 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.mule.tooling.devkit.ASTUtils;
 
 public class ChangeModifier extends QuickFix {
 
@@ -18,35 +15,32 @@ public class ChangeModifier extends QuickFix {
 
 	}
 
-	public String getLabel() {
-		return label;
-	}
+	@Override
+	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+		ASTRewrite rewrite = null;
+		LocateModifierVisitor visitor = new LocateModifierVisitor(
+				errorMarkerStart, ModifierKeyword.PROTECTED_KEYWORD);
 
-	protected void createAST(ICompilationUnit unit, Integer charStart)
-			throws JavaModelException {
-		CompilationUnit parse = ASTUtils.parse(unit);
-		LocateModifierVisitor visitor = new LocateModifierVisitor(charStart,
-				ModifierKeyword.PROTECTED_KEYWORD);
+		unit.accept(visitor);
 
-		parse.accept(visitor);
-
+		// No protected modifier, try to find a private modifier
 		if (visitor.getNode() == null) {
-			visitor = new LocateModifierVisitor(charStart,
+			visitor = new LocateModifierVisitor(errorMarkerStart,
 					ModifierKeyword.PRIVATE_KEYWORD);
-			parse.accept(visitor);
+			unit.accept(visitor);
 		}
 
-		ASTRewrite rewrite = ASTRewrite.create(parse.getAST());
 		if (visitor.getNode() != null) {
+			rewrite = ASTRewrite.create(unit.getAST());
 			rewrite.replace(
 					visitor.getNode(),
-					parse.getAST().newModifier(
+					unit.getAST().newModifier(
 							Modifier.ModifierKeyword.PUBLIC_KEYWORD), null);
 		} else {
 			// No modifier
 			// TODO check how to add a modifier to an existing class
 		}
-		applyChange(unit, rewrite);
+		return rewrite;
 	}
 
 	@Override

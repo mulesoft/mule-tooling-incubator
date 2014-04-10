@@ -1,7 +1,5 @@
 package org.mule.tooling.devkit.quickfix;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -9,7 +7,6 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
-import org.mule.tooling.devkit.ASTUtils;
 
 @SuppressWarnings("restriction")
 public class RemoveExceptions extends QuickFix {
@@ -18,37 +15,32 @@ public class RemoveExceptions extends QuickFix {
 		super(label, evaluator);
 	}
 
-	protected void createAST(ICompilationUnit unit, Integer charStart)
-			throws JavaModelException {
-		CompilationUnit parse = ASTUtils.parse(unit);
+	@Override
+	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+		ASTRewrite rewrite = null;
 		LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(
-				charStart);
+				errorMarkerStart);
 
-		parse.accept(visitor);
+		unit.accept(visitor);
 
 		if (visitor.getNode() != null) {
-			ASTRewrite rewrite = ASTRewrite.create(parse.getAST());
+			rewrite = ASTRewrite.create(unit.getAST());
 			MethodDeclaration method = (MethodDeclaration) visitor.getNode();
 
 			for (Object element : method.thrownExceptions()) {
 				ASTNode node = (ASTNode) element;
 				rewrite.remove(node, null);
 			}
-			this.addImportIfRequired(parse, parse.getAST(), rewrite,
+			addImportIfRequired(unit, rewrite,
 					"org.mule.api.ConnectionException");
 
 			ListRewrite exceptions = rewrite.getListRewrite(method,
 					MethodDeclaration.THROWN_EXCEPTIONS_PROPERTY);
 
-			exceptions.insertAt(rewrite.getAST().newName("ConnectionException"), 0, null);
-
-			applyChange(unit, rewrite);
+			exceptions.insertAt(
+					rewrite.getAST().newName("ConnectionException"), 0, null);
 		}
-	}
-
-	@Override
-	public String getDescription() {
-		return "You can either add datanse or remove this operation";
+		return rewrite;
 	}
 
 	@Override

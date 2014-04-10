@@ -3,8 +3,6 @@ package org.mule.tooling.devkit.quickfix;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -16,7 +14,6 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
-import org.mule.tooling.devkit.ASTUtils;
 
 @SuppressWarnings("restriction")
 public class AddJavadocForExceptionQuickFix extends QuickFix {
@@ -26,37 +23,43 @@ public class AddJavadocForExceptionQuickFix extends QuickFix {
 		super(label, evaluator);
 	}
 
-	protected void createAST(ICompilationUnit unit, Integer charStart)
-			throws JavaModelException {
-		CompilationUnit parse = ASTUtils.parse(unit);
+	@Override
+	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+		ASTRewrite rewrite = null;
 		LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(
-				charStart);
+				errorMarkerStart);
 
-		parse.accept(visitor);
+		unit.accept(visitor);
 
 		if (visitor.getNode() != null) {
-			AST ast = parse.getAST();
-			ASTRewrite rewrite = ASTRewrite.create(ast);
+			AST ast = unit.getAST();
+			rewrite = ASTRewrite.create(ast);
 
 			MethodDeclaration method = (MethodDeclaration) visitor.getNode();
 
 			ast = method.getAST();
 
-			Javadoc javadoc = method.getJavadoc();
-			if (javadoc != null) {
-				addJavadocForParam(ast, rewrite, method, javadoc);
-			} else {
-				final Javadoc doc = (Javadoc) rewrite.createStringPlaceholder(
-						"/**\n" + " * Comment for method\n" + " */",
-						ASTNode.JAVADOC);
-				rewrite.set(method, MethodDeclaration.JAVADOC_PROPERTY, doc,
-						null);
-			}
+			addJavadoc(rewrite, ast, method);
 
-			applyChange(unit, rewrite);
+		}
+		return rewrite;
+	}
+
+	private void addJavadoc(ASTRewrite rewrite, AST ast,
+			MethodDeclaration method) {
+		Javadoc javadoc = method.getJavadoc();
+		if (javadoc != null) {
+			addJavadocForParam(ast, rewrite, method, javadoc);
+		} else {
+			final Javadoc doc = (Javadoc) rewrite.createStringPlaceholder(
+					"/**\n" + " * Comment for method\n" + " */",
+					ASTNode.JAVADOC);
+			rewrite.set(method, MethodDeclaration.JAVADOC_PROPERTY, doc,
+					null);
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addJavadocForParam(AST ast, ASTRewrite rewrite,
 			MethodDeclaration method, Javadoc javadoc) {
 		Set<String> exceptions = new HashSet<String>();

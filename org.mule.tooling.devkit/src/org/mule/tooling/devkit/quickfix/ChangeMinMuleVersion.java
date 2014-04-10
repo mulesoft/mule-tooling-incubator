@@ -1,31 +1,13 @@
 package org.mule.tooling.devkit.quickfix;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.EnumDeclaration;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
-import org.eclipse.jdt.core.dom.SimpleType;
-import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
-import org.eclipse.swt.graphics.Image;
-import org.mule.tooling.devkit.ASTUtils;
-import org.mule.tooling.devkit.common.DevkitUtils;
 
-@SuppressWarnings("restriction")
 public class ChangeMinMuleVersion extends QuickFix {
 
 	private final String annotation;
@@ -35,23 +17,18 @@ public class ChangeMinMuleVersion extends QuickFix {
 		this.annotation = "Connector";
 	}
 
-	public String getLabel() {
-		return label;
-	}
-
-	protected void createAST(ICompilationUnit unit, Integer charStart)
-			throws JavaModelException {
-
-		CompilationUnit parse = ASTUtils.parse(unit);
+	@Override
+	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+		ASTRewrite rewrite = null;
 		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
-				charStart, annotation);
+				errorMarkerStart, annotation);
 
-		parse.accept(visitor);
+		unit.accept(visitor);
 
 		if (visitor.getNode() != null) {
-			AST ast = parse.getAST();
+			AST ast = unit.getAST();
 
-			ASTRewrite rewrite = ASTRewrite.create(ast);
+			rewrite = ASTRewrite.create(ast);
 			Annotation annotation = (Annotation) visitor.getNode();
 
 			if (annotation.isNormalAnnotation()) {
@@ -67,10 +44,9 @@ public class ChangeMinMuleVersion extends QuickFix {
 						}
 					}
 				}
-
-				applyChange(unit, rewrite);
 			}
 
 		}
+		return rewrite;
 	}
 }
