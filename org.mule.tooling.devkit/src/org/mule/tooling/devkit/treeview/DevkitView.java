@@ -131,21 +131,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 			@SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
 			private void goToSampleInDocSampleFile(
 					IStructuredSelection thisSelection) {
-				IFile file = null;
-				IFolder folder = getCurrent()
-						.getFolder(DevkitUtils.DOCS_FOLDER);
-
-				try {
-					for (IResource resource : folder.members()) {
-						if (resource.getName().matches(".*.sample")) {
-							file = getCurrent().getFile(
-									resource.getProjectRelativePath());
-							break;
-						}
-					}
-				} catch (CoreException e1) {
-					e1.printStackTrace();
-				}
+				IFile file = getFileFromResource();
 				if (file == null)
 					return;
 				InputStreamReader isr = null;
@@ -168,18 +154,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 					if (!found) {
 						lineNumber = 0;
 					}
-					HashMap map = new HashMap();
-					map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
-					map.put(IWorkbenchPage.EDITOR_ID_ATTR,
-							"org.mule.tooling.devkit.sample.editor.XMLEditor");
-					IMarker marker;
-
-					marker = file.createMarker(IMarker.TEXT);
-
-					marker.setAttributes(map);
-					// page.openEditor(marker); //2.1 API
-					IDE.openEditor(getSite().getPage(), marker); // 3.0 API
-					marker.delete();
+					openSampleAtLine(file, lineNumber);
 				} catch (CoreException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -193,6 +168,41 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 						}
 					}
 				}
+			}
+
+			private IFile getFileFromResource() {
+				IFile file = null;
+				IFolder folder = getCurrent()
+						.getFolder(DevkitUtils.DOCS_FOLDER);
+
+				try {
+					for (IResource resource : folder.members()) {
+						if (resource.getName().matches(".*.sample")) {
+							file = getCurrent().getFile(
+									resource.getProjectRelativePath());
+							break;
+						}
+					}
+				} catch (CoreException e1) {
+					e1.printStackTrace();
+				}
+				return file;
+			}
+
+			private void openSampleAtLine(IFile file, int lineNumber)
+					throws CoreException, PartInitException {
+				HashMap map = new HashMap();
+				map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
+				map.put(IWorkbenchPage.EDITOR_ID_ATTR,
+						"org.mule.tooling.devkit.sample.editor.XMLEditor");
+				IMarker marker;
+
+				marker = file.createMarker(IMarker.TEXT);
+
+				marker.setAttributes(map);
+				// page.openEditor(marker); //2.1 API
+				IDE.openEditor(getSite().getPage(), marker); // 3.0 API
+				marker.delete();
 			}
 		});
 	}

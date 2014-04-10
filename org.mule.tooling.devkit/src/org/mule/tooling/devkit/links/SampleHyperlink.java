@@ -15,6 +15,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.mule.tooling.devkit.common.DevkitUtils;
@@ -59,6 +60,66 @@ public class SampleHyperlink implements IHyperlink {
 
 	@Override
 	public void open() {
+		IFile file = getFileFromResource();
+		if (file != null) {
+			InputStreamReader isr = null;
+			try {
+				int startPos = link.indexOf("@sample.xml");
+				String sample = link.substring(startPos).split(" ")[2];
+				isr = new InputStreamReader(file.getContents());
+				BufferedReader ir = new BufferedReader(isr);
+				int lineNumber = 0;
+				String line;
+				boolean found = false;
+				while ((line = ir.readLine()) != null) {
+					lineNumber++;
+					if (line.contains(sample)) {
+						found = true;
+						break;
+					}
+
+				}
+				if (!found) {
+					lineNumber = 0;
+				}
+				openSampleAtLine(file, lineNumber);
+			} catch (CoreException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (isr != null) {
+					try {
+						isr.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	private void openSampleAtLine(IFile file, int lineNumber)
+			throws CoreException, PartInitException {
+		HashMap map = new HashMap();
+		map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
+		map.put(IWorkbenchPage.EDITOR_ID_ATTR,
+				"org.mule.tooling.devkit.sample.editor.XMLEditor");
+		IMarker marker;
+
+		marker = file.createMarker(IMarker.TEXT);
+
+		marker.setAttributes(map);
+		// page.openEditor(marker); //2.1 API
+		IWorkbenchPage page = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
+		// page.openEditor(new SampleDocEditorInput(file, module),
+		// "org.mule.tooling.devkit.sample.editor.XMLEditor");
+		IDE.openEditor(page, marker); // 3.0 API
+		marker.delete();
+	}
+
+	private IFile getFileFromResource() {
 		IFolder folder = project.getFolder(DevkitUtils.DOCS_FOLDER);
 		IFile file = null;
 		try {
@@ -71,55 +132,7 @@ public class SampleHyperlink implements IHyperlink {
 		} catch (CoreException e1) {
 			e1.printStackTrace();
 		}
-		InputStreamReader isr = null;
-		try {
-			int startPos = link.indexOf("@sample.xml");
-			String sample = link.substring(startPos).split(" ")[2];
-			isr = new InputStreamReader(file.getContents());
-			BufferedReader ir = new BufferedReader(isr);
-			int lineNumber = 0;
-			String line;
-			boolean found = false;
-			while ((line = ir.readLine()) != null) {
-				lineNumber++;
-				if (line.contains(sample)) {
-					found = true;
-					break;
-				}
-
-			}
-			if (!found) {
-				lineNumber = 0;
-			}
-			HashMap map = new HashMap();
-			map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
-			map.put(IWorkbenchPage.EDITOR_ID_ATTR,
-					"org.mule.tooling.devkit.sample.editor.XMLEditor");
-			IMarker marker;
-
-			marker = file.createMarker(IMarker.TEXT);
-
-			marker.setAttributes(map);
-			// page.openEditor(marker); //2.1 API
-			IWorkbenchPage page = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage();
-			// page.openEditor(new SampleDocEditorInput(file, module),
-			// "org.mule.tooling.devkit.sample.editor.XMLEditor");
-			IDE.openEditor(page, marker); // 3.0 API
-			marker.delete();
-		} catch (CoreException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (isr != null) {
-				try {
-					isr.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		return file;
 	}
 
 }
