@@ -192,8 +192,11 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 		if (this.getName().length() == 0) {
 			updateStatus("The Name must be specified");
 			return;
+		}else if (this.getName().equals("Test")) {
+			updateStatus("The Name cannot be Test");
+			return;
 		}else if(!connectorName.matcher(this.getName()).matches()){
-			updateStatus("The Name must start with an uppper case character followed by other characters.");
+			updateStatus("The Name must start with an uppper case character followed by other characters. Numbers are not allowed");
 			return;	
 		}
 		
