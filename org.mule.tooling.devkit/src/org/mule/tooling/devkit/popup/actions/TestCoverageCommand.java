@@ -2,7 +2,7 @@ package org.mule.tooling.devkit.popup.actions;
 
 import org.eclipse.core.resources.IProject;
 
-public class AnalizeTestCoverageCommand extends AbstractMavenCommandRunner {
+public class TestCoverageCommand extends AbstractMavenCommandRunner {
 
 	
 	@Override

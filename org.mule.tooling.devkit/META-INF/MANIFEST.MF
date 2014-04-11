@@ -40,3 +40,11 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.mule.tooling.devkit.builder
 Bundle-ClassPath: .
+Import-Package: org.apache.commons.httpclient.params;version="3.1.0",
+ org.apache.http,
+ org.apache.http.client,
+ org.apache.http.client.methods,
+ org.apache.http.entity.mime,
+ org.apache.http.entity.mime.content,
+ org.apache.http.impl.client,
+ org.apache.http.message

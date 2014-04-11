@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.ui.MuleUiConstants;
 import org.mule.tooling.ui.utils.UiUtils;
+import static org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand.ConfigKeys;
 
 public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 
@@ -125,7 +126,7 @@ public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 		};
 		
 		txtOutputFileName = initializeTextField(container, LABEL_INTEROP_NAME,
-							TESTDATA_XML, 2,  interopFileListener);
+								TESTDATA_XML, 2,  interopFileListener);
 		txtOutputFileName.setText(TESTDATA_XML);		
 
 	}
@@ -292,15 +293,15 @@ public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 
 	
 	@SuppressWarnings("serial")
-	public Map<String, String> getConfigKeys(){
+	public Map<ConfigKeys, String> getConfigProperties(){
 		
-		return new HashMap<String, String>(){{
+		return new HashMap<ConfigKeys, String>(){{
 			
-				put("outputFile", outputFileName);
-				put("credentialsFile", credentialsFile);
-				put("replaceAll", selectedReplaceAll.toString());
-				put("selectedInterop", selectedInterop.toString());
-				put("selectedFunctional", selectedFunctional.toString());
+				put(ConfigKeys.outputFile, outputFileName);
+				put(ConfigKeys.credentialsFile, credentialsFile);
+				put(ConfigKeys.replaceAll, selectedReplaceAll.toString());
+				put(ConfigKeys.selectedInterop, selectedInterop.toString());
+				put(ConfigKeys.selectedFunctional, selectedFunctional.toString());
 				
 			}};
 	}
