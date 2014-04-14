@@ -30,7 +30,9 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <module>org.mule.tooling.incubator.munit.ui.contribution</module>
     <module>org.mule.tooling.incubator.munit.runtime.3.4</module>
     <module>org.mule.tooling.incubator.munit.runtime.3.5</module>
-    <module>org.mule.tooling.incubator.munit.extension</module>
+    <module>org.mule.tooling.incubator.munit.extension</module> 
+    <module>org.mule.tooling.incubator.aop.ui.contribution</module>
+    <module>org.mule.tooling.incubator.aop.extension</module>
     <module>org.mule.tooling.incubator.updatesite</module>
   </modules>
   

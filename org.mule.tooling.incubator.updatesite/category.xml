@@ -12,6 +12,9 @@
     <feature id="org.mule.tooling.incubator.munit.extension">
       <category name="org.mule.tooling.incubator.category.munit"/>
     </feature>
+    <feature id="org.mule.tooling.incubator.aop.extension">
+        <category name="org.mule.tooling.incubator.category"/>
+    </feature>
     <feature id="org.mule.tooling.ui.extension.munit-mclient-module">
       <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
     </feature>
