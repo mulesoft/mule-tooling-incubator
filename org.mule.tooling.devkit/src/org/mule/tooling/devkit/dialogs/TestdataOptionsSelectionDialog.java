@@ -23,10 +23,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.ui.MuleUiConstants;
 import org.mule.tooling.ui.utils.UiUtils;
+
 import static org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand.ConfigKeys;
 
 public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 
+	private static final String REPLACE_POLICY = "Replace all";
 	private static final String GENERATION_TYPE_SELECTION = "Generation type selection";
 	private static final String TITTLE = "TestData generation properties";
 	private static final String SUBTITLE = "Configure the generation type and its arguments";
@@ -40,12 +42,14 @@ public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 	private static final String LABEL_INTEROP_NAME = "Output File:";
 	private static final String EXTENSION_FILTER = "*.properties";
 	
+	private static String credentialsDefault = "";
+	
 	private Text txtOutputFileName;
 	private String outputFileName;
 	
 	private Text txtCredsFile;
 	private String credentialsFile;
-	
+		
 	private Button interopCheckBox;
 	private Boolean selectedInterop;
 	
@@ -141,6 +145,7 @@ public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 
 		txtCredsFile = new Text(container, SWT.BORDER);
 		txtCredsFile.setLayoutData(dataFileName);
+		txtCredsFile.setText(credentialsDefault);
 	}
 
 
@@ -224,7 +229,7 @@ public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 		dataReplace.horizontalSpan = 1;
 
 		replaceAllCheckbox.setLayoutData(dataReplace);
-		replaceAllCheckbox.setText("Replace All");
+		replaceAllCheckbox.setText(REPLACE_POLICY);
 		replaceAllCheckbox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -265,11 +270,12 @@ public class TestdataOptionsSelectionDialog extends TitleAreaDialog {
 	// as soon as the Dialog closes
 	private void saveInput() {
 		credentialsFile = txtCredsFile.getText();
+		credentialsDefault = credentialsFile;
+		
 		outputFileName = txtOutputFileName.getText();
 		selectedFunctional = functionalCheckBox.getSelection();
 		selectedInterop = interopCheckBox.getSelection();
 		selectedReplaceAll = replaceAllCheckbox.getSelection();
-		
 	}
 	
 	private void createLabel(Composite container, String text) {

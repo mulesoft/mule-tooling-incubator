@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.help.ui.internal.views.SeeAlsoPart;
 import org.eclipse.swt.widgets.Display;
 import org.mule.tooling.devkit.dialogs.TestdataOptionsSelectionDialog;
 
@@ -17,11 +18,9 @@ public class GenerateInteropTestDataCommand extends AbstractMavenCommandRunner {
 	
 	private Map<ConfigKeys, String> generationProperties = null;
 
-	private IProject project = null;
 	
 	@Override
 	protected void doCommandJobOnProject(final IProject selectedProject) {
-		this.project = selectedProject;
 		
 		if(getConfigurationAndContinue() ){
 			
@@ -51,8 +50,11 @@ public class GenerateInteropTestDataCommand extends AbstractMavenCommandRunner {
 		int returnStatus =  dialog.open();
 
 		generationProperties = dialog.getConfigProperties();
-
-		return returnStatus == 0;
+		
+		Boolean selectedInterop = new Boolean(generationProperties.get(ConfigKeys.selectedInterop));
+		Boolean selectedFunctional = new Boolean(generationProperties.get(ConfigKeys.selectedFunctional));		
+		
+		return ((returnStatus == 0) && (selectedFunctional || selectedInterop) );
 	}
 	
 	private String getGenerationType(){
@@ -65,8 +67,10 @@ public class GenerateInteropTestDataCommand extends AbstractMavenCommandRunner {
 
 		if ( selectedFunctional)
 			return generateFunctional;
-
-		return generateInterop;
+		if ( selectedInterop )
+			return generateInterop;
+		
+		return "";
 	}
 	
 }
