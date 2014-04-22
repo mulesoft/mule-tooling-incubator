@@ -96,7 +96,7 @@ public class XMLContentAssistantProcessor implements IContentAssistProcessor {
 	 * getCompletionProposalAutoActivationCharacters()
 	 */
 	public char[] getCompletionProposalAutoActivationCharacters() {
-		return new char[] { 's', '.', '@' };
+		return new char[] { '<' };
 	}
 
 	/*
