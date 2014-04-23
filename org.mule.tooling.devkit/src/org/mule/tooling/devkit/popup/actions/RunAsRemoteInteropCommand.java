@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.dialogs.InteropRunOptionsSelectionDialog;
+import org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand.ConfigKeys;
 
 
 public class RunAsRemoteInteropCommand extends AbstractHandler{
@@ -171,14 +172,34 @@ public class RunAsRemoteInteropCommand extends AbstractHandler{
 
 			mpBuilder.addTextBody("connectorRepository", runnerConfig.get(ConfigKeys.repository));
 
+			mpBuilder.addTextBody("ooss", getSelectedOS());
+			
 			mpBuilder.addBinaryBody("testDataFile", testData, ContentType.APPLICATION_XML, testData.getName());
 			mpBuilder.addBinaryBody("testDataOverrideFile", override, ContentType.APPLICATION_XML, override.getName());
 
-
+			
 			httppost.setEntity(mpBuilder.build());
 			
 			return httppost;
 		}
+
+		private String getSelectedOS() {
+
+
+			Boolean selectedLinux = new Boolean(runnerConfig.get(ConfigKeys.selectedLinux));
+			Boolean selectedWindows = new Boolean(runnerConfig.get(ConfigKeys.selectedWindows));
+
+			if(selectedLinux && selectedWindows)
+				return "both";
+
+			if ( selectedLinux)
+				return "linux";
+			if ( selectedWindows )
+				return "windows";
+			
+			return "";
+		}
+
 
 		private String getLogLevel(){
 			return ( new Boolean(runnerConfig.get("selectedVerbose")) ? "verbose": "info" );
