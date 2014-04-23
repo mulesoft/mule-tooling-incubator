@@ -12,6 +12,9 @@
     <feature id="org.mule.tooling.incubator.munit.extension">
       <category name="org.mule.tooling.incubator.category.munit"/>
     </feature>
+    <feature id="org.mule.tooling.incubator.aop.extension">
+        <category name="org.mule.tooling.incubator.category"/>
+    </feature>
     <feature id="org.mule.tooling.ui.extension.munit-mclient-module">
       <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
     </feature>
@@ -24,10 +27,10 @@
    <feature id="org.mule.tooling.ui.synchronize.extension">
        <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
    </feature>
-   <category-def name="org.mule.tooling.incubator.category.devkit" label="AnyPoint Devkit Plugin">
-       <description>
+   <category-def name="org.mule.tooling.incubator.category.devkit" label="Anypoint Devkit Plugin">
+      <description>
             Anypoint Devkit Plugin
-       </description>
+      </description>
    </category-def>
    <category-def name="org.mule.tooling.incubator.category" label="Mule Tooling Incubator Projects">
       <description>

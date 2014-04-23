@@ -48,6 +48,7 @@ import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
+import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.treeview.model.Module;
 import org.mule.tooling.devkit.treeview.model.NodeItem;
@@ -130,21 +131,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 			@SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
 			private void goToSampleInDocSampleFile(
 					IStructuredSelection thisSelection) {
-				IFile file = null;
-				IFolder folder = getCurrent()
-						.getFolder(DevkitUtils.DOCS_FOLDER);
-
-				try {
-					for (IResource resource : folder.members()) {
-						if (resource.getName().matches(".*.sample")) {
-							file = getCurrent().getFile(
-									resource.getProjectRelativePath());
-							break;
-						}
-					}
-				} catch (CoreException e1) {
-					e1.printStackTrace();
-				}
+				IFile file = getFileFromResource();
 				if (file == null)
 					return;
 				InputStreamReader isr = null;
@@ -167,18 +154,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 					if (!found) {
 						lineNumber = 0;
 					}
-					HashMap map = new HashMap();
-					map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
-					map.put(IWorkbenchPage.EDITOR_ID_ATTR,
-							"org.mule.tooling.devkit.sample.editor.editors.XMLEditor");
-					IMarker marker;
-
-					marker = file.createMarker(IMarker.TEXT);
-
-					marker.setAttributes(map);
-					// page.openEditor(marker); //2.1 API
-					IDE.openEditor(getSite().getPage(), marker); // 3.0 API
-					marker.delete();
+					openSampleAtLine(file, lineNumber);
 				} catch (CoreException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -192,6 +168,41 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 						}
 					}
 				}
+			}
+
+			private IFile getFileFromResource() {
+				IFile file = null;
+				IFolder folder = getCurrent()
+						.getFolder(DevkitUtils.DOCS_FOLDER);
+
+				try {
+					for (IResource resource : folder.members()) {
+						if (resource.getName().matches(".*.sample")) {
+							file = getCurrent().getFile(
+									resource.getProjectRelativePath());
+							break;
+						}
+					}
+				} catch (CoreException e1) {
+					e1.printStackTrace();
+				}
+				return file;
+			}
+
+			private void openSampleAtLine(IFile file, int lineNumber)
+					throws CoreException, PartInitException {
+				HashMap map = new HashMap();
+				map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
+				map.put(IWorkbenchPage.EDITOR_ID_ATTR,
+						"org.mule.tooling.devkit.sample.editor.XMLEditor");
+				IMarker marker;
+
+				marker = file.createMarker(IMarker.TEXT);
+
+				marker.setAttributes(map);
+				// page.openEditor(marker); //2.1 API
+				IDE.openEditor(getSite().getPage(), marker); // 3.0 API
+				marker.delete();
 			}
 		});
 	}
@@ -324,7 +335,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 		ModuleVisitor visitor = new ModuleVisitor();
 		for (ICompilationUnit unit : mypackage.getCompilationUnits()) {
 			// now create the AST for the ICompilationUnits
-			CompilationUnit parse = parse(unit);
+			CompilationUnit parse = ASTUtils.parse(unit);
 
 			parse.accept(visitor);
 
@@ -339,19 +350,5 @@ public class DevkitView extends ViewPart implements IResourceChangeListener,
 				}
 			});
 		}
-	}
-
-	/**
-	 * * Reads a ICompilationUnit and creates the AST DOM for manipulating the *
-	 * Java source file * * @param unit * @return
-	 */
-
-	private CompilationUnit parse(ICompilationUnit unit) {
-		@SuppressWarnings("deprecation")
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		parser.setSource(unit);
-		parser.setResolveBindings(true);
-		return (CompilationUnit) parser.createAST(null); // parse
 	}
 }

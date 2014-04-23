@@ -152,12 +152,16 @@ public class MavenDevkitProjectDecorator {
         getPreferenceNode().addPreferenceChangeListener(listener);
     }
 
-    public boolean hasDependency(Dependency dependency, boolean checkVersion) {
+    public boolean hasDependency(MavenDependency dependency, boolean checkVersion) {
         checkPomWellFormed();
         List<Dependency> existingDependencies = pomModel.getDependencies();
+        Dependency tempDependency = MavenUtils.dependency( //
+                dependency.getGroupId(), //
+                dependency.getArtifactId(), //
+                dependency.getVersion());
         boolean found = false;
         for (Dependency existingDependency : existingDependencies) {
-            if (areDependenciesEqual(existingDependency, dependency, checkVersion)) {
+            if (areDependenciesEqual(existingDependency, tempDependency, checkVersion)) {
                 found = true;
             }
         }
@@ -186,7 +190,7 @@ public class MavenDevkitProjectDecorator {
 
         // check for the dependency ignoring it's version (whatever the user
         // wants to use, is fine)
-        if (!this.hasDependency(newDependency, false)) {
+        if (!this.hasDependency(dependency, false)) {
             doAddDependency(newDependency);
             this.writeChanges();
         }

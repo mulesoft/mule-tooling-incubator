@@ -67,7 +67,7 @@ public abstract class MunitMockModuleCustomEditor extends CustomEditor implement
     }
 
     @Override
-    public void refreshEditor() {
+    public void refreshEditor(boolean shouldNotifyObservers) {
 
     }
 

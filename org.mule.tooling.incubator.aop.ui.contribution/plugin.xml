@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.mule.tooling.core.contribution">
+      <externalContribution
+            contributionJar="lib/mule-module-aop.jar"
+            contributionLibPathInMule="/lib"
+            contributionLibs="lib/mule-module-aop.jar"
+            contributionNamespace="http://www.mulesoft.org/schema/mule/aop"
+            contributionNamespaceFile="http://www.mulesoft.org/schema/mule/aop/current/aop.xsd"
+            contributionNamespacePrefix="aop"
+            contributionType="cloud-connector"
+            icon="icons/small/mule-aop-connector-24x16.png"
+            includeInDesignTimeClasspath="true"
+            minimumVersion="3.3.0"
+            name="AOP"
+            path="aop.xml"
+            version="1.0">
+      </externalContribution>
+   </extension>
+
+<extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="org.mule.tooling.aop.ui"
+            objectClass="org.eclipse.jdt.core.IJavaProject">
+         <menu
+         	   id="org.mule.tooling.aop.ui.menu"
+               icon="icons/menuLogo.png"
+               label="Mule Aop"
+               path="additions">
+            <separator
+                  name="group">
+            </separator>
+         </menu>
+         <action
+               class="org.mule.tooling.ui.extension.aop.EnableAopHandler"
+               enablesFor="1"
+               id="org.mule.tooling.maven.ui.popup.enableDisableSupport"
+               label="Enable/Disable Support"
+               menubarPath="org.mule.tooling.aop.ui.menu/group">
+         </action>
+      </objectContribution>
+   </extension>
+</plugin>

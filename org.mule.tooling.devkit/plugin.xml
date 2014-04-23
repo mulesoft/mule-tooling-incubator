@@ -126,7 +126,7 @@
             extensions="sample"
             icon="icons/sample.gif"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            class="org.mule.tooling.devkit.sample.editor.editors.XMLEditor"
+            class="org.mule.tooling.devkit.sample.editor.XMLEditor"
             id="org.mule.tooling.devkit.sample.editor.editors.XMLEditor">
       </editor>
    </extension>
@@ -185,7 +185,12 @@
 			defaultHandler="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand">
 		</command>
 	</extension>
-	
+	<extension point="org.eclipse.ui.commands">
+		<command id="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector"
+			name="Install Or Update Connector"
+			defaultHandler="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector">
+		</command>
+	</extension>
 	<extension point="org.eclipse.core.expressions.propertyTesters">
 		<propertyTester
 			id="org.mule.tooling.devkit.javadoc.check.tester"
@@ -204,6 +209,9 @@
 					<iterate>
 						<adapt type="org.eclipse.core.resources.IProject"/>
 					</iterate>
+     <count
+           value="1">
+     </count>
 				</with>
 			</visibleWhen>
 			<separator name="group">
@@ -213,11 +221,11 @@
 				icon="icons/generate_sources.gif"
 				style="push">
 			</command>
-			<!--<command commandId="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand" 
-				label="Try it out!"
-				icon="icons/mule.png" 
+			<command commandId="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector" 
+				label="Install or Update"
+				icon="icons/install.gif" 
 				style="push">
-			</command>-->
+			</command>
 			<command commandId="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand" 
 				label="Preview Documentation"
 				icon="icons/generate_doc.gif" 

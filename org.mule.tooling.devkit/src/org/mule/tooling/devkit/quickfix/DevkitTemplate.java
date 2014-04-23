@@ -12,7 +12,6 @@ public class DevkitTemplate extends TemplateProposal implements IJavaCompletionP
 	public DevkitTemplate(Template template, TemplateContext context,
 			IRegion region, Image image) {
 		super(template, context, region, image);
-		// TODO Auto-generated constructor stub
 	}
 
 }

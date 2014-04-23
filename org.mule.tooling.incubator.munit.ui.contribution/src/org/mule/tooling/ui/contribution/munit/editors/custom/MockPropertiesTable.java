@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.ui.widgets.action.IModificationListener;
+import org.mule.tooling.ui.widgets.table.MapTableComposite.ModificationType;
 import org.mule.tooling.ui.widgets.util.WidgetUtils;
 
 /**
@@ -63,7 +64,7 @@ public class MockPropertiesTable extends Composite {
 
     protected void notifyModified(Object value) {
         for (IModificationListener listener : listeners) {
-            listener.onModified(value, tableViewer);
+            listener.onModified(value, value, tableViewer, ModificationType.EDIT);
         }
     }
 

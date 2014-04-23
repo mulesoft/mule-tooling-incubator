@@ -71,6 +71,24 @@ public class ${className}
     private String accessToken;
 
     /**
+     * Set accessToken
+     *
+     * @param accessToken The accessToken
+     */
+    public void setAccessToken(String accessToken)
+    {
+        this.accessToken = accessToken;
+    }
+
+    /**
+     * Get ClientSecret
+     */
+    public String getAccessToken()
+    {
+        return this.accessToken;
+    }
+
+    /**
      * Set clientId
      *
      * @param clientId The clientId
@@ -137,6 +155,7 @@ public class ${className}
         return this.myProperty;
     }
 
+#if($OAuthEnaled == false)
     /**
      * Connect
      *
@@ -178,6 +197,7 @@ public class ${className}
         return "001";
     }
 
+#end 
     /**
      * Custom processor
      *

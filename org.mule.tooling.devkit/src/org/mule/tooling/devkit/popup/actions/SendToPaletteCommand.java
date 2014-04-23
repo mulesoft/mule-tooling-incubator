@@ -105,21 +105,7 @@ public class SendToPaletteCommand extends AbstractHandler {
 				final IProject selectedProject = ((IJavaElement) selected)
 						.getJavaProject().getProject();
 				if (selectedProject != null) {
-					int errorCount = 0;
-					IMarker[] errors;
-					try {
-						errors = selectedProject.findMarkers(null /* all markers */,
-								true, IResource.DEPTH_INFINITE);
-						for (IMarker error : errors) {
-							int severity = error.getAttribute(IMarker.SEVERITY,
-									Integer.MAX_VALUE);
-							if (severity == IMarker.SEVERITY_ERROR) {
-								errorCount++;
-							}
-						}
-					} catch (CoreException e1) {
-						e1.printStackTrace();
-					}
+					int errorCount = getErrorsCount(selectedProject);
 
 					if (errorCount > 0) {
 						String errorText = "Your project has (" + errorCount + ") "
@@ -176,6 +162,25 @@ public class SendToPaletteCommand extends AbstractHandler {
 			}
 		}
 		return null;
+	}
+
+	private int getErrorsCount(final IProject selectedProject) {
+		int errorCount = 0;
+		IMarker[] errors;
+		try {
+			errors = selectedProject.findMarkers(null /* all markers */,
+					true, IResource.DEPTH_INFINITE);
+			for (IMarker error : errors) {
+				int severity = error.getAttribute(IMarker.SEVERITY,
+						Integer.MAX_VALUE);
+				if (severity == IMarker.SEVERITY_ERROR) {
+					errorCount++;
+				}
+			}
+		} catch (CoreException e1) {
+			e1.printStackTrace();
+		}
+		return errorCount;
 	}
 
 }
