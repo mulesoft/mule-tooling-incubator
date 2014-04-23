@@ -143,42 +143,49 @@
 			defaultHandler="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand">
 		</command>
 	</extension>
+	
 	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
 			name="Generate Sources"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand">
 		</command>
 	</extension>
+	
 	<extension point="org.eclipse.ui.commands">
 	<command id="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand"
 			name="Generate Testdata"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand">
 		</command>
 	</extension>
-		<extension point="org.eclipse.ui.commands">
-	<command id="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
+	
+	<extension point="org.eclipse.ui.commands">
+		<command id="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
 			name="Run Interop Test"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand">
 		</command>
 	</extension>
-		<extension point="org.eclipse.ui.commands">
-	<command id="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand"
+	
+	<extension point="org.eclipse.ui.commands">
+		<command id="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand"
 			name="Generate Functional TestCases"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand">
 		</command>
 	</extension>
+	
 	<extension point="org.eclipse.ui.commands">
-	<command id="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
+		<command id="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
 			name="Test Coverage Report"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.TestCoverageCommand">
 		</command>
 	</extension>
+	
 	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
 			name="Create documentation"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand">
 		</command>
 	</extension>
+	
 	<extension point="org.eclipse.core.expressions.propertyTesters">
 		<propertyTester
 			id="org.mule.tooling.devkit.javadoc.check.tester"
