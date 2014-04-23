@@ -7,7 +7,7 @@
       plugin="org.mule.tooling.ui.contribution.munit"
       exclusive="true">
 
-   <description url="http://www.mulesoft.com">
+   <description url="http://www.mulesoft.com">MUnit UI
         </description>
 
    <copyright url="http://www.mulesoft.com">
