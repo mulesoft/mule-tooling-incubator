@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.help.ui.internal.views.SeeAlsoPart;
 import org.eclipse.swt.widgets.Display;
 import org.mule.tooling.devkit.dialogs.TestdataOptionsSelectionDialog;
 

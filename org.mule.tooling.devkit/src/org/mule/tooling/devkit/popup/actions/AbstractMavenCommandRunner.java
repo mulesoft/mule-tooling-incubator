@@ -1,6 +1,5 @@
 package org.mule.tooling.devkit.popup.actions;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;

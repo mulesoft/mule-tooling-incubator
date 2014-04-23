@@ -29,24 +29,34 @@ import org.mule.tooling.ui.utils.UiUtils;
 
 public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 
-	private static final String DEFAULT_SERVER = "http://localhost:8080/";
-	private static final String EMAIL_CONFIGURATION = "Email Configuration";
-	private static final String VERBOSE_LOGGING = "Verbose Logging";
-	private static final String RUN_AS_TESTS_DEBUG = "Run as tests Debug";
-	private static final String SERVER_PROPERTIES = "Server Properties";
-	private static final String DESTINATION_EXAMPLE = "destination@example.com";
-	private static final String EMAIL = "Email:";
+	private static final String RUN_ON_LINUX = "Run on Linux";
+	private static final String OS_SELECTION = "OS Selection";
+	private static final String SERVER_RUN_OPTIONS = "Run Options:";
+	private static final String RUN_ON_WINDOWS = "Run on Windows";
+	private static final String CONNECTOR_REPOSITORY_SSH_URL = "Connector Repository SSH Url";
 	private static final String TITTLE = "Interop Remote Runner Properties";
 	private static final String SUBTITLE = "Configure the options for the remote interoperability tests runner";
-	private static final String INTEROP_INPUT_FILES = "Interop Input Files";
-	private static final String BASIC_TESTDATA = "TestData Basic:";
-	private static final String OVERRIDE_TESTDATA = "TestData Override:";
-	private static final String GIT_REPO_DIR = "Repository:";
-	private static final String SERVER = "Server";
+	private static final String EMAIL_CONFIGURATION = "Email Configuration";
+	private static final String VERBOSE_LOGGING = "Verbose Logging";
+	private static final String RUN_AS_DEBUG = "Run as Debug";
+	private static final String SERVER_PROPERTIES = "Server Properties";
+	private static final String DESTINATION_EXAMPLE = "destination@example.com";
+	private static final String INTEROP_INPUT_FILES = "Interop Input TestData Files";
+	private static final String EMAIL = "Email:";
+	private static final String BASIC_TESTDATA = "Basic:";
+	private static final String OVERRIDE_TESTDATA = "Override:";
 	private static final String BROWSE = "Browse";
+	private static final String GIT_REPO_DIR = "Repository:";
+	private static final String SERVER = "Url:";
 	private static final String EXTENSION_FILTER = "*.xml";
 	
+	private static String serverDefaultUrl = "http://localhost:8080/";
+	private static String emailDefault = "";
+	private static String repositoryDefault = "";
 	public static String testDataDefault = "";
+	public static Boolean selectedWindowsDefault = false;
+	public static Boolean selectedLinuxDefault = false;
+
 	private Text testDataPathField;
 	private String testDataPath;
 	private Button testDataBrowser;
@@ -66,18 +76,22 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 	private String serverURL;
 	
 	private Button debugCheckBox;
-	private Boolean selectedDebug;
+	private Boolean selectedDebug = false;
 	
 	private Button verboseCheckBox;
-	private Boolean selectedVerbose;
+	private Boolean selectedVerbose = false;
 	
+	private Button windowsCheckBox;
+	private Boolean selectedWindows = false;
+	
+	private Button linuxCheckBox;
+	private Boolean selectedLinux = false;
 	
 	private ModifyListener defaultListener = new ModifyListener() {
 													@Override
 													public void modifyText(ModifyEvent e) {
 													}
 												};
-	
 	
 	public InteropRunOptionsSelectionDialog(Shell parentShell) {
 		super(parentShell);
@@ -88,7 +102,6 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 		super.create();
 		setTitle(TITTLE);
 		setMessage(SUBTITLE);
-		
 	}
 
 
@@ -109,6 +122,7 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 
 		createEmailPropertiesGroup(container);
 		createFilesPropertiesGroup(container);
+		createRepositoryInputGroup(container);
 		createServerPropertiesGroup(container);
 
 		return area;
@@ -117,10 +131,17 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 	private void createEmailPropertiesGroup(Composite container) {
 		
 		Group emailGroupBox = UiUtils.createGroupWithTitle(container, EMAIL_CONFIGURATION, 2);
-		destinationEmailField = createTextInput(emailGroupBox, defaultListener, EMAIL, "");
+		destinationEmailField = createTextInput(emailGroupBox, defaultListener, EMAIL, emailDefault);
 		destinationEmailField.setToolTipText(DESTINATION_EXAMPLE);
 	}
 
+	private void createRepositoryInputGroup(Composite container){
+		
+		Group repositoryGroupBox = UiUtils.createGroupWithTitle(container, CONNECTOR_REPOSITORY_SSH_URL, 2);
+		
+		repositoryField = createTextInput(repositoryGroupBox, defaultListener, GIT_REPO_DIR, repositoryDefault);
+	}
+	
 	private void createFilesPropertiesGroup(Composite container) {
 		Group interopGroupBox = UiUtils.createGroupWithTitle(container, INTEROP_INPUT_FILES, 3);
 
@@ -158,18 +179,26 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 				}
 			});
 		
-		repositoryField = createTextInput(interopGroupBox, defaultListener, GIT_REPO_DIR, "");
 		
 	}
 
 	private void createServerPropertiesGroup(Composite container) {
-		Group serverGroup = UiUtils.createGroupWithTitle(container, SERVER_PROPERTIES, 2);
+		Group serverGroup = UiUtils.createGroupWithTitle(container, SERVER_PROPERTIES, 5);
 		
-		serverURLField = createTextInput(serverGroup, defaultListener, SERVER, DEFAULT_SERVER);
+		serverURLField = createTextInput(serverGroup, defaultListener, SERVER, serverDefaultUrl, 4);
+		serverURLField.setToolTipText("http://www.example.com");
+		createLabel(serverGroup, SERVER_RUN_OPTIONS);
+		
+		createRunOnWindowsCheckboxInput(serverGroup);
+		createRunOnLinuxCheckboxInput(serverGroup);
 		createRunAsDebugCheckboxInput(serverGroup);
+		
+		createLabel(serverGroup, " ");
+		createLabel(serverGroup, " ");
 		createReportLogVerboseCheckboxInput(serverGroup);
+		
 	}
-	
+
 	
 	private Text createTextInput(Composite container, ModifyListener listener,
 						String label, String defaultValue)
@@ -178,6 +207,15 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 		Text textField = initializeTextField(container, label, defaultValue, 1, listener);
 		textField.setText(defaultValue);		
 		return textField;
+	}
+	
+	private Text createTextInput(Composite container, ModifyListener listener,
+			String label, String defaultValue, int inputSpan)
+	{
+	
+	Text textField = initializeTextField(container, label, defaultValue, inputSpan, listener);
+	textField.setText(defaultValue);		
+	return textField;
 	}
 	
 	private Text createFileInput(Composite container, String label, String defaultValue) {
@@ -214,6 +252,46 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 	}
 	
 
+	private void createRunOnWindowsCheckboxInput(Composite container){
+		
+		
+		windowsCheckBox = new Button(container, SWT.CHECK);
+
+		GridData dataInterop = new GridData();
+		dataInterop.grabExcessHorizontalSpace = false;
+		dataInterop.horizontalAlignment = SWT.LEFT;
+
+		windowsCheckBox.setLayoutData(dataInterop);
+		windowsCheckBox.setText(RUN_ON_WINDOWS);
+		windowsCheckBox.setSelection(selectedWindowsDefault);
+		windowsCheckBox.addSelectionListener(new SelectionAdapter() {
+												@Override
+												public void widgetSelected(SelectionEvent e) {
+													selectedWindows = windowsCheckBox.getSelection();
+												}
+											});
+	}
+
+	private void createRunOnLinuxCheckboxInput(Composite container){
+		
+		
+		linuxCheckBox = new Button(container, SWT.CHECK);
+
+		GridData dataInterop = new GridData();
+		dataInterop.grabExcessHorizontalSpace = false;
+		dataInterop.horizontalAlignment = SWT.LEFT;
+
+		linuxCheckBox.setLayoutData(dataInterop);
+		linuxCheckBox.setText(RUN_ON_LINUX);
+		linuxCheckBox.setSelection(selectedLinuxDefault);
+		linuxCheckBox.addSelectionListener(new SelectionAdapter() {
+												@Override
+												public void widgetSelected(SelectionEvent e) {
+													selectedLinux = linuxCheckBox.getSelection();
+												}
+											});
+	}
+
 	private void createRunAsDebugCheckboxInput(Composite container){
 		
 		
@@ -224,7 +302,7 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 		dataInterop.horizontalAlignment = SWT.LEFT;
 
 		debugCheckBox.setLayoutData(dataInterop);
-		debugCheckBox.setText(RUN_AS_TESTS_DEBUG);
+		debugCheckBox.setText(RUN_AS_DEBUG);
 		debugCheckBox.addSelectionListener(new SelectionAdapter() {
 												@Override
 												public void widgetSelected(SelectionEvent e) {
@@ -259,11 +337,7 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 	private Text initializeTextField(Composite container, String labelText,
 			String defaultValue, int span, ModifyListener modifyListener) {
 		
-		Label label = new Label(container, SWT.NULL);
-		label.setText(labelText);
-		label.setLayoutData(GridDataFactory.swtDefaults()
-				.align(SWT.BEGINNING, SWT.CENTER)
-				.hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
+		createLabel(container, labelText);
 		
 		Text textField = new Text(container, SWT.BORDER);
 		
@@ -280,57 +354,86 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 	}
 
 	private void createLabel(Composite container, String text) {
-		Label lbtCredentials = new Label(container, SWT.NONE);
 		
-		GridData label = new GridData();
-		label.grabExcessHorizontalSpace = false;
-		label.horizontalAlignment = SWT.BEGINNING;
-		label.horizontalSpan = 1;
+		Label label = new Label(container, SWT.NULL);
+		label.setText(text);
+		label.setLayoutData(GridDataFactory.swtDefaults()
+				.align(SWT.BEGINNING, SWT.CENTER)
+				.hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
 		
-		lbtCredentials.setLayoutData(label);
-		lbtCredentials.setText(text);
 	}
 	
 	// save content of the Text fields because they get disposed
 	// as soon as the Dialog closes
-	private void saveInput() throws MissingRequiredFieldException {
+	private void saveInput() throws MissingRequiredFieldException, InvalidRequiredFieldException {
 		
-		destinationEmail = destinationEmailField.getText();
-		if ( !destinationEmail.matches(".*@.*"))
-			throw new MissingRequiredFieldException(EMAIL, destinationEmailField);
+		destinationEmail = validateField(destinationEmailField, EMAIL, ".*@.*", "", false);
 		
-		testDataPath = testDataPathField.getText();
-		if ( testDataPath.equals(""))
-			throw new MissingRequiredFieldException(BASIC_TESTDATA, testDataPathField);
+		testDataPath = validateField(testDataPathField, BASIC_TESTDATA, "", "", false);
 		
-		testDataOverridePath = testDataOverridePathField.getText();
-		if ( testDataOverridePath.equals(""))
-			throw new MissingRequiredFieldException(OVERRIDE_TESTDATA,testDataOverridePathField);
+		testDataOverridePath = validateField(testDataOverridePathField, BASIC_TESTDATA, "", "", false);
 		
-		repository = repositoryField.getText();
+		repository = validateField(repositoryField, GIT_REPO_DIR, "", "http.*", true);
 		
-		serverURL = serverURLField.getText();
-		if ( serverURL.equals(""))
-			throw new MissingRequiredFieldException(SERVER, serverURLField);
-		
+		serverURL = validateField(serverURLField, SERVER, "http://.*", "", false);
 		
 		selectedDebug = debugCheckBox.getSelection();
 		selectedVerbose = verboseCheckBox.getSelection();
 		
+		selectedWindows = windowsCheckBox.getSelection();
+		selectedLinux = linuxCheckBox.getSelection();
+		
+		if( !(selectedWindows || selectedLinux)){
+			throw new MissingRequiredFieldException(OS_SELECTION, windowsCheckBox);
+		}
+		
 	}
 	
+	private String validateField(Text field, String label, String validFormat, String invalidFormat, Boolean nullable)
+			throws MissingRequiredFieldException, InvalidRequiredFieldException
+	{
+		
+		String fieldValue = field.getText();
+		
+		if ( !nullable && fieldValue.equals(""))
+			throw new MissingRequiredFieldException(label.replace(":", ""), field);
+		
+		if ( !validFormat.equals("") && !fieldValue.matches(validFormat))
+			throw new InvalidRequiredFieldException(label.replace(":", ""), field);
+		
+		if ( !invalidFormat.equals("") && fieldValue.matches(invalidFormat))
+			throw new InvalidRequiredFieldException(label.replace(":", ""), field);
+		
+		return fieldValue;
+	}
+	
+	private void saveSelectionsAsDefault() {
+		
+		emailDefault = destinationEmail;
+		repositoryDefault = repository;
+		serverDefaultUrl = serverURL;
+		selectedWindowsDefault = selectedWindows;
+		selectedLinuxDefault = selectedLinux;
+	}
 
 	@Override
 	protected void okPressed() {
 		try{
 			saveInput();
+			saveSelectionsAsDefault();
+			
 			super.okPressed();
 		
 		}catch(MissingRequiredFieldException e){
-			e.getField().setFocus();
+			e.field.setFocus();
+			setErrorMessage(e.msg);
+		
+		}catch(InvalidRequiredFieldException e){
+			e.field.setFocus();
+			setErrorMessage(e.msg);
 		}	
 	}
-	
+
 	@SuppressWarnings("serial")
 	public Map<ConfigKeys, String> getConfigKeys(){
 		
@@ -342,6 +445,8 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 			put(ConfigKeys.serverURL, serverURL);
 			put(ConfigKeys.selectedDebug, selectedDebug.toString());
 			put(ConfigKeys.selectedVerbose, selectedVerbose.toString());
+			put(ConfigKeys.selectedWindows, selectedWindows.toString());
+			put(ConfigKeys.selectedLinux, selectedLinux.toString());
 		}};
 	}
 
@@ -352,16 +457,19 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 		private Control field = null;
 		
 		public MissingRequiredFieldException(String msg, Control field){
-			this.msg = msg;
+			this.msg = "Missing required field " + msg;
 			this.field = field;
 		}
-
-		public String getMsg() {
-			return msg;
-		}
-
-		public Control getField() {
-			return field;
+	}
+	
+	@SuppressWarnings("serial")
+	private class InvalidRequiredFieldException extends Exception{
+		private String msg = "";
+		private Control field = null;
+		
+		public InvalidRequiredFieldException(String msg, Control field){
+			this.msg = "Invalid value for field " + msg;
+			this.field = field;
 		}
 	}
 } 
