@@ -90,6 +90,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
 						throws ProvisionException {
 					IMetadataRepository repo = ProvisioningUI.getDefaultUI()
 							.loadMetadataRepository(uri, false, null);
+					repo.setProperty("name", selectedProject.getElementName()+" local Update Site");
 					IQueryResult<IInstallableUnit> queryResult = repo.query(
 							QueryUtil.createIUAnyQuery(), monitor);
 
