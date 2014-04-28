@@ -4,12 +4,13 @@ $(function () {
     template = Handlebars.compile($('#descriptionTemplate').html()),
     container = $('.container');
 
-  $.getJSON('http://cors.io/buds.cloudhub.io/api/updateSites/buds/plugins').then(function (result) {
-
-    container.html(
-      result.map(function (value, key) { return template(value); })
-    );
-
+   
+  $.getJSON("http://cors.io/buds.cloudhub.io/api/updateSites/buds/plugins",function (result) {
+    container.html("");
+      $.each(result,function (index, value) {
+          console.log(value); 
+          container.append(template(value));
+        });
   });
 
   container.on('click', '.thumbnail .btn-primary', function (evt) {
