@@ -39,7 +39,7 @@ import org.mule.api.annotations.Query;
  *
  * @author MuleSoft, Inc.
  */
-@Connector(name="${moduleName}", schemaVersion="1.0", friendlyName="${moduleName}", minMuleVersion="${minMuleVersion}")
+@Connector(name="${moduleName}", schemaVersion="1.0", friendlyName="${connectorName}", minMuleVersion="${minMuleVersion}")
 #if($OAuthEnaled == true )
 @OAuth2(authorizationUrl = "", accessTokenUrl = "", accessTokenRegex = "", expirationRegex = "", refreshTokenRegex = "")
 #end
