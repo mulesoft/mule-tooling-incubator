@@ -76,7 +76,7 @@
 	*	@return return comment
 	*/
 	@Processor
-	public List&lt;Object&gt;  ${name}(@Query string query) {
+	public List&lt;Object&gt;  ${name}(@Query String query) {
 		//${todo}
 		${cursor}
 		return null;
