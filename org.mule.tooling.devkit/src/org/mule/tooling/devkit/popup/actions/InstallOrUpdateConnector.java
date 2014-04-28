@@ -55,7 +55,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
 						return Status.CANCEL_STATUS;
 
 					if (selectedProject.getProject().getFolder(
-							DevkitUtils.UPDATE_SITE_FOLDER) != null) {
+							DevkitUtils.UPDATE_SITE_FOLDER) != null && (result == Status.OK) ) {
 
 						final List<IInstallableUnit> list = new ArrayList<IInstallableUnit>();
 						final URI uri = selectedProject.getProject()
@@ -79,7 +79,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
 						return new OperationStatus(Status.ERROR,
 								DevkitUIPlugin.PLUGIN_ID,
 								OperationStatus.ERROR,
-								"Failed to generate Update Site", null);
+								"Failed to generate Update Site. Check the logs for more details.", null);
 					}
 					return Status.OK_STATUS;
 				}
