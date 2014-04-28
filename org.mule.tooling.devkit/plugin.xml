@@ -143,12 +143,42 @@
 			defaultHandler="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand">
 		</command>
 	</extension>
+	
 	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
 			name="Generate Sources"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand">
 		</command>
 	</extension>
+	
+	<extension point="org.eclipse.ui.commands">
+	<command id="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand"
+			name="Generate Testdata"
+			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand">
+		</command>
+	</extension>
+	
+	<extension point="org.eclipse.ui.commands">
+		<command id="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
+			name="Run Interop Test"
+			defaultHandler="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand">
+		</command>
+	</extension>
+	
+	<extension point="org.eclipse.ui.commands">
+		<command id="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand"
+			name="Generate Functional TestCases"
+			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand">
+		</command>
+	</extension>
+	
+	<extension point="org.eclipse.ui.commands">
+		<command id="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
+			name="Test Coverage Report"
+			defaultHandler="org.mule.tooling.devkit.popup.actions.TestCoverageCommand">
+		</command>
+	</extension>
+	
 	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
 			name="Create documentation"
@@ -201,6 +231,30 @@
 				icon="icons/generate_doc.gif" 
 				style="push">
 			</command>
+			
+			<separator name="testing" visible="true">
+			</separator>
+			<command commandId="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand" 
+				label="Generate TestData"
+				icon="icons/generate_sources.gif"
+				style="push">
+			</command>
+			<command commandId="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand" 
+				label="Generate Functional TestCases"
+				icon="icons/generate_sources.gif"
+				style="push">
+			</command>
+			<command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand" 
+				label="Run Remote Interop"
+				icon="icons/generate_doc.gif"
+				style="push">
+			</command>
+			<command commandId="org.mule.tooling.devkit.popup.actions.TestCoverageCommand" 
+				label="Test Coverage Report"
+				icon="icons/generate_doc.gif"
+				style="push">
+			</command>
+			
 			<separator name="javadoc" visible="true">
 			</separator>
 			<command commandId="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand" 

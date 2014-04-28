@@ -42,4 +42,12 @@ Require-Bundle: org.mule.tooling.runtime;bundle-version="3.5.0",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.mule.tooling.devkit.builder
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ lib/httpclient.jar,
+ lib/httpcore.jar,
+ lib/httpmime.jar,
+ lib/commons-codec.jar,
+ lib/commons-logging.jar,
+ lib/fluent-hc.jar,
+ lib/httpclient-cache.jar
+
