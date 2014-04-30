@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Display;
+import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.dialogs.TestdataOptionsSelectionDialog;
 
 public class GenerateInteropTestDataCommand extends AbstractMavenCommandRunner {
@@ -36,7 +37,7 @@ public class GenerateInteropTestDataCommand extends AbstractMavenCommandRunner {
 			
 			System.out.println("** Command :: " + StringUtils.join(mavenCommand, " "));
 			
-			runMavenGoalJob(selectedProject, mavenCommand, jobMsg);
+			runMavenGoalJob(selectedProject, mavenCommand, jobMsg,DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.TEST_RESOURCES_FOLDER), null));
 	
 		}
 	}

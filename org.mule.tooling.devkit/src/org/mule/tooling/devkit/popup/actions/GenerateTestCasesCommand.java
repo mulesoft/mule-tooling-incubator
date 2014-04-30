@@ -1,6 +1,7 @@
 package org.mule.tooling.devkit.popup.actions;
 
 import org.eclipse.core.resources.IProject;
+import org.mule.tooling.devkit.common.DevkitUtils;
 
 public class GenerateTestCasesCommand extends AbstractMavenCommandRunner {
 
@@ -14,7 +15,7 @@ public class GenerateTestCasesCommand extends AbstractMavenCommandRunner {
 		
 		final String jobMsg = "Generating Functional TestCases...";
 		
-		runMavenGoalJob(selectedProject, mavenCommand, jobMsg);
+		runMavenGoalJob(selectedProject, mavenCommand, jobMsg,DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.TEST_JAVA_FOLDER), null));
 	}
 
 }

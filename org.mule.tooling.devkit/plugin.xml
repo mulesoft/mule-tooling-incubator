@@ -236,22 +236,22 @@
 			</separator>
 			<command commandId="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand" 
 				label="Generate TestData"
-				icon="icons/generate_sources.gif"
+				icon="icons/tsuite.png"
 				style="push">
 			</command>
 			<command commandId="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand" 
 				label="Generate Functional TestCases"
-				icon="icons/generate_sources.gif"
+				icon="icons/tsuite.png"
 				style="push">
 			</command>
 			<command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand" 
 				label="Run Remote Interop"
-				icon="icons/generate_doc.gif"
+				icon="icons/run.png"
 				style="push">
 			</command>
 			<command commandId="org.mule.tooling.devkit.popup.actions.TestCoverageCommand" 
 				label="Test Coverage Report"
-				icon="icons/generate_doc.gif"
+				icon="icons/coverage.gif"
 				style="push">
 			</command>
 			

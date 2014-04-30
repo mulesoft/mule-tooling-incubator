@@ -1,7 +1,5 @@
 package org.mule.tooling.devkit.popup.actions;
 
-import java.net.MalformedURLException;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -14,20 +12,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.help.ui.internal.DefaultHelpUI;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
 import org.mule.tooling.devkit.maven.MavenDevkitProjectDecorator;
-import org.mule.tooling.ui.widgets.util.SilentRunner;
 
-@SuppressWarnings("restriction")
 public class CreateDocumentationCommand extends AbstractHandler {
 
 	@Override
@@ -75,35 +70,11 @@ public class CreateDocumentationCommand extends AbstractHandler {
 											"-DskipTests", "javadoc:javadoc" },javaProject)
 									.run(mavenProject.getPomFile(), monitor);
 
-							Display.getDefault().syncExec(new Runnable() {
-
-								@Override
-								public void run() {
-									SilentRunner.run(new Runnable() {
-
-										@Override
-										public void run() {
-											try {
-												if (result == BaseDevkitGoalRunner.CANCELED)
-													return;
-												DefaultHelpUI
-														.showInWorkbenchBrowser(
-																selectedProject
-																		.getFile(
-																				"/target/apidocs/index.html")
-																		.getLocationURI()
-																		.toURL()
-																		.toString(),
-																true);
-											} catch (MalformedURLException e) {
-												throw new RuntimeException(e);
-											}
-
-										}
-									});
-								}
-							});
-
+							if (result == BaseDevkitGoalRunner.CANCELED)
+                                return null;
+                            
+							DevkitUtils.openFileInBrower(selectedProject.getFile("/target/apidocs/index.html")).execute();
+							
 							return Status.OK_STATUS;
 						}
 					};
