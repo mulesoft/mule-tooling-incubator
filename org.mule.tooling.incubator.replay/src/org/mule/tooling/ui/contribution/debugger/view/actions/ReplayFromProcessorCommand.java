@@ -48,7 +48,7 @@ public class ReplayFromProcessorCommand extends Command {
                 MuleConfiguration muleConfig = messageFlowEditor.getModelRoot().getEntity();
                 IMuleProject muleProject = messageFlowEditor.getMuleProject();
 
-                final MulePath path = MessageFlowUtils.getInstance().findMulePathForEntity(muleConfig, selectedEditPart.getEntity());
+                final MulePath path = MessageFlowUtils.getInstance().findMulePathForEntity(messageFlowEditor.getMuleProject(),muleConfig, selectedEditPart.getEntity());
                 if (path != null) {
                     mpPath = path.toString();
                     appName = muleProject.getName();
