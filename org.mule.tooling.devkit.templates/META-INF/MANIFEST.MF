@@ -7,6 +7,8 @@ Bundle-Activator: org.mule.tooling.devkit.templates.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide,
  org.eclipse.ui.editors,
- org.eclipse.jdt.ui
+ org.eclipse.jdt.ui,
+ org.eclipse.jface.text;bundle-version="3.8.2",
+ org.eclipse.jdt.core;bundle-version="3.8.3"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

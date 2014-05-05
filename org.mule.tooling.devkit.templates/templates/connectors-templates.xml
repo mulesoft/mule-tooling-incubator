@@ -51,7 +51,7 @@
 		${cursor}
 		return null;
 	}</template>
-	<template id="org.mule.tooling.devkit.templates.processorpaginated" autoinsert="true" context="java-members"  description="Create a paginated processor" enabled="true" name="processor">${imp:import(org.mule.api.annotations.Processor,org.mule.api.annotations.Paged,org.mule.api.annotations.Query,org.mule.streaming.PagingConfiguration,org.mule.streaming.PagingDelegate)}
+	<template id="org.mule.tooling.devkit.templates.processorpaginated" autoinsert="true" context="java-members"  description="Create a paginated processor" enabled="true" name="processor">${imp:import(org.mule.api.annotations.Processor,org.mule.api.annotations.Paged,org.mule.api.annotations.Query,org.mule.streaming.PagingConfiguration,org.mule.streaming.ProviderAwarePagingDelegate)}
 		/**
 	* Description for queryPaginated
 	*
@@ -63,7 +63,7 @@
 	*/
     @Processor
     @Paged
-    public PagingDelegate&lt;Object&gt; queryPaginated(@Query String query, PagingConfiguration pagingConfiguration){
+    public ProviderAwarePagingDelegate&lt;Object,Object&gt; queryPaginated(@Query String query, PagingConfiguration pagingConfiguration){
 		return null;
 	}</template>
 	<template id="org.mule.tooling.devkit.templates.processorquery" autoinsert="true" context="java-members"  description="Creates a processor that uses @Query" enabled="true" name="processor">${imp:import(java.util.List,org.mule.api.annotations.Processor,org.mule.api.annotations.Query)}

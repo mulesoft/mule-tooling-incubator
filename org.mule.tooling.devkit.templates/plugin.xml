@@ -3,5 +3,10 @@
 <plugin>
 	<extension point="org.eclipse.ui.editors.templates">
 		<include file="templates/connectors-templates.xml"/>
+		<resolver
+         contextTypeId="java"
+         type="moduleName"
+         class="org.mule.tooling.devkit.templates.DevkitVariableResolver">
+        </resolver>
 	</extension>
 </plugin>
