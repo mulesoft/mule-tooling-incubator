@@ -15,8 +15,31 @@
     <properties>
         <aws.key>${settings.servers.mulesoft-s3.username}</aws.key>
         <aws.secret>${settings.servers.mulesoft-s3.password}</aws.secret>
+        <incubators.endpoint>s3.amazonaws.com</incubators.endpoint>
+        <incubators.bucket>mule-tooling-incubator</incubators.bucket>
+        <incubators.dir>3.5</incubators.dir>
     </properties>
 	<profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <aws.key>${settings.servers.studio-s3-releases.username}</aws.key>
+                <aws.secret>${settings.servers.studio-s3-releases.password}</aws.secret>
+                <incubators.endpoint>s3.amazonaws.com</incubators.endpoint>
+                <incubators.bucket>studio.mulesoft.org</incubators.bucket>
+                <incubators.dir>r3/addons/beta</incubators.dir>
+            </properties>
+        </profile>
+        <profile>
+            <id>stage</id>
+            <properties>
+                <aws.key>${settings.servers.studio-s3-releases.username}</aws.key>
+                <aws.secret>${settings.servers.studio-s3-releases.password}</aws.secret>
+                <incubators.endpoint>s3.amazonaws.com</incubators.endpoint>
+                <incubators.bucket>studio.mulesoft.org</incubators.bucket>
+                <incubators.dir>staging/r3/addons/beta</incubators.dir>
+            </properties>
+        </profile>
 		<profile>
 			<id>amazon</id>
 			<build>
@@ -32,10 +55,10 @@
 				                <configuration>
 				                    <tasks>
 				                        <taskdef resource="org/mule/ant/tasks.properties" classpathref="maven.plugin.classpath"/>
-                                        <s3delete endpoint="s3.amazonaws.com" key="${aws.key}" secret="${aws.secret}" bucket="mule-tooling-incubator" dir="3.5-M4"/>
-                                        <s3upload publicRead="true" endpoint="s3.amazonaws.com" key="${aws.key}" secret="${aws.secret}" bucket="mule-tooling-incubator" dest="3.5-M4" contentType="application/x-whatever">
-                                        <!-- fileset structure -->
-                                        <fileset dir="${basedir}/target/repository"/>
+                                        <s3delete endpoint="${incubators.endpoint}" key="${aws.key}" secret="${aws.secret}" bucket="${incubators.bucket}" dir="${incubators.dir}"/>
+                                        <s3upload publicRead="true" endpoint="${incubators.endpoint}" key="${aws.key}" secret="${aws.secret}" bucket="${incubators.bucket}" dest="${incubators.dir}" contentType="application/x-whatever">
+                                            <!-- fileset structure -->
+                                            <fileset dir="${basedir}/target/repository"/>
                                         </s3upload>
 				                    </tasks>
 				                </configuration>
@@ -85,8 +108,22 @@
 	      </plugin>	      
 		</plugins>
 	</build>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>nexus.repository</id>
+            <name>Nexus Repository</name>
+            <layout>default</layout>
+            <url>http://repository.mulesoft.org/nexus/content/repositories/releases/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>nexus.snapshots.repository</id>
+            <name>Nexus Snapshots Repository</name>
+            <layout>default</layout>
+            <url>http://repository.mulesoft.org/nexus/content/repositories/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
 	<repositories>
-	<repository>
+	    <repository>
 			<id>mulesoft-s3</id>
 			<url>http://munit.s3.amazonaws.com/utils</url>
 			<layout>p2</layout>
