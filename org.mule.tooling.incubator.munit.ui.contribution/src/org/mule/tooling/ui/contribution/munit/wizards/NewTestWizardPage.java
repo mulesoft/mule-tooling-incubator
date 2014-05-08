@@ -102,7 +102,8 @@ public class NewTestWizardPage extends WizardPage {
                     project = (IContainer) obj;
                 else
                     project = ((IResource) obj).getParent();
-                productionFileText.setText(project.getFullPath().toString());
+                if(project.isAccessible())
+                    productionFileText.setText(project.getFullPath().toString());
             }
         }
         fileText.setText("new_munit_test.xml");
@@ -113,7 +114,7 @@ public class NewTestWizardPage extends WizardPage {
             List<IResource> resources = new ArrayList<IResource>();
             IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
             for (IProject project : projects) {
-                if (project.hasNature(MuleNature.NATURE_ID) && project.isOpen()) {
+                if (project.isOpen() && project.hasNature(MuleNature.NATURE_ID)) {
                     IMuleProject muleProject = new MuleProjectImpl();
                     muleProject.initialize(JavaCore.create(project));
                     IResource[] appsFiles = muleProject.getMuleAppsFolder().members(false);
@@ -137,18 +138,19 @@ public class NewTestWizardPage extends WizardPage {
                 }
             }
         } catch (CoreException e) {
+            
         }
     }
 
     private void dialogChanged() {
 
         String fileName = getFileName();
-
-        if (getContainerName() != null && getContainerName().length() == 0) {
+        String containerName = getContainerName();
+        if (containerName != null && containerName.length() == 0) {
             updateStatus("The file to be tested must be specified");
             return;
         }
-        IResource container = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(getContainerName()));
+        IResource container = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(containerName));
         if (container == null || (container.getType() & IResource.FILE) == 0) {
             updateStatus("The file to be tested must exist");
             return;
