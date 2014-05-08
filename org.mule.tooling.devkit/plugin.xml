@@ -234,13 +234,13 @@
 			
 			<separator name="testing" visible="true">
 			</separator>
-			<command commandId="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand" 
-				label="Generate TestData"
+			<command commandId="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand" 
+				label="Generate Functional TestCases"
 				icon="icons/tsuite.png"
 				style="push">
 			</command>
-			<command commandId="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand" 
-				label="Generate Functional TestCases"
+			<command commandId="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand" 
+				label="Generate TestData"
 				icon="icons/tsuite.png"
 				style="push">
 			</command>

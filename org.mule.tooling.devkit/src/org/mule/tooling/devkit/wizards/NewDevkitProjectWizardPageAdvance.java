@@ -52,15 +52,20 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 
+		Group datasenseGroupBox = UiUtils.createGroupWithTitle(container,
+		        "Datasense", 2);
+
 		Group connectorGroupBox = UiUtils.createGroupWithTitle(container,
 				"Advanced options", 2);
-		checkBoxMetadata = initializeCheckBox(connectorGroupBox,
+		
+		checkBoxMetadata = initializeCheckBox(datasenseGroupBox,
 				"Enable DataSense", null);
 		checkBoxOAuth = initializeCheckBox(connectorGroupBox,
 				"OAuth authentication", null);
-		checkBoxQuery = initializeCheckBox(connectorGroupBox,
+		checkBoxQuery = initializeCheckBox(datasenseGroupBox,
 				"Add DataSense Query method", null);
 
+		
 		Group gitHubGroupBox = UiUtils.createGroupWithTitle(container,
 				"GitHub", 2);
 		addGitHubInfo = initializeCheckBox(gitHubGroupBox,
@@ -78,7 +83,7 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 				});
 
 		owner = initializeTextField(gitHubGroupBox, "GitHub Owner",
-				DEFAULT_USER, new ModifyListener() {
+				DEFAULT_USER,"Owner of the repository", new ModifyListener() {
 
 					public void modifyText(ModifyEvent e) {
 						if (owner.getText().isEmpty()) {
@@ -105,14 +110,14 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 		connection = initializeTextField(gitHubGroupBox, "Connection",
 				"scm:git:git://github.com:" + DEFAULT_USER + "/"
 						+ connectorModel.getConnectorName().toLowerCase()
-						+ ".git", null);
+						+ ".git","The two connection elements convey to how one is to connect to the version control system through Maven. Where connection requires read access for Maven to be able to find the source code (for example, an update), developerConnection requires a connection that will give write access.",  null);
 		devConnection = initializeTextField(gitHubGroupBox, "Dev. Connection",
 				"scm:git:git@github.com:" + DEFAULT_USER + "/"
 						+ connectorModel.getConnectorName().toLowerCase()
-						+ "-module" + ".git", null);
+						+ "-module" + ".git","The two connection elements convey to how one is to connect to the version control system through Maven. Where connection requires read access for Maven to be able to find the source code (for example, an update), developerConnection requires a connection that will give write access.",  null);
 		url = initializeTextField(gitHubGroupBox, "Url", "http://github.com/"
 				+ DEFAULT_USER + "/"
-				+ connectorModel.getConnectorName().toLowerCase(), null);
+				+ connectorModel.getConnectorName().toLowerCase(), "A publicly browsable repository. For example, via ViewCVS.", null);
 
 		GridLayoutFactory.fillDefaults().numColumns(1)
 				.extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0)
@@ -139,7 +144,7 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 	}
 
 	private Text initializeTextField(Group groupBox, String labelText,
-			String defaultValue, ModifyListener modifyListener) {
+			String defaultValue, String tooltip, ModifyListener modifyListener) {
 		Label label = new Label(groupBox, SWT.NULL);
 		label.setText(labelText);
 		label.setLayoutData(GridDataFactory.swtDefaults()
@@ -149,7 +154,7 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 		textField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		textField.setText(defaultValue);
 		textField.setEnabled(false);
-		textField.setToolTipText("Tool Tip");
+		textField.setToolTipText(tooltip);
 		if (modifyListener != null) {
 			textField.addModifyListener(modifyListener);
 		}
