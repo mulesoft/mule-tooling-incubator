@@ -14,7 +14,7 @@ public class TestCoverageCommand extends AbstractMavenCommandRunner {
 					"-DskipTests",
 					"-P", "coverage-reporter"};
 			
-			final String jobMsg = "Analizing Sources...";
+			final String jobMsg = "Analyzing Sources...";
 			
 			runMavenGoalJob(selectedProject, mavenCommand, jobMsg,DevkitUtils.openFileInBrower(selectedProject.getFile("/target/reports/certification/automation-coverage-report.html")));
 
