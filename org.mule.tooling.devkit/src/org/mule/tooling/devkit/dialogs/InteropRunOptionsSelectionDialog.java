@@ -33,11 +33,11 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 	private static final String OS_SELECTION = "OS Selection";
 	private static final String SERVER_RUN_OPTIONS = "Run Options:";
 	private static final String RUN_ON_WINDOWS = "Run on Windows";
-	private static final String CONNECTOR_REPOSITORY_SSH_URL = "Connector Repository SSH Url";
+	private static final String CONNECTOR_REPOSITORY_SSH_URL = "Connector Repository";
 	private static final String TITTLE = "Interop Remote Runner Properties";
 	private static final String SUBTITLE = "Configure the options for the remote interoperability tests runner";
 	private static final String EMAIL_CONFIGURATION = "Email Configuration";
-	private static final String VERBOSE_LOGGING = "Verbose Logging";
+	private static final String VERBOSE_LOGGING = "Verbose Mode";
 	private static final String RUN_AS_DEBUG = "Run as Debug";
 	private static final String SERVER_PROPERTIES = "Server Properties";
 	private static final String DESTINATION_EXAMPLE = "destination@example.com";
@@ -46,7 +46,7 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 	private static final String BASIC_TESTDATA = "Basic:";
 	private static final String OVERRIDE_TESTDATA = "Override:";
 	private static final String BROWSE = "Browse";
-	private static final String GIT_REPO_DIR = "Repository:";
+	private static final String GIT_REPO_DIR = "SSH url:";
 	private static final String SERVER = "Url:";
 	private static final String EXTENSION_FILTER = "*.xml";
 	

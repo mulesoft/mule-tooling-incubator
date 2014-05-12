@@ -10,6 +10,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -102,7 +103,8 @@ public class NewTestWizardPage extends WizardPage {
                     project = (IContainer) obj;
                 else
                     project = ((IResource) obj).getParent();
-                productionFileText.setText(project.getFullPath().toString());
+                if(project.isAccessible())
+                    productionFileText.setText(project.getFullPath().toString());
             }
         }
         fileText.setText("new_munit_test.xml");
@@ -113,7 +115,7 @@ public class NewTestWizardPage extends WizardPage {
             List<IResource> resources = new ArrayList<IResource>();
             IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
             for (IProject project : projects) {
-                if (project.hasNature(MuleNature.NATURE_ID) && project.isOpen()) {
+                if (project.isOpen() && project.hasNature(MuleNature.NATURE_ID)) {
                     IMuleProject muleProject = new MuleProjectImpl();
                     muleProject.initialize(JavaCore.create(project));
                     IResource[] appsFiles = muleProject.getMuleAppsFolder().members(false);
@@ -126,29 +128,33 @@ public class NewTestWizardPage extends WizardPage {
 
                 }
             }
-
-            ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new LabelProvider());
-            dialog.setElements(resources.toArray());
-
-            if (dialog.open() == ElementListSelectionDialog.OK) {
-                Object[] result = dialog.getResult();
-                if (result.length == 1) {
-                    productionFileText.setText((((IResource) result[0]).getFullPath()).toString());
+            if(resources.isEmpty()){
+                MessageDialog.open(MessageDialog.INFORMATION, getShell(), "Munit", "There is no file available in your workspace that can be used to generate an Munit Test.\nVerify that you have atleast one Mule Project opened.", SWT.NONE);
+            }else{
+                ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new LabelProvider());
+                dialog.setElements(resources.toArray());
+    
+                if (dialog.open() == ElementListSelectionDialog.OK) {
+                    Object[] result = dialog.getResult();
+                    if (result.length == 1) {
+                        productionFileText.setText((((IResource) result[0]).getFullPath()).toString());
+                    }
                 }
             }
         } catch (CoreException e) {
+            
         }
     }
 
     private void dialogChanged() {
 
         String fileName = getFileName();
-
-        if (getContainerName() != null && getContainerName().length() == 0) {
+        String containerName = getContainerName();
+        if (containerName != null && containerName.length() == 0) {
             updateStatus("The file to be tested must be specified");
             return;
         }
-        IResource container = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(getContainerName()));
+        IResource container = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(containerName));
         if (container == null || (container.getType() & IResource.FILE) == 0) {
             updateStatus("The file to be tested must exist");
             return;
