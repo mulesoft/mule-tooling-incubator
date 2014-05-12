@@ -4,9 +4,9 @@
     <extension
         point="org.mule.tooling.core.contribution">
         <externalContribution
-      		contributionJar="munit-synchronize-module.jar"
+      		contributionJar="mule-module-synchronize.jar"
             contributionLibPathInMule="/lib"
-            contributionLibs="munit-synchronize-module.jar"
+            contributionLibs="mule-module-synchronize.jar"
             contributionNamespace="http://www.mulesoft.org/schema/mule/synchronize"
             contributionNamespaceFile="http://www.mulesoft.org/schema/mule/synchronize/current/mule-synchronize.xsd"
             contributionNamespacePrefix="synchronize"
