@@ -9,6 +9,6 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd">
     <munit:config/>
     <spring:beans>
-        <spring:import resource="classpath:${resource}"/>
+        <spring:import resource="classpath*:${resource}"/>
     </spring:beans>
 </mule>
