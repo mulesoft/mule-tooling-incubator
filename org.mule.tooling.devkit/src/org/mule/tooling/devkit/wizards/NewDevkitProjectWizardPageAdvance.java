@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
+import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.ui.MuleUiConstants;
 import org.mule.tooling.ui.utils.UiUtils;
 
@@ -225,6 +226,6 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 
 	public void setDevkitVersion(String devkitVersion) {
 		this.devkitVersion = devkitVersion;
-		this.checkBoxQuery.setEnabled(devkitVersion.startsWith("3.5.0"));
+		this.checkBoxQuery.setEnabled(devkitVersion.startsWith(DevkitUtils.DEVKIT_3_5_0));
 	}
 }

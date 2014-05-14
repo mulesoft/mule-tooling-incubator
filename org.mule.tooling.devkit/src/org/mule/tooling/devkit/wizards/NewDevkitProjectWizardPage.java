@@ -284,12 +284,12 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 	
 	private String getDevkitVersion(
 			ServerDefinition selectedServerDefinition) {
-		if (selectedServerDefinition.getId().contains("3.4.2"))
-			return "3.4.2";
-		if (selectedServerDefinition.getId().contains("3.4.1"))
-			return "3.4.1";
-		if (selectedServerDefinition.getId().contains("3.4.0"))
-			return "3.4.0";
-		return "3.5.0-SNAPSHOT";
+		if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_2))
+			return DevkitUtils.DEVKIT_3_4_2;
+		if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_1))
+			return DevkitUtils.DEVKIT_3_4_1;
+		if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_0))
+			return DevkitUtils.DEVKIT_3_4_0;
+		return DevkitUtils.DEVKIT_3_5_0;
 	}
 }

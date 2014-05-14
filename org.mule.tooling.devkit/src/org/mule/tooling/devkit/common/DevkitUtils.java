@@ -34,7 +34,7 @@ public class DevkitUtils {
     public static final String DEVKIT_3_4_0 = "3.4.0";
     public static final String DEVKIT_3_4_1 = "3.4.1";
     public static final String DEVKIT_3_4_2 = "3.4.2";
-    public static final String DEVKIT_3_5_0 = "3.5.0-cascade";
+    public static final String DEVKIT_3_5_0 = "3.5.0";
 
     public static final String devkitVersions[] = { DEVKIT_3_4_0, DEVKIT_3_4_1, DEVKIT_3_4_2, DEVKIT_3_5_0 };
     public static final String CATEGORY_COMMUNITY = "Community";
