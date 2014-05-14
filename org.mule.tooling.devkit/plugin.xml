@@ -244,11 +244,11 @@
 				icon="icons/tsuite.png"
 				style="push">
 			</command>
-			<command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand" 
+			<!--<command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
 				label="Run Remote Interop"
 				icon="icons/run.png"
 				style="push">
-			</command>
+			</command>-->
 			<command commandId="org.mule.tooling.devkit.popup.actions.TestCoverageCommand" 
 				label="Test Coverage Report"
 				icon="icons/coverage.gif"
