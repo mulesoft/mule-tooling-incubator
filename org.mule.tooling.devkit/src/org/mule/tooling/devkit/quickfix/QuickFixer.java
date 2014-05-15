@@ -116,12 +116,10 @@ public class QuickFixer implements IMarkerResolutionGenerator {
 				"Optional", new MessageMatches(notifications)));
 
 		notifications = new ArrayList<DevkitNotification>();
-		notifications.add(Message.DEVKIT_083);
-		notifications.add(Message.DEVKIT_212);
 		notifications.add(Message.DEVKIT_214);
 		notifications.add(Message.DEVKIT_215);
 		fixes.add(new AddSampleQuickFix("Add sample for operation",
-				new MessageEquals(notifications)));
+				new MessageMatches(notifications)));
 
 		notifications = new ArrayList<DevkitNotification>();
 		notifications.add(Message.DEVKIT_084);

@@ -39,18 +39,6 @@ public class AddSampleQuickFix extends QuickFix {
 	}
 
 	@Override
-	public boolean hasFixForMarker(IMarker marker) {
-		String problem = "";
-		try {
-			problem = (String) marker.getAttribute(IMarker.MESSAGE);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-
-		return problem.contains("{@sample.xml}");
-	}
-
-	@Override
 	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
 		ASTRewrite rewrite = null;
 		LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(
@@ -111,6 +99,8 @@ public class AddSampleQuickFix extends QuickFix {
 			String javadoc = doc.toString();
 			int startPos = javadoc.indexOf("{@sample.xml");
 			int endPos = javadoc.indexOf('}', startPos);
+			if(startPos==-1 || endPos==-1)
+			    return;
 			String sample = javadoc.substring(startPos, endPos).split(" ")[2];
 			Writer writer = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(file.getRawLocation().toFile(), true),
