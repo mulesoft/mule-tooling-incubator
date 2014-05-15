@@ -44,7 +44,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 	private Text version;
 	private Text name;
 	private String connectorCategory = DEFAULT_CATEGORY;
-	private final Pattern connectorName = Pattern.compile("[A-Z]+[a-zA-Z]+");
+	private final Pattern connectorName = Pattern.compile("[A-Z]+[a-zA-Z0-9]+");
 
 	private ServerDefinition selectedServerDefinition;
 	private Button cbCreatePomCheckbox;
@@ -199,7 +199,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             updateStatus("There is no need for you to add the Connector word at the end.");
             return;
         }else if(!connectorName.matcher(this.getName()).matches()){
-			updateStatus("The Name must start with an uppper case character followed by other characters. Numbers are not allowed.");
+			updateStatus("The Name must start with an uppper case character followed by other alphanumeric characters.");
 			return;	
 		}
 		
