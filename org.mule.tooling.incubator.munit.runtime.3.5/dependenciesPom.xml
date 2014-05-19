@@ -56,7 +56,7 @@
             <version>${munit.version}</version>
         </dependency>
  	    <dependency>
-            <groupId>org.mule.munit.plugins</groupId>
+            <groupId>org.mule.munit</groupId>
             <artifactId>munit-coverage-plugin</artifactId>
             <version>${munit.version}</version>
         </dependency>
