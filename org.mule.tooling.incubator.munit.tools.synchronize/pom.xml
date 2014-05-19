@@ -37,7 +37,7 @@
                             <stripVersion>true</stripVersion>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.mule.modules</groupId>
+                                    <groupId>com.mulesoft.munit.modules</groupId>
                                     <artifactId>mule-module-synchronize</artifactId>
                                     <version>1.0</version>
                                     <type>jar</type>
