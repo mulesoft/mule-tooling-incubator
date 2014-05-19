@@ -42,9 +42,9 @@
             Munit Studio integration
       </description>
    </category-def>
-   <category-def name="org.mule.tooling.incubator.category.munit.tools.34" label="Munit Tools for Mule 3.4.x">
+   <category-def name="org.mule.tooling.incubator.category.munit.tools.34" label="Munit Tools for Mule">
        <description>
-           Munit Tools for mule 3.4.x
+           Munit Tools for Mule
        </description>
    </category-def>
 </site>
