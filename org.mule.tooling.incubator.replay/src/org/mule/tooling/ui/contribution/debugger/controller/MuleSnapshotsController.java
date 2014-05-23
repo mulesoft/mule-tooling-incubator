@@ -1,10 +1,5 @@
 package org.mule.tooling.ui.contribution.debugger.controller;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -12,7 +7,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.mule.tooling.core.event.EventBus;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.CoreUtils;
-import org.mule.tooling.core.utils.ProjectClassPathProvider;
+import org.mule.tooling.metadata.utils.MetadataUtils;
 import org.mule.tooling.ui.contribution.debugger.controller.events.ISnapshotClearedHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.ISnapshotRemovedHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.ISnapshotTakenHandler;
@@ -78,29 +73,20 @@ public class MuleSnapshotsController {
                     IStructuredSelection structuredSelection = (IStructuredSelection) event.getSelection();
                     String name = (String) structuredSelection.getFirstElement();
                     MessageSnapshot snapshot = service.getSnapshot(name);
-                    IObjectFactory payload = snapshot.getPayload();
-                    ProjectClassPathProvider projectClassPathProvider = new ProjectClassPathProvider();
+                    IObjectFactory<?> payload = snapshot.getPayload();
                     String appName = snapshot.getAppName();
                     IMuleProject muleProject = CoreUtils.getMuleProject(appName);
-                    try {
-                        if (muleProject != null) {
-                            URL[] classPathWithServer = projectClassPathProvider.getClassPathWithServer(muleProject);
-                            URLClassLoader newClassLoader = new URLClassLoader(classPathWithServer, this.getClass().getClassLoader());
-                            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-                            try {
-                                Thread.currentThread().setContextClassLoader(newClassLoader);
-                                String previewText = "MP : " + snapshot.getPath() + "\n" + "Payload : " + payload.createObject();
-                                editor.getPreviewText().setText(previewText);
-                            } finally {
-                                Thread.currentThread().setContextClassLoader(contextClassLoader);
-                            }
+                    if (muleProject != null) {
+                        ClassLoader newClassLoader = MetadataUtils.createMuleClassLoader(muleProject);
+                        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+                        try {
+                            Thread.currentThread().setContextClassLoader(newClassLoader);
+                            String previewText = "MP : " + snapshot.getPath() + "\n" + "Payload : " + payload.createObject();
+                            editor.getPreviewText().setText(previewText);
+                        } finally {
+                            Thread.currentThread().setContextClassLoader(contextClassLoader);
                         }
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    } catch (CoreException e) {
-                        e.printStackTrace();
                     }
-
                 } else {
                     editor.getPreviewText().setText("");
                 }

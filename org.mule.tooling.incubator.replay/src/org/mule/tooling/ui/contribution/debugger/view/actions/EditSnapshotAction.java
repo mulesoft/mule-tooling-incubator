@@ -2,9 +2,7 @@ package org.mule.tooling.ui.contribution.debugger.view.actions;
 
 import groovy.lang.GroovyShell;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.util.concurrent.Callable;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -23,10 +21,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.CoreUtils;
-import org.mule.tooling.core.utils.ProjectClassPathProvider;
+import org.mule.tooling.metadata.utils.MetadataUtils;
 import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
 import org.mule.tooling.ui.contribution.debugger.service.SnapshotService;
 import org.mule.tooling.ui.contribution.debugger.view.IMuleSnapshotEditor;
+import org.mule.tooling.ui.widgets.util.SilentRunner;
 
 import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 
@@ -55,37 +54,36 @@ public class EditSnapshotAction extends Action {
 
     @Override
     public void run() {
-        IStructuredSelection selection = (IStructuredSelection) snapshotEditor.getSnapshotTable().getSelection();
-        MessageSnapshot snapshot = service.getSnapshot(String.valueOf(selection.getFirstElement()));
+        final IStructuredSelection selection = (IStructuredSelection) snapshotEditor.getSnapshotTable().getSelection();
+        final MessageSnapshot snapshot = service.getSnapshot(String.valueOf(selection.getFirstElement()));
         if (snapshot != null) {
 
-            String appName = snapshot.getAppName();
-            IMuleProject muleProject = CoreUtils.getMuleProject(appName);
-            try {
-                if (muleProject != null) {
-                    ProjectClassPathProvider projectClassPathProvider = new ProjectClassPathProvider();
-                    URL[] classPathWithServer = projectClassPathProvider.getClassPathWithServer(muleProject);
-                    URLClassLoader newClassLoader = new URLClassLoader(classPathWithServer, this.getClass().getClassLoader());
-                    ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-                    try {
-                        Thread.currentThread().setContextClassLoader(newClassLoader);
-                        GroovyShell groovyShell = new GroovyShell();
-                        ScriptDialog scriptDialog = new ScriptDialog(Display.getCurrent().getActiveShell());
-                        int open = scriptDialog.open();
-                        if (open == Window.OK) {
-                            groovyShell.setVariable("payload", snapshot.getPayload().createObject());
-                            Object payload = groovyShell.evaluate(scriptDialog.getScript());
-                            snapshot.getPayload().updateObject(payload);
+            final String appName = snapshot.getAppName();
+            final IMuleProject muleProject = CoreUtils.getMuleProject(appName);
+            SilentRunner.run(new Callable<Void>() {
+
+                @Override
+                public Void call() throws Exception {
+                    if (muleProject != null) {
+                        final ClassLoader newClassLoader = MetadataUtils.createMuleClassLoader(muleProject);
+                        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+                        try {
+                            Thread.currentThread().setContextClassLoader(newClassLoader);
+                            GroovyShell groovyShell = new GroovyShell();
+                            ScriptDialog scriptDialog = new ScriptDialog(Display.getCurrent().getActiveShell());
+                            int open = scriptDialog.open();
+                            if (open == Window.OK) {
+                                groovyShell.setVariable("payload", snapshot.getPayload().createObject());
+                                Object payload = groovyShell.evaluate(scriptDialog.getScript());
+                                snapshot.getPayload().updateObject(payload);
+                            }
+                        } finally {
+                            Thread.currentThread().setContextClassLoader(contextClassLoader);
                         }
-                    } finally {
-                        Thread.currentThread().setContextClassLoader(contextClassLoader);
                     }
+                    return null;
                 }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            }, null);
 
         }
     }
