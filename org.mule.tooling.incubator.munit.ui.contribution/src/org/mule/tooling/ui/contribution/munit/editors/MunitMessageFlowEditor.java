@@ -12,6 +12,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.contexts.IContextService;
+import org.mule.tooling.core.IXmlConfigurationProvider;
 import org.mule.tooling.core.MuleConfigurationsCache;
 import org.mule.tooling.core.MuleConfigurationsCache.MuleConfigurationEntry;
 import org.mule.tooling.core.StudioDesignContextRunner;
@@ -38,6 +39,9 @@ import org.mule.tooling.ui.contribution.munit.MunitPlugin;
  */
 public class MunitMessageFlowEditor extends MessageFlowEditor {
 
+    public MunitMessageFlowEditor(IXmlConfigurationProvider xmlConfigurationProvider){
+        super(xmlConfigurationProvider);
+    }
     private static boolean showTestsOnly = false;
 
     public static synchronized void showTestsOnly(boolean value) {
