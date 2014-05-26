@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Munit
 Bundle-SymbolicName: org.mule.tooling.ui.contribution.munit;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: org.mule.tooling.ui.contribution.munit.MunitPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -49,5 +49,4 @@ Eclipse-BundleShape: dir
 Bundle-ClassPath: .,
  lib/munit-runner.jar,
  lib/gson.jar
-Export-Package: com.google.gson,
- org.mule.tooling.ui.contribution.munit
+Export-Package: com.google.gson,org.mule.tooling.ui.contribution.munit

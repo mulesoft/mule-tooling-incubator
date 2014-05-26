@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Mule Tooling Devkit APT
 Bundle-SymbolicName: org.mule.tooling.devkit.apt;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: org.mule.tooling.devkit.apt.Activator
 Bundle-Vendor: MuleSoft Inc.
 Require-Bundle: org.eclipse.core.runtime,
@@ -83,12 +83,7 @@ Bundle-ClassPath: .,
  lib/plexus-io.jar,
  lib/plexus-utils.jar,
  lib/junit.jar
-Export-Package: org.mule.devkit.generation.api.gatherer,
- org.mule.devkit.generation.utils,
- org.mule.tooling.devkit.apt;
-  uses:="javax.lang.model.util,
-   javax.lang.model.type,
-   org.mule.devkit.model.visitor,
-   org.mule.devkit.model,
-   com.sun.source.util,
-   javax.lang.model.element"
+Export-Package: org.mule.devkit.generation.api.gatherer,org.mule.devki
+ t.generation.utils,org.mule.tooling.devkit.apt; uses:="javax.lang.mod
+ el.util,  javax.lang.model.type,  org.mule.devkit.model.visitor,  org
+ .mule.devkit.model,  com.sun.source.util,  javax.lang.model.element"

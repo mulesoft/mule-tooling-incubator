@@ -7,11 +7,11 @@
     <parent>
         <groupId>org.mule.tooling.incubator</groupId>
         <artifactId>org.mule.tooling.incubator.parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>org.mule.tooling.ui.synchronize.extension</artifactId>
     <packaging>eclipse-feature</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <description>Studio feature</description>
 
     <build>

@@ -2,7 +2,7 @@
 <feature
       id="org.mule.tooling.incubator.munit.extension"
       label="Munit UI"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="MuleSoft Inc."
       plugin="org.mule.tooling.ui.contribution.munit"
       exclusive="true">
