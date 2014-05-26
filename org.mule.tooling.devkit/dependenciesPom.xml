@@ -5,12 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mule.tooling</groupId>
 	<artifactId>org.mule.tooling.maven.dependencies</artifactId>
-	<version>3.5.0-SNAPSHOT</version>
+	<version>3.6.0-M1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<lib-dir>lib</lib-dir>
-		<devkit-version>3.5.0-SNAPSHOT</devkit-version>
 	</properties>
 
 	<description>This pom exists because of the limitation on including dependencies when building with Tycho.
