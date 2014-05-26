@@ -12,4 +12,10 @@ target
 *.iml
 *.idea
 /target
-*/bin
+**/bin
+
+# Vim temp files
+**/.*.un~
+
+# Build logs
+**/build.log

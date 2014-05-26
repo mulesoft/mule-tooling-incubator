@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?>
-
-<target name="MuleStudio+DataMapper Dependencies" sequenceNumber="21">
+<?pde version="3.8"?><target name="MuleStudio+DataMapper Dependencies" sequenceNumber="22">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.wst.common.fproj.feature.group" version="0.0.0"/>
@@ -74,15 +72,18 @@
 <repository location="http://dist.springsource.org/release/GRECLIPSE/e4.2"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.mule.tooling.extension.server.3.5.0.ee.feature.group" version="0.0.0" />
-<unit id="org.mule.tooling.datamapper.feature.group" version="0.0.0" />
-<unit id="org.mule.tooling.feature.group" version="0.0.0" />
-<unit id="org.mule.tooling.ui.extension.sap.3.5.0.feature.group" version="0.0.0" />
-<unit id="org.mule.tooling.ui.extension.sap.feature.group" version="0.0.0" />
-<unit id="org.mule.tooling.branding" version="0.0.0" />
-<unit id="org.mule.tooling.servers.commons" version="0.0.0" />
-<unit id="com.cloveretl.gui.hadoop" version="0.0.0" />
+<unit id="org.mule.tooling.datamapper.feature.group" version="0.0.0"/>
+<unit id="org.mule.tooling.feature.group" version="0.0.0"/>
+<unit id="org.mule.tooling.ui.extension.sap.3.5.0.feature.group" version="0.0.0"/>
+<unit id="org.mule.tooling.ui.extension.sap.feature.group" version="0.0.0"/>
+<unit id="org.mule.tooling.branding" version="0.0.0"/>
+<unit id="org.mule.tooling.servers.commons" version="0.0.0"/>
+<unit id="com.cloveretl.gui.hadoop" version="0.0.0"/>
 <repository location="http://studio-nightly-update.s3.amazonaws.com"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.mule.tooling.extension.server.3.5.0.ee.feature.group" version="3.5.0.201405201442"/>
+<repository location="http://tooling-runtimes.s3.amazonaws.com/dependencies/"/>
 </location>
 </locations>
 </target>
