@@ -66,6 +66,7 @@ public class NewDevkitProjectWizard extends Wizard implements INewWizard {
     private ConnectorMavenModel connectorModel;
     public NewDevkitProjectWizard() {
         super();
+        this.setWindowTitle("New Anypoint Connector Project");
         setNeedsProgressMonitor(true);
         this.setDefaultPageImageDescriptor(DevkitImages.getManaged("", "mulesoft-logo.png"));
         connectorModel = new ConnectorMavenModel();
@@ -82,7 +83,6 @@ public class NewDevkitProjectWizard extends Wizard implements INewWizard {
     @Override
     public IWizardPage getNextPage(IWizardPage currentPage) {
         if (currentPage instanceof NewDevkitProjectWizardPage) {
-        	advancePage.setDevkitVersion(page.getDevkitVersion());
         	advancePage.refresh();
            return advancePage;
         }
@@ -90,18 +90,18 @@ public class NewDevkitProjectWizard extends Wizard implements INewWizard {
     } 
     @Override
     public boolean performFinish() {
-        final ConnectorMavenModel mavenModel = new ConnectorMavenModel(page.getVersion(), page.getGroupId(), page.getArtifactId(),page.getCategory());
+        final ConnectorMavenModel mavenModel = new ConnectorMavenModel(advancePage.getVersion(), advancePage.getGroupId(), advancePage.getArtifactId(),page.getCategory());
         mavenModel.setAddGitInformation(advancePage.getAddGitHubInfo());
         mavenModel.setGitConnection(advancePage.getConnection());
         mavenModel.setGitDevConnection(advancePage.getDevConnection());
         mavenModel.setGitUrl(advancePage.getUrl());
         
         final String runtimeId = page.getDevkitVersion();
-        final String packageName = page.getPackage();
+        final String packageName = advancePage.getPackage();
         final String connectorName = page.getName();
-        final boolean isMetaDataEnabled = advancePage.isMetadaEnabled();
-        final boolean isOAuth = advancePage.isOAuth();
-        final boolean hasQuery = advancePage.hasQuery();
+        final boolean isOAuth = page.isOAuth();
+        final boolean isMetaDataEnabled = page.isMetadaEnabled() && !isOAuth;
+        final boolean hasQuery = page.hasQuery() && isMetaDataEnabled;
         final String minMuleVersion = getMinMuleVersion();
         IRunnableWithProgress op = new IRunnableWithProgress() {
 
@@ -130,10 +130,10 @@ public class NewDevkitProjectWizard extends Wizard implements INewWizard {
 
     private String getMinMuleVersion() {
     	String minMuleVersion = "3.5";
-    	if(advancePage.hasQuery() || page.getDevkitVersion().equals(DevkitUtils.DEVKIT_3_5_0)){
+    	if(page.hasQuery() || page.getDevkitVersion().equals(DevkitUtils.DEVKIT_3_5_0)){
     		minMuleVersion = "3.5";
     	}else{
-    		if(advancePage.isMetadaEnabled() || page.getDevkitVersion().startsWith("3.4")){
+    		if(page.isMetadaEnabled() || page.getDevkitVersion().startsWith("3.4")){
     			minMuleVersion = "3.4";
     		}
     	}

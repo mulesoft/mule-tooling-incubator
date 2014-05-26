@@ -6,7 +6,7 @@ public class ConnectorMavenModel {
     private String groupId;
     private String artifactId;
     private String category;
-    private String connectorName;
+    private String connectorName = "Hello";
     private boolean	oAuthEnabled;
     private boolean	metadataEnabled;
     private boolean addGitInformation;

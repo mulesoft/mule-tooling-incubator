@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
@@ -31,265 +33,233 @@ import org.mule.tooling.ui.wizards.extensible.WizardPagePartExtension;
 
 public class NewDevkitProjectWizardPage extends WizardPage {
 
-	private static final String DEFAULT_VERSION = "1.0.0-SNAPSHOT";
-	private static final String DEFAULT_ARTIFACT_ID = "hello-connector";
-	private static final String DEFAULT_GROUP_ID = "org.mule.modules";
-	private static final String DEFAULT_NAME = "Hello";
-	private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
-	private static final String GROUP_TITLE_CONNECTOR = "Anypoint Connector";
-	private static final String GROUP_TITLE_MAVEN_SETTINGS = "Maven Settings";
-	private static final String CREATE_POM_LABEL = "Manually set values";
-	private Text groupId;
-	private Text artifactId;
-	private Text version;
-	private Text name;
-	private String connectorCategory = DEFAULT_CATEGORY;
-	private final Pattern connectorName = Pattern.compile("[A-Z]+[a-zA-Z0-9]+");
+    private static final String DEFAULT_NAME = "Hello";
+    private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
+    private static final String GROUP_TITLE_CONNECTOR = "Anypoint Connector";
+    private Text name;
+    private String connectorCategory = DEFAULT_CATEGORY;
+    private final Pattern connectorName = Pattern.compile("[A-Z]+[a-zA-Z0-9]+");
 
-	private ServerDefinition selectedServerDefinition;
-	private Button cbCreatePomCheckbox;
-	private ConnectorMavenModel model;
+    private ServerDefinition selectedServerDefinition;
+    private ConnectorMavenModel model;
 
-	public NewDevkitProjectWizardPage(ISelection selection,
-			ConnectorMavenModel model) {
-		super("wizardPage");
-		setTitle("New Anypoint Connector Project");
-		setDescription("This wizard creates a new connector project");
-		selectedServerDefinition = new MuleStudioPreference()
-				.getDefaultRuntimeSelection();
-		this.model = model;
-	}
+    private Button basicAuth;
+    private Button datasense;
+    private Button query;
 
-	/**
-	 * @see IDialogPage#createControl(Composite)
-	 */
-	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
-		layout.numColumns = 3;
-		layout.verticalSpacing = 6;
+    public NewDevkitProjectWizardPage(ISelection selection, ConnectorMavenModel model) {
+        super("wizardPage");
+        setTitle("Create an Anypoint Connector");
+        setDescription("Enter a connector name");
+        
+        if(!MuleCorePlugin.getServerManager().getServerDefinitions().isEmpty()){
+            selectedServerDefinition = new MuleStudioPreference().getDefaultRuntimeSelection();
+        }else{
+            selectedServerDefinition  = new ServerDefinition();
+        }
+        
+        this.model = model;
+    }
 
-		Group connectorGroupBox = UiUtils.createGroupWithTitle(container,
-				GROUP_TITLE_CONNECTOR, 2);
-		ModifyListener connectorNameListener = new ModifyListener() {
+    /**
+     * @see IDialogPage#createControl(Composite)
+     */
+    public void createControl(Composite parent) {
+        Composite container = new Composite(parent, SWT.NULL);
+        GridLayout layout = new GridLayout();
+        container.setLayout(layout);
+        layout.numColumns = 3;
+        layout.verticalSpacing = 6;
 
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateComponentsEnablement();
-			}
-		};
-		name = initializeTextField(connectorGroupBox, "Name: ",
-				DEFAULT_GROUP_ID, "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener);
+        Group connectorGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_CONNECTOR, 2);
+        ModifyListener connectorNameListener = new ModifyListener() {
 
-		name.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                updateComponentsEnablement();
+            }
+        };
+        name = initializeTextField(connectorGroupBox, "Name: ", DEFAULT_NAME,
+                "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener);
 
-			public void modifyText(ModifyEvent e) {
-				if (name.getText().isEmpty()) {
-					artifactId.setText(DEFAULT_ARTIFACT_ID);
-				} else {
-					artifactId
-							.setText(name.getText().toLowerCase() + "-connector");
-				}
-				model.setConnectorName(name.getText());
-				dialogChanged();
-			}
-		});
+        name.addModifyListener(new ModifyListener() {
 
-		Group mavenGroupBox = UiUtils.createGroupWithTitle(container,
-				GROUP_TITLE_MAVEN_SETTINGS, 2);
-		initializeCheckBox(mavenGroupBox);
+            public void modifyText(ModifyEvent e) {
+                model.setConnectorName(name.getText());
+                dialogChanged();
+            }
+        });
 
-		ModifyListener groupIdListener = new ModifyListener() {
+        addRuntime(container);
 
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateComponentsEnablement();
-			}
-		};
-		ModifyListener artifactIdListener = new ModifyListener() {
+        addAuthentication(container);
 
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateComponentsEnablement();
-			}
-		};
-		ModifyListener versionListener = new ModifyListener() {
+        addDatasense(container);
 
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateComponentsEnablement();
-			}
-		};
-		groupId = initializeTextField(mavenGroupBox, "Group Id: ",
-				DEFAULT_GROUP_ID,"This element indicates the unique identifier of the organization or group that created the project.", groupIdListener);
-		artifactId = initializeTextField(mavenGroupBox, "Artifact Id: ",
-				DEFAULT_ARTIFACT_ID, " This element indicates the unique base name of the primary artifact being generated by this project. ",artifactIdListener);
-		version = initializeTextField(mavenGroupBox, "Version: ",
-				DEFAULT_VERSION,"This element indicates the version of the artifact generated by the project.", versionListener);
+        GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0).applyTo(container);
+        GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
 
-		mavenGroupBox.layout();
-		
-		ServerChooserComponent serverChooserComponent = new ServerChooserComponent(
-				"Please select a Runtime");
-		serverChooserComponent.createControl(container);
-		serverChooserComponent.setServerDefinition(selectedServerDefinition);
-		serverChooserComponent.setStatusHandler(new PartStatusHandler(){
+        initialize();
+        setControl(container);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(container, "org.mule.tooling.devkit.myId"); 
+    }
 
-			@Override
-			public void clearErrors(WizardPagePartExtension part) {
-				
-			}
+    private void addAuthentication(Composite container) {
+        Group authenticationGroupBox = UiUtils.createGroupWithTitle(container, "Authentication", 6);
+        basicAuth = initButton(authenticationGroupBox, "Basic", SWT.RADIO);
+        initButton(authenticationGroupBox, "OAuth 2.0", SWT.RADIO);
+        authenticationGroupBox.layout();
+    }
 
-			@Override
-			public void setErrorMessage(WizardPagePartExtension part,
-					String message) {
-				
-			}
+    private void addDatasense(Composite container) {
+        Group mavenGroupBox = UiUtils.createGroupWithTitle(container, "Datasense", 2);
+        datasense = initButton(mavenGroupBox, "Add DataSense methods", SWT.CHECK);
+        query = initButton(mavenGroupBox, "Add DataSense Query Method", SWT.CHECK);
+        mavenGroupBox.layout();
+    }
 
-			@Override
-			public void notifyUpdate(WizardPagePartExtension part, String key,
-					Object value) {
-				if (ServerChooserComponent.KEY_SERVER_DEFINITION.equals(key)) {
-                    selectedServerDefinition=(ServerDefinition) value;
+    private Button initButton(Group mavenGroupBox, String title, int buttonType) {
+        Button cbCreatePomCheckbox = new Button(mavenGroupBox, buttonType);
+        cbCreatePomCheckbox.setSelection(false);
+        cbCreatePomCheckbox.setText(" " + title);
+        cbCreatePomCheckbox.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
+        cbCreatePomCheckbox.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                updateComponentsEnablement();
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                updateComponentsEnablement();
+            }
+        });
+        cbCreatePomCheckbox.setSelection(false);
+        return cbCreatePomCheckbox;
+    }
+
+    private void addRuntime(Composite container) {
+        ServerChooserComponent serverChooserComponent = new ServerChooserComponent("Runtime");
+        serverChooserComponent.createControl(container);
+        if(selectedServerDefinition.getId()!=null){
+            serverChooserComponent.setServerDefinition(selectedServerDefinition);
+        }
+        serverChooserComponent.setStatusHandler(new PartStatusHandler() {
+
+            @Override
+            public void clearErrors(WizardPagePartExtension part) {
+
+            }
+
+            @Override
+            public void setErrorMessage(WizardPagePartExtension part, String message) {
+
+            }
+
+            @Override
+            public void notifyUpdate(WizardPagePartExtension part, String key, Object value) {
+                if (ServerChooserComponent.KEY_SERVER_DEFINITION.equals(key)) {
+                    selectedServerDefinition = (ServerDefinition) value;
                 }
-			}
+            }
 
-			@Override
-			public void setPartComplete(WizardPagePartExtension part,
-					boolean isComplete) {
-				
-			}
-			
-		});
-				GridLayoutFactory.fillDefaults().numColumns(1)
-				.extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0)
-				.applyTo(container);
-		GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
+            @Override
+            public void setPartComplete(WizardPagePartExtension part, boolean isComplete) {
 
-		initialize();
-		dialogChanged();
-		setControl(container);
-	}
+            }
 
-	private void initialize() {
-		groupId.setText(DEFAULT_GROUP_ID);
-		artifactId.setText(DEFAULT_ARTIFACT_ID);
-		version.setText(DEFAULT_VERSION);
-		name.setText(DEFAULT_NAME);
+        });
+    }
 
-	}
+    private void initialize() {
+        name.setText(DEFAULT_NAME);
+        basicAuth.setSelection(true);
+        updateComponentsEnablement();
+    }
 
-	private void dialogChanged() {
+    private void dialogChanged() {
 
-		String version = getVersion();
-
-		if (version.length() == 0) {
-			updateStatus("Version must be specified.");
-			return;
-		}
-
-		if (this.getName().length() == 0) {
-			updateStatus("The Name must be specified.");
-			return;
-		}else if (this.getName().equals("Test")) {
-			updateStatus("The Name cannot be Test.");
-			return;
-		}else if (this.getName().endsWith("Connector")) {
+        if(this.selectedServerDefinition.getId()==null){
+            updateStatus("Select a runtime.");
+            return;
+        }
+        if (this.getName().length() == 0) {
+            updateStatus("The Name must be specified.");
+            return;
+        } else if (this.getName().equals("Test")) {
+            updateStatus("The Name cannot be Test.");
+            return;
+        } else if (this.getName().endsWith("Connector")) {
             updateStatus("There is no need for you to add the Connector word at the end.");
             return;
-        }else if(!connectorName.matcher(this.getName()).matches()){
-			updateStatus("The Name must start with an uppper case character followed by other alphanumeric characters.");
-			return;	
-		}
-		
-		updateStatus(null);
-	}
+        } else if (!connectorName.matcher(this.getName()).matches()) {
+            updateStatus("The Name must start with an uppper case character followed by other alphanumeric characters.");
+            return;
+        }
 
-	private void updateStatus(String message) {
-		setErrorMessage(message);
-		setPageComplete(message == null);
-	}
+        updateStatus(null);
+    }
 
-	public String getGroupId() {
-		return groupId.getText();
-	}
+    private void updateStatus(String message) {
+        setErrorMessage(message);
+        setPageComplete(message == null);
+    }
 
-	public String getArtifactId() {
-		return artifactId.getText();
-	}
+    public String getDevkitVersion() {
+        return getDevkitVersion(this.selectedServerDefinition);
+    }
 
-	public String getVersion() {
-		return version.getText();
-	}
+    public String getName() {
+        return name.getText();
+    }
 
-	public String getDevkitVersion() {
-		return getDevkitVersion(this.selectedServerDefinition);
-	}
+    public String getCategory() {
+        return connectorCategory;
+    }
 
-	public String getPackage() {
-		return groupId.getText() + "." + name.getText().toLowerCase();
-	}
+    private Text initializeTextField(Group groupBox, String labelText, String defaultValue, String tooltip, ModifyListener modifyListener) {
+        Label label = new Label(groupBox, SWT.NULL);
+        label.setText(labelText);
+        label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
+        Text textField = new Text(groupBox, SWT.BORDER);
+        textField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        textField.setText(defaultValue);
+        textField.addModifyListener(modifyListener);
+        textField.setToolTipText(tooltip);
+        return textField;
+    }
 
-	public String getName() {
-		return name.getText();
-	}
+    private void updateComponentsEnablement() {
+        boolean isBasic = basicAuth.getSelection();
+        datasense.setEnabled(isBasic);
+        query.setEnabled(isBasic);
+        if (isBasic) {
+            model.setMetadataEnabled(datasense.getSelection());
+        }
+        query.setEnabled(datasense.getSelection() && isBasic);
+    }
 
-	public String getCategory() {
-		return connectorCategory;
-	}
+    private String getDevkitVersion(ServerDefinition selectedServerDefinition) {
+        if (selectedServerDefinition.getId().contains("3.4.2"))
+            return "3.4.2";
+        if (selectedServerDefinition.getId().contains("3.4.1"))
+            return "3.4.1";
+        if (selectedServerDefinition.getId().contains("3.4.0"))
+            return "3.4.0";
+        return "3.5.0";
+    }
 
-	private void initializeCheckBox(Composite parent) {
-		cbCreatePomCheckbox = new Button(parent, SWT.CHECK);
-		cbCreatePomCheckbox.setSelection(false);
-		cbCreatePomCheckbox.setText(" " + CREATE_POM_LABEL);
-		cbCreatePomCheckbox.setLayoutData(GridDataFactory.swtDefaults()
-				.span(2, 1).create());
-		cbCreatePomCheckbox.addSelectionListener(new SelectionListener() {
+    public boolean hasQuery() {
+        return query.getSelection();
+    }
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateComponentsEnablement();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				updateComponentsEnablement();
-			}
-		});
-		cbCreatePomCheckbox.setSelection(false);
-	}
-
-	private Text initializeTextField(Group groupBox, String labelText,
-			String defaultValue, String tooltip, ModifyListener modifyListener) {
-		Label label = new Label(groupBox, SWT.NULL);
-		label.setText(labelText);
-		label.setLayoutData(GridDataFactory.swtDefaults()
-				.align(SWT.BEGINNING, SWT.CENTER)
-				.hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
-		Text textField = new Text(groupBox, SWT.BORDER);
-		textField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		textField.setText(defaultValue);
-		textField.addModifyListener(modifyListener);
-		textField.setToolTipText(tooltip);
-		return textField;
-	}
-
-	private void updateComponentsEnablement() {
-		boolean createPom = cbCreatePomCheckbox.getSelection();
-		artifactId.setEnabled(createPom);
-		groupId.setEnabled(createPom);
-		version.setEnabled(createPom);
-	}
-	
-	private String getDevkitVersion(
-			ServerDefinition selectedServerDefinition) {
-		if (selectedServerDefinition.getId().contains("3.4.2"))
-			return "3.4.2";
-		if (selectedServerDefinition.getId().contains("3.4.1"))
-			return "3.4.1";
-		if (selectedServerDefinition.getId().contains("3.4.0"))
-			return "3.4.0";
-		return "3.5.0-RC1";
-	}
+    public boolean isMetadaEnabled(){
+        return datasense.getSelection();
+    }
+    
+    public boolean isOAuth(){
+        return !basicAuth.getSelection();
+    }
+    
 }

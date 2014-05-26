@@ -23,6 +23,12 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 
 	private static String DEFAULT_USER = "mulesoft";
 
+    private static final String DEFAULT_VERSION = "1.0.0-SNAPSHOT";
+    private static final String DEFAULT_ARTIFACT_ID = "hello-connector";
+    private static final String DEFAULT_GROUP_ID = "org.mule.modules";
+    private static final String GROUP_TITLE_MAVEN_SETTINGS = "Maven Settings";
+    private static final String CREATE_POM_LABEL = "Manually set values";
+    
 	private ConnectorMavenModel connectorModel;
 
 	protected NewDevkitProjectWizardPageAdvance(
@@ -39,34 +45,29 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 	private Text url;
 	private Button manuallyEditCheckBox;
 	private Button addGitHubInfo;
-
-	private Button checkBoxMetadata;
-	private Button checkBoxOAuth;
-	private Button checkBoxQuery;
-
-	private String devkitVersion;
 	
+	private Text groupId;
+	private Text artifactId;
+	private Text version;
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 
-		Group datasenseGroupBox = UiUtils.createGroupWithTitle(container,
-		        "Datasense", 2);
-
-		Group connectorGroupBox = UiUtils.createGroupWithTitle(container,
-				"Advanced options", 2);
+		addMavenGroup(container);
 		
-		checkBoxMetadata = initializeCheckBox(datasenseGroupBox,
-				"Enable DataSense", null);
-		checkBoxOAuth = initializeCheckBox(connectorGroupBox,
-				"OAuth authentication", null);
-		checkBoxQuery = initializeCheckBox(datasenseGroupBox,
-				"Add DataSense Query method", null);
-
+		addGitHubGroup(container);
 		
-		Group gitHubGroupBox = UiUtils.createGroupWithTitle(container,
+		GridLayoutFactory.fillDefaults().numColumns(1)
+		.extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0)
+		.applyTo(container);
+		GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
+		setControl(container);
+	}
+
+    private void addGitHubGroup(Composite container) {
+        Group gitHubGroupBox = UiUtils.createGroupWithTitle(container,
 				"GitHub", 2);
 		addGitHubInfo = initializeCheckBox(gitHubGroupBox,
 				"Add GitHub information", new SelectionListener() {
@@ -92,20 +93,6 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 						refresh();
 					}
 				});
-		manuallyEditCheckBox = initializeCheckBox(gitHubGroupBox,
-				"Manually set values", new SelectionListener() {
-
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						updateComponentsEnablement();
-					}
-
-					@Override
-					public void widgetDefaultSelected(SelectionEvent e) {
-						updateComponentsEnablement();
-					}
-
-				});
 
 		connection = initializeTextField(gitHubGroupBox, "Connection",
 				"scm:git:git://github.com:" + DEFAULT_USER + "/"
@@ -119,15 +106,7 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 				+ DEFAULT_USER + "/"
 				+ connectorModel.getConnectorName().toLowerCase(), "A publicly browsable repository. For example, via ViewCVS.", null);
 
-		GridLayoutFactory.fillDefaults().numColumns(1)
-				.extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0)
-				.applyTo(container);
-		GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
-
-		manuallyEditCheckBox.setSelection(false);
-		manuallyEditCheckBox.setEnabled(false);
-		setControl(container);
-	}
+    }
 
 	private Button initializeCheckBox(Composite parent, String label,
 			SelectionListener listener) {
@@ -162,20 +141,23 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 	}
 
 	private void updateAllComponentsEnablement() {
-		boolean createPom = addGitHubInfo.getSelection();
-		manuallyEditCheckBox.setEnabled(createPom);
-		owner.setEnabled(createPom);
+		boolean shouldAddInfo = addGitHubInfo.getSelection();
+		owner.setEnabled(shouldAddInfo);
+        connection.setEnabled(shouldAddInfo);
+        devConnection.setEnabled(shouldAddInfo);
+        url.setEnabled(shouldAddInfo);
 	}
 
 	private void updateComponentsEnablement() {
-		boolean createPom = manuallyEditCheckBox.getSelection();
-		connection.setEnabled(createPom);
-		devConnection.setEnabled(createPom);
-		url.setEnabled(createPom);
+		boolean editManually = manuallyEditCheckBox.getSelection();
+		groupId.setEnabled(editManually);
+	    artifactId.setEnabled(editManually);
+	    version.setEnabled(editManually);
 	}
 
 	public void refresh() {
-		if(!manuallyEditCheckBox.getSelection()){
+	    
+	    artifactId.setText(connectorModel.getConnectorName().toLowerCase()+"-connector");
 		connection.setText("scm:git:git://github.com:" + owner.getText()
 				+ "/" + connectorModel.getConnectorName().toLowerCase()
 				+ ".git");
@@ -184,23 +166,10 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 				+ "-module" + ".git");
 		url.setText("http://github.com/" + owner.getText() + "/"
 				+ connectorModel.getConnectorName().toLowerCase());
-		}
 	}
 
 	public boolean getAddGitHubInfo() {
 		return this.addGitHubInfo.getSelection();
-	}
-
-	public boolean isMetadaEnabled(){
-		return this.checkBoxMetadata.getSelection();
-	}
-	
-	public boolean isOAuth(){
-		return this.checkBoxOAuth.getSelection();
-	}
-	
-	public boolean hasQuery(){
-		return this.checkBoxQuery.isEnabled() && this.checkBoxQuery.getSelection();
 	}
 	
 	public boolean addGitHubInfo(){
@@ -218,13 +187,72 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 	public String getUrl(){
 		return this.url.getText();
 	}
+	
+	private void addMavenGroup(Composite container) {
+        Group mavenGroupBox = UiUtils.createGroupWithTitle(container,
+                GROUP_TITLE_MAVEN_SETTINGS, 2);
+        
+        manuallyEditCheckBox = new Button(mavenGroupBox, SWT.CHECK);
+        manuallyEditCheckBox.setSelection(false);
+        manuallyEditCheckBox.setText(" " + CREATE_POM_LABEL);
+        manuallyEditCheckBox.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
+        manuallyEditCheckBox.addSelectionListener(new SelectionListener() {
 
-	public String getDevkitVersion() {
-		return devkitVersion;
-	}
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                updateComponentsEnablement();
+            }
 
-	public void setDevkitVersion(String devkitVersion) {
-		this.devkitVersion = devkitVersion;
-		this.checkBoxQuery.setEnabled(devkitVersion.startsWith("3.5.0"));
-	}
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                updateComponentsEnablement();
+            }
+        });
+
+        ModifyListener groupIdListener = new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                updateComponentsEnablement();
+            }
+        };
+        ModifyListener artifactIdListener = new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                updateComponentsEnablement();
+            }
+        };
+        ModifyListener versionListener = new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                updateComponentsEnablement();
+            }
+        };
+        groupId = initializeTextField(mavenGroupBox, "Group Id: ", DEFAULT_GROUP_ID,
+                "This element indicates the unique identifier of the organization or group that created the project.", groupIdListener);
+        artifactId = initializeTextField(mavenGroupBox, "Artifact Id: ", DEFAULT_ARTIFACT_ID,
+                " This element indicates the unique base name of the primary artifact being generated by this project. ", artifactIdListener);
+        version = initializeTextField(mavenGroupBox, "Version: ", DEFAULT_VERSION, "This element indicates the version of the artifact generated by the project.", versionListener);
+
+        mavenGroupBox.layout();
+        manuallyEditCheckBox.setSelection(false);
+        
+    }
+    public String getPackage() {
+        return groupId.getText() + "." + connectorModel.getConnectorName().toLowerCase();
+    }
+    
+    public String getGroupId() {
+        return groupId.getText();
+    }
+
+    public String getArtifactId() {
+        return artifactId.getText();
+    }
+
+    public String getVersion() {
+        return version.getText();
+    }
 }
