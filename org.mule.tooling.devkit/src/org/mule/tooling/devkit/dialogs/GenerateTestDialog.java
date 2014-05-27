@@ -38,7 +38,7 @@ public class GenerateTestDialog extends TitleAreaDialog {
     private static final String CREDENTIALS = "Credentials File:";
     private static final String BROWSE = "Browse";
     private static final String REPLACE_POLICY = "Replace Files";
-    private static final String FUNCTIONAL_FILES = "Generate Test Case Scafolding";
+    private static final String FUNCTIONAL_FILES = "Generate Test Case Scaffolding";
     private static final String INTEROP_FILES = "Generate Interop Test Files";
 
     private static final String TESTDATA_XML = "testData.xml";
