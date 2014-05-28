@@ -65,7 +65,8 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
                 final String[] mavenCommand = new String[] { "package", "-P", "testdata-generator", "-Dtestdata.type=" + getGenerationType(),
                         "-Dtestdata.replaceAll=" + generationProperties.get(ConfigKeys.replaceAllInterop),
                         "-Dtestdata.credentialsFile=" + generationProperties.get(ConfigKeys.credentialsFile),
-                        "-Dtestdata.outputFile=" + generationProperties.get(ConfigKeys.outputFile) };
+                        "-Dtestdata.outputFile=" + generationProperties.get(ConfigKeys.outputFile) , "-DskipTests","-Ddevkit.javadoc.check.skip=true",
+                        "-Dmaven.javadoc.skip=true"};
 
                 commandArgs.addAll(Arrays.asList(mavenCommand));
                 final String jobMsg = "Generating Sources...";
