@@ -2,16 +2,21 @@ package org.mule.tooling.devkit.apt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.Diagnostic;
 
 import org.mule.devkit.apt.AnnotationProcessorManifest;
+import org.mule.devkit.apt.dependency.SimpleDependency;
 import org.mule.devkit.apt.model.factory.FactoryHolder;
 import org.mule.devkit.generation.api.Context;
+import org.mule.devkit.generation.api.Dependency;
+import org.mule.devkit.generation.api.License;
 import org.mule.devkit.generation.api.Manifest;
 import org.mule.devkit.generation.api.MavenInformation;
 import org.mule.devkit.generation.api.Product;
@@ -41,8 +46,57 @@ public class StudioAnnotationProcessorContext implements Context {
         studioModel = new StudioModel(new FilerCodeWriter(env.getFiler()));
         manifest = new AnnotationProcessorManifest(this);
         messager = env.getMessager();
-       FactoryHolder.setPathUtils(new StudioPathUtils(env));
-       FactoryHolder.setGenericTypeFactory(new StudioGenericTypeFactory());    }
+        FactoryHolder.setPathUtils(new StudioPathUtils(env));
+        FactoryHolder.setGenericTypeFactory(new StudioGenericTypeFactory());
+        //TODO: DEVKIT-703 Extreme hack to avoid RestClient dependency checkers 
+        mavenInformation = new StudioMavenInformation();
+    }
+
+    private class StudioMavenInformation implements MavenInformation {
+
+        @Override
+        public String getGroupId() {
+            return "dummy";
+        }
+
+        @Override
+        public String getArtifactId() {
+            return "dummy";
+        }
+
+        @Override
+        public String getVersion() {
+            return "dummy";
+        }
+
+        @Override
+        public License getLicense() {
+            return null;
+        }
+
+        @Override
+        public String getOutputDirectory() {
+            return "null";
+        }
+
+        @Override
+        public String getName() {
+            return "dummy";
+        }
+
+        @Override
+        public String getCategory() {
+            return "dummy";
+        }
+
+        @Override
+        public Set<Dependency> getDependencies() {
+            Set<Dependency> dummy = new HashSet<Dependency>();
+            dummy.add(SimpleDependency.create("org.mule.transports:mule-transport-http:3.0.0"));
+            return dummy;
+        }
+
+    }
 
     @Override
     public CodeModel getCodeModel() {
@@ -94,11 +148,11 @@ public class StudioAnnotationProcessorContext implements Context {
         return (T) classesByRole.get(new Tuple<Product, Type, String>(product, null, null));
     }
 
-
     /**
      * Retrieve a previously generated class that fulfills the specified role
-     *
-     * @param product Role to be fulfilled
+     * 
+     * @param product
+     *            Role to be fulfilled
      * @return A previously generated class
      */
     @Override
@@ -108,17 +162,19 @@ public class StudioAnnotationProcessorContext implements Context {
 
     /**
      * Retrieve a previously generated class that fulfills the specified role
-     *
-     * @param product      Role to be fulfilled
-     * @param identifiable Module for which this role is fulfilled
-     * @param methodName   Method for which this role is fulfilled
+     * 
+     * @param product
+     *            Role to be fulfilled
+     * @param identifiable
+     *            Module for which this role is fulfilled
+     * @param methodName
+     *            Method for which this role is fulfilled
      * @return A previously generated class
      */
     @Override
     public <T> T getProduct(Product product, Identifiable identifiable, String methodName) {
         return (T) classesByRole.get(new Tuple<Product, Identifiable, String>(product, identifiable, methodName));
     }
-
 
     /**
      * @param product
@@ -176,6 +232,7 @@ public class StudioAnnotationProcessorContext implements Context {
     }
 
     private class Tuple<T, U, X> {
+
         private final T first;
         private final U second;
         private final X third;
@@ -185,9 +242,7 @@ public class StudioAnnotationProcessorContext implements Context {
             this.first = f;
             this.second = s;
             this.third = x;
-            hash = (first == null ? 0 : first.hashCode() * 31)
-                    + (second == null ? 0 : second.hashCode() * 17)
-                    + (third == null ? 0 : third.hashCode());
+            hash = (first == null ? 0 : first.hashCode() * 31) + (second == null ? 0 : second.hashCode() * 17) + (third == null ? 0 : third.hashCode());
         }
 
         @Override
@@ -204,24 +259,23 @@ public class StudioAnnotationProcessorContext implements Context {
                 return false;
             }
             Tuple<T, U, X> other = getClass().cast(oth);
-            return (first == null ? other.first == null : first.equals(other.first))
-                    && (second == null ? other.second == null : second.equals(other.second))
+            return (first == null ? other.first == null : first.equals(other.first)) && (second == null ? other.second == null : second.equals(other.second))
                     && (third == null ? other.third == null : third.equals(other.third));
         }
     }
 
-	@Override
-	public void warn(String msg, Identifiable element) {
-		messager.printMessage(Diagnostic.Kind.WARNING, msg, element.unwrap());
-	}
+    @Override
+    public void warn(String msg, Identifiable element) {
+        messager.printMessage(Diagnostic.Kind.WARNING, msg, element.unwrap());
+    }
 
-	@Override
-	public void note(String msg, Identifiable element) {
-		messager.printMessage(Diagnostic.Kind.NOTE, msg, element.unwrap());
-	}
+    @Override
+    public void note(String msg, Identifiable element) {
+        messager.printMessage(Diagnostic.Kind.NOTE, msg, element.unwrap());
+    }
 
-	@Override
-	public Messager getMessager() {
-		return messager;
-	}
+    @Override
+    public Messager getMessager() {
+        return messager;
+    }
 }
