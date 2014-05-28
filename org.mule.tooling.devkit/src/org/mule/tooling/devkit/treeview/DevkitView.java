@@ -16,15 +16,18 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
@@ -49,6 +52,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 import org.mule.tooling.devkit.ASTUtils;
+import org.mule.tooling.devkit.builder.DevkitNature;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.treeview.model.Module;
 import org.mule.tooling.devkit.treeview.model.NodeItem;
@@ -56,299 +60,301 @@ import org.mule.tooling.devkit.treeview.model.ProjectRoot;
 import org.mule.tooling.devkit.treeview.model.Property;
 
 @SuppressWarnings("restriction")
-public class DevkitView extends ViewPart implements IResourceChangeListener,
-		ISelectionListener {
+public class DevkitView extends ViewPart implements IResourceChangeListener, ISelectionListener {
 
-	public static final String ID = "org.mule.tooling.devkit.treeview.DevkitView";
+    public static final String ID = "org.mule.tooling.devkit.treeview.DevkitView";
 
-	private TreeViewer viewer;
-	private IEditorInput currentInput;
-	private IProject current;
+    private TreeViewer viewer;
+    private IEditorInput currentInput;
+    private IProject current;
 
-	public IProject getCurrent() {
-		return current;
-	}
+    public IProject getCurrent() {
+        return current;
+    }
 
-	public void setCurrent(IProject current) {
-		this.current = current;
-	}
+    public void setCurrent(IProject current) {
+        this.current = current;
+    }
 
-	public DevkitView() {
-		super();
+    public DevkitView() {
+        super();
 
-	}
+    }
 
-	@Override
-	public void dispose() {
-		getSite().getWorkbenchWindow().getSelectionService()
-				.removeSelectionListener(this);
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		workspace.removeResourceChangeListener(this);
-	}
+    @Override
+    public void dispose() {
+        getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        workspace.removeResourceChangeListener(this);
+    }
 
-	public void createPartControl(Composite parent) {
-		PatternFilter filter = new PatternFilter();
-		FilteredTree tree = new FilteredTree(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL, filter, true);
-		viewer = tree.getViewer();
-		viewer.setContentProvider(new ModuleContentProvider());
-		viewer.setLabelProvider(new ModuleLabelProvider());
-		// Expand the tree
-		viewer.setAutoExpandLevel(2);
-		// provide the input to the ContentProvider
-		viewer.setInput(new ProjectRoot());
+    public void createPartControl(Composite parent) {
+        PatternFilter filter = new PatternFilter();
+        FilteredTree tree = new FilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, filter, true);
+        viewer = tree.getViewer();
+        viewer.setContentProvider(new ModuleContentProvider());
+        viewer.setLabelProvider(new ModuleLabelProvider());
+        // Expand the tree
+        viewer.setAutoExpandLevel(2);
+        // provide the input to the ContentProvider
+        viewer.setInput(new ProjectRoot());
 
-		getSite().getWorkbenchWindow().getSelectionService()
-				.addSelectionListener(this);
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		workspace.addResourceChangeListener(this);
+        getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        workspace.addResourceChangeListener(this);
 
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection thisSelection = (IStructuredSelection) event
-						.getSelection();
-				if (thisSelection.getFirstElement() instanceof Property) {
-					goToSampleInDocSampleFile(thisSelection);
+        viewer.addDoubleClickListener(new IDoubleClickListener() {
 
-				} else if (thisSelection.getFirstElement() instanceof NodeItem) {
-					NodeItem method = (NodeItem) thisSelection
-							.getFirstElement();
-					ICompilationUnit cu = method.getCompilationUnit();
-					IEditorPart javaEditor;
-					try {
-						javaEditor = JavaUI.openInEditor(cu);
-						JavaUI.revealInEditor(javaEditor,
-								method.getJavaElement());
-					} catch (PartInitException e) {
-						e.printStackTrace();
-					} catch (JavaModelException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+            @Override
+            public void doubleClick(DoubleClickEvent event) {
+                IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
+                if (thisSelection.getFirstElement() instanceof Property) {
+                    goToSampleInDocSampleFile(thisSelection);
 
-			@SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
-			private void goToSampleInDocSampleFile(
-					IStructuredSelection thisSelection) {
-				IFile file = getFileFromResource();
-				if (file == null)
-					return;
-				InputStreamReader isr = null;
-				try {
+                } else if (thisSelection.getFirstElement() instanceof NodeItem) {
+                    NodeItem method = (NodeItem) thisSelection.getFirstElement();
+                    ICompilationUnit cu = method.getCompilationUnit();
+                    IEditorPart javaEditor;
+                    try {
+                        javaEditor = JavaUI.openInEditor(cu);
+                        JavaUI.revealInEditor(javaEditor, method.getJavaElement());
+                    } catch (PartInitException e) {
+                        e.printStackTrace();
+                    } catch (JavaModelException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
 
-					isr = new InputStreamReader(file.getContents());
-					BufferedReader ir = new BufferedReader(isr);
-					String line;
-					int lineNumber = 0;
-					Property prop = (Property) thisSelection.getFirstElement();
-					boolean found = false;
-					while ((line = ir.readLine()) != null) {
-						lineNumber++;
-						if (line.contains(prop.getValue())) {
-							found = true;
-							break;
-						}
+            private void goToSampleInDocSampleFile(IStructuredSelection thisSelection) {
+                IFile file = getFileFromResource();
+                if (file == null)
+                    return;
+                InputStreamReader isr = null;
+                try {
 
-					}
-					if (!found) {
-						lineNumber = 0;
-					}
-					openSampleAtLine(file, lineNumber);
-				} catch (CoreException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-					if (isr != null) {
-						try {
-							isr.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
+                    isr = new InputStreamReader(file.getContents());
+                    BufferedReader ir = new BufferedReader(isr);
+                    String line;
+                    int lineNumber = 0;
+                    Property prop = (Property) thisSelection.getFirstElement();
+                    boolean found = false;
+                    while ((line = ir.readLine()) != null) {
+                        lineNumber++;
+                        if (line.contains(prop.getValue())) {
+                            found = true;
+                            break;
+                        }
 
-			private IFile getFileFromResource() {
-				IFile file = null;
-				IFolder folder = getCurrent()
-						.getFolder(DevkitUtils.DOCS_FOLDER);
+                    }
+                    if (!found) {
+                        lineNumber = 0;
+                    }
+                    openSampleAtLine(file, lineNumber);
+                } catch (CoreException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (isr != null) {
+                        try {
+                            isr.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
 
-				try {
-					for (IResource resource : folder.members()) {
-						if (resource.getName().matches(".*.sample")) {
-							file = getCurrent().getFile(
-									resource.getProjectRelativePath());
-							break;
-						}
-					}
-				} catch (CoreException e1) {
-					e1.printStackTrace();
-				}
-				return file;
-			}
+            private IFile getFileFromResource() {
+                IFile file = null;
+                IFolder folder = getCurrent().getFolder(DevkitUtils.DOCS_FOLDER);
 
-			private void openSampleAtLine(IFile file, int lineNumber)
-					throws CoreException, PartInitException {
-				HashMap map = new HashMap();
-				map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
-				map.put(IWorkbenchPage.EDITOR_ID_ATTR,
-						"org.mule.tooling.devkit.sample.editor.XMLEditor");
-				IMarker marker;
+                try {
+                    for (IResource resource : folder.members()) {
+                        if (resource.getName().matches(".*.sample")) {
+                            file = getCurrent().getFile(resource.getProjectRelativePath());
+                            break;
+                        }
+                    }
+                } catch (CoreException e1) {
+                    e1.printStackTrace();
+                }
+                return file;
+            }
 
-				marker = file.createMarker(IMarker.TEXT);
+            @SuppressWarnings({ "unchecked", "deprecation" })
+            private void openSampleAtLine(IFile file, int lineNumber) throws CoreException, PartInitException {
+                @SuppressWarnings({ "rawtypes" })
+                HashMap map = new HashMap();
+                map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
+                map.put(IWorkbenchPage.EDITOR_ID_ATTR, "org.mule.tooling.devkit.sample.editor.XMLEditor");
+                IMarker marker;
 
-				marker.setAttributes(map);
-				// page.openEditor(marker); //2.1 API
-				IDE.openEditor(getSite().getPage(), marker); // 3.0 API
-				marker.delete();
-			}
-		});
-	}
+                marker = file.createMarker(IMarker.TEXT);
 
-	@Override
-	public void setFocus() {
-		viewer.getControl().setFocus();
-	}
+                marker.setAttributes(map);
+                // page.openEditor(marker); //2.1 API
+                IDE.openEditor(getSite().getPage(), marker); // 3.0 API
+                marker.delete();
+            }
+        });
+    }
 
-	public void updateContent(Module module) {
-		viewer.setInput(module);
-	}
+    @Override
+    public void setFocus() {
+        viewer.getControl().setFocus();
+    }
 
-	@Override
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (selection.isEmpty())
-			return;
-		if (selection instanceof IStructuredSelection) {
-			Object selected = ((IStructuredSelection) selection)
-					.getFirstElement();
-			if (selected instanceof IJavaElement) {
-				handleNewJavaElementSelected(selected);
-			} else if (selected instanceof IProject) {
-				handleNewProjectSelectedChange(selected);
-			}
-		} else if (selection instanceof ITextSelection) {
-			handleNewEditorPageSelected(part, selection);
-		}
+    public void updateContent(Module module) {
+        viewer.setInput(module);
+    }
 
-	}
+    @Override
+    public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 
-	private void handleNewJavaElementSelected(Object selected) {
-		final IProject selectedProject = ((IJavaElement) selected)
-				.getJavaProject().getProject();
-		try {
-			analyseMethods(selectedProject);
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		}
-	}
+        if (selection.isEmpty())
+            return;
+        final ISelection currentSelection = selection;
+        final IWorkbenchPart workbenchPart = part;
+        final String convertingMsg = "Checking Modules in project...";
+        final WorkspaceJob refreshDevkitViewJob = new WorkspaceJob(convertingMsg) {
 
-	private void handleNewProjectSelectedChange(Object selected) {
-		try {
-			final IProject selectedProject = (IProject) selected;
-			if (selectedProject.isOpen()) {
-				analyseMethods(selectedProject);
-			} else {
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						viewer.setInput(new ProjectRoot());
-					}
-				});
-			}
+            @Override
+            public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+                if (currentSelection instanceof IStructuredSelection) {
+                    Object selected = ((IStructuredSelection) currentSelection).getFirstElement();
+                    if (selected instanceof IJavaElement) {
+                        handleNewJavaElementSelected(selected);
+                    } else if (selected instanceof IProject) {
+                        handleNewProjectSelectedChange(selected);
+                    }
+                } else if (currentSelection instanceof ITextSelection) {
+                    handleNewEditorPageSelected(workbenchPart, currentSelection);
+                }
+                return Status.OK_STATUS;
+            }
+        };
+        refreshDevkitViewJob.setUser(false);
+        refreshDevkitViewJob.setPriority(Job.SHORT);
+        refreshDevkitViewJob.schedule();
 
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		}
-	}
+    }
 
-	private void handleNewEditorPageSelected(IWorkbenchPart part,
-			ISelection selection) {
-		if (part instanceof JavaEditor) {
-			JavaEditor editor = (JavaEditor) part;
-			IEditorInput file = editor.getEditorInput();
-			if (file.equals(currentInput))
-				return;
-			currentInput = file;
+    private void handleNewJavaElementSelected(Object selected) {
+        final IProject selectedProject = ((IJavaElement) selected).getJavaProject().getProject();
+        try {
+            analyseMethods(selectedProject);
+        } catch (JavaModelException e) {
+            e.printStackTrace();
+        }
+    }
 
-			try {
-				IJavaElement element = SelectionConverter
-						.resolveEnclosingElement((JavaEditor) part,
-								(ITextSelection) selection);
-				try {
-					final IProject selectedProject = element.getJavaProject()
-							.getProject();
-					analyseMethods(selectedProject);
-				} catch (JavaModelException e) {
-					e.printStackTrace();
-				}
-			} catch (JavaModelException e1) {
-				e1.printStackTrace();
-			}
+    private void handleNewProjectSelectedChange(Object selected) {
+        try {
+            final IProject selectedProject = (IProject) selected;
+            if (selectedProject.isOpen() && selectedProject.hasNature(DevkitNature.NATURE_ID)) {
+                analyseMethods(selectedProject);
+            } else {
+                Display.getDefault().asyncExec(new Runnable() {
 
-		}
-	}
+                    public void run() {
+                        viewer.setInput(new ProjectRoot());
+                    }
+                });
+            }
 
-	@Override
-	public void resourceChanged(IResourceChangeEvent event) {
-		if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+        } catch (JavaModelException e) {
+            e.printStackTrace();
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+    }
 
-			if (event.getSource() instanceof IWorkspace) {
-				IWorkspace workspace = (IWorkspace) event.getSource();
+    private void handleNewEditorPageSelected(IWorkbenchPart part, ISelection selection) {
+        if (part instanceof JavaEditor) {
+            JavaEditor editor = (JavaEditor) part;
+            IEditorInput file = editor.getEditorInput();
+            if (file.equals(currentInput))
+                return;
+            currentInput = file;
 
-				try {
-					IWorkspaceRoot root = workspace.getRoot();
-					if (root != null) {
-						IResourceDelta delta = event.getDelta()
-								.getAffectedChildren()[0];
+            try {
+                IJavaElement element = SelectionConverter.resolveEnclosingElement((JavaEditor) part, (ITextSelection) selection);
+                try {
+                    final IProject selectedProject = element.getJavaProject().getProject();
+                    analyseMethods(selectedProject);
+                } catch (JavaModelException e) {
+                    e.printStackTrace();
+                }
+            } catch (JavaModelException e1) {
+                e1.printStackTrace();
+            }
 
-						if (delta.getResource().getProject() != null) {
-							analyseMethods(delta.getResource().getProject());
-						}
-					}
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+        }
+    }
 
-	public void analyseMethods(IProject project) throws JavaModelException {
-		if (!project.exists()) {
-			current = null;
-			return;
-		}
-		current = project;
-		IPackageFragment[] packages = JavaCore.create(project)
-				.getPackageFragments();
-		// parse(JavaCore.create(project));
-		for (IPackageFragment mypackage : packages) {
-			if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
-				createAST(mypackage);
-			}
+    @Override
+    public void resourceChanged(IResourceChangeEvent event) {
+        if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
 
-		}
-	}
+            if (event.getSource() instanceof IWorkspace) {
+                IWorkspace workspace = (IWorkspace) event.getSource();
 
-	private void createAST(IPackageFragment mypackage)
-			throws JavaModelException {
-		ModuleVisitor visitor = new ModuleVisitor();
-		for (ICompilationUnit unit : mypackage.getCompilationUnits()) {
-			// now create the AST for the ICompilationUnits
-			CompilationUnit parse = ASTUtils.parse(unit);
+                try {
+                    IWorkspaceRoot root = workspace.getRoot();
+                    if (root != null) {
+                        IResourceDelta delta = event.getDelta().getAffectedChildren()[0];
 
-			parse.accept(visitor);
+                        if (delta.getResource().getProject() != null) {
+                            analyseMethods(delta.getResource().getProject());
+                        }
+                    }
+                } catch (CoreException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
-		}
-		if (visitor.getRoot().getModules() != null
-				&& !visitor.getRoot().getModules().isEmpty()) {
-			final ProjectRoot root = visitor.getRoot();
-			// Update the user interface asynchronously
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					viewer.setInput(root);
-				}
-			});
-		}
-	}
+    public void analyseMethods(IProject project) throws JavaModelException {
+        if (!project.exists()) {
+            current = null;
+            return;
+        }
+        current = project;
+        IPackageFragment[] packages = JavaCore.create(project).getPackageFragments();
+        // parse(JavaCore.create(project));
+        for (IPackageFragment mypackage : packages) {
+            if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
+                if (!mypackage.getPath().toString().contains(DevkitUtils.MAIN_JAVA_FOLDER)) {
+                    continue;
+                }
+                createAST(mypackage);
+            }
+
+        }
+    }
+
+    private void createAST(IPackageFragment mypackage) throws JavaModelException {
+
+        ModuleVisitor visitor = new ModuleVisitor();
+        for (ICompilationUnit unit : mypackage.getCompilationUnits()) {
+            // now create the AST for the ICompilationUnits
+            CompilationUnit parse = ASTUtils.parse(unit);
+
+            parse.accept(visitor);
+
+        }
+        if (visitor.getRoot().getModules() != null && !visitor.getRoot().getModules().isEmpty()) {
+            final ProjectRoot root = visitor.getRoot();
+            // Update the user interface asynchronously
+            Display.getDefault().asyncExec(new Runnable() {
+
+                public void run() {
+                    viewer.setInput(root);
+                }
+            });
+        }
+    }
 }
