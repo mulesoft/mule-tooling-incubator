@@ -3,9 +3,7 @@ package org.mule.tooling.devkit.wizards;
 import static org.mule.tooling.devkit.common.DevkitUtils.DEMO_FOLDER;
 import static org.mule.tooling.devkit.common.DevkitUtils.DOCS_FOLDER;
 import static org.mule.tooling.devkit.common.DevkitUtils.ICONS_FOLDER;
-import static org.mule.tooling.devkit.common.DevkitUtils.MAIN_FLOWS_FOLDER;
 import static org.mule.tooling.devkit.common.DevkitUtils.MAIN_JAVA_FOLDER;
-import static org.mule.tooling.devkit.common.DevkitUtils.MAIN_MULE_FOLDER;
 import static org.mule.tooling.devkit.common.DevkitUtils.MAIN_RESOURCES_FOLDER;
 import static org.mule.tooling.devkit.common.DevkitUtils.POM_FILENAME;
 import static org.mule.tooling.devkit.common.DevkitUtils.POM_TEMPLATE_PATH;
@@ -208,8 +206,6 @@ public class NewDevkitProjectWizard extends Wizard implements INewWizard {
         entries.add(createEntry(project.getFolder(MAIN_RESOURCES_FOLDER), monitor));
         entries.add(createEntry(project.getFolder(TEST_RESOURCES_FOLDER), monitor));
         entries.add(createEntry(project.getFolder(TEST_JAVA_FOLDER), monitor));
-        entries.add(createEntry(project.getFolder(MAIN_MULE_FOLDER), monitor));
-        entries.add(createEntry(project.getFolder(MAIN_FLOWS_FOLDER), monitor));
         entries.add(createEntry(project.getFolder(DevkitUtils.GENERATED_SOURCES_FOLDER), monitor));
         entries.add(JavaRuntime.getDefaultJREContainerEntry());
         return entries;
