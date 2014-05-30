@@ -112,7 +112,11 @@ public class ModuleVisitor extends ASTVisitor {
 
             Property prop = new Property(module, (ICompilationUnit) compilationUnit.getJavaElement(), valuePair);
             prop.setName(valuePair.getName().toString());
-            prop.setValue(((StringLiteral) valuePair.getValue()).getLiteralValue());
+            if (valuePair.getValue() instanceof StringLiteral) {
+                prop.setValue(((StringLiteral) valuePair.getValue()).getLiteralValue());
+            } else {
+                prop.setValue(valuePair.getValue().toString());
+            }
             module.getProperties().add(prop);
         }
 
@@ -150,8 +154,11 @@ public class ModuleVisitor extends ASTVisitor {
             method.setMetadataMethod(ModelUtils.isMetadaMethod(node.getTypeName().toString()));
             method.setMethod((MethodDeclaration) node.getParent());
             processor.add((MethodDeclaration) node.getParent());
-            if (module == null)
+            if (module == null) {
+                if (!root.getModules().isEmpty())
+                    root.getModules().get(root.getModules().size() - 1).getProcessor().add(method);
                 return false;
+            }
             module.getProcessor().add(method);
         }
         return false;

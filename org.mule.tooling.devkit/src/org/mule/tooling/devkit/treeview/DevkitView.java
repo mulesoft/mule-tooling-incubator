@@ -306,7 +306,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                     if (root != null) {
                         IResourceDelta delta = event.getDelta().getAffectedChildren()[0];
 
-                        if (delta.getResource().getProject() != null) {
+                        if (delta.getResource().getProject() != null && delta.getResource().getProject().isOpen()) {
                             analyseMethods(delta.getResource().getProject());
                         }
                     }
@@ -326,7 +326,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
         IPackageFragment[] packages = JavaCore.create(project).getPackageFragments();
         // parse(JavaCore.create(project));
         for (IPackageFragment mypackage : packages) {
-            if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE) {
+            if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE && mypackage.exists()) {
                 if (!mypackage.getPath().toString().contains(DevkitUtils.MAIN_JAVA_FOLDER)) {
                     continue;
                 }
