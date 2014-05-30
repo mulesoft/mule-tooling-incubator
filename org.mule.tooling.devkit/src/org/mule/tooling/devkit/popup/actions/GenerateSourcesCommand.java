@@ -69,7 +69,7 @@ public class GenerateSourcesCommand extends AbstractHandler {
 									"-Ddevkit.javadoc.check.skip=true",
 									"-Dmaven.javadoc.skip=true" },javaProject).run(
 									mavenProject.getPomFile(), monitor);
-
+							monitor.done();
 							return Status.OK_STATUS;
 						}
 					};
