@@ -50,20 +50,21 @@ public class ModuleVisitor extends ASTVisitor {
         LocateAnnotationVisitor visitorConnector = new LocateAnnotationVisitor(0, "Connector");
         LocateAnnotationVisitor visitorModule = new LocateAnnotationVisitor(0, "Module");
         node.accept(visitorConnector);
-        if (visitorConnector.getNode() != null)
+        if (visitorConnector.getNode() != null){
+            module = new Module(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
+            root.getModules().add(module);
             return true;
-
+        }
         node.accept(visitorModule);
-        if (visitorModule.getNode() != null)
+        if (visitorModule.getNode() != null){
+            module = new Module(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
+            root.getModules().add(module);
             return true;
+        }
+        module = null;
         return false;
     }
 
-    @Override
-    public boolean visit(SingleMemberAnnotation node) {
-        node.getTypeName();
-        return true;
-    }
 
     @Override
     public boolean visit(NormalAnnotation node) {
@@ -96,15 +97,11 @@ public class ModuleVisitor extends ASTVisitor {
             return false;
         }
 
-        module = null;
 
         if (!ModelUtils.isAnnotationSupported(node.getTypeName().toString())) {
             return false;
-        }
-
-        module = new Module(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
-        // TODO fixme
-        root.getModules().add(module);
+        }        
+        
         module.setName(((TypeDeclaration) node.getParent()).getName().toString());
         module.setType("@" + node.getTypeName().toString());
         for (Object value : node.values()) {
@@ -138,9 +135,6 @@ public class ModuleVisitor extends ASTVisitor {
                 ex.printStackTrace();
             }
         } else if (node.getTypeName().toString().equals("MetaDataCategory")) {
-            module = new Module(root, (ICompilationUnit) compilationUnit.getJavaElement(), node.getParent());
-            // TODO fixme
-            root.getModules().add(module);
             module.setName(((TypeDeclaration) node.getParent()).getName().toString());
             module.setType("@" + node.getTypeName().toString());
         } else if (ModelUtils.isAnnotationSupported(node.getTypeName().toString())) {
@@ -153,12 +147,6 @@ public class ModuleVisitor extends ASTVisitor {
             }
             method.setMetadataMethod(ModelUtils.isMetadaMethod(node.getTypeName().toString()));
             method.setMethod((MethodDeclaration) node.getParent());
-            processor.add((MethodDeclaration) node.getParent());
-            if (module == null) {
-                if (!root.getModules().isEmpty())
-                    root.getModules().get(root.getModules().size() - 1).getProcessor().add(method);
-                return false;
-            }
             module.getProcessor().add(method);
         }
         return false;

@@ -101,7 +101,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
 
         getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        workspace.addResourceChangeListener(this);
+        workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 
         viewer.addDoubleClickListener(new IDoubleClickListener() {
 
@@ -304,10 +304,12 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                 try {
                     IWorkspaceRoot root = workspace.getRoot();
                     if (root != null) {
-                        IResourceDelta delta = event.getDelta().getAffectedChildren()[0];
+                        if (event.getDelta().getAffectedChildren().length > 0) {
+                            IResourceDelta delta = event.getDelta().getAffectedChildren()[0];
 
-                        if (delta.getResource().getProject() != null && delta.getResource().getProject().isOpen()) {
-                            analyseMethods(delta.getResource().getProject());
+                            if (delta.getResource().getProject() != null && delta.getResource().getProject().isOpen()) {
+                                analyseMethods(delta.getResource().getProject());
+                            }
                         }
                     }
                 } catch (CoreException e) {
