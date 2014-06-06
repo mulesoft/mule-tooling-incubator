@@ -325,4 +325,14 @@
     		name="Devkit Sample Link Detector">
 		</hyperlinkDetector>
 	</extension>
+	<extension 
+       point="org.eclipse.ui.importWizards"> 
+      <wizard 
+      	 category="org.mule.tooling.ui.muleImportCategory"
+         id="org.mule.tooling.devkit.wizards.ConnectorImportWizzard" 
+         name="AnyPoint Connector Project from External Location" 
+         class="org.mule.tooling.devkit.wizards.ConnectorImportWizzard" 
+         icon="icons/icon.png">
+      </wizard> 
+   </extension>
 </plugin>
