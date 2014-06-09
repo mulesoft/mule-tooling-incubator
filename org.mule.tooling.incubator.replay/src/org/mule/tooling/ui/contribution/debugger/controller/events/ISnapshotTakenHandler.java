@@ -1,10 +1,9 @@
 package org.mule.tooling.ui.contribution.debugger.controller.events;
 
 import org.mule.tooling.core.event.IEventHandler;
-
-import com.mulesoft.mule.debugger.commons.MessageSnapshot;
+import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDescriptor;
 
 public interface ISnapshotTakenHandler extends IEventHandler {
 
-    void onSnapshotTaken(String name, MessageSnapshot snapshot);
+    void onSnapshotTaken(MessageSnapshotDescriptor snapshot);
 }

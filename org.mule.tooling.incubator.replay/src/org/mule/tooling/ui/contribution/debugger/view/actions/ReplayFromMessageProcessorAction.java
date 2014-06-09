@@ -9,7 +9,7 @@ import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerConnectedHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerDisconnectedHandler;
 import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
-import org.mule.tooling.ui.contribution.debugger.service.SnapshotService;
+import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
 import org.mule.tooling.ui.contribution.debugger.view.IMuleSnapshotEditor;
 
 import com.mulesoft.mule.debugger.commons.MessageSnapshot;
@@ -17,9 +17,9 @@ import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 public class ReplayFromMessageProcessorAction extends Action {
 
     private IMuleSnapshotEditor editor;
-    private SnapshotService snaphotService;
+    private MessageSnapshotService snaphotService;
 
-    public ReplayFromMessageProcessorAction(final IMuleSnapshotEditor editor, SnapshotService snapshotService) {
+    public ReplayFromMessageProcessorAction(final IMuleSnapshotEditor editor, MessageSnapshotService snapshotService) {
         super();
         this.editor = editor;
         snaphotService = snapshotService;

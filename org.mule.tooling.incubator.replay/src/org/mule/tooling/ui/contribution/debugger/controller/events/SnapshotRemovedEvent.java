@@ -2,12 +2,13 @@ package org.mule.tooling.ui.contribution.debugger.controller.events;
 
 import org.mule.tooling.core.event.EventType;
 import org.mule.tooling.core.event.IEvent;
+import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDescriptor;
 
 public class SnapshotRemovedEvent implements IEvent<ISnapshotRemovedHandler> {
 
-    private String name;
+    private MessageSnapshotDescriptor name;
 
-    public SnapshotRemovedEvent(String name) {
+    public SnapshotRemovedEvent(MessageSnapshotDescriptor name) {
         super();
         this.name = name;
 

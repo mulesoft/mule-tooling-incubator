@@ -8,7 +8,7 @@ import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerConnectedHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerDisconnectedHandler;
 import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
-import org.mule.tooling.ui.contribution.debugger.service.SnapshotService;
+import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
 import org.mule.tooling.ui.contribution.debugger.view.impl.CreateSnapshotDialog;
 
 import com.mulesoft.mule.debugger.client.DebuggerClient;
@@ -17,9 +17,9 @@ import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 
 public class TakeSnapshotAction extends Action {
 
-    private SnapshotService service;
+    private MessageSnapshotService service;
 
-    public TakeSnapshotAction(SnapshotService service) {
+    public TakeSnapshotAction(MessageSnapshotService service) {
         super();
         this.service = service;
         setImageDescriptor(ReplayImages.getDebuggerImages().getImageDescriptor(ReplayImages.SNAPSHOT));

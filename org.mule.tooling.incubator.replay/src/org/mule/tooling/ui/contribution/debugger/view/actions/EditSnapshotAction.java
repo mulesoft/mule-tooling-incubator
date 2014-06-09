@@ -23,7 +23,7 @@ import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.metadata.utils.MetadataUtils;
 import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
-import org.mule.tooling.ui.contribution.debugger.service.SnapshotService;
+import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
 import org.mule.tooling.ui.contribution.debugger.view.IMuleSnapshotEditor;
 import org.mule.tooling.ui.widgets.util.SilentRunner;
 
@@ -32,9 +32,9 @@ import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 public class EditSnapshotAction extends Action {
 
     private IMuleSnapshotEditor snapshotEditor;
-    private SnapshotService service;
+    private MessageSnapshotService service;
 
-    public EditSnapshotAction(IMuleSnapshotEditor snapshotEditor, SnapshotService service) {
+    public EditSnapshotAction(IMuleSnapshotEditor snapshotEditor, MessageSnapshotService service) {
         super();
         this.snapshotEditor = snapshotEditor;
         this.service = service;
@@ -62,6 +62,7 @@ public class EditSnapshotAction extends Action {
             final IMuleProject muleProject = CoreUtils.getMuleProject(appName);
             SilentRunner.run(new Callable<Void>() {
 
+                @SuppressWarnings("unchecked")
                 @Override
                 public Void call() throws Exception {
                     if (muleProject != null) {

@@ -13,7 +13,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Display;
 import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
-import org.mule.tooling.ui.contribution.debugger.service.SnapshotService;
+import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
 import org.mule.tooling.ui.contribution.debugger.view.IMuleSnapshotEditor;
 import org.mule.tooling.ui.contribution.debugger.view.impl.CreateSnapshotDialog;
 
@@ -22,9 +22,9 @@ import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 public class DuplicateSnapshotAction extends Action {
 
     private IMuleSnapshotEditor snapshotEditor;
-    private SnapshotService service;
+    private MessageSnapshotService service;
 
-    public DuplicateSnapshotAction(IMuleSnapshotEditor snapshot, SnapshotService service) {
+    public DuplicateSnapshotAction(IMuleSnapshotEditor snapshot, MessageSnapshotService service) {
         super();
         this.snapshotEditor = snapshot;
         this.service = service;
