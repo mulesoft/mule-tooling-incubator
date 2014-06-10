@@ -82,7 +82,10 @@ Bundle-ClassPath: .,
  lib/plexus-container-default.jar,
  lib/plexus-io.jar,
  lib/plexus-utils.jar,
- lib/junit.jar
+ lib/junit.jar,
+ lib/devkit-module.jar,
+ lib/grabbag.jar,
+ lib/guava.jar
 Export-Package: org.mule.devkit.generation.api.gatherer,org.mule.devki
  t.generation.utils,org.mule.tooling.devkit.apt; uses:="javax.lang.mod
  el.util,  javax.lang.model.type,  org.mule.devkit.model.visitor,  org
