@@ -165,6 +165,9 @@ public class ConnectorImportWizzardPage extends WizardPage {
                         validate();
                     }
                 }
+                if (existsInWorkspace((MavenInfo) event.getElement()) && event.getChecked()) {
+                    validate();
+                }
                 setPageComplete();
             }
         });
@@ -436,7 +439,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
     void setPageComplete() {
         Object[] checkedElements = projectTreeViewer.getCheckedElements();
         setPageComplete(checkedElements != null && checkedElements.length > 0);
-        if (checkedElements != null && checkedElements.length == 0) {
+        if (checkedElements != null && checkedElements.length > 0) {
             setMessage(null);
         }
     }
