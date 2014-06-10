@@ -203,6 +203,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
                 IStructuredSelection selection = (IStructuredSelection) event.getSelection();
                 if (selection.getFirstElement() != null) {
                     if (existsInWorkspace((MavenInfo) selection.getFirstElement())) {
+                        projectTreeViewer.setChecked(selection.getFirstElement(), false);
                         setMessage("Project " + ((MavenInfo) selection.getFirstElement()).getArtifactId() + " is already in the workspace", IMessageProvider.WARNING);
                     } else {
                         setMessage(null);
