@@ -213,7 +213,10 @@
                 <visibleWhen>
                     <with variable="activeMenuSelection">
                         <iterate>
-                            <adapt type="org.eclipse.core.resources.IProject"/>
+                            <adapt type="org.eclipse.core.resources.IProject">
+								<test value="true" property="org.eclipse.core.resources.open" forcePluginActivation="true">
+                                </test>
+                            </adapt>
                         </iterate>
                         <count
                                 value="1">
@@ -334,5 +337,20 @@
          class="org.mule.tooling.devkit.wizards.ConnectorImportWizzard" 
          icon="icons/icon.png">
       </wizard> 
+   </extension>
+   <extension point="org.eclipse.ui.decorators">
+     <decorator
+           adaptable="true"
+           icon="icons/devkit-8x8.png"
+           id="org.mule.tooling.ui.devkitDecorator"
+           label="Anypoint project"
+           lightweight="true"
+           location="BOTTOM_RIGHT"
+           state="true">
+       <description>Anypoint project icon decorator</description>
+       <enablement>
+            <objectState name="nature" value="org.mule.tooling.devkit.devkitNature"/>
+       </enablement>
+     </decorator>
    </extension>
 </plugin>

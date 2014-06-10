@@ -24,7 +24,7 @@ public class JavadocCheckPropertyTester extends PropertyTester {
 
 			final IJavaProject selectedProject = JavaCore.create((IProject)receiver);
 
-			if (selectedProject != null) {
+			if (selectedProject != null && selectedProject.isOpen()) {
 				Map<String, String> options = AptConfig
 						.getProcessorOptions(selectedProject);
 				Boolean enabled = Boolean.parseBoolean(options
