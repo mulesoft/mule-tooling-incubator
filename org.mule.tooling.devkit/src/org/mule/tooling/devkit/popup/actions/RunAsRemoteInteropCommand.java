@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.dialogs.InteropRunOptionsSelectionDialog;
-import org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand.ConfigKeys;
 
 
 public class RunAsRemoteInteropCommand extends AbstractHandler{
