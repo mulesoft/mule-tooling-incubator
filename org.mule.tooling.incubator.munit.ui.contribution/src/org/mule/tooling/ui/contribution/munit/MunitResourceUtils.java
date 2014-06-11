@@ -79,7 +79,7 @@ public class MunitResourceUtils {
 
     public static String getBaseName(IFile xmlConfigFile) {
         String name = xmlConfigFile.getName();
-        return name.substring(0, name.length() - xmlConfigFile.getFileExtension().length() + 1); // 1 for the .
+        return name.substring(0, name.length() - (xmlConfigFile.getFileExtension().length() + 1)); // 1 for the .
     }
 
     /**
@@ -170,7 +170,7 @@ public class MunitResourceUtils {
      */
     public static void configureProjectClasspath(IMuleProject muleProject) {
         try {
-            //Todo shouldn't we check first if the classpath was already set?
+            // Todo shouldn't we check first if the classpath was already set?
             IClasspathEntry[] rawClasspath = muleProject.getJavaProject().getRawClasspath();
             ArrayList<IClasspathEntry> newClassPath = new ArrayList<IClasspathEntry>(Arrays.asList(rawClasspath));
             newClassPath.add(JavaCore.newContainerEntry(MunitClassPathContainer.CONTAINER_ID, true));
