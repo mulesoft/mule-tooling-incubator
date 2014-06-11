@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Devkit
-Bundle-SymbolicName: org.mule.tooling.devkit; singleton:=true
+Bundle-Name: org.mule.tooling.devkit
+Bundle-SymbolicName: org.mule.tooling.devkit;singleton:=true
 Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: org.mule.tooling.devkit.DevkitUIPlugin
 Require-Bundle: org.mule.tooling.runtime;bundle-version="3.5.0",
@@ -51,4 +51,3 @@ Bundle-ClassPath: .,
  lib/commons-logging.jar,
  lib/fluent-hc.jar,
  lib/httpclient-cache.jar
-

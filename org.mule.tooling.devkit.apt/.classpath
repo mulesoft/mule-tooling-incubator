@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src/"/>
+	<classpathentry exported="true" kind="lib" path="lib/antlr-runtime.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/asm-commons.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/asm-tree.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/asm.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cglib-nodep.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-beanutils.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-cli.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-codec.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-collections.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-httpclient.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-lang.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-pool.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geronimo-j2ee-connector_1.5_spec.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/geronimo-jta_1.1_spec.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/javax.inject.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jaxen.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jcifs.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jcl-over-slf4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jgrapht-jdk1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jgrapht.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/joda-time.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jsr250-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jug-asl.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-common.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-annotations-model.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-annotations-processor.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-annotations.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-code-model.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-generation-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-generation-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-plugin-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-schema-model.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-studio-model.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-module-annotations.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-module-devkit-support.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-module-spring-config.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-mvel2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-transport-http.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-transport-ssl.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-transport-tcp.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/qdox.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/signpost-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-log4j12.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-aop.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-asm.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-beans.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-context.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-expression.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/stringtemplate.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tomcat-apr.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tomcat-util.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/validation-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-plugin-oauth-client.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-plugin-rest-client.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/stax-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xmlbeans.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/classworlds.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-plugin-at-generated.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-plugin-expression-language.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-plugin-studio.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/plexus-archiver.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/plexus-container-default.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/plexus-io.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/plexus-utils.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/devkit-module.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/grabbag.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/guava.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
