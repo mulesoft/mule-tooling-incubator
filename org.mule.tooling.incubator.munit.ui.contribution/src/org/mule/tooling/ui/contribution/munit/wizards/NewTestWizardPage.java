@@ -2,8 +2,10 @@ package org.mule.tooling.ui.contribution.munit.wizards;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,6 +22,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -30,6 +33,8 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.mule.tooling.core.builder.MuleNature;
 import org.mule.tooling.core.impl.model.MuleProjectImpl;
 import org.mule.tooling.core.model.IMuleProject;
+import org.mule.tooling.ui.MuleImages;
+import org.mule.tooling.ui.widgets.util.SilentRunner;
 
 public class NewTestWizardPage extends WizardPage {
 
@@ -53,7 +58,7 @@ public class NewTestWizardPage extends WizardPage {
         layout.numColumns = 3;
         layout.verticalSpacing = 9;
         Label label = new Label(container, SWT.NULL);
-        label.setText("&Flow file to be tested:");
+        label.setText("&Configuration file to be tested:");
 
         productionFileText = new Text(container, SWT.BORDER | SWT.SINGLE);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -103,47 +108,48 @@ public class NewTestWizardPage extends WizardPage {
                     project = (IContainer) obj;
                 else
                     project = ((IResource) obj).getParent();
-                if(project.isAccessible())
+                if (project.isAccessible())
                     productionFileText.setText(project.getFullPath().toString());
             }
         }
+        // Why is this hardcoded?
         fileText.setText("new_munit_test.xml");
     }
 
     private void handleBrowse() {
-        try {
-            List<IResource> resources = new ArrayList<IResource>();
-            IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-            for (IProject project : projects) {
-                if (project.isOpen() && project.hasNature(MuleNature.NATURE_ID)) {
-                    IMuleProject muleProject = new MuleProjectImpl();
-                    muleProject.initialize(JavaCore.create(project));
-                    IResource[] appsFiles = muleProject.getMuleAppsFolder().members(false);
-                    for (IResource appFile : appsFiles) {
-                        if ("xml".equals(appFile.getFileExtension())) {
-                            resources.add(appFile);
+        SilentRunner.run(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                final List<IResource> resources = new ArrayList<IResource>();
+                final IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+                for (IProject project : projects) {
+                    if (project.isOpen() && project.hasNature(MuleNature.NATURE_ID)) {
+                        final IMuleProject muleProject = (IMuleProject) project.getAdapter(IMuleProject.class);
+                        final List<IFile> configurationResources = muleProject.getConfigurationsCache().getConfigurationResources();
+                        resources.addAll(configurationResources);
+                    }
+                }
+                if (resources.isEmpty()) {
+                    MessageDialog.open(MessageDialog.INFORMATION, getShell(), "Munit",
+                            "There is no file available in your workspace that can be used to generate an Munit Test.\nVerify that you have atleast one Mule Project opened.",
+                            SWT.NONE);
+                } else {
+                    final ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new ResourceLabelProvider());
+                    dialog.setElements(resources.toArray());
+                    dialog.setTitle("Configuration List");
+                    dialog.setMessage("Select the configuration");
+                    if (dialog.open() == ElementListSelectionDialog.OK) {
+                        Object[] result = dialog.getResult();
+                        if (result.length == 1) {
+                            productionFileText.setText((((IResource) result[0]).getFullPath()).toString());
                         }
-
-                    }
-
-                }
-            }
-            if(resources.isEmpty()){
-                MessageDialog.open(MessageDialog.INFORMATION, getShell(), "Munit", "There is no file available in your workspace that can be used to generate an Munit Test.\nVerify that you have atleast one Mule Project opened.", SWT.NONE);
-            }else{
-                ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new LabelProvider());
-                dialog.setElements(resources.toArray());
-    
-                if (dialog.open() == ElementListSelectionDialog.OK) {
-                    Object[] result = dialog.getResult();
-                    if (result.length == 1) {
-                        productionFileText.setText((((IResource) result[0]).getFullPath()).toString());
                     }
                 }
+                return null;
             }
-        } catch (CoreException e) {
-            
-        }
+        }, null);
+
     }
 
     private void dialogChanged() {
@@ -193,5 +199,21 @@ public class NewTestWizardPage extends WizardPage {
 
     public String getFileName() {
         return fileText.getText();
+    }
+
+    public class ResourceLabelProvider extends LabelProvider {
+
+        @Override
+        public Image getImage(Object element) {
+
+            return MuleImages.FLOW_IMAGE;
+        }
+
+        @Override
+        public String getText(Object element) {
+            IResource resource = (IResource) element;
+            return resource.getProjectRelativePath().toString();
+        }
+
     }
 }

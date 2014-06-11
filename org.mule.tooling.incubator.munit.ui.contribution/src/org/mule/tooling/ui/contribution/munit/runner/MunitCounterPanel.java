@@ -1,15 +1,13 @@
 package org.mule.tooling.ui.contribution.munit.runner;
 
-import org.eclipse.jdt.internal.junit.ui.JUnitPlugin;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 
 /**
  * <p>
@@ -24,9 +22,6 @@ public class MunitCounterPanel extends Composite {
     protected int fTotal;
     protected int fIgnoredCount;
 
-    private final Image fErrorIcon = JUnitPlugin.createImage("ovr16/error_ovr.gif");
-    private final Image fFailureIcon = JUnitPlugin.createImage("ovr16/failed_ovr.gif");
-
     public MunitCounterPanel(Composite parent) {
         super(parent, SWT.WRAP);
         GridLayout gridLayout = new GridLayout();
@@ -36,20 +31,9 @@ public class MunitCounterPanel extends Composite {
         setLayout(gridLayout);
 
         fNumberOfRuns = createLabel("Run:", null, " 0/0  ");
-        fNumberOfErrors = createLabel("Errors:", fErrorIcon, " 0 ");
-        fNumberOfFailures = createLabel("Failures:", fFailureIcon, " 0 ");
+        fNumberOfErrors = createLabel("Errors:", MunitPlugin.fErrorIcon, " 0 ");
+        fNumberOfFailures = createLabel("Failures:", MunitPlugin.fFailureIcon, " 0 ");
 
-        addDisposeListener(new DisposeListener() {
-
-            public void widgetDisposed(DisposeEvent e) {
-                disposeIcons();
-            }
-        });
-    }
-
-    private void disposeIcons() {
-        fErrorIcon.dispose();
-        fFailureIcon.dispose();
     }
 
     private Text createLabel(String name, Image image, String init) {

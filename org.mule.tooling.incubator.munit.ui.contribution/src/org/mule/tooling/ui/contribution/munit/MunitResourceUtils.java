@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -25,7 +26,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
-import org.mule.tooling.core.builder.TransformerUtils;
+import org.mule.tooling.core.classloader.ProjectClasspathUtils;
 import org.mule.tooling.core.io.MuleResourceUtils;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.maven.MavenMuleProjectDecorator;
@@ -33,8 +34,6 @@ import org.mule.tooling.maven.utils.MavenUtils;
 import org.mule.tooling.maven.utils.XmlEditingHelper;
 import org.mule.tooling.maven.utils.XmlEditionCallable;
 import org.mule.tooling.messageflow.editor.MessageFlowEditor;
-import org.mule.tooling.model.messageflow.Property;
-import org.mule.tooling.model.messageflow.PropertyCollection;
 import org.mule.tooling.model.messageflow.util.MuleConfigurationNamingSupport;
 import org.mule.tooling.ui.contribution.munit.classpath.MunitClassPathContainer;
 import org.mule.tooling.ui.contribution.munit.runtime.MunitLibrary;
@@ -53,7 +52,7 @@ public class MunitResourceUtils {
 
     /**
      * <p>
-     * Creates the munit folder in the {@link IMuleProject}. If the folder already exists then it does nothing
+     * Creates the munit folder in the {@link IMuleProject}. If the folder already exists then it does nothing and adds it to the path if necessary
      * </p>
      * 
      * @param muleProject
@@ -63,23 +62,40 @@ public class MunitResourceUtils {
      *             If the folder could not be created
      */
     public static IFolder createMunitFolder(IMuleProject muleProject) throws CoreException {
-        IFolder folder = muleProject.getFolder(MunitPlugin.MUNIT_FOLDER_PATH);
-        if (!folder.exists()) {
-            folder.create(true, true, new NullProgressMonitor());
-            return folder;
+        IFolder munitFolder = muleProject.getFolder(MunitPlugin.MUNIT_FOLDER_PATH);
+        if (!munitFolder.exists()) {
+            munitFolder.create(true, true, new NullProgressMonitor());
+            ProjectClasspathUtils.ensureFolderIsASourceFolder(muleProject, munitFolder, new Path(MunitPlugin.MUNIT_FOLDER_PATH));
+            return munitFolder;
         }
-
-        return folder;
+        return munitFolder;
     }
 
+    /**
+     * Create the Munit test file from the xml configuration file.
+     * 
+     * @param testFolder
+     *            The munit folder to where the new file is going to be created
+     * @param xmlConfigFile
+     *            The xml Configuration File
+     * @return The new test file
+     */
     public static IFile createMunitFileFromXmlConfigFile(IFolder testFolder, IFile xmlConfigFile) {
         String baseName = getBaseName(xmlConfigFile);
         return testFolder.getFile(baseName + "-test.xml");
     }
 
+    /**
+     * Returns the base name of the specified file. The name of the file without the extension
+     * 
+     * @param xmlConfigFile
+     *            The xml configuration file.
+     * @return The base name.
+     */
     public static String getBaseName(IFile xmlConfigFile) {
-        String name = xmlConfigFile.getName();
-        return name.substring(0, name.length() - (xmlConfigFile.getFileExtension().length() + 1)); // 1 for the .
+        final String name = xmlConfigFile.getName();
+        final int extensionLength = xmlConfigFile.getFileExtension().length() + 1;// 1 for the .
+        return name.substring(0, name.length() - extensionLength);
     }
 
     /**

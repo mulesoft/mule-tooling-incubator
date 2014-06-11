@@ -23,6 +23,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.mule.tooling.core.impl.model.MuleProjectImpl;
 import org.mule.tooling.core.model.IMuleProject;
+import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 import org.mule.tooling.ui.contribution.munit.MunitResourceUtils;
 
 public class NewTestWizard extends Wizard implements INewWizard {
@@ -99,8 +100,7 @@ public class NewTestWizard extends Wizard implements INewWizard {
     }
 
     private void throwCoreException(String message) throws CoreException {
-        IStatus status = new Status(IStatus.ERROR, "org.mule.tooling.ui.contribution.munit", IStatus.OK, message, null);
-        throw new CoreException(status);
+        throw new CoreException(new Status(IStatus.ERROR, MunitPlugin.PLUGIN_ID, IStatus.OK, message, null));
     }
 
     public void init(IWorkbench workbench, IStructuredSelection selection) {
