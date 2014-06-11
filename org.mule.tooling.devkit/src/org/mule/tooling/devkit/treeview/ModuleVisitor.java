@@ -13,7 +13,6 @@ import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
-import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.mule.tooling.devkit.quickfix.LocateAnnotationVisitor;
@@ -21,6 +20,7 @@ import org.mule.tooling.devkit.treeview.model.ModelUtils;
 import org.mule.tooling.devkit.treeview.model.Module;
 import org.mule.tooling.devkit.treeview.model.ModuleField;
 import org.mule.tooling.devkit.treeview.model.ModuleMethod;
+import org.mule.tooling.devkit.treeview.model.ModuleSource;
 import org.mule.tooling.devkit.treeview.model.ModuleTransformer;
 import org.mule.tooling.devkit.treeview.model.ProjectRoot;
 import org.mule.tooling.devkit.treeview.model.Property;
@@ -50,13 +50,13 @@ public class ModuleVisitor extends ASTVisitor {
         LocateAnnotationVisitor visitorConnector = new LocateAnnotationVisitor(0, "Connector");
         LocateAnnotationVisitor visitorModule = new LocateAnnotationVisitor(0, "Module");
         node.accept(visitorConnector);
-        if (visitorConnector.getNode() != null){
+        if (visitorConnector.getNode() != null) {
             module = new Module(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
             root.getModules().add(module);
             return true;
         }
         node.accept(visitorModule);
-        if (visitorModule.getNode() != null){
+        if (visitorModule.getNode() != null) {
             module = new Module(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
             root.getModules().add(module);
             return true;
@@ -65,7 +65,6 @@ public class ModuleVisitor extends ASTVisitor {
         return false;
     }
 
-
     @Override
     public boolean visit(NormalAnnotation node) {
         if (node.getParent() instanceof MethodDeclaration) {
@@ -73,6 +72,8 @@ public class ModuleVisitor extends ASTVisitor {
                 ModuleMethod method = null;
                 if (ModelUtils.isTransformerMethod(node.getTypeName().toString())) {
                     method = new ModuleTransformer(module, (ICompilationUnit) compilationUnit.getJavaElement(), node);
+                } else if (ModelUtils.isSourceMethod(node.getTypeName().toString())) {
+                    method = new ModuleSource(module, (ICompilationUnit) compilationUnit.getJavaElement(), node);
                 } else {
                     method = new ModuleMethod(module, (ICompilationUnit) compilationUnit.getJavaElement(), node);
                 }
@@ -97,11 +98,10 @@ public class ModuleVisitor extends ASTVisitor {
             return false;
         }
 
-
         if (!ModelUtils.isAnnotationSupported(node.getTypeName().toString())) {
             return false;
-        }        
-        
+        }
+
         module.setName(((TypeDeclaration) node.getParent()).getName().toString());
         module.setType("@" + node.getTypeName().toString());
         for (Object value : node.values()) {
@@ -141,6 +141,8 @@ public class ModuleVisitor extends ASTVisitor {
             ModuleMethod method = null;
             if (ModelUtils.isTransformerMethod(node.getTypeName().toString())) {
                 method = new ModuleTransformer(module, (ICompilationUnit) compilationUnit.getJavaElement(), node.getParent());
+            } else if (ModelUtils.isSourceMethod(node.getTypeName().toString())) {
+                method = new ModuleSource(module, (ICompilationUnit) compilationUnit.getJavaElement(), node.getParent());
             } else {
                 method = new ModuleMethod(module, (ICompilationUnit) compilationUnit.getJavaElement(), node.getParent());
                 method.setConnectionMethod(ModelUtils.isConnectionAnnotation(node.getTypeName().toString()));
