@@ -3,6 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Munit
 Bundle-SymbolicName: org.mule.tooling.ui.contribution.munit;singleton:=true
 Bundle-Version: 1.0.1.qualifier
+Bundle-ClassPath: .,
+ lib/munit-runner.jar,
+ lib/gson.jar
 Bundle-Activator: org.mule.tooling.ui.contribution.munit.MunitPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -12,8 +15,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.mule.tooling.messageflow;bundle-version="3.5.0",
  org.eclipse.gef;bundle-version="3.8.1",
- org.mule.tooling.core;bundle-version="3.5.0",
- org.mule.tooling.model;bundle-version="3.5.0",
+ org.mule.tooling.core,
+ org.mule.tooling.model,
  org.eclipse.ui.forms;bundle-version="3.5.200",
  org.apache.xerces;bundle-version="2.9.0",
  org.eclipse.jdt;bundle-version="3.8.1",
@@ -26,27 +29,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.console,
  org.mule.tooling.maven;bundle-version="3.5.0",
  org.mule.tooling.ui.contribution.debugger;bundle-version="3.5.0",
- org.apache.velocity;bundle-version="1.5.0"
-Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.dom4j,
+ org.apache.velocity;bundle-version="1.5.0",
+ org.dom4j;bundle-version="1.6.1",
  org.eclipse.debug.core,
- org.eclipse.debug.internal.ui,
- org.eclipse.debug.ui,
- org.eclipse.jdt.core,
- org.eclipse.jdt.core.search,
- org.eclipse.jdt.internal.junit,
- org.eclipse.jdt.internal.junit.launcher,
- org.eclipse.jdt.internal.junit.ui,
- org.eclipse.jdt.internal.junit.util,
- org.eclipse.jdt.internal.ui.wizards,
- org.eclipse.jdt.junit.launcher,
- org.eclipse.jdt.launching,
- org.eclipse.jdt.ui,
- org.eclipse.jdt.ui.dialogs,
- org.eclipse.wst.xml.ui.internal.tabletree
+ org.eclipse.debug.ui;bundle-version="3.8.2",
+ org.eclipse.jdt.junit;bundle-version="3.7.100",
+ org.eclipse.jdt.launching;bundle-version="3.6.101"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
-Bundle-ClassPath: .,
- lib/munit-runner.jar,
- lib/gson.jar
-Export-Package: com.google.gson,org.mule.tooling.ui.contribution.munit

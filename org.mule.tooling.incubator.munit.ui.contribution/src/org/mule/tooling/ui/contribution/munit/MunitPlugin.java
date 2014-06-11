@@ -45,9 +45,7 @@ public class MunitPlugin extends AbstractUIPlugin {
 
     public static final String PLUGIN_ID = "org.mule.tooling.ui.contribution.munit";
 
-    public static final String FLOW_REF_TYPE = "http://www.mulesoft.org/schema/mule/core/flow-ref";
-    public static final String SUB_FLOW_TYPE = "http://www.mulesoft.org/schema/mule/core/subflow";
-    public static final String FLOW_TYPE = "http://www.mulesoft.org/schema/mule/core/flow";
+    
     public static final String TEST_TYPE = "http://www.mulesoft.org/schema/mule/munit/test";
     public static final String MUNIT_NAMESPACE = "http://www.mulesoft.org/schema/mule/munit";
     public static final String MUNIT_FOLDER_PATH = "src/test/munit";

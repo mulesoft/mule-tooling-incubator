@@ -14,7 +14,6 @@ import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 import org.mule.tooling.ui.contribution.munit.MunitResourceUtils;
 import org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor;
 import org.mule.tooling.ui.contribution.munit.runner.MunitLaunchConfigurationConstants;
-import org.mule.tooling.ui.contribution.munit.runner.MunitTestRunnerViewPart;
 
 /**
  * <p>
@@ -58,8 +57,7 @@ public class RunTestAction extends Action {
         if (activeEditor instanceof MunitMultiPageEditor) {
             final MultiPageMessageFlowEditor editor = (MultiPageMessageFlowEditor) activeEditor;
             final MessageFlowEditor messageFlowEditor = editor.getFlowEditor();
-            IFile configFileFromFlowFile = MunitTestRunnerViewPart.getConfigFileFromFlowFile(messageFlowEditor.getMuleProject().getJavaProject().getProject(),
-                    messageFlowEditor.getInputFile());
+            final IFile configFileFromFlowFile = messageFlowEditor.getInputXmlConfigFile();
             MunitLaunchConfigurationConstants.runTest(configFileFromFlowFile, mode);
         }
 

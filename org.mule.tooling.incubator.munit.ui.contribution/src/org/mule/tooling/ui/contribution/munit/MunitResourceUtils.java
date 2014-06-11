@@ -26,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.mule.tooling.core.builder.TransformerUtils;
+import org.mule.tooling.core.io.MuleResourceUtils;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.maven.MavenMuleProjectDecorator;
 import org.mule.tooling.maven.utils.MavenUtils;
@@ -71,6 +72,16 @@ public class MunitResourceUtils {
         return folder;
     }
 
+    public static IFile createMunitFileFromXmlConfigFile(IFolder testFolder, IFile xmlConfigFile) {
+        String baseName = getBaseName(xmlConfigFile);
+        return testFolder.getFile(baseName + "-test.xml");
+    }
+
+    public static String getBaseName(IFile xmlConfigFile) {
+        String name = xmlConfigFile.getName();
+        return name.substring(0, name.length() - xmlConfigFile.getFileExtension().length() + 1); // 1 for the .
+    }
+
     /**
      * <p>
      * Creates a new test as a template for user
@@ -84,18 +95,16 @@ public class MunitResourceUtils {
      *             In case the test could not be created
      */
     public static void createDefaultMunitTest(MessageFlowEditor flowEditor, String flowName) throws CoreException {
-        MuleConfigurationBuilder muleConfigurationBuilder = new MuleConfigurationBuilder(flowEditor.getMuleConfigurationDecorator());
-        MuleConfigurationNamingSupport naming = new MuleConfigurationNamingSupport(flowEditor.getMuleConfiguration());
-        PropertyCollection properties = new PropertyCollection();
-        properties.addProperty(new Property("description", "Test"));
-        properties.addProperty(new Property("name", naming.getAvailableName(flowName + "Test")));
-        ContainerBuilder<MuleConfigurationBuilder> container = muleConfigurationBuilder.addContainer("munit_test", "http://www.mulesoft.org/schema/mule/munit/test");
-        container.setProperties(properties);
-        AbstractPipelineBuilder<ContainerBuilder<MuleConfigurationBuilder>> addFlowRef = container.editNested(1).addFlowRef("Flow-ref to " + flowName);
-        PropertyCollection properties2 = new PropertyCollection();
-        properties2.addProperty(new Property("name", flowName));
-        addFlowRef.setProperties(properties2);
-        TransformerUtils.updateConfigFileFromMFlow(flowEditor.getMuleProject(), flowEditor.getInputFile(), muleConfigurationBuilder.getConfig().getEntity());
+        final MuleConfigurationBuilder muleConfigurationBuilder = new MuleConfigurationBuilder(flowEditor.getMuleConfigurationDecorator());
+
+        final MuleConfigurationNamingSupport naming = new MuleConfigurationNamingSupport(flowEditor.getMuleConfiguration());
+        final ContainerBuilder<MuleConfigurationBuilder> munitElement = muleConfigurationBuilder.addContainer("munit_test", "http://www.mulesoft.org/schema/mule/munit/test");
+        munitElement.usingProperties().property("description", "Test").property("name", naming.getAvailableName(flowName + "Test")).endProperties();
+
+        final AbstractPipelineBuilder<ContainerBuilder<MuleConfigurationBuilder>> addFlowRef = munitElement.editNested(1).addFlowRef("Flow-ref to " + flowName);
+        addFlowRef.usingProperties().property("name", flowName).endProperties();
+
+        MuleResourceUtils.updateXmlFileFromMuleConfig(flowEditor.getMuleProject(), flowEditor.getMuleConfiguration());
     }
 
     /**
@@ -161,13 +170,12 @@ public class MunitResourceUtils {
      */
     public static void configureProjectClasspath(IMuleProject muleProject) {
         try {
+            //Todo shouldn't we check first if the classpath was already set?
             IClasspathEntry[] rawClasspath = muleProject.getJavaProject().getRawClasspath();
             ArrayList<IClasspathEntry> newClassPath = new ArrayList<IClasspathEntry>(Arrays.asList(rawClasspath));
-            newClassPath.add(JavaCore.newSourceEntry(muleProject.getMuleAppsFolder().getFullPath()));
             newClassPath.add(JavaCore.newContainerEntry(MunitClassPathContainer.CONTAINER_ID, true));
             IClasspathEntry[] newClasspathEntries = (IClasspathEntry[]) newClassPath.toArray(new IClasspathEntry[0]);
             muleProject.getJavaProject().setRawClasspath(newClasspathEntries, null);
-
         } catch (JavaModelException e) {
             MunitPlugin.log(e);
         }

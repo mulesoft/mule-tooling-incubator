@@ -46,7 +46,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
-import org.mule.tooling.core.MuleConfigurationsCache;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.MuleRuntime;
 import org.mule.tooling.core.event.EventBusHelper;
@@ -151,10 +150,7 @@ public class MunitTestRunnerViewPart extends ViewPart {
         final int index = filename.lastIndexOf('.');
         filename = filename.substring(0, index);
         filename += ".xml";
-
-        IFile xmlFile = muleProject.getFolder(MunitPlugin.MUNIT_FOLDER_PATH).getFile(filename);
-
-        return xmlFile;
+        return muleProject.getFolder(MunitPlugin.MUNIT_FOLDER_PATH).getFile(filename);
     }
 
     public void setSuiteStatus(SuiteStatus suiteStatus) {
@@ -319,7 +315,6 @@ public class MunitTestRunnerViewPart extends ViewPart {
             @Override
             public void doubleClick(DoubleClickEvent event) {
 
-                MuleConfigurationsCache configurationsCache = MuleConfigurationsCache.getDefaultInstance();
                 try {
                     IMuleProject muleProject = null;
                     IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(file.getFullPath().toFile().toURI());
@@ -329,7 +324,7 @@ public class MunitTestRunnerViewPart extends ViewPart {
                         muleProject = MuleRuntime.create(file.getProject());
                     }
 
-                    Pair<MuleConfiguration, Flow> flowPair = configurationsCache.searchMuleFlowByName(muleProject, getCoveredFlow(event));
+                    Pair<MuleConfiguration, Flow> flowPair = muleProject.getConfigurationsCache().searchMuleFlowByName(getCoveredFlow(event));
                     if (flowPair != null) {
                         ShowFlowHandler.openConfigWithConfigName(muleProject, flowPair.getLeft().getName());
                         ShowFlowHandler.selectFlow(flowPair.getRight().getName());
@@ -425,9 +420,9 @@ public class MunitTestRunnerViewPart extends ViewPart {
         eventBusHelper.unregister();
     }
 
+    @SuppressWarnings("unchecked")
     public String getCoveredFlow(DoubleClickEvent event) {
-        Map.Entry<String, Double> firstElement = (Map.Entry<String, Double>) ((TreeSelection) event.getSelection()).getFirstElement();
-
+        final Map.Entry<String, Double> firstElement = (Map.Entry<String, Double>) ((TreeSelection) event.getSelection()).getFirstElement();
         return firstElement.getKey().replaceAll("/", "");
     }
 

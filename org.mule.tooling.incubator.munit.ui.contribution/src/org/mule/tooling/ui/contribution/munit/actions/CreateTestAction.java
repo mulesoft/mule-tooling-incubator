@@ -39,30 +39,29 @@ public class CreateTestAction extends Action {
         if (activeWorkbenchWindow == null) {
             return;
         }
-
         MunitResourceUtils.openMunitRunner();
-
         final IEditorPart activeEditor = activeWorkbenchWindow.getActivePage().getActiveEditor();
         if (activeEditor instanceof MultiPageMessageFlowEditor) {
             final MultiPageMessageFlowEditor editor = (MultiPageMessageFlowEditor) activeEditor;
             final MessageFlowEditor messageFlowEditor = editor.getFlowEditor();
             IMuleProject muleProject = messageFlowEditor.getMuleProject();
             MunitResourceUtils.configureProjectForMunit(muleProject);
-            IFolder folder = createMunitFolder(activeWorkbenchWindow, muleProject);
-            createMunitFile(activeWorkbenchWindow, messageFlowEditor, folder);
+            IFolder munitFolder = createMunitFolder(activeWorkbenchWindow, muleProject);
+            createMunitFile(activeWorkbenchWindow, messageFlowEditor, munitFolder);
         }
 
     }
 
-    private void createMunitFile(final IWorkbenchWindow activeWorkbenchWindow, final MessageFlowEditor messageFlowEditor, IFolder folder) {
-        IFile file = folder.getFile(messageFlowEditor.getInputFile().getName().replace(".mflow", "-test.xml"));
-        if (!file.exists()) {
+    private void createMunitFile(final IWorkbenchWindow activeWorkbenchWindow, final MessageFlowEditor messageFlowEditor, IFolder munitFolder) {
+        IFile munitConfigFile = MunitResourceUtils.createMunitFileFromXmlConfigFile(munitFolder, messageFlowEditor.getInputXmlConfigFile());
+        if (!munitConfigFile.exists()) {
             try {
                 StructuredSelection selection = (StructuredSelection) messageFlowEditor.getSelection();
                 EntityEditPart<?> editPart = (EntityEditPart<?>) selection.getFirstElement();
                 editPart = getParent(editPart);
-                MunitResourceUtils.createXMLConfigurationFromTemplate(messageFlowEditor.getMuleProject(), file.getName(), file.getName().replace("-test", ""), folder);
-                IEditorPart openEditor = MunitResourceUtils.open(file);
+                MunitResourceUtils.createXMLConfigurationFromTemplate(messageFlowEditor.getMuleProject(), munitConfigFile.getName(),
+                        munitConfigFile.getName().replace("-test", ""), munitFolder);
+                IEditorPart openEditor = MunitResourceUtils.open(munitConfigFile);
                 MultiPageMessageFlowEditor multiPageEditor = (MultiPageMessageFlowEditor) openEditor;
 
                 MessageFlowEditor flowEditor = multiPageEditor.getFlowEditor();
@@ -92,10 +91,10 @@ public class CreateTestAction extends Action {
 
     public static void openConfigWithConfigName(IMuleProject muleProject, String toFind) {
         try {
-            for (IFile mflowFile : muleProject.getConfigurationManager().getConfigurationResources()) {
-                String nameWithoutSuffix = mflowFile.getName().replaceAll(".mflow", "");
+            for (IFile xmlFile : muleProject.getConfigurationsCache().getConfigurationResources()) {
+                String nameWithoutSuffix = MunitResourceUtils.getBaseName(xmlFile);
                 if (nameWithoutSuffix.equalsIgnoreCase(toFind)) {
-                    MunitResourceUtils.open(mflowFile);
+                    MunitResourceUtils.open(xmlFile);
                     return;
                 }
             }

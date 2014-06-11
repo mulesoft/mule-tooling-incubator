@@ -1,10 +1,12 @@
 package org.mule.tooling.ui.contribution.munit.editors;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBElement;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -12,10 +14,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.contexts.IContextService;
-import org.mule.tooling.core.IXmlConfigurationProvider;
-import org.mule.tooling.core.MuleConfigurationsCache;
-import org.mule.tooling.core.MuleConfigurationsCache.MuleConfigurationEntry;
 import org.mule.tooling.core.StudioDesignContextRunner;
+import org.mule.tooling.core.cache.IMuleConfigurationsCache;
+import org.mule.tooling.core.cache.IXmlConfigurationProvider;
 import org.mule.tooling.messageflow.editor.IPaletteCategoryFilter;
 import org.mule.tooling.messageflow.editor.MessageFlowEditor;
 import org.mule.tooling.messageflow.editor.MessageFlowEditorPaletteCategoryFilter;
@@ -26,6 +27,7 @@ import org.mule.tooling.model.messageflow.MessageFlowEntity;
 import org.mule.tooling.model.messageflow.MuleConfiguration;
 import org.mule.tooling.model.module.CategoryDefinition;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
+import org.mule.tooling.ui.contribution.munit.MunitResourceUtils;
 
 /**
  * <p>
@@ -39,18 +41,16 @@ import org.mule.tooling.ui.contribution.munit.MunitPlugin;
  */
 public class MunitMessageFlowEditor extends MessageFlowEditor {
 
-    public MunitMessageFlowEditor(IXmlConfigurationProvider xmlConfigurationProvider){
-        super(xmlConfigurationProvider);
-    }
     private static boolean showTestsOnly = false;
 
-    public static synchronized void showTestsOnly(boolean value) {
-        showTestsOnly = value;
+    public MunitMessageFlowEditor(IXmlConfigurationProvider xmlConfigurationProvider) {
+        super(xmlConfigurationProvider);
     }
 
     @Override
-    protected MunitConfigurationDecorator createModelRoot(MuleConfiguration config) {
-        return new MunitConfigurationDecorator(config);
+    protected void updateModelRoot() {
+        // This is a hook method of munit
+        modelRoot = new MunitConfigurationDecorator(getMuleConfiguration());
     }
 
     @Override
@@ -159,14 +159,14 @@ public class MunitMessageFlowEditor extends MessageFlowEditor {
         }
 
         List<String> importedFiles = visitor.getFiles();
-        MuleConfigurationsCache cache = MuleConfigurationsCache.getDefaultInstance();
+        IMuleConfigurationsCache cache = getMuleProject().getConfigurationsCache();
         MuleConfiguration productionConfigurationFlows = new MuleConfiguration();
-        List<MuleConfigurationEntry> configurationEntries = cache.getConfigurationEntries(getMuleProject());
-        for (MuleConfigurationEntry entry : configurationEntries) {
-            String fileName = entry.getConfigurationFile().getName().replace(".mflow", "");
+        Map<IFile, MuleConfiguration> configurationEntries = cache.getResourceToConfigMap();
+        for (Map.Entry<IFile, MuleConfiguration> entry : configurationEntries.entrySet()) {
+            String fileName = MunitResourceUtils.getBaseName(entry.getKey());
             for (String importedFile : importedFiles) {
                 if (importedFile.contains(fileName)) {
-                    productionConfigurationFlows.getFlows().addAll(entry.getMuleConfiguration().getFlows());
+                    productionConfigurationFlows.getFlows().addAll(entry.getValue().getFlows());
                 }
             }
         }
@@ -182,4 +182,7 @@ public class MunitMessageFlowEditor extends MessageFlowEditor {
 
     }
 
+    public static synchronized void showTestsOnly(boolean value) {
+        showTestsOnly = value;
+    }
 }
