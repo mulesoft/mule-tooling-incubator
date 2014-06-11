@@ -93,14 +93,21 @@
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="library"/>
          </sequence>
-         <attribute name="muleVersion" type="string" use="required">
+         <attribute name="minMuleVersion" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The minimum mule version include range. If not present no min mule version restriction is applied.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="munitVersion" type="string" use="required">
+         <attribute name="maxMuleVersion" type="string">
+            <annotation>
+               <documentation>
+                  The maximing mule version exclusion range. If not present no max mule version restriction is applied.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="munitVersion" type="string">
             <annotation>
                <documentation>
                   

@@ -22,7 +22,8 @@ public class MunitRuntimeExtension {
     private MunitRuntimeExtension() {
         IConfigurationElement[] configurationElementsFor = Platform.getExtensionRegistry().getConfigurationElementsFor("org.mule.tooling.ui.contribution.munit.munitRuntime");
         for (IConfigurationElement configElement : configurationElementsFor) {
-            MunitRuntime runtime = new MunitRuntime(configElement.getContributor().getName(), configElement.getAttribute("muleVersion"), configElement.getAttribute("munitVersion"));
+            MunitRuntime runtime = new MunitRuntime(configElement.getContributor().getName(), configElement.getAttribute("munitVersion"),
+                    configElement.getAttribute("minMuleVersion"), configElement.getAttribute("maxMuleVersion"));
 
             for (IConfigurationElement library : configElement.getChildren()) {
                 MunitLibrary munitLibrary = new MunitLibrary(library.getAttribute("path"));
@@ -39,7 +40,7 @@ public class MunitRuntimeExtension {
 
     public MunitRuntime getMunitRuntimeFor(IMuleProject muleProject) {
         for (MunitRuntime runtime : runtimes) {
-            if (runtime.accepts(muleProject.getRuntimeId())) {
+            if (runtime.accepts(muleProject.getServerDefinition())) {
                 return runtime;
             }
         }
