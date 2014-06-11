@@ -22,6 +22,12 @@
 			<groupId>org.mule.tools.devkit</groupId>
 			<artifactId>mule-devkit-annotations-processor</artifactId>
 			<version>${devkit-version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>tools</artifactId>
+					<groupId>com.sun</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.tools.devkit</groupId>
@@ -75,21 +81,45 @@
 			<groupId>org.mule.tools.devkit</groupId>
 			<artifactId>mule-devkit-generation-api</artifactId>
 			<version>${devkit-version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>tools</artifactId>
+					<groupId>com.sun</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.tools.devkit</groupId>
 			<artifactId>mule-devkit-schema-model</artifactId>
 			<version>${devkit-version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>tools</artifactId>
+					<groupId>com.sun</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.tools.devkit</groupId>
 			<artifactId>mule-devkit-studio-model</artifactId>
 			<version>${devkit-version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>tools</artifactId>
+					<groupId>com.sun</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.tools.devkit</groupId>
 			<artifactId>mule-devkit-code-model</artifactId>
 			<version>${devkit-version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>tools</artifactId>
+					<groupId>com.sun</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.mule.tools.devkit</groupId>
