@@ -2,7 +2,9 @@ package org.mule.tooling.ui.contribution.debugger.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -10,32 +12,35 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.io.FileUtils;
 import org.mule.tooling.core.event.EventBus;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.ui.contribution.debugger.controller.events.SnapshotClearedEvent;
 import org.mule.tooling.ui.contribution.debugger.controller.events.SnapshotRemovedEvent;
 import org.mule.tooling.ui.contribution.debugger.controller.events.SnapshotTakenEvent;
-import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDescriptor;
+import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDecorator;
 import org.mule.tooling.ui.widgets.util.SilentRunner;
 
 import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 
 public class MessageSnapshotService {
 
-    private List<MessageSnapshotDescriptor> snapshots;
+    private List<MessageSnapshotDecorator> snapshots;
     private EventBus eventBus;
     private IMuleProject muleProject;
 
     public MessageSnapshotService(EventBus eventBus) {
         this.eventBus = eventBus;
-        snapshots = new ArrayList<MessageSnapshotDescriptor>();
+        snapshots = new ArrayList<MessageSnapshotDecorator>();
     }
 
     public void loadAllFromProject(IMuleProject muleProject) {
-        store();
-        this.muleProject = muleProject;
-        File snapshots = getSnapshotsFolder(muleProject);
-        loadContent(snapshots);
+        if (muleProject != this.muleProject) {
+            store();
+            this.muleProject = muleProject;
+            File snapshots = getSnapshotsFolder(muleProject);
+            loadContent(snapshots);
+        }
     }
 
     public File getSnapshotsFolder(IMuleProject muleProject) {
@@ -54,19 +59,11 @@ public class MessageSnapshotService {
         if (listFiles != null) {
             for (final File snapshot : listFiles) {
                 if (snapshot.isFile()) {
-
                     final MessageSnapshot messageSnapshot = SilentRunner.run(new Callable<MessageSnapshot>() {
 
                         @Override
                         public MessageSnapshot call() throws Exception {
-                            final ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(snapshot));
-                            try {
-                                final Object readObject = objectInputStream.readObject();
-                                return (MessageSnapshot) (readObject instanceof MessageSnapshot ? readObject : null);
-                            } finally {
-                                objectInputStream.close();
-                            }
-
+                            return load(snapshot);
                         }
                     }, null);
                     addSnaphost(snapshot.getName(), messageSnapshot);
@@ -79,28 +76,20 @@ public class MessageSnapshotService {
     public void store() {
         if (muleProject != null) {
             final File snapshots = getSnapshotsFolder(muleProject);
-            final File[] listFiles = snapshots.listFiles();
-            if (listFiles != null) {
-                for (File file : listFiles) {
-                    if (file.isFile()) {
-                        file.delete();
-                    }
-                }
+            try {
+                FileUtils.deleteDirectory(snapshots);
+            } catch (IOException e) {
+
             }
-            List<MessageSnapshotDescriptor> allDefinedSnapshots = getAllDefinedSnapshots();
-            for (final MessageSnapshotDescriptor entry : allDefinedSnapshots) {
+            snapshots.mkdirs();
+            List<MessageSnapshotDecorator> allDefinedSnapshots = getAllDefinedSnapshots();
+            for (final MessageSnapshotDecorator entry : allDefinedSnapshots) {
                 final File snapshotFile = new File(snapshots, entry.getName());
                 SilentRunner.run(new Callable<Void>() {
 
                     @Override
                     public Void call() throws Exception {
-                        final ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(snapshotFile));
-                        try {
-                            objectOutputStream.writeObject(entry.getSnapshot());
-                            objectOutputStream.flush();
-                        } finally {
-                            objectOutputStream.close();
-                        }
+                        store(entry.getSnapshot(), snapshotFile);
                         return null;
                     }
                 }, null);
@@ -115,13 +104,13 @@ public class MessageSnapshotService {
     }
 
     public void addSnaphost(String name, MessageSnapshot snapshot) {
-        final MessageSnapshotDescriptor messageSnapshotDescriptor = new MessageSnapshotDescriptor(name, muleProject, snapshot);
+        final MessageSnapshotDecorator messageSnapshotDescriptor = new MessageSnapshotDecorator(name, muleProject, snapshot);
         this.snapshots.add(messageSnapshotDescriptor);
         this.eventBus.fireEvent(new SnapshotTakenEvent(messageSnapshotDescriptor));
     }
 
     public MessageSnapshot getSnapshot(String name) {
-        for (MessageSnapshotDescriptor messageSnapshot : snapshots) {
+        for (MessageSnapshotDecorator messageSnapshot : snapshots) {
             if (messageSnapshot.getName().equals(name)) {
                 return messageSnapshot.getSnapshot();
             }
@@ -129,8 +118,8 @@ public class MessageSnapshotService {
         return null;
     }
 
-    public MessageSnapshotDescriptor getSnapshotDescriptor(String name) {
-        for (MessageSnapshotDescriptor messageSnapshot : snapshots) {
+    public MessageSnapshotDecorator getSnapshotDescriptor(String name) {
+        for (MessageSnapshotDecorator messageSnapshot : snapshots) {
             if (messageSnapshot.getName().equals(name)) {
                 return messageSnapshot;
             }
@@ -139,15 +128,36 @@ public class MessageSnapshotService {
     }
 
     public void removeSnapshot(String name) {
-        MessageSnapshotDescriptor snapshot = getSnapshotDescriptor(name);
+        MessageSnapshotDecorator snapshot = getSnapshotDescriptor(name);
         if (snapshot != null) {
             this.snapshots.remove(name);
             this.eventBus.fireEvent(new SnapshotRemovedEvent(snapshot));
         }
     }
 
-    public List<MessageSnapshotDescriptor> getAllDefinedSnapshots() {
+    public List<MessageSnapshotDecorator> getAllDefinedSnapshots() {
         return Collections.unmodifiableList(snapshots);
+    }
+
+    public static MessageSnapshot load(final File snapshot) throws IOException, FileNotFoundException, ClassNotFoundException {
+        final ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(snapshot));
+        try {
+            final Object readObject = objectInputStream.readObject();
+            return (MessageSnapshot) (readObject instanceof MessageSnapshot ? readObject : null);
+        } finally {
+            objectInputStream.close();
+        }
+    }
+
+    public static void store(final MessageSnapshot snapshot, final File snapshotFile) throws IOException, FileNotFoundException {
+        final ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(snapshotFile));
+        try {
+            objectOutputStream.writeObject(snapshot);
+            objectOutputStream.flush();
+        } finally {
+            objectOutputStream.close();
+        }
+
     }
 
 }

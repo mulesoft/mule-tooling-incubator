@@ -8,21 +8,16 @@ import org.mule.tooling.ui.contribution.debugger.controller.DebuggerEventTypes;
 import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerConnectedHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerDisconnectedHandler;
+import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDecorator;
 import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
-import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
 import org.mule.tooling.ui.contribution.debugger.view.IMuleSnapshotEditor;
-
-import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 
 public class ReplayFromMessageProcessorAction extends Action {
 
     private IMuleSnapshotEditor editor;
-    private MessageSnapshotService snaphotService;
-
-    public ReplayFromMessageProcessorAction(final IMuleSnapshotEditor editor, MessageSnapshotService snapshotService) {
+    public ReplayFromMessageProcessorAction(final IMuleSnapshotEditor editor) {
         super();
         this.editor = editor;
-        snaphotService = snapshotService;
         setImageDescriptor(ReplayImages.getDebuggerImages().getImageDescriptor(ReplayImages.PLAY));
         setText("Replay From Message Processor");
         this.setEnabled(false);
@@ -62,10 +57,9 @@ public class ReplayFromMessageProcessorAction extends Action {
 
     @Override
     public void run() {
-        IStructuredSelection selection = (IStructuredSelection) editor.getSnapshotTable().getSelection();
-        String snapshotName = (String) selection.getFirstElement();
-        MessageSnapshot snapshot = snaphotService.getSnapshot(snapshotName);
-        new ReplayFromProcessorCommand(snapshot).execute();
+        final IStructuredSelection selection = (IStructuredSelection) editor.getSnapshotTable().getSelection();
+        final MessageSnapshotDecorator snapshotDescriptor = (MessageSnapshotDecorator) selection.getFirstElement();
+        new ReplayFromProcessorCommand(snapshotDescriptor.getSnapshot()).execute();
     }
 
 }

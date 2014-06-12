@@ -4,7 +4,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 import org.mule.tooling.incubator.replay.ReplayPlugin;
-
 import org.osgi.framework.Bundle;
 
 public class ReplayImages {
@@ -14,6 +13,10 @@ public class ReplayImages {
     public static String REPLAY = "icons/replay-16x16.png";
     public static String PLAY = "icons/play-16x16.png";
     public static String DUPLICATE = "icons/copy-16x16.png";
+    public static String DELETE = "icons/delete-16x16.png";
+    public static String EXPORT = "icons/export-16x16.png";
+    public static String IMPORT = "icons/import-16x16.png";
+    
 
     private static ReplayImages instance = null;
 

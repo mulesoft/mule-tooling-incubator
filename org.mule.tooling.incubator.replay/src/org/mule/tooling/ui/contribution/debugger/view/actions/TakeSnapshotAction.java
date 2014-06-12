@@ -7,8 +7,8 @@ import org.mule.tooling.ui.contribution.debugger.controller.DebuggerEventTypes;
 import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerConnectedHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerDisconnectedHandler;
-import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
 import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
+import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
 import org.mule.tooling.ui.contribution.debugger.view.impl.CreateSnapshotDialog;
 
 import com.mulesoft.mule.debugger.client.DebuggerClient;

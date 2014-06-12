@@ -3,7 +3,7 @@ package org.mule.tooling.ui.contribution.debugger.controller;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDescriptor;
+import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDecorator;
 
 public class MessageSnapshotLabelProvider extends LabelProvider implements ITableLabelProvider {
 
@@ -15,7 +15,7 @@ public class MessageSnapshotLabelProvider extends LabelProvider implements ITabl
 
     @Override
     public String getColumnText(Object element, int columnIndex) {        
-        MessageSnapshotDescriptor messageSnapshot = (MessageSnapshotDescriptor) element;
+        MessageSnapshotDecorator messageSnapshot = (MessageSnapshotDecorator) element;
         switch (columnIndex) {
         case 0:
             return messageSnapshot.getName();

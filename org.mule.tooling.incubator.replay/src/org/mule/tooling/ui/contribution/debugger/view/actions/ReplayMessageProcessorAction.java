@@ -8,21 +8,17 @@ import org.mule.tooling.ui.contribution.debugger.controller.DebuggerEventTypes;
 import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerConnectedHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.IDebuggerDisconnectedHandler;
+import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDecorator;
 import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
-import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
 import org.mule.tooling.ui.contribution.debugger.view.IMuleSnapshotEditor;
-
-import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 
 public class ReplayMessageProcessorAction extends Action {
 
     private IMuleSnapshotEditor editor;
-    private MessageSnapshotService snaphotService;
 
-    public ReplayMessageProcessorAction(final IMuleSnapshotEditor editor, MessageSnapshotService snapshotService) {
+    public ReplayMessageProcessorAction(final IMuleSnapshotEditor editor) {
         super();
         this.editor = editor;
-        snaphotService = snapshotService;
         setImageDescriptor(ReplayImages.getDebuggerImages().getImageDescriptor(ReplayImages.REPLAY));
         setText("Replay Message Processor");
         this.setEnabled(false);
@@ -32,7 +28,6 @@ public class ReplayMessageProcessorAction extends Action {
             @Override
             public void selectionChanged(SelectionChangedEvent event) {
                 setEnabled(checkCanBeEnabled(editor, debuggerService));
-
             }
         });
 
@@ -56,11 +51,9 @@ public class ReplayMessageProcessorAction extends Action {
 
     @Override
     public void run() {
-        IStructuredSelection selection = (IStructuredSelection) editor.getSnapshotTable().getSelection();
-        String snapshotName = (String) selection.getFirstElement();
-
-        MessageSnapshot snapshot = snaphotService.getSnapshot(snapshotName);
-        new ReplayProcessorCommand(snapshot).execute();
+        final IStructuredSelection selection = (IStructuredSelection) editor.getSnapshotTable().getSelection();
+        final MessageSnapshotDecorator snapshotDecorator = (MessageSnapshotDecorator) selection.getFirstElement();
+        new ReplayProcessorCommand(snapshotDecorator.getSnapshot()).execute();
     }
 
     protected boolean checkCanBeEnabled(final IMuleSnapshotEditor editor, final MuleDebuggerService debuggerService) {

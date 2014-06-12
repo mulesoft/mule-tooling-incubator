@@ -14,6 +14,8 @@ public class ReplayPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static ReplayPlugin plugin;
+
+    public static final String MSNAP_EXTENSION = ".msnap";
 	
 	/**
 	 * The constructor

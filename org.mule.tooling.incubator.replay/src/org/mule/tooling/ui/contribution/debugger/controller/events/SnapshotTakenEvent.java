@@ -2,15 +2,13 @@ package org.mule.tooling.ui.contribution.debugger.controller.events;
 
 import org.mule.tooling.core.event.EventType;
 import org.mule.tooling.core.event.IEvent;
-import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDescriptor;
-
-import com.mulesoft.mule.debugger.commons.MessageSnapshot;
+import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDecorator;
 
 public class SnapshotTakenEvent implements IEvent<ISnapshotTakenHandler> {
 
-    private MessageSnapshotDescriptor snapshot;
+    private MessageSnapshotDecorator snapshot;
 
-    public SnapshotTakenEvent( MessageSnapshotDescriptor snapshot) {
+    public SnapshotTakenEvent( MessageSnapshotDecorator snapshot) {
         super();
         this.snapshot = snapshot;
         

@@ -23,7 +23,7 @@ import org.mule.tooling.ui.contribution.debugger.controller.events.ISnapshotClea
 import org.mule.tooling.ui.contribution.debugger.controller.events.ISnapshotRemovedHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.ISnapshotTakenHandler;
 import org.mule.tooling.ui.contribution.debugger.controller.events.SnapshotEventTypes;
-import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDescriptor;
+import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDecorator;
 import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
 import org.mule.tooling.ui.contribution.debugger.utils.FlowEditorEntityEditPartPair;
 import org.mule.tooling.ui.contribution.debugger.utils.MuleDebuggerUtils;
@@ -56,7 +56,7 @@ public class MuleSnapshotsController {
         eventBus.registerUIThreadListener(SnapshotEventTypes.SNAPSHOT_TAKEN, new ISnapshotTakenHandler() {
 
             @Override
-            public void onSnapshotTaken(MessageSnapshotDescriptor snapshot) {
+            public void onSnapshotTaken(MessageSnapshotDecorator snapshot) {
                 editor.getSnapshotTable().add(snapshot);
             }
         });
@@ -72,7 +72,7 @@ public class MuleSnapshotsController {
         eventBus.registerUIThreadListener(SnapshotEventTypes.SNAPSHOT_REMOVED, new ISnapshotRemovedHandler() {
 
             @Override
-            public void onSnapshotRemoved(MessageSnapshotDescriptor snapshot) {
+            public void onSnapshotRemoved(MessageSnapshotDecorator snapshot) {
                 editor.getSnapshotTable().remove(snapshot);
             }
 
@@ -102,7 +102,7 @@ public class MuleSnapshotsController {
             public void open(OpenEvent event) {
                 IStructuredSelection selection = (IStructuredSelection) event.getSelection();
                 if (!selection.isEmpty()) {
-                    final MessageSnapshotDescriptor snapshotDescriptor = (MessageSnapshotDescriptor) selection.getFirstElement();
+                    final MessageSnapshotDecorator snapshotDescriptor = (MessageSnapshotDecorator) selection.getFirstElement();
                     StudioDesignContextRunner.runSilentWithMuleProject(new Callable<Void>() {
 
                         @Override
@@ -128,7 +128,7 @@ public class MuleSnapshotsController {
             public void selectionChanged(SelectionChangedEvent event) {
                 if (!event.getSelection().isEmpty()) {
                     final IStructuredSelection structuredSelection = (IStructuredSelection) event.getSelection();
-                    final MessageSnapshotDescriptor snapshotDescriptor = (MessageSnapshotDescriptor) structuredSelection.getFirstElement();
+                    final MessageSnapshotDecorator snapshotDescriptor = (MessageSnapshotDecorator) structuredSelection.getFirstElement();
                     final MessageSnapshot snapshot = snapshotDescriptor.getSnapshot();
                     final IObjectFactory<?> payload = snapshot.getPayload();
                     final String appName = snapshot.getAppName();

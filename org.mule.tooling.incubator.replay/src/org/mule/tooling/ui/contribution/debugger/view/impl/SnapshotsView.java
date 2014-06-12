@@ -12,10 +12,13 @@ import org.mule.tooling.core.event.EventBus;
 import org.mule.tooling.core.event.IMuleProjectChangedListener;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.ui.contribution.debugger.controller.MuleSnapshotsController;
-import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
 import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
+import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
 import org.mule.tooling.ui.contribution.debugger.view.IMuleSnapshotEditor;
+import org.mule.tooling.ui.contribution.debugger.view.actions.DeleteMessageSnapshotAction;
 import org.mule.tooling.ui.contribution.debugger.view.actions.DuplicateSnapshotAction;
+import org.mule.tooling.ui.contribution.debugger.view.actions.ExportMessageSnapshotAction;
+import org.mule.tooling.ui.contribution.debugger.view.actions.ImportMessageSnapshotAction;
 import org.mule.tooling.ui.contribution.debugger.view.actions.ReplayFromMessageProcessorAction;
 import org.mule.tooling.ui.contribution.debugger.view.actions.ReplayMessageProcessorAction;
 import org.mule.tooling.ui.contribution.debugger.view.actions.TakeSnapshotAction;
@@ -60,10 +63,13 @@ public class SnapshotsView extends ViewPart {
     public void createToolBar(IMuleSnapshotEditor editor, MessageSnapshotService snaphotService) {
         IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
         mgr.add(new TakeSnapshotAction(snaphotService));
-        mgr.add(new ReplayFromMessageProcessorAction(editor, snaphotService));
-        mgr.add(new ReplayMessageProcessorAction(editor, snaphotService));
-      // mgr.add(new EditSnapshotAction(editor, snaphotService));
+        mgr.add(new ReplayFromMessageProcessorAction(editor));
+        mgr.add(new ReplayMessageProcessorAction(editor));
+        // mgr.add(new EditSnapshotAction(editor, snaphotService));
         mgr.add(new DuplicateSnapshotAction(editor, snaphotService));
+        mgr.add(new ExportMessageSnapshotAction(editor));
+        mgr.add(new ImportMessageSnapshotAction(snaphotService));
+        mgr.add(new DeleteMessageSnapshotAction(editor,snaphotService));
 
     }
 

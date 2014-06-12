@@ -4,13 +4,13 @@ import org.mule.tooling.core.model.IMuleProject;
 
 import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 
-public class MessageSnapshotDescriptor {
+public class MessageSnapshotDecorator {
 
     private String name;
     private MessageSnapshot snapshot;
     private IMuleProject project;
 
-    public MessageSnapshotDescriptor(String name, IMuleProject project, MessageSnapshot snapshot) {
+    public MessageSnapshotDecorator(String name, IMuleProject project, MessageSnapshot snapshot) {
         super();
         this.name = name;
         this.project = project;
@@ -45,7 +45,7 @@ public class MessageSnapshotDescriptor {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MessageSnapshotDescriptor other = (MessageSnapshotDescriptor) obj;
+        MessageSnapshotDecorator other = (MessageSnapshotDecorator) obj;
         if (name == null) {
             if (other.name != null)
                 return false;
