@@ -78,8 +78,8 @@ public class ConnectorImportWizzardPage extends WizardPage {
 
     public ConnectorImportWizzardPage(IJavaProject selected) {
         super(PAGE_ID);
-        setTitle("Import AnyPoint Connector Project");
-        setDescription("Import an existing AnyPoint Connector");
+        setTitle("Import Anypoint Connector Project");
+        setDescription("Import an existing Anypoint Connector");
 
         fieldsWithHistory = new HashMap<String, List<Combo>>();
         root = new MavenInfo();
