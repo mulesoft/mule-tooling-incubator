@@ -3,6 +3,7 @@ package org.mule.tooling.devkit.popup.actions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -15,6 +16,8 @@ import org.mule.tooling.devkit.wizards.GenerateTestWizard;
 
 public class GenerateTestsCommand extends AbstractMavenCommandRunner {
 
+    private static final String TEST_FLOWS_XML = "src/test/resources/generated/automation-test-flows.xml";
+    private static final String SPRING_BEANS_XML = "src/test/resources/generated/AutomationSpringBeans.xml";
     private final String generateAll = "all";
     private final String generateInterop = "interop";
     private final String generateFunctional = "functional";
@@ -82,7 +85,6 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
     private Boolean getConfigurationAndContinue(IProject selectedProject) {
         
         GenerateTestWizard wizard = new GenerateTestWizard(selectedProject);
-        Shell activeShell = Display.getCurrent().getActiveShell();
         WizardDialog wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(), wizard) {
                     @Override
                     protected void configureShell(Shell newShell) {
@@ -92,38 +94,49 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
             };
         int returnStatus = wizardDialog.open(); 
         
-        boolean skip = (returnStatus != 0);
-
-        if (skip) 
-            return skip;
+        if (returnStatus == 1) 
+            return false;
         
-        ExportTypeSelectionDialog selectionDialog;
         this.testdataDto = wizard.getRunConfig();
-        if (testdataDto.selectedFunctional()) {  
-            if (selectedProject.getFile("src/test/resources/generated/AutomationSpringBeans.xml").exists() ||
-                selectedProject.getFile("src/test/resources/generated/automation-test-flows.xml").exists()) {
-                
-                selectionDialog = new ExportTypeSelectionDialog(activeShell, "AutomationSpringBeans.xml");
-                skip = (selectionDialog.open() == 1);
-                testdataDto.setExportFunctionalPolicy(selectionDialog.getSelectedPolicy());
-                
-            }
-        }
+        
+        boolean skipFunctional = verifyFunctionalExportPolicy(selectedProject);
+        boolean skipInterop = verifyInteropExportPolicy(selectedProject);
+        
+        return ( !(skipFunctional && skipInterop) &&
+                 (testdataDto.selectedFunctional() || testdataDto.selectedInterop() || testdataDto.selectedScafolding()));
+    }
 
+    private boolean verifyInteropExportPolicy(IProject selectedProject) {
+        boolean skip = false;
+        ExportTypeSelectionDialog selectionDialog;
         if (testdataDto.selectedInterop()) {
             if (selectedProject.getFile("src/test/resources/generated/"+testdataDto.getOutputFile()).exists() || 
                 selectedProject.getFile("src/test/resources/generated/"+testdataDto.getOutputFile().replace(".xml", ".-override.xml")).exists()) {
                 
-                selectionDialog = new ExportTypeSelectionDialog(activeShell, "TestData.xml");
+                selectionDialog = new ExportTypeSelectionDialog(Display.getCurrent().getActiveShell(), "Interop files");
                 skip = (selectionDialog.open() == 1);
                 testdataDto.setExportInteropPolicy(selectionDialog.getSelectedPolicy());    
             }
         }
         
-        return ((!skip) && 
-                (testdataDto.selectedFunctional() || testdataDto.selectedInterop() || testdataDto.selectedScafolding()));
+        return skip;
     }
 
+    public boolean verifyFunctionalExportPolicy(IProject selectedProject) {
+        boolean skip = false;
+        ExportTypeSelectionDialog selectionDialog;
+        if (testdataDto.selectedFunctional()) {  
+            if (selectedProject.getFile(SPRING_BEANS_XML).exists() || selectedProject.getFile(TEST_FLOWS_XML).exists()) {
+                
+                selectionDialog = new ExportTypeSelectionDialog(Display.getCurrent().getActiveShell(), "Functional files");
+                skip = (selectionDialog.open() == 1);
+                testdataDto.setExportFunctionalPolicy(selectionDialog.getSelectedPolicy());
+            }
+        }
+        return skip;
+    }
+
+    
     private String getGenerationType() {
 
         if (testdataDto.selectedFunctional() && testdataDto.selectedInterop())

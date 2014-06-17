@@ -1,16 +1,26 @@
 package org.mule.tooling.devkit.wizards;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -21,6 +31,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
@@ -29,6 +40,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
+import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.common.TestDataModelDto;
 import org.mule.tooling.devkit.common.TestDataModelDto.ExportPolicy;
@@ -37,11 +50,7 @@ import org.mule.tooling.ui.utils.UiUtils;
 
 public class GenerateTestWizardPage extends WizardPage {
 
-    private static final String pageName = "asasdasdasdad";
-
-    private static final String TITTLE = "Generate Tests";
-    private static final String SUBTITLE = "Generate Tests for your Anypoint Connector";
-
+    private static final String GENERAL_MESSAGE = "Select the operation and type of generation to be performed";
     private static final String GROUP_TITTLE_FUNCTIONAL_TESTCASES = "Functional Tests";
     private static final String GROUP_TITLE_INTEROP_INPUT = "Studio Interop Tests";
 
@@ -71,9 +80,9 @@ public class GenerateTestWizardPage extends WizardPage {
     private Group interopGroup;
 
     public GenerateTestWizardPage(IProject selectedProject, TestDataModelDto dataModel) {
-        super(pageName);
-        setTitle("Create an Anypoint Connector");
-        setDescription("Enter a connector name");
+        super("Generation Options");
+        setTitle("Test Scaffolding Generation");
+        setDescription(GENERAL_MESSAGE);
         
         this.dataModel = dataModel != null ? new TestDataModelDto(dataModel) : new TestDataModelDto();
         this.project = selectedProject;
@@ -144,11 +153,15 @@ public class GenerateTestWizardPage extends WizardPage {
     }
 
     private void initializeFields() {
-        txtOutputFileName.setEnabled(false);
-        txtCredsFile.setEnabled(false);
-        browserButton.setEnabled(false);
-//        functionalGroup.setEnabled(false);
-//        interopGroup.setEnabled(false);
+        setControlsEnable(false, functionalGroup.getChildren());
+        setControlsEnable(false, interopGroup.getChildren());
+        setPageComplete(false);
+    }
+    
+    private void setControlsEnable(boolean enabled, Control... controls){
+        for (Control part : controls){
+            part.setEnabled(enabled);
+        }
     }
 
     private void createNameInput(Composite container) {
@@ -172,7 +185,21 @@ public class GenerateTestWizardPage extends WizardPage {
 
         txtCredsFile = new Text(container, SWT.BORDER);
         txtCredsFile.setLayoutData(dataFileName);
-        // txtCredsFile.setText(credentialsDefault); TODO
+
+        txtCredsFile.addModifyListener(new ModifyListener() {
+
+            public void modifyText(ModifyEvent e) {
+                String text = ((Text) e.widget).getText();
+
+                if (!text.isEmpty() && !new File(text).exists()) {
+                    setMessage("Invalid credentials file. File does not exist", IMessageProvider.ERROR);
+                    setPageComplete(false);
+                } else {
+                    setMessage(GENERAL_MESSAGE, IMessageProvider.INFORMATION);
+                    setPageComplete(true);
+                }
+            }
+        });
     }
 
     private void createBrowser(Composite container) {
@@ -196,7 +223,7 @@ public class GenerateTestWizardPage extends WizardPage {
                 fileDialog.setFilterNames(new String[] { "Properties(*.properties)" });
 
                 String selected = fileDialog.open();
-
+                
                 txtCredsFile.setText(selected);
             }
         });
@@ -294,6 +321,12 @@ public class GenerateTestWizardPage extends WizardPage {
         viewer.getControl().setLayoutData(gridData);
 
         viewer.setContentProvider(ArrayContentProvider.getInstance());
+        viewer.setComparator(new ViewerComparator() {
+          public int compare(Viewer viewer, Object e1, Object e2) {
+            return ((String) e1).compareTo((String) e2);
+          };
+        });
+        
         viewer.setInput(input);
         viewer.setLabelProvider(new LabelProvider() {
 
@@ -307,18 +340,36 @@ public class GenerateTestWizardPage extends WizardPage {
             public void handleEvent(Event event) {
               if (event.detail == SWT.CHECK) {
                 if (viewer.getCheckedElements().length > 0){  
-                    functionalGroup.setEnabled(true);
-                    interopGroup.setEnabled(true);
+                    enableGlobalFields();
+
                 }else{
-                    functionalGroup.setEnabled(true);
-                    interopGroup.setEnabled(true);
+                    disableGlobalFields();
                 }
               }
             }
         });
-        
+    }
+    
+    private void disableGlobalFields() {
+        setControlsEnable(false, functionalGroup.getChildren());
+        setControlsEnable(false, interopGroup.getChildren());
+        setPageComplete(false);
     }
 
+    private void enableGlobalFields() {
+        setControlsEnable(true, functionalGroup.getChildren());
+        setControlsEnable(true, interopGroup.getChildren());
+        
+        setInteropInputEnable(false);
+        setPageComplete(true);
+    }
+
+    private void setInteropInputEnable(boolean enabled) {
+        txtCredsFile.setEnabled(enabled);
+        txtOutputFileName.setEnabled(enabled);
+        browserButton.setEnabled(enabled);
+    }
+    
     public void createTableSelectionButton(Composite container, String text, final Boolean setChecked) {
 
         Button button = new Button(container, SWT.PUSH);
@@ -335,21 +386,68 @@ public class GenerateTestWizardPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 viewer.setAllChecked(setChecked);
+                if (viewer.getCheckedElements().length > 0){  
+                    enableGlobalFields();
+
+                }else{
+                    disableGlobalFields();
+                    setMessage(GENERAL_MESSAGE);
+                }
             }
         });
     }
 
     private List<String> getProjectProcessorsNames() {
+        
         List<String> names = new LinkedList<String>();
-        for(MethodDeclaration proc : DevkitUtils.getProjectProcessors(project))
+        List<MethodDeclaration> methods = new ArrayList<MethodDeclaration>();
+        
+        try {
+            methods = DevkitUtils.getProjectProcessors(project);
+        
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            MessageDialog.openWarning(Display.getCurrent().getActiveShell(), "Connector not found", "Unable to find the connector class, please select one");
+            methods = getConnectorFromUserPrompt(methods);
+        }
+        
+        for (MethodDeclaration proc : methods)
             names.add(proc.getName().toString());
 
         return names;
     }
+
+    public List<MethodDeclaration> getConnectorFromUserPrompt(List<MethodDeclaration> methods) {
+        ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(Display.getCurrent().getActiveShell(), project.getFolder(DevkitUtils.MAIN_JAVA_FOLDER), IResource.FILE);
+        dialog.setTitle("Please select your connector's class");
+
+        while ((methods == null || methods.isEmpty()) && dialog.open() == 0){
+            
+            Object[] result = dialog.getResult();
+            
+            if (result != null){
+                IResource connectorResource = ((IResource) result[0]);
+                IJavaElement element = (IJavaElement) connectorResource.getAdapter(IJavaElement.class);
+                if (element.getElementType() == IJavaElement.COMPILATION_UNIT){ 
+                    try {
+                        methods = DevkitUtils.getProjectProcessors(ASTUtils.parse((ICompilationUnit) element));
+                    } catch (FileNotFoundException e1) {
+                        e1.printStackTrace();
+                    }
+                }    
+            }
+            
+            if (methods == null || methods.isEmpty()){
+                MessageDialog.openError(Display.getCurrent().getActiveShell(), "Invalid Connector", "No processors were found in the selected file");
+            }
+        }
+        return methods;
+    }
     
-    private void saveInput() {
+    private void saveInput(){
 
         dataModel.setCredentialsFile(txtCredsFile.getText());
+            
         dataModel.setOutputFile(txtOutputFileName.getText());
 
         dataModel.setSelectedScafolding(selectedScafolding);
@@ -372,5 +470,4 @@ public class GenerateTestWizardPage extends WizardPage {
         this.saveInput();
         return dataModel;
     }
-
 }

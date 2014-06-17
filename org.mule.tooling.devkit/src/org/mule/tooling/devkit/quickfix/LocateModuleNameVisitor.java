@@ -20,8 +20,9 @@ public class LocateModuleNameVisitor extends ASTVisitor {
 	}
 
 	public boolean visit(NormalAnnotation node) {
-		return node.getTypeName().toString().equals("Connector")
-				|| node.getTypeName().toString().equals("Module");
+		return node.getTypeName().toString().equals("Connector") ||
+		       node.getTypeName().toString().equals("org.mule.api.annotations.Connector") ||
+		       node.getTypeName().toString().equals("Module");
 	}
 
 	public boolean visit(MemberValuePair node) {

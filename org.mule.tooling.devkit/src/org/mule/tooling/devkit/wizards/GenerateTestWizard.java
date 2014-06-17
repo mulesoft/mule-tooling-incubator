@@ -12,9 +12,7 @@ import org.mule.tooling.devkit.common.TestDataModelDto;
 public class GenerateTestWizard extends AbstractDevkitProjectWizzard implements INewWizard {
 
     private GenerateTestWizardPage initPage;
-    private GenerateTestWizardPageAdvance advancedPage;
     private IProject selectedProject;
-    private IStructuredSelection workBenchSelection;
     private TestDataModelDto dataModel;
 
     public GenerateTestWizard(IProject project){
@@ -51,7 +49,6 @@ public class GenerateTestWizard extends AbstractDevkitProjectWizzard implements 
          return true;
     }
     
-    @SuppressWarnings("serial")
     public TestDataModelDto getRunConfig() {
         return dataModel;
     }

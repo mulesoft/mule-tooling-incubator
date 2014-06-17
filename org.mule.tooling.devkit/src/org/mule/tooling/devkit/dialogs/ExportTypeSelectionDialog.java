@@ -10,7 +10,7 @@ public class ExportTypeSelectionDialog extends MessageDialog {
     private static final String[] buttons = new String[] {"Update", "Skip", "Replace"};
     
     private static final String TITLE = "File Already Exists";
-    private static final String MESSAGE = "The file %s already exist, do you want to replace it?";
+    private static final String MESSAGE = "Some of the %s already exist, do you want to replace them?";
     
     private int result = -1;
     

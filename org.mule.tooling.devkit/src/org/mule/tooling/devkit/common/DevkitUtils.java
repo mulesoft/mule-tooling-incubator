@@ -1,5 +1,6 @@
 package org.mule.tooling.devkit.common;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -115,6 +116,11 @@ public class DevkitUtils {
         };
     }
     
+    public static CompilationUnit getConnectorClass(IProject selectedProject, IPath folderResource) {
+
+        return locateConnectorInResource(selectedProject, folderResource);
+    }
+    
     public static CompilationUnit getConnectorClass(IProject selectedProject) {
 
         IFolder folder = selectedProject.getFolder(DevkitUtils.MAIN_JAVA_FOLDER);
@@ -152,23 +158,31 @@ public class DevkitUtils {
                 }
             }
         } catch (CoreException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-        
+
         return null;
     }
+   
+    public static List<MethodDeclaration> getProjectProcessors(IProject selectedProject) throws FileNotFoundException {
+
+        CompilationUnit unit = DevkitUtils.getConnectorClass(selectedProject);
+        return getProjectProcessors(unit);
+    }
     
-    public static List<MethodDeclaration> getProjectProcessors(IProject selectedProject) {
+    public static List<MethodDeclaration> getProjectProcessors(CompilationUnit connector) throws FileNotFoundException {
         List<MethodDeclaration> processors = new ArrayList<MethodDeclaration>();
 
         MethodVisitor visitor = new MethodVisitor();
-        CompilationUnit unit = DevkitUtils.getConnectorClass(selectedProject);
-        if (unit != null)
-            unit.accept(visitor);
+        if (connector != null)
+            connector.accept(visitor);
         
         List<MethodDeclaration> methods = visitor.getMethods();
+        
+        if (methods == null){
+            throw new FileNotFoundException("Unable to locate the Connector's compilation unit");
+        }
+
         for (MethodDeclaration method : methods) {
             Iterator<IExtendedModifier> modifiers = method.modifiers().iterator();
             boolean isProcessor = false;

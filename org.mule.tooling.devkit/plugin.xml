@@ -243,11 +243,11 @@
                          icon="icons/install.gif"
                          style="push">
                 </command>
-                <command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
+                <!--<command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
                     label="Run Remote Interop"
                     icon="icons/run.png"
                     style="push">
-                </command>
+                </command>-->
                 <separator name="middleSection" visible="true">
                 </separator>
                 <command commandId="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
