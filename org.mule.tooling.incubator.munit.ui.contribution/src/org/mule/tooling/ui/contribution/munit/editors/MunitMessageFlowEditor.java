@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import javax.xml.bind.JAXBElement;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -84,13 +82,13 @@ public class MunitMessageFlowEditor extends MessageFlowEditor {
         EntityEditPart<?> editPart = ((EntityEditPart<?>) viewer.getContents());
         for (Object child : editPart.getChildren()) {
             if (child instanceof FlowEditPart) {
-                IFigure figure = ((EntityEditPart) child).getFigure();
+                IFigure figure = ((EntityEditPart<?>) child).getFigure();
                 figure.setVisible(!showTestsOnly);
 
                 if (showTestsOnly) {
-                    hideConnections((EntityEditPart) child);
+                    hideConnections((EntityEditPart<?>) child);
                 } else {
-                    showConnections((EntityEditPart) child);
+                    showConnections((EntityEditPart<?>) child);
                 }
 
             }
@@ -101,8 +99,8 @@ public class MunitMessageFlowEditor extends MessageFlowEditor {
 
             @Override
             public Void call() throws Exception {
-                ((EntityEditPart) viewer.getContents()).refresh();
-                ((EntityEditPart) viewer.getContents()).getFigure().repaint();
+                ((EntityEditPart<?>) viewer.getContents()).refresh();
+                ((EntityEditPart<?>) viewer.getContents()).getFigure().repaint();
                 return null;
             }
         }, project);
@@ -151,11 +149,11 @@ public class MunitMessageFlowEditor extends MessageFlowEditor {
     }
 
     public MuleConfiguration getProductionMuleConfiguration() {
-        List<JAXBElement<? extends MessageFlowEntity>> globalEntries = modelRoot.getEntity().getGlobalEntries();
+        List<? extends MessageFlowEntity> globalEntries = modelRoot.getEntity().getGlobalEntries();
 
         ImportedFilesVisitor visitor = new ImportedFilesVisitor();
-        for (JAXBElement<? extends MessageFlowEntity> globalEntry : globalEntries) {
-            globalEntry.getValue().accept(visitor);
+        for (MessageFlowEntity globalEntry : globalEntries) {
+            globalEntry.accept(visitor);
         }
 
         List<String> importedFiles = visitor.getFiles();

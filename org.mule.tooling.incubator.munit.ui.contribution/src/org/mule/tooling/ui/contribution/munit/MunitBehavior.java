@@ -2,8 +2,6 @@ package org.mule.tooling.ui.contribution.munit;
 
 import java.util.List;
 
-import javax.xml.bind.JAXBElement;
-
 import org.dom4j.Element;
 import org.mule.tooling.core.builder.container.ContainerBehavior;
 import org.mule.tooling.core.builder.messageflow.MuleToFlowTransformer;
@@ -30,7 +28,7 @@ public class MunitBehavior implements ContainerBehavior {
 
         for (Element element : elements) {
             NodeDefinition def = muleToFlowTransformer.getDefinitionForElement(element, runtimeVersion);
-            JAXBElement<? extends MessageFlowEntity> entity = muleToFlowTransformer.getPopulatedNode(element, muleConfiguration, def, runtimeVersion);
+            MessageFlowEntity entity = muleToFlowTransformer.getPopulatedNode(element, muleConfiguration, def, runtimeVersion);
 
             if (isMockOrSpyElement(element)) {
                 getSetupContainer(container, containerDefinition).getCompartmentLaneEntries().add(entity);

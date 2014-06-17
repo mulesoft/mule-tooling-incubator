@@ -3,8 +3,6 @@ package org.mule.tooling.ui.contribution.munit.extensions;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBElement;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -70,14 +68,13 @@ public class CreateNewExtension implements IMessageFlowNodeContextMenuProvider {
     }
 
     public boolean isImportedMuleConfiguraiton(MuleConfiguration muleConfiguration, String referencedFile) {
-        List<JAXBElement<? extends MessageFlowEntity>> globalEntries = muleConfiguration.getGlobalEntries();
-
-        ImportedFilesVisitor visitor = new ImportedFilesVisitor();
-        for (JAXBElement<? extends MessageFlowEntity> globalEntry : globalEntries) {
-            globalEntry.getValue().accept(visitor);
+        final List<? extends MessageFlowEntity> globalEntries = muleConfiguration.getGlobalEntries();
+        final ImportedFilesVisitor visitor = new ImportedFilesVisitor();
+        for (MessageFlowEntity globalEntry : globalEntries) {
+            globalEntry.accept(visitor);
         }
 
-        List<String> importedFiles = visitor.getFiles();
+        final List<String> importedFiles = visitor.getFiles();
 
         for (String importedFile : importedFiles) {
             if (importedFile.contains(referencedFile)) {
