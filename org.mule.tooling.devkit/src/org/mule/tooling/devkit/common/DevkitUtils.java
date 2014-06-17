@@ -1,21 +1,37 @@
 package org.mule.tooling.devkit.common;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.ui.internal.DefaultHelpUI;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.swt.widgets.Display;
+import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.popup.actions.DevkitCallback;
+import org.mule.tooling.devkit.quickfix.LocateModuleNameVisitor;
 import org.mule.tooling.ui.widgets.util.SilentRunner;
 
 public class DevkitUtils {
+    
+    public static final String PROCESSOR = "Processor";
 
     public static final String ICONS_FOLDER = "icons";
     public static final String DOCS_FOLDER = "doc";
@@ -98,5 +114,87 @@ public class DevkitUtils {
                 });
             };
         };
+    }
+    
+    public static CompilationUnit getConnectorClass(IProject selectedProject, IPath folderResource) {
+
+        return locateConnectorInResource(selectedProject, folderResource);
+    }
+    
+    public static CompilationUnit getConnectorClass(IProject selectedProject) {
+
+        IFolder folder = selectedProject.getFolder(DevkitUtils.MAIN_JAVA_FOLDER);
+
+        return locateConnectorInResource(selectedProject, folder.getProjectRelativePath());
+    }
+
+    private static CompilationUnit locateConnectorInResource(IProject project, IPath folderResource) {
+        
+        IFolder folder = project.getFolder(folderResource.makeRelative());
+        ICompilationUnit connectorElement = null;
+
+        try {
+            for (IResource resource : folder.members()) {
+                IJavaElement element = (IJavaElement) resource.getAdapter(IJavaElement.class);
+                if (element != null) {
+                    switch (element.getElementType()) {
+                        case IJavaElement.PACKAGE_FRAGMENT:
+                            System.out.println(element);
+                            return locateConnectorInResource(project, element.getPath().makeRelativeTo(folderResource));
+                       
+                        case IJavaElement.COMPILATION_UNIT:
+                            CompilationUnit connectorClass = ASTUtils.parse((ICompilationUnit) element);
+                            LocateModuleNameVisitor locator = new LocateModuleNameVisitor();
+                            connectorClass.accept(locator);
+                            if (!locator.getValue().isEmpty()) {
+                                connectorElement = (ICompilationUnit) element;
+                                return connectorClass;
+                            }
+                            break;
+                        default:
+                            System.out.println(element);
+                            break;
+                    }
+                }
+            }
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+   
+    public static List<MethodDeclaration> getProjectProcessors(IProject selectedProject) throws FileNotFoundException {
+
+        CompilationUnit unit = DevkitUtils.getConnectorClass(selectedProject);
+        return getProjectProcessors(unit);
+    }
+    
+    public static List<MethodDeclaration> getProjectProcessors(CompilationUnit connector) throws FileNotFoundException {
+        List<MethodDeclaration> processors = new ArrayList<MethodDeclaration>();
+
+        MethodVisitor visitor = new MethodVisitor();
+        if (connector != null)
+            connector.accept(visitor);
+        
+        List<MethodDeclaration> methods = visitor.getMethods();
+        
+        if (methods == null){
+            throw new FileNotFoundException("Unable to locate the Connector's compilation unit");
+        }
+
+        for (MethodDeclaration method : methods) {
+            Iterator<IExtendedModifier> modifiers = method.modifiers().iterator();
+            boolean isProcessor = false;
+            while(modifiers.hasNext() && !isProcessor){
+                IExtendedModifier modifier = modifiers.next(); 
+                if (modifier.isAnnotation())
+                    isProcessor = ((Annotation)modifier).getTypeName().toString().equals(PROCESSOR);
+            }
+            if (isProcessor)
+                processors.add(method);    
+        }
+        
+        return processors;
     }
 }
