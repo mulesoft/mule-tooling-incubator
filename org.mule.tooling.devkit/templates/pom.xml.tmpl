@@ -19,7 +19,7 @@
 #if( $isSoapWithCXF == true )
         <cxf.version>2.5.9</cxf.version>
         <cxf.version.boolean>2.6.0</cxf.version.boolean>
-        <connector.generator.version>1.0.3-SNAPSHOT</connector.generator.version>
+        <connector.generator.version>1.0.2-SNAPSHOT</connector.generator.version>
 #end
         <junit.version>4.9</junit.version>
         <mockito.version>1.8.2</mockito.version>
@@ -53,55 +53,64 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-codegen-plugin</artifactId>
-                <version>${cxf.version}</version>
-                <executions>
-                    <execution>
-                        <phase>clean</phase> <!-- This is so it work with the DEV Kit -->
-                        <goals>
-                            <goal>wsdl2java</goal>
-                        </goals>
-                        <configuration>
-                            <wsdlOptions>
-                                <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/wsdl/${wsdlFileName}.wsdl</wsdl>
-                                    <autoNameResolution>true</autoNameResolution>
-                                    <extraargs>
-                                        <extraarg>-xjc-Xbg</extraarg>
-                                        <extraarg>-xjc-Xcollection-setter-injector</extraarg>
-                                        <extraarg>-b</extraarg>
-                                        <extraarg>${basedir}/src/main/resources/wsdl/binding.xml</extraarg>
-                                        <extraarg>-p</extraarg>
-                                        <extraarg>${package}.api</extraarg>
-                                        <extraarg>-mark-generated</extraarg>
-                                        <extraarg>-exsh</extraarg>
-                                        <extraarg>true</extraarg>
-                                    </extraargs>
-                                </wsdlOption>
-                            </wsdlOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <!-- Boolean getters -->
-                    <dependency>
-                        <groupId>org.apache.cxf.xjcplugins</groupId>
-                        <artifactId>cxf-xjc-boolean</artifactId>
-                        <version>${cxf.version.boolean}</version>
-                    </dependency>
-                    <!-- Collection Setters -->
-                    <dependency>
-                        <groupId>net.java.dev.vcc.thirdparty</groupId>
-                        <artifactId>collection-setter-injector</artifactId>
-                        <version>0.5.0-1</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>cxf-generate</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- CXF Code generation -->
+                    <plugin>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-codegen-plugin</artifactId>
+                        <version>${cxf.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>clean</phase> <!-- This is so it work with the DEV Kit -->
+                                <goals>
+                                    <goal>wsdl2java</goal>
+                                </goals>
+                                <configuration>
+                                    <wsdlOptions>
+                                        <wsdlOption>
+                                            <wsdl>${basedir}/src/main/resources/wsdl/${wsdlFileName}.wsdl</wsdl>
+                                            <autoNameResolution>true</autoNameResolution>
+                                            <extendedSoapHeaders>true</extendedSoapHeaders>
+                                            <extraargs>
+                                                <extraarg>-xjc-Xbg</extraarg>
+                                                <extraarg>-xjc-Xcollection-setter-injector</extraarg>
+                                                <extraarg>-b</extraarg>
+                                                <extraarg>${basedir}/src/main/resources/wsdl/binding.xml</extraarg>
+                                                <extraarg>-p</extraarg>
+                                                <extraarg>${package}.api</extraarg>
+                                            </extraargs>
+                                        </wsdlOption>
+                                    </wsdlOptions>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <!-- Boolean getters -->
+                            <dependency>
+                                <groupId>org.apache.cxf.xjcplugins</groupId>
+                                <artifactId>cxf-xjc-boolean</artifactId>
+                                <version>${cxf.version.boolean}</version>
+                            </dependency>
+                            <!-- Collection Setters -->
+                            <dependency>
+                                <groupId>net.java.dev.vcc.thirdparty</groupId>
+                                <artifactId>collection-setter-injector</artifactId>
+                                <version>0.5.0-1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <!-- USE THIS PROFILE ONLY TO GENERATE THE BASE CODE -->
         <profile>
             <id>connector-generator</id>
@@ -123,7 +132,7 @@
                             <outputDirectory>${basedir}/src/main/java/</outputDirectory>
                             <connectorPackage>${package}</connectorPackage>
                             <className>${package}.api</className>
-                            <sourceRootDir>${basedir}/generated-sources/cxf</sourceRootDir>
+                            <sourceRootDir>${basedir}/target/generated-sources/cxf</sourceRootDir>
                             <skipGeneration>false</skipGeneration>
                             <overrideXmlHolder>false</overrideXmlHolder>
                             <expandLvl>2</expandLvl>

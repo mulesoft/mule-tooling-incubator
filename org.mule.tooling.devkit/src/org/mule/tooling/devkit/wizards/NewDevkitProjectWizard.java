@@ -46,6 +46,7 @@ import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
 import org.mule.tooling.devkit.template.ImageWriter;
 import org.mule.tooling.devkit.template.TemplateFileWriter;
@@ -92,7 +93,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
     @Override
     public boolean performFinish() {
-        final ConnectorMavenModel mavenModel = new ConnectorMavenModel(advancePage.getVersion(), advancePage.getGroupId(), advancePage.getArtifactId(), page.getCategory(),advancePage.getPackage());
+        final ConnectorMavenModel mavenModel = new ConnectorMavenModel(advancePage.getVersion(), advancePage.getGroupId(), advancePage.getArtifactId(), page.getCategory(),
+                advancePage.getPackage());
         mavenModel.setAddGitInformation(advancePage.getAddGitHubInfo());
         mavenModel.setGitConnection(advancePage.getConnection());
         mavenModel.setGitDevConnection(advancePage.getDevConnection());
@@ -128,6 +130,11 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                             }
                         }, IncrementalProjectBuilder.CLEAN_BUILD, new IProject[] { javaProject.getProject() });
                         projectBuild.run();
+                        javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+                    }
+                    if (isSoapWithCXF) {
+                        new BaseDevkitGoalRunner(new String[] { "clean", "compile", "-Pconnector-generator" }, javaProject).run(javaProject.getProject().getFile("pom.xml")
+                                .getRawLocation().toFile(), monitor);
                         javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
                     }
                 } catch (CoreException e) {
@@ -240,7 +247,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         }
         templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, new MavenParameterReplacer(mavenModel, runtimeId, connectorName, isSoapWithCXF, wsdlFileName));
         create(connectorName, monitor, getMainTemplatePath(), getTestResourcePath(), DevkitUtils.createConnectorNameFrom(connectorName), connectorPackage, project, classReplacer,
-                mavenModel.getAuthenticationType());
+                mavenModel.getAuthenticationType(),isSoapWithCXF);
 
         configureDevkitAPT(javaProject);
 
@@ -249,11 +256,13 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     }
 
     protected void create(String moduleName, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className, String packageName,
-            IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType) throws CoreException {
+            IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, boolean isSoapCxf) throws CoreException {
 
         TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
         ImageWriter imageWriter = new ImageWriter(project, monitor);
-        fileWriter.apply(mainTemplatePath, buildMainTargetFilePath(packageName, className), classReplacer);
+        if (!isSoapCxf) {
+            fileWriter.apply(mainTemplatePath, buildMainTargetFilePath(packageName, className), classReplacer);
+        }
         if (authenticationType.equals(AuthenticationType.BASIC) || authenticationType.equals(AuthenticationType.NONE)) {
             fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(moduleName), classReplacer);
             fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);

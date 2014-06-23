@@ -1,7 +1,9 @@
 package org.mule.tooling.devkit.wizards;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -132,6 +134,14 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         rootDirectoryCombo = new Combo(apiGroupBox, SWT.NONE);
         rootDirectoryCombo.setLayoutData(GridDataFactory.fillDefaults().span(1, 1).grab(true, false).create());
 
+        rootDirectoryCombo.addModifyListener(new ModifyListener(){
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                dialogChanged();
+            }
+            
+        });
         final Button buttonPickFile = new Button(apiGroupBox, SWT.NONE);
         buttonPickFile.setText("File...");
         buttonPickFile.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).create());
@@ -150,7 +160,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 String result = dialog.open();
                 if (result != null) {
                     rootDirectoryCombo.setText(result);
-
                 }
             }
         });
@@ -172,9 +181,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 String result = dialog.open();
                 if (result != null) {
                     rootDirectoryCombo.setText(result);
-
                 }
             }
+
         });
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0).applyTo(container);
         GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
@@ -298,6 +307,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         } else if (!connectorName.matcher(this.getName()).matches()) {
             updateStatus("The Name must start with an uppper case character followed by other alphanumeric characters.");
             return;
+        } else if(!isValidateFileOrFolder(this.rootDirectoryCombo.getText())){
+            updateStatus("The selected folder does not contains a wsdl file.");
+            return;
         }
 
         updateStatus(null);
@@ -394,4 +406,18 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         return AuthenticationType.fromLabel(comboAuthentication.getText());
     }
 
+    private boolean isValidateFileOrFolder(String result) {
+        File wsdlFileOrDirectory = new File(result);
+
+        if(!result.isEmpty() && !wsdlFileOrDirectory.exists()){
+            return false;
+        }
+        if (wsdlFileOrDirectory.isDirectory()) {
+            String[] files = wsdlFileOrDirectory.list(new SuffixFileFilter(".wsdl"));
+            if(files.length==0){
+                return false;
+            }
+        }
+        return true;
+    }
 }
