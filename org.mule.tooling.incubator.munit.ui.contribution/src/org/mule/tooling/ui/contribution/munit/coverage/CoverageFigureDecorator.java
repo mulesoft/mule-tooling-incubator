@@ -29,10 +29,8 @@ public class CoverageFigureDecorator implements IFigureDecoratorFactory {
     }
 
     @Override
-    public IFigureDecorator createDecorator(MessageFlowEntity entity) {
-        MessageFlowUtils messageFlowUtils = MessageFlowUtils.getInstance();
-
-        MessageFlowEntityRef path = messageFlowUtils.findMulePathForEntityInOpenEditors(entity);
+    public IFigureDecorator createDecorator(MessageFlowEntity entity) {        
+        MessageFlowEntityRef path = MessageFlowUtils.findMulePathForEntityInOpenEditors(entity);
         CoverageReport report = MunitTestRunnerViewPart.getCoverageReport();
         if (path == null || report == null) {
             return null;

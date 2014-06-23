@@ -1,6 +1,6 @@
 package org.mule.tooling.ui.contribution.debugger.controller.events;
 
-import org.mule.tooling.core.event.EventType;
+import org.mule.tooling.utils.eventbus.EventType;
 
 
 public class SnapshotEventTypes {

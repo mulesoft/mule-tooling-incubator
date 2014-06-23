@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeNode;
 import org.mule.tooling.core.StudioDesignContextRunner;
-import org.mule.tooling.core.event.EventBus;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.metadata.utils.MetadataUtils;
@@ -28,6 +27,7 @@ import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
 import org.mule.tooling.ui.contribution.debugger.utils.FlowEditorEntityEditPartPair;
 import org.mule.tooling.ui.contribution.debugger.utils.MuleDebuggerUtils;
 import org.mule.tooling.ui.contribution.debugger.view.IMuleSnapshotEditor;
+import org.mule.tooling.utils.eventbus.EventBus;
 
 import com.mulesoft.mule.debugger.commons.IObjectFactory;
 import com.mulesoft.mule.debugger.commons.MapObjectFactory;

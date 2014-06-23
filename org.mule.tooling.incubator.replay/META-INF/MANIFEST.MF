@@ -17,7 +17,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources;bundle-version="3.8.1",
  org.eclipse.ui.forms;bundle-version="3.5.200",
  org.mule.tooling.ui.widgets;bundle-version="3.5.0",
- org.mule.tooling.metadata;bundle-version="3.5.0"
+ org.mule.tooling.metadata;bundle-version="3.5.0",
+ org.mule.tooling.utils;bundle-version="4.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .

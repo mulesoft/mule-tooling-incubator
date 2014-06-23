@@ -48,7 +48,6 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.MuleRuntime;
-import org.mule.tooling.core.event.EventBusHelper;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.Pair;
 import org.mule.tooling.messageflow.events.RefreshRequestedEvent;
@@ -61,6 +60,7 @@ import org.mule.tooling.ui.contribution.munit.coverage.CoverageUpdatedEvent;
 import org.mule.tooling.ui.contribution.munit.coverage.ICoverageUpdatedHandler;
 import org.mule.tooling.ui.contribution.munit.editors.MunitMessageFlowEditor;
 import org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor;
+import org.mule.tooling.utils.eventbus.EventBusHelper;
 
 /**
  * <p>

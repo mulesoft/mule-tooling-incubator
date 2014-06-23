@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FileUtils;
-import org.mule.tooling.core.event.EventBus;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.ui.contribution.debugger.controller.events.SnapshotClearedEvent;
 import org.mule.tooling.ui.contribution.debugger.controller.events.SnapshotRemovedEvent;
 import org.mule.tooling.ui.contribution.debugger.controller.events.SnapshotTakenEvent;
 import org.mule.tooling.ui.contribution.debugger.model.MessageSnapshotDecorator;
-import org.mule.tooling.ui.widgets.util.SilentRunner;
+import org.mule.tooling.utils.SilentRunner;
+import org.mule.tooling.utils.eventbus.EventBus;
 
 import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 

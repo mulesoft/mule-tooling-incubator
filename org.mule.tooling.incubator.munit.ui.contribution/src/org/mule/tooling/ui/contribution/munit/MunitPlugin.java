@@ -21,12 +21,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.mule.tooling.core.event.EventBus;
 import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
 import org.mule.tooling.ui.contribution.munit.runner.MunitEclipseUpdater;
 import org.mule.tooling.ui.contribution.munit.runner.MunitModel;
 import org.mule.tooling.ui.contribution.munit.runner.MunitTestRunnerViewPart;
 import org.mule.tooling.ui.contribution.munit.runner.SuiteStatus;
+import org.mule.tooling.utils.eventbus.EventBus;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 

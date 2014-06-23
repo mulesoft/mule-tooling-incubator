@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.eclipse.core.runtime.Status;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 
 public class MunitEclipseUpdater implements Runnable {

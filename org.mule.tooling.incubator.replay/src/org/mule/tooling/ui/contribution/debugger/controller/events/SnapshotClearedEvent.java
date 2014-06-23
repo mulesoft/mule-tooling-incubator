@@ -1,7 +1,7 @@
 package org.mule.tooling.ui.contribution.debugger.controller.events;
 
-import org.mule.tooling.core.event.EventType;
-import org.mule.tooling.core.event.IEvent;
+import org.mule.tooling.utils.eventbus.EventType;
+import org.mule.tooling.utils.eventbus.IEvent;
 
 public class SnapshotClearedEvent implements IEvent<ISnapshotClearedHandler> {
 

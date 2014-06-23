@@ -25,7 +25,7 @@ import org.mule.tooling.metadata.utils.MetadataUtils;
 import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
 import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
 import org.mule.tooling.ui.contribution.debugger.view.IMuleSnapshotEditor;
-import org.mule.tooling.ui.widgets.util.SilentRunner;
+import org.mule.tooling.utils.SilentRunner;
 
 import com.mulesoft.mule.debugger.commons.MessageSnapshot;
 

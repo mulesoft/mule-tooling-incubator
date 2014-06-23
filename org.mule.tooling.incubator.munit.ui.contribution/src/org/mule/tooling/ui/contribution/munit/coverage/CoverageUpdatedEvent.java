@@ -1,8 +1,9 @@
 package org.mule.tooling.ui.contribution.munit.coverage;
 
-import org.mule.tooling.core.event.EventBus;
-import org.mule.tooling.core.event.EventType;
-import org.mule.tooling.core.event.IEvent;
+import org.mule.tooling.utils.eventbus.EventBus;
+import org.mule.tooling.utils.eventbus.EventType;
+import org.mule.tooling.utils.eventbus.IEvent;
+
 
 /**
  * <p>

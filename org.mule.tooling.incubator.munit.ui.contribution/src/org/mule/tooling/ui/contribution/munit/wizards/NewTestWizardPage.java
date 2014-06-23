@@ -9,9 +9,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,10 +29,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.mule.tooling.core.builder.MuleNature;
-import org.mule.tooling.core.impl.model.MuleProjectImpl;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.ui.MuleImages;
-import org.mule.tooling.ui.widgets.util.SilentRunner;
+import org.mule.tooling.utils.SilentRunner;
 
 public class NewTestWizardPage extends WizardPage {
 

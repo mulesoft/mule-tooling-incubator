@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.mule.tooling.incubator.replay.ReplayPlugin;
 import org.mule.tooling.ui.contribution.debugger.controller.ReplayImages;
 import org.mule.tooling.ui.contribution.debugger.service.MessageSnapshotService;
-import org.mule.tooling.ui.widgets.util.SilentRunner;
+import org.mule.tooling.utils.SilentRunner;
 
 public class ImportMessageSnapshotAction extends Action {
 

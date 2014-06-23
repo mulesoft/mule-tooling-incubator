@@ -8,7 +8,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.event.CoreEventTypes;
-import org.mule.tooling.core.event.EventBus;
 import org.mule.tooling.core.event.IMuleProjectChangedListener;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.ui.contribution.debugger.controller.MuleSnapshotsController;
@@ -22,6 +21,7 @@ import org.mule.tooling.ui.contribution.debugger.view.actions.ImportMessageSnaps
 import org.mule.tooling.ui.contribution.debugger.view.actions.ReplayFromMessageProcessorAction;
 import org.mule.tooling.ui.contribution.debugger.view.actions.ReplayMessageProcessorAction;
 import org.mule.tooling.ui.contribution.debugger.view.actions.TakeSnapshotAction;
+import org.mule.tooling.utils.eventbus.EventBus;
 
 public class SnapshotsView extends ViewPart {
 

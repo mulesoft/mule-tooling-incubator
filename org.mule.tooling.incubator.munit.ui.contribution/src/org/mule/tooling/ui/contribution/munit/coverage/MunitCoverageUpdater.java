@@ -5,8 +5,8 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.mule.tooling.core.event.EventBus;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
+import org.mule.tooling.utils.eventbus.EventBus;
 
 import com.google.gson.Gson;
 
