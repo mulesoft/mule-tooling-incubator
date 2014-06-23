@@ -55,7 +55,7 @@
       <id>amazon</id>
       <activation>
         <property>
-          <name>release</name>
+          <name>amazon</name>
         </property>
       </activation>
       <build>
