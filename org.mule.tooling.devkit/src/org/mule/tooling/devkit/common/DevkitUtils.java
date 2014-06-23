@@ -27,8 +27,9 @@ import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.popup.actions.DevkitCallback;
 import org.mule.tooling.devkit.quickfix.LocateModuleNameVisitor;
-import org.mule.tooling.ui.widgets.util.SilentRunner;
+import org.mule.tooling.utils.SilentRunner;
 
+@SuppressWarnings("restriction")
 public class DevkitUtils {
     
     public static final String PROCESSOR = "Processor";
@@ -41,6 +42,7 @@ public class DevkitUtils {
     public static final String MAIN_FLOWS_FOLDER = "flows";
     public static final String TEST_RESOURCES_FOLDER = "src/test/resources";
     public static final String GENERATED_SOURCES_FOLDER = "/target/generated-sources/mule";
+    public static final String CXF_GENERATED_SOURCES_FOLDER = "/target/generated-sources/cxf";
     public static final String MAIN_RESOURCES_FOLDER = "src/main/resources";
     public static final String MAIN_JAVA_FOLDER = "src/main/java";
     public static final String POM_FILENAME = "pom.xml";
@@ -94,7 +96,6 @@ public class DevkitUtils {
                     public void run() {
                         SilentRunner.run(new Runnable() {
 
-                            @SuppressWarnings("restriction")
                             @Override
                             public void run() {
                                 try {

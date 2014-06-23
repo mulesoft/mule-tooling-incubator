@@ -16,6 +16,11 @@
     </parent>
 
     <properties>
+#if( $isSoapWithCXF == true )
+        <cxf.version>2.5.9</cxf.version>
+        <cxf.version.boolean>2.6.0</cxf.version.boolean>
+        <connector.generator.version>1.0.3-SNAPSHOT</connector.generator.version>
+#end
         <junit.version>4.9</junit.version>
         <mockito.version>1.8.2</mockito.version>
         <jersey.version>1.16</jersey.version>
@@ -25,7 +30,122 @@
         <licensePath>LICENSE.md</licensePath>
         <devkit.studio.package.skip>false</devkit.studio.package.skip>
     </properties>
-
+#if( $isSoapWithCXF == true )
+    <build>
+        <plugins>
+            <!-- CXF Code generation -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/target/generated-sources/cxf</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>${cxf.version}</version>
+                <executions>
+                    <execution>
+                        <phase>clean</phase> <!-- This is so it work with the DEV Kit -->
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/main/resources/wsdl/${wsdlFileName}.wsdl</wsdl>
+                                    <autoNameResolution>true</autoNameResolution>
+                                    <extraargs>
+                                        <extraarg>-xjc-Xbg</extraarg>
+                                        <extraarg>-xjc-Xcollection-setter-injector</extraarg>
+                                        <extraarg>-b</extraarg>
+                                        <extraarg>${basedir}/src/main/resources/wsdl/binding.xml</extraarg>
+                                        <extraarg>-p</extraarg>
+                                        <extraarg>${package}.api</extraarg>
+                                        <extraarg>-mark-generated</extraarg>
+                                        <extraarg>-exsh</extraarg>
+                                        <extraarg>true</extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <!-- Boolean getters -->
+                    <dependency>
+                        <groupId>org.apache.cxf.xjcplugins</groupId>
+                        <artifactId>cxf-xjc-boolean</artifactId>
+                        <version>${cxf.version.boolean}</version>
+                    </dependency>
+                    <!-- Collection Setters -->
+                    <dependency>
+                        <groupId>net.java.dev.vcc.thirdparty</groupId>
+                        <artifactId>collection-setter-injector</artifactId>
+                        <version>0.5.0-1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <!-- USE THIS PROFILE ONLY TO GENERATE THE BASE CODE -->
+        <profile>
+            <id>connector-generator</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.mule.tools.devkit</groupId>
+                        <artifactId>connector-generator-wsdl2connector-maven-plugin</artifactId>
+                        <version>${connector.generator.version}</version>
+                        <configuration>
+                            <name>${connectorName}</name>
+                            <connectorProperties>
+                                <friendlyName>${connectorName}</friendlyName>
+                                <schemaVersion>1.0</schemaVersion>
+                            </connectorProperties>
+                            <outputDirectory>${basedir}/src/main/java/</outputDirectory>
+                            <connectorPackage>${package}</connectorPackage>
+                            <className>${package}.api</className>
+                            <sourceRootDir>${basedir}/generated-sources/cxf</sourceRootDir>
+                            <skipGeneration>false</skipGeneration>
+                            <overrideXmlHolder>false</overrideXmlHolder>
+                            <expandLvl>2</expandLvl>
+                            <wsdlFile>${basedir}/src/main/resources/wsdl/${wsdlFileName}.wsdl</wsdlFile>
+                            <bindingFiles>
+                                <bindingFile>${basedir}/src/main/resources/wsdl/binding.xml</bindingFile>
+                            </bindingFiles>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>connector-generator</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+#end
     <dependencies>
         <dependency>
             <groupId>eclipse</groupId>
@@ -33,6 +153,71 @@
             <version>2.1.0</version>
             <scope>provided</scope>
         </dependency>
+#if( $isSoapWithCXF == true )
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-databinding-jaxb</artifactId>
+            <version>${cxf.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                </exclusion>
+                <!-- We use javax.activation -->
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-activation_1.1_spec</artifactId>
+                </exclusion>
+                <!-- We use javax.mail -->
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+                <!-- We use stax-api -->
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-stax-api_1.0_spec</artifactId>
+                </exclusion>
+                <!-- We use javax.xml.ws:jaxws-api -->
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jaxws_2.1_spec</artifactId>
+                </exclusion>
+                <!-- We use slf4j -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>${cxf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+            <version>${cxf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>${cxf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+#end        
+#if( $authenticationType=='OAUTH_V1' )
+        <dependency>
+           <artifactId>signpost-core</artifactId>
+           <groupId>oauth.signpost</groupId>
+           <version>1.2.1.2</version>
+           <scope>compile</scope>
+        </dependency>
+#end
     </dependencies>
     <repositories>
         <repository>
@@ -50,4 +235,3 @@
     </scm>
 #end
 </project>
-

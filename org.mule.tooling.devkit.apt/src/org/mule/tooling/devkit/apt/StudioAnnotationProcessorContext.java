@@ -48,7 +48,7 @@ public class StudioAnnotationProcessorContext implements Context {
         messager = env.getMessager();
         FactoryHolder.setPathUtils(new StudioPathUtils(env));
         FactoryHolder.setGenericTypeFactory(new StudioGenericTypeFactory());
-        //TODO: DEVKIT-703 Extreme hack to avoid RestClient dependency checkers 
+        // TODO: DEVKIT-703 Extreme hack to avoid RestClient dependency checkers
         mavenInformation = new StudioMavenInformation();
     }
 
@@ -93,6 +93,7 @@ public class StudioAnnotationProcessorContext implements Context {
         public Set<Dependency> getDependencies() {
             Set<Dependency> dummy = new HashSet<Dependency>();
             dummy.add(SimpleDependency.create("org.mule.transports:mule-transport-http:3.0.0"));
+            dummy.add(SimpleDependency.create("oauth.signpost:signpost-core:1.2.1.2"));
             return dummy;
         }
 

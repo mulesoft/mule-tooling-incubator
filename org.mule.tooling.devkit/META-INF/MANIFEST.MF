@@ -15,10 +15,6 @@ Require-Bundle: org.mule.tooling.runtime;bundle-version="3.5.0",
  org.apache.commons.io;bundle-version="2.0.1",
  org.apache.velocity;bundle-version="1.5.0",
  org.eclipse.jdt.launching;bundle-version="3.6.101",
- org.eclipse.pde;bundle-version="3.8.0",
- org.eclipse.pde.api.tools.ui;bundle-version="1.0.400",
- org.eclipse.pde.core;bundle-version="3.8.1",
- org.eclipse.pde.ds.ui;bundle-version="1.0.200",
  org.mule.tooling.maven;bundle-version="3.5.0",
  org.mule.tooling.core;bundle-version="3.5.0",
  org.eclipse.ui.console;bundle-version="3.5.100",
@@ -39,7 +35,8 @@ Require-Bundle: org.mule.tooling.runtime;bundle-version="3.5.0",
  org.eclipse.equinox.p2.ui;bundle-version="2.2.0",
  org.eclipse.equinox.util;bundle-version="1.0.400",
  org.eclipse.equinox.p2.ui.sdk;bundle-version="1.0.200",
- org.eclipse.ui.forms;bundle-version="3.5.200"
+ org.eclipse.ui.forms;bundle-version="3.5.200",
+ org.mule.tooling.utils;bundle-version="4.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.mule.tooling.devkit.builder

@@ -14,8 +14,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.mule.tooling.ui.widgets.util.SilentRunner;
-
+import org.mule.tooling.utils.SilentRunner;
 public class ToggleJavadocCheckCommand extends AbstractHandler {
 
 	@Override

@@ -212,15 +212,14 @@
             <menu icon="icons/icon.png" label="Anypoint Connector">
                 <visibleWhen>
                     <with variable="activeMenuSelection">
-                        <iterate>
-                            <adapt type="org.eclipse.core.resources.IProject">
-								<test value="true" property="org.eclipse.core.resources.open" forcePluginActivation="true">
-                                </test>
-                            </adapt>
+                        <iterate >
+                        <adapt type="org.eclipse.core.resources.IProject">
+	             			<test property="org.eclipse.core.resources.projectNature"
+	                   				value="org.mule.tooling.devkit.devkitNature">
+	             			</test>
+         				</adapt>
                         </iterate>
-                        <count
-                                value="1">
-                        </count>
+                        <count value="1"></count>
                     </with>
                 </visibleWhen>
                 <separator name="group">

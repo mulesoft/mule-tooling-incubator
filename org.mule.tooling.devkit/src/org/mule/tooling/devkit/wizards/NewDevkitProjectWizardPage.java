@@ -2,6 +2,7 @@ package org.mule.tooling.devkit.wizards;
 
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -10,18 +11,23 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
+import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.ui.MuleUiConstants;
@@ -36,6 +42,20 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String DEFAULT_NAME = "Hello";
     private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
     private static final String GROUP_TITLE_CONNECTOR = "Anypoint Connector";
+    private static final String GROUP_TITLE_API = "API";
+    private static final String SOAP = "Soap";
+    private static final String REST = "Rest";
+    private static final String OTHER = "Other";
+    private static final String NONE = "none";
+    private static final String OAUTH_V1 = "OAuth V1";
+    private static final String OAUTH_V2 = "OAuth V2";
+    private static final String BASIC = "Basic";
+    private static final String[] SUPPORTED_AUTHENTICATION_SOAP_OPTIONS = new String[] { NONE };
+    private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { NONE, BASIC, OAUTH_V1, OAUTH_V2 };
+    private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { NONE };
+    private static final String[] SUPPORTED_API_OPTIONS = new String[] { SOAP, REST, OTHER };
+    private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.\n You can specify the folder where the wsdl and schemas are located if you need to copy multiple files.";
+    private static final String OTHER_COMMENT = "If you have a Java library for example.";
     private Text name;
     private String connectorCategory = DEFAULT_CATEGORY;
     private final Pattern connectorName = Pattern.compile("[A-Z]+[a-zA-Z0-9]+");
@@ -43,7 +63,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private ServerDefinition selectedServerDefinition;
     private ConnectorMavenModel model;
 
-    private Button basicAuth;
+    private Combo apiType;
+    private Combo comboAuthentication;
+    private Combo rootDirectoryCombo;
     private Button datasense;
     private Button query;
 
@@ -51,13 +73,13 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         super("wizardPage");
         setTitle("Create an Anypoint Connector");
         setDescription("Enter a connector name");
-        
-        if(!MuleCorePlugin.getServerManager().getServerDefinitions().isEmpty()){
+
+        if (!MuleCorePlugin.getServerManager().getServerDefinitions().isEmpty()) {
             selectedServerDefinition = new MuleStudioPreference().getDefaultRuntimeSelection();
-        }else{
-            selectedServerDefinition  = new ServerDefinition();
+        } else {
+            selectedServerDefinition = new ServerDefinition();
         }
-        
+
         this.model = model;
     }
 
@@ -89,26 +111,107 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 dialogChanged();
             }
         });
+        name.setFocus();
 
         addRuntime(container);
 
-        addAuthentication(container);
-
         addDatasense(container);
 
+        Group apiGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_API, 4);
+        apiType = initializeComboField(apiGroupBox, "Type: ", SUPPORTED_API_OPTIONS,
+                "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener, 3);
+
+        comboAuthentication = initializeComboField(apiGroupBox, "Authentication: ", SUPPORTED_AUTHENTICATION_SOAP_OPTIONS, "Authentication type", connectorNameListener, 1);
+        final Label comment = new Label(apiGroupBox, SWT.NULL);
+        comment.setText("For some Authentication methods we can generate\na better code base for your connector");
+        comment.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
+        final Label wsdlLabel = new Label(apiGroupBox, SWT.NULL);
+        wsdlLabel.setText("WSDL:");
+        wsdlLabel.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
+
+        rootDirectoryCombo = new Combo(apiGroupBox, SWT.NONE);
+        rootDirectoryCombo.setLayoutData(GridDataFactory.fillDefaults().span(1, 1).grab(true, false).create());
+
+        final Button buttonPickFile = new Button(apiGroupBox, SWT.NONE);
+        buttonPickFile.setText("File...");
+        buttonPickFile.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).create());
+        buttonPickFile.addSelectionListener(new SelectionAdapter() {
+
+            public void widgetSelected(SelectionEvent e) {
+                FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
+                dialog.setText("Select WSDL file");
+                dialog.setFilterExtensions(new String[] { "wsdl" });
+                String path = rootDirectoryCombo.getText();
+                if (path.length() == 0) {
+                    path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPortableString();
+                }
+                dialog.setFilterPath(path);
+
+                String result = dialog.open();
+                if (result != null) {
+                    rootDirectoryCombo.setText(result);
+
+                }
+            }
+        });
+
+        final Button buttonPickFolder = new Button(apiGroupBox, SWT.NONE);
+        buttonPickFolder.setText("Folder...");
+        buttonPickFolder.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).create());
+        buttonPickFolder.addSelectionListener(new SelectionAdapter() {
+
+            public void widgetSelected(SelectionEvent e) {
+                DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
+                dialog.setText("Select Directory containing one WSDL");
+                String path = rootDirectoryCombo.getText();
+                if (path.length() == 0) {
+                    path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPortableString();
+                }
+                dialog.setFilterPath(path);
+
+                String result = dialog.open();
+                if (result != null) {
+                    rootDirectoryCombo.setText(result);
+
+                }
+            }
+        });
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0).applyTo(container);
         GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
 
+        final Label label = new Label(container, SWT.NULL);
+        label.setText(SOAP_COMMENT);
+        label.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).create());
+
+        apiType.addModifyListener(new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                boolean isVisible = SOAP.equals(apiType.getText());
+                wsdlLabel.setVisible(isVisible);
+                rootDirectoryCombo.setVisible(isVisible);
+                buttonPickFile.setVisible(isVisible);
+                buttonPickFolder.setVisible(isVisible);
+                if (SOAP.equals(apiType.getText())) {
+                    comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS);
+                    comboAuthentication.setText(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS[0]);
+                    label.setText(SOAP_COMMENT);
+                }
+                if (REST.equals(apiType.getText())) {
+                    comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_REST_OPTIONS);
+                    comboAuthentication.setText(SUPPORTED_AUTHENTICATION_REST_OPTIONS[0]);
+                    label.setText("");
+                }
+                if (OTHER.equals(apiType.getText())) {
+                    comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS);
+                    comboAuthentication.setText(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS[0]);
+                    label.setText(OTHER_COMMENT);
+                }
+            }
+        });
         initialize();
         setControl(container);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(container, "org.mule.tooling.devkit.myId"); 
-    }
-
-    private void addAuthentication(Composite container) {
-        Group authenticationGroupBox = UiUtils.createGroupWithTitle(container, "Authentication", 6);
-        basicAuth = initButton(authenticationGroupBox, "Basic", SWT.RADIO);
-        initButton(authenticationGroupBox, "OAuth 2.0", SWT.RADIO);
-        authenticationGroupBox.layout();
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(container, "org.mule.tooling.devkit.myId");
     }
 
     private void addDatasense(Composite container) {
@@ -142,7 +245,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private void addRuntime(Composite container) {
         ServerChooserComponent serverChooserComponent = new ServerChooserComponent("Runtime");
         serverChooserComponent.createControl(container);
-        if(selectedServerDefinition.getId()!=null){
+        if (selectedServerDefinition.getId() != null) {
             serverChooserComponent.setServerDefinition(selectedServerDefinition);
         }
         serverChooserComponent.setStatusHandler(new PartStatusHandler() {
@@ -174,13 +277,12 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
     private void initialize() {
         name.setText(DEFAULT_NAME);
-        basicAuth.setSelection(true);
         updateComponentsEnablement();
     }
 
     private void dialogChanged() {
 
-        if(this.selectedServerDefinition.getId()==null){
+        if (this.selectedServerDefinition.getId() == null) {
             updateStatus("Select a runtime.");
             return;
         }
@@ -230,14 +332,32 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         return textField;
     }
 
+    private Combo initializeComboField(Group groupBox, String labelText, String[] initialValues, String tooltip, ModifyListener modifyListener, int horizontalSpan) {
+        Label label = new Label(groupBox, SWT.NULL);
+        label.setText(labelText);
+        label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
+        Combo textField = new Combo(groupBox, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+        textField.setLayoutData(GridDataFactory.swtDefaults().span(horizontalSpan, 1).create());
+        textField.setItems(initialValues);
+        textField.setText(initialValues[0]);
+        textField.addModifyListener(modifyListener);
+        textField.setToolTipText(tooltip);
+
+        return textField;
+    }
+
     private void updateComponentsEnablement() {
-        boolean isBasic = basicAuth.getSelection();
-        datasense.setEnabled(isBasic);
-        query.setEnabled(isBasic);
-        if (isBasic) {
+        boolean enabled = isBasic() && !apiType.getText().equals(REST);
+        datasense.setEnabled(enabled);
+        query.setEnabled(enabled);
+        if (enabled) {
             model.setMetadataEnabled(datasense.getSelection());
         }
-        query.setEnabled(datasense.getSelection() && isBasic);
+        query.setEnabled(datasense.getSelection() && enabled);
+    }
+
+    private boolean isBasic() {
+        return !apiType.getText().equals(REST) || (comboAuthentication.getText().equals(BASIC));
     }
 
     private String getDevkitVersion(ServerDefinition selectedServerDefinition) {
@@ -254,12 +374,24 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         return query.getSelection();
     }
 
-    public boolean isMetadaEnabled(){
+    public boolean isMetadaEnabled() {
         return datasense.getSelection();
     }
-    
-    public boolean isOAuth(){
-        return !basicAuth.getSelection();
+
+    public boolean isOAuth() {
+        return !isBasic();
     }
-    
+
+    public String getWsdlFileOrDirectory() {
+        return this.rootDirectoryCombo.getText();
+    }
+
+    public boolean isCxfSoap() {
+        return apiType.getText().equals(SOAP);
+    }
+
+    public AuthenticationType getAuthenticationType() {
+        return AuthenticationType.fromLabel(comboAuthentication.getText());
+    }
+
 }

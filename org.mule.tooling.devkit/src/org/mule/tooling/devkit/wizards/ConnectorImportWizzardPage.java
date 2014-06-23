@@ -227,14 +227,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
 
             public void widgetSelected(SelectionEvent e) {
                 projectTreeViewer.expandAll();
-                setAllChecked(true);
-                projectTreeViewer.setSubtreeChecked(projectTreeViewer.getInput(), true);
-                MavenInfo elements = (MavenInfo) projectTreeViewer.getInput();
-                for (MavenInfo item : elements.getModules()) {
-                    projectTreeViewer.setChecked(item, true);
-
-                }
-                validate();
+                selectecAll();
             }
         });
 
@@ -431,6 +424,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
             projectTreeViewer.setInput(root);
             projectTreeViewer.refresh();
             projectTreeViewer.expandAll();
+            selectecAll();
         } catch (CoreException e1) {
             e1.printStackTrace();
         }
@@ -471,5 +465,16 @@ public class ConnectorImportWizzardPage extends WizardPage {
             }
         }
         setPageComplete();
+    }
+
+    private void selectecAll() {
+        setAllChecked(true);
+        projectTreeViewer.setSubtreeChecked(projectTreeViewer.getInput(), true);
+        MavenInfo elements = (MavenInfo) projectTreeViewer.getInput();
+        for (MavenInfo item : elements.getModules()) {
+            projectTreeViewer.setChecked(item, true);
+
+        }
+        validate();
     }
 }

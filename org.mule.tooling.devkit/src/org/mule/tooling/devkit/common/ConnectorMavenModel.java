@@ -8,17 +8,19 @@ public class ConnectorMavenModel {
     private String category;
     private String connectorName = "Hello";
     private boolean	oAuthEnabled;
+    private AuthenticationType authenticationType;
     private boolean	metadataEnabled;
     private boolean addGitInformation;
     private String gitConnection;
     private String gitDevConnection;
     private String gitUrl;
-    
-	public ConnectorMavenModel(String version, String groupId, String artifactId,String category) {
+    private String packageName;
+	public ConnectorMavenModel(String version, String groupId, String artifactId,String category,String packageName) {
         this.version = version;
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.category = category;
+        this.packageName = packageName;
     }
 
     public ConnectorMavenModel() {
@@ -96,5 +98,17 @@ public class ConnectorMavenModel {
 	public void setGitUrl(String gitUrl) {
 		this.gitUrl = gitUrl;
 	}
+
+    public AuthenticationType getAuthenticationType() {
+        return authenticationType;
+    }
+
+    public void setAuthenticationType(AuthenticationType authenticationType) {
+        this.authenticationType = authenticationType;
+    }
+
+    public Object getPackage() {
+        return packageName;
+    }
 	
 }

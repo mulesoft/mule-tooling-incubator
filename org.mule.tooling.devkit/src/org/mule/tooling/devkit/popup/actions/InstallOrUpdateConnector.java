@@ -151,6 +151,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
 				}
 			};
 			installOrUpdate.setUser(true);
+			installOrUpdate.setRule(selectedProject.getProject());
 			installOrUpdate.setPriority(Job.LONG);
 			installOrUpdate.schedule();
 

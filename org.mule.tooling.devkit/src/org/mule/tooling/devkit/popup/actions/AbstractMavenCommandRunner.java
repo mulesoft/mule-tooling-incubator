@@ -72,6 +72,7 @@ public abstract class AbstractMavenCommandRunner extends AbstractHandler {
             }
         };
         changeClasspathJob.setUser(true);
+        changeClasspathJob.setRule(selectedProject);
         changeClasspathJob.setPriority(Job.SHORT);
         changeClasspathJob.schedule();
     }

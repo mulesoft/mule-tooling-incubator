@@ -99,7 +99,8 @@ public class SampleHyperlink implements IHyperlink {
 		}
 	}
 
-	private void openSampleAtLine(IFile file, int lineNumber)
+	@SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
+    private void openSampleAtLine(IFile file, int lineNumber)
 			throws CoreException, PartInitException {
 		HashMap map = new HashMap();
 		map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));

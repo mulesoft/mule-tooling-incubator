@@ -2,7 +2,6 @@ package org.mule.tooling.devkit.wizards;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
@@ -21,14 +20,12 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.BuildAction;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
-import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
 import org.mule.tooling.devkit.maven.MavenInfo;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
 
@@ -145,21 +142,6 @@ public class ConnectorImportWizzard extends AbstractDevkitProjectWizzard impleme
         projectDescription.setLocation(Path.fromOSString(folder.getAbsolutePath()));
 
         return projectDescription;
-    }
-
-    private class ProjectSubsetBuildAction extends BuildAction {
-
-        private IProject[] projectsToBuild = new IProject[0];
-
-        public ProjectSubsetBuildAction(IShellProvider shellProvider, int type, IProject[] projects) {
-            super(shellProvider, type);
-            this.projectsToBuild = projects;
-        }
-
-        @Override
-        protected List getSelectedResources() {
-            return Arrays.asList(this.projectsToBuild);
-        }
     }
 
 }

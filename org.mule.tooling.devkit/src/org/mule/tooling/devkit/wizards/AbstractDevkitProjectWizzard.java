@@ -28,7 +28,7 @@ public abstract class AbstractDevkitProjectWizzard extends Wizard {
         IFactoryPath path = AptConfig.getFactoryPath(javaProject);
         path.enablePlugin(org.mule.tooling.devkit.apt.Activator.PLUGIN_ID);
         AptConfig.setFactoryPath(javaProject, path);
-        AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "true");
+        AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "false");
     }
     
     protected IProject getProjectWithDescription(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root, IProjectDescription projectDescription) throws CoreException {

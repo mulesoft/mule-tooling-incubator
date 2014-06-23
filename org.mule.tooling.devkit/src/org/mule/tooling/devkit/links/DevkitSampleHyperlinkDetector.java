@@ -13,6 +13,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+@SuppressWarnings("restriction")
 public class DevkitSampleHyperlinkDetector extends AbstractHyperlinkDetector {
 
 	Pattern pattern = Pattern.compile(".*\\{@sample.*\\}");

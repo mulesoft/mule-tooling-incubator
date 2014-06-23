@@ -79,6 +79,7 @@ public class CreateDocumentationCommand extends AbstractHandler {
 						}
 					};
 					createDocumentationJob.setUser(true);
+					createDocumentationJob.setRule(selectedProject);
 					createDocumentationJob.setPriority(Job.SHORT);
 					createDocumentationJob.schedule();
 
