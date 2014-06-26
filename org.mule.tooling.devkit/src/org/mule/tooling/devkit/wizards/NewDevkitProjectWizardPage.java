@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.devkit.common.AuthenticationType;
@@ -47,7 +46,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String GROUP_TITLE_API = "API";
     private static final String SOAP = "Soap";
     private static final String REST = "Rest";
-    private static final String OTHER = "Other";
+    private static final String OTHER = "Generic";
     private static final String NONE = "none";
     private static final String OAUTH_V1 = "OAuth V1";
     private static final String OAUTH_V2 = "OAuth V2";
@@ -55,7 +54,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String[] SUPPORTED_AUTHENTICATION_SOAP_OPTIONS = new String[] { NONE };
     private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { NONE, BASIC, OAUTH_V1, OAUTH_V2 };
     private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { NONE };
-    private static final String[] SUPPORTED_API_OPTIONS = new String[] { SOAP, REST, OTHER };
+    private static final String[] SUPPORTED_API_OPTIONS = new String[] { OTHER,SOAP, REST };
     private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.\n You can specify the folder where the wsdl and schemas are located if you need to copy multiple files.";
     private static final String OTHER_COMMENT = "If you have a Java library for example.";
     private Text name;
@@ -122,11 +121,12 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         Group apiGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_API, 4);
         apiType = initializeComboField(apiGroupBox, "Type: ", SUPPORTED_API_OPTIONS,
                 "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener, 3);
-
+        
         comboAuthentication = initializeComboField(apiGroupBox, "Authentication: ", SUPPORTED_AUTHENTICATION_SOAP_OPTIONS, "Authentication type", connectorNameListener, 1);
         final Label comment = new Label(apiGroupBox, SWT.NULL);
         comment.setText("For some Authentication methods we can generate\na better code base for your connector");
         comment.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
+
         final Label wsdlLabel = new Label(apiGroupBox, SWT.NULL);
         wsdlLabel.setText("WSDL:");
         wsdlLabel.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
@@ -134,13 +134,13 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         rootDirectoryCombo = new Combo(apiGroupBox, SWT.NONE);
         rootDirectoryCombo.setLayoutData(GridDataFactory.fillDefaults().span(1, 1).grab(true, false).create());
 
-        rootDirectoryCombo.addModifyListener(new ModifyListener(){
+        rootDirectoryCombo.addModifyListener(new ModifyListener() {
 
             @Override
             public void modifyText(ModifyEvent e) {
                 dialogChanged();
             }
-            
+
         });
         final Button buttonPickFile = new Button(apiGroupBox, SWT.NONE);
         buttonPickFile.setText("File...");
@@ -192,6 +192,11 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         label.setText(SOAP_COMMENT);
         label.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).create());
 
+        wsdlLabel.setVisible(false);
+        rootDirectoryCombo.setVisible(false);
+        buttonPickFile.setVisible(false);
+        buttonPickFolder.setVisible(false);
+        
         apiType.addModifyListener(new ModifyListener() {
 
             @Override
@@ -218,9 +223,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 }
             }
         });
-        initialize();
+        
+        apiType.setText(OTHER);
         setControl(container);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(container, "org.mule.tooling.devkit.myId");
+        initialize();
     }
 
     private void addDatasense(Composite container) {
@@ -307,7 +313,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         } else if (!connectorName.matcher(this.getName()).matches()) {
             updateStatus("The Name must start with an uppper case character followed by other alphanumeric characters.");
             return;
-        } else if(!isValidateFileOrFolder(this.rootDirectoryCombo.getText())){
+        } else if (!isValidateFileOrFolder(this.rootDirectoryCombo.getText())) {
             updateStatus("The selected folder does not contains a wsdl file.");
             return;
         }
@@ -409,12 +415,12 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private boolean isValidateFileOrFolder(String result) {
         File wsdlFileOrDirectory = new File(result);
 
-        if(!result.isEmpty() && !wsdlFileOrDirectory.exists()){
+        if (!result.isEmpty() && !wsdlFileOrDirectory.exists()) {
             return false;
         }
         if (wsdlFileOrDirectory.isDirectory()) {
             String[] files = wsdlFileOrDirectory.list(new SuffixFileFilter(".wsdl"));
-            if(files.length==0){
+            if (files.length == 0) {
                 return false;
             }
         }
