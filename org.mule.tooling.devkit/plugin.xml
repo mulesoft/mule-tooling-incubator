@@ -133,68 +133,37 @@
    
 	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
-			name="Enable/Disable Javadoc Check"
-			defaultHandler="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand">
+			name="Enable/Disable Javadoc Check">
 		</command>
-	</extension>
-	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand"
 			name="Try it out!"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand">
 		</command>
-	</extension>
-	
-	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
-			name="Generate Sources"
-			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand">
+			name="Generate Sources">
 		</command>
-	</extension>
-	
-	<extension point="org.eclipse.ui.commands">
-	<command id="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand"
-			name="Generate Testdata"
-			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand">
+		<command id="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand"
+			name="Generate Testdata">
 		</command>
-	</extension>
-	
-	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
 			name="Run Interop Test"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand">
 		</command>
-	</extension>
-	
-	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand"
 			name="Generate Functional TestCases"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand">
 		</command>
-	</extension>
-	
-	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
-			name="Test Coverage Report"
-			defaultHandler="org.mule.tooling.devkit.popup.actions.TestCoverageCommand">
+			name="Test Coverage Report">
 		</command>
-	</extension>
-	
-	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
-			name="Create documentation"
-			defaultHandler="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand">
+			name="Create documentation">
 		</command>
-	</extension>
-	<extension point="org.eclipse.ui.commands">
 		<command id="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector"
-			name="Install Or Update Connector"
-			defaultHandler="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector">
+			name="Install Or Update Connector">
 		</command>
-	</extension>
-    <extension point="org.eclipse.ui.commands">
         <command id="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand"
-                 name="Generate Tests"
-                 defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand">
+			name="Generate Tests">
         </command>
     </extension>
 	<extension point="org.eclipse.core.expressions.propertyTesters">
@@ -351,5 +320,93 @@
             <objectState name="nature" value="org.mule.tooling.devkit.devkitNature"/>
        </enablement>
      </decorator>
+   </extension>
+   
+   <!-- TOOL BAR -->
+   <extension point="org.eclipse.core.expressions.definitions">
+		<definition id="org.mule.tooling.devkit.hasDevkitNature">
+			<with variable="selection">
+                <iterate >
+                    <adapt type="org.eclipse.core.resources.IProject">
+             			<test property="org.eclipse.core.resources.projectNature"
+                   				value="org.mule.tooling.devkit.devkitNature">
+             			</test>
+     				</adapt>
+                </iterate>
+                <count value="1"></count>
+			</with>
+	   </definition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+         <handler commandId="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand"
+ 			class="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector"
+         	class="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
+         	class="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
+         	class="org.mule.tooling.devkit.popup.actions.TestCoverageCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
+         	class="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
+         	class="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+	</extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+			<toolbar id="org.mule.tooling.devkit.toolbar" label="Devkit Studio Toolbar">
+				<command commandId="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand"
+                         tooltip="Generate Tests"
+                         icon="icons/tsuite.png">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector"
+                         tooltip="Install or Update"
+                         icon="icons/install.gif"
+                         id="org.mule.tooling.devkit.toolbar.InstallOrUpdateConnector">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
+                         tooltip="Preview Documentation"
+                         icon="icons/generate_doc.gif">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
+                         tooltip="Test Coverage Report"
+                         icon="icons/coverage.gif">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
+                         tooltip="Generate Sources"
+                         icon="icons/generate_sources.gif">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
+                         tooltip="Enable/Disable Javadoc check"
+                         icon="icons/javadoc.gif">
+				</command>
+            </toolbar>
+      </menuContribution>
    </extension>
 </plugin>
