@@ -11,9 +11,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -47,7 +51,7 @@ public class ConnectorImportWizzard extends AbstractDevkitProjectWizzard impleme
     @Override
     public boolean performFinish() {
         final Object[] items = importPage.getSelectedItems();
-        IRunnableWithProgress op = new IRunnableWithProgress() {
+        final IRunnableWithProgress op = new IRunnableWithProgress() {
 
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
@@ -70,7 +74,7 @@ public class ConnectorImportWizzard extends AbstractDevkitProjectWizzard impleme
                                 if (mavenProject.getPackaging() != null && mavenProject.getPackaging().equals("mule-module")) {
                                     configureDevkitAPT(javaProject);
                                 }
-                                
+
                                 boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
 
                                 if (!autoBuilding) {
@@ -91,15 +95,23 @@ public class ConnectorImportWizzard extends AbstractDevkitProjectWizzard impleme
                 monitor.done();
             }
         };
-        try {
-            getContainer().run(true, false, op);
-        } catch (InterruptedException e) {
-            return false;
-        } catch (InvocationTargetException e) {
-            Throwable realException = e.getTargetException();
-            MessageDialog.openError(getShell(), "Error", realException.getMessage());
-            return false;
-        }
+        Job job = new WorkspaceJob("Importing connector") {
+
+            @Override
+            public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+                try {
+                    op.run(monitor);
+                } catch (InterruptedException e) {
+                    return Status.OK_STATUS;
+                } catch (InvocationTargetException e) {
+                    Throwable realException = e.getTargetException();
+                    MessageDialog.openError(getShell(), "Error", realException.getMessage());
+                    return Status.CANCEL_STATUS;
+                }
+                return Status.OK_STATUS;
+            }
+        };
+        job.schedule();
         return true;
     }
 
