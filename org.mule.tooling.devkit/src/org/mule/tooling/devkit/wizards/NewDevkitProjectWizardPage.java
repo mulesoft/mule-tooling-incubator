@@ -54,9 +54,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String[] SUPPORTED_AUTHENTICATION_SOAP_OPTIONS = new String[] { NONE };
     private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { NONE, BASIC, OAUTH_V1, OAUTH_V2 };
     private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { NONE };
-    private static final String[] SUPPORTED_API_OPTIONS = new String[] { OTHER,SOAP, REST };
-    private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.\n You can specify the folder where the wsdl and schemas are located if you need to copy multiple files.";
-    private static final String OTHER_COMMENT = "If you have a Java library for example.";
+    private static final String[] SUPPORTED_API_OPTIONS = new String[] { OTHER, SOAP, REST };
+    private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.\nYou can specify the folder where the wsdl and schemas are located if you need to copy multiple files.";
+    private static final String OTHER_COMMENT = "This will generate the scaffolding for the connector.\nIf you want to create a connector for a java client this will help you get started.";
+    private static final String REST_COMMENT = "This will generate the scaffolding for the connector using @RestCall.";
     private Text name;
     private String connectorCategory = DEFAULT_CATEGORY;
     private final Pattern connectorName = Pattern.compile("[A-Z]+[a-zA-Z0-9]+");
@@ -66,7 +67,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
     private Combo apiType;
     private Combo comboAuthentication;
-    private Combo rootDirectoryCombo;
+    private Text wsdlLocation;
     private Button datasense;
     private Button query;
 
@@ -121,20 +122,21 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         Group apiGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_API, 4);
         apiType = initializeComboField(apiGroupBox, "Type: ", SUPPORTED_API_OPTIONS,
                 "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener, 3);
-        
+
         comboAuthentication = initializeComboField(apiGroupBox, "Authentication: ", SUPPORTED_AUTHENTICATION_SOAP_OPTIONS, "Authentication type", connectorNameListener, 1);
         final Label comment = new Label(apiGroupBox, SWT.NULL);
         comment.setText("For some Authentication methods we can generate\na better code base for your connector");
         comment.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
 
         final Label wsdlLabel = new Label(apiGroupBox, SWT.NULL);
-        wsdlLabel.setText("WSDL:");
-        wsdlLabel.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
+        wsdlLabel.setText("WSDL location:");
+        wsdlLabel.setToolTipText("Select a wsdl file, folder containing the wsdl or just use the url where it is located.");
+        wsdlLabel.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).span(4, 1).hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
 
-        rootDirectoryCombo = new Combo(apiGroupBox, SWT.NONE);
-        rootDirectoryCombo.setLayoutData(GridDataFactory.fillDefaults().span(1, 1).grab(true, false).create());
+        wsdlLocation = new Text(apiGroupBox, SWT.BORDER|SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
+        wsdlLocation.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(3, 1).grab(true, false).create());
 
-        rootDirectoryCombo.addModifyListener(new ModifyListener() {
+        wsdlLocation.addModifyListener(new ModifyListener() {
 
             @Override
             public void modifyText(ModifyEvent e) {
@@ -142,16 +144,18 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             }
 
         });
-        final Button buttonPickFile = new Button(apiGroupBox, SWT.NONE);
+
+        Composite pickButtons = new Composite(apiGroupBox, SWT.NULL);
+        final Button buttonPickFile = new Button(pickButtons, SWT.NONE);
         buttonPickFile.setText("File...");
-        buttonPickFile.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).create());
+        buttonPickFile.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.END).create());
         buttonPickFile.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
                 FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
                 dialog.setText("Select WSDL file");
-                dialog.setFilterExtensions(new String[] { "wsdl" });
-                String path = rootDirectoryCombo.getText();
+                dialog.setFilterExtensions(new String[] { "*.wsdl", "*.*" });
+                String path = wsdlLocation.getText();
                 if (path.length() == 0) {
                     path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPortableString();
                 }
@@ -159,20 +163,20 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
                 String result = dialog.open();
                 if (result != null) {
-                    rootDirectoryCombo.setText(result);
+                    wsdlLocation.setText(result);
                 }
             }
         });
 
-        final Button buttonPickFolder = new Button(apiGroupBox, SWT.NONE);
+        final Button buttonPickFolder = new Button(pickButtons, SWT.NONE);
         buttonPickFolder.setText("Folder...");
-        buttonPickFolder.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).create());
+        buttonPickFolder.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.END).create());
         buttonPickFolder.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
                 DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
                 dialog.setText("Select Directory containing one WSDL");
-                String path = rootDirectoryCombo.getText();
+                String path = wsdlLocation.getText();
                 if (path.length() == 0) {
                     path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPortableString();
                 }
@@ -180,30 +184,33 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
                 String result = dialog.open();
                 if (result != null) {
-                    rootDirectoryCombo.setText(result);
+                    wsdlLocation.setText(result);
                 }
             }
 
         });
+
+        GridLayoutFactory.fillDefaults().numColumns(1).applyTo(pickButtons);
+
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0).applyTo(container);
         GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
 
         final Label label = new Label(container, SWT.NULL);
-        label.setText(SOAP_COMMENT);
+        label.setText(OTHER_COMMENT);
         label.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).create());
-
+        
         wsdlLabel.setVisible(false);
-        rootDirectoryCombo.setVisible(false);
+        wsdlLocation.setVisible(false);
         buttonPickFile.setVisible(false);
         buttonPickFolder.setVisible(false);
-        
+
         apiType.addModifyListener(new ModifyListener() {
 
             @Override
             public void modifyText(ModifyEvent e) {
                 boolean isVisible = SOAP.equals(apiType.getText());
                 wsdlLabel.setVisible(isVisible);
-                rootDirectoryCombo.setVisible(isVisible);
+                wsdlLocation.setVisible(isVisible);
                 buttonPickFile.setVisible(isVisible);
                 buttonPickFolder.setVisible(isVisible);
                 if (SOAP.equals(apiType.getText())) {
@@ -214,7 +221,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 if (REST.equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_REST_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_REST_OPTIONS[0]);
-                    label.setText("");
+                    label.setText(REST_COMMENT);
                 }
                 if (OTHER.equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS);
@@ -223,7 +230,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 }
             }
         });
-        
+
         apiType.setText(OTHER);
         setControl(container);
         initialize();
@@ -313,7 +320,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         } else if (!connectorName.matcher(this.getName()).matches()) {
             updateStatus("The Name must start with an uppper case character followed by other alphanumeric characters.");
             return;
-        } else if (!isValidateFileOrFolder(this.rootDirectoryCombo.getText())) {
+        } else if (!isValidateFileOrFolder(this.wsdlLocation.getText())) {
             updateStatus("The selected folder does not contains a wsdl file.");
             return;
         }
@@ -401,7 +408,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     public String getWsdlFileOrDirectory() {
-        return this.rootDirectoryCombo.getText();
+        return this.wsdlLocation.getText();
     }
 
     public boolean isCxfSoap() {
@@ -413,6 +420,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private boolean isValidateFileOrFolder(String result) {
+        if (result.startsWith("http")) {
+            return true;
+        }
         File wsdlFileOrDirectory = new File(result);
 
         if (!result.isEmpty() && !wsdlFileOrDirectory.exists()) {

@@ -17,6 +17,11 @@
 
     <properties>
 #if( $isSoapWithCXF == true )
+#if( $wsdlFileName.contains("http") )
+#set( $wsdlUrl = ${wsdlFileName} )
+#else
+#set( $wsdlUrl = '${basedir}/src/main/resources/wsdl/'+${wsdlFileName} )
+#end
         <cxf.version>2.5.9</cxf.version>
         <cxf.version.boolean>2.6.0</cxf.version.boolean>
         <connector.generator.version>1.0.2-SNAPSHOT</connector.generator.version>
@@ -77,7 +82,7 @@
                                 <configuration>
                                     <wsdlOptions>
                                         <wsdlOption>
-                                            <wsdl>${basedir}/src/main/resources/wsdl/${wsdlFileName}.wsdl</wsdl>
+                                            <wsdl>${wsdlUrl}</wsdl>
                                             <autoNameResolution>true</autoNameResolution>
                                             <extendedSoapHeaders>true</extendedSoapHeaders>
                                             <extraargs>
@@ -131,12 +136,11 @@
                             </connectorProperties>
                             <outputDirectory>${basedir}/src/main/java/</outputDirectory>
                             <connectorPackage>${package}</connectorPackage>
-                            <className>${package}.api</className>
                             <sourceRootDir>${basedir}/target/generated-sources/cxf</sourceRootDir>
                             <skipGeneration>false</skipGeneration>
                             <overrideXmlHolder>false</overrideXmlHolder>
                             <expandLvl>1</expandLvl>
-                            <wsdlFile>${basedir}/src/main/resources/wsdl/${wsdlFileName}.wsdl</wsdlFile>
+                            <wsdlFile>${wsdlUrl}</wsdlFile>
                             <bindingFiles>
                                 <bindingFile>${basedir}/src/main/resources/wsdl/binding.xml</bindingFile>
                             </bindingFiles>

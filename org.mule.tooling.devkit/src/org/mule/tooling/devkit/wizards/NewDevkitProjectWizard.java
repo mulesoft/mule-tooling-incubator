@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -145,7 +146,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
             }
         };
         try {
-            getContainer().run(true, false, op);
+            getContainer().run(true, true, op);
         } catch (InterruptedException e) {
             return false;
         } catch (InvocationTargetException e) {
@@ -159,7 +160,12 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         try {
             project = root.getProject(advancePage.getArtifactId());
             IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-            IDE.openEditor(page, project.getFile(buildMainTargetFilePath(packageName, DevkitUtils.createConnectorNameFrom(connectorName))));
+            IFile connectorFile = project.getFile(buildMainTargetFilePath(packageName, DevkitUtils.createConnectorNameFrom(connectorName)));
+            if (connectorFile.exists()) {
+                IDE.openEditor(page, connectorFile);
+            } else {
+                // Inform severe error
+            }
         } catch (CoreException e) {
             e.printStackTrace();
         }
@@ -232,22 +238,26 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                     String[] files = wsdlFileOrDirectory.list(new SuffixFileFilter(".wsdl"));
                     for (int i = 0; i < files.length; i++) {
                         File temp = new File(files[i]);
-                        wsdlFileName = temp.getName().substring(0, temp.getName().lastIndexOf('.'));
+                        wsdlFileName = temp.getName();
                     }
 
                     org.apache.commons.io.FileUtils.copyDirectory(wsdlFileOrDirectory, project.getFolder("src/main/resources/wsdl/").getRawLocation().toFile());
 
                 } else {
                     wsdlFileName = wsdlFileOrDirectory.getName();
-                    org.apache.commons.io.FileUtils.copyFileToDirectory(wsdlFileOrDirectory, project.getFolder("src/main/resources/wsdl/").getRawLocation().toFile());
+                    if (wsdlPath.startsWith("http")) {
+                        wsdlFileName = wsdlPath;
+                    } else {
+                        org.apache.commons.io.FileUtils.copyFileToDirectory(wsdlFileOrDirectory, project.getFolder("src/main/resources/wsdl/").getRawLocation().toFile());
+                    }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException("Could not copy wsdl file to local directory");
             }
         }
         templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, new MavenParameterReplacer(mavenModel, runtimeId, connectorName, isSoapWithCXF, wsdlFileName));
         create(connectorName, monitor, getMainTemplatePath(), getTestResourcePath(), DevkitUtils.createConnectorNameFrom(connectorName), connectorPackage, project, classReplacer,
-                mavenModel.getAuthenticationType(),isSoapWithCXF);
+                mavenModel.getAuthenticationType(), isSoapWithCXF);
 
         configureDevkitAPT(javaProject);
 
