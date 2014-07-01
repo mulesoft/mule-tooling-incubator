@@ -378,4 +378,16 @@
             </toolbar>
       </menuContribution>
    </extension>
+   <extension point="org.eclipse.ui.bindings">
+   		<key
+            sequence="M1+M3+M D"
+			commandId="org.eclipse.ui.newWizard"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+            <parameter
+                  id="newWizardId"
+                  value="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard">
+            </parameter>
+      </key>
+   </extension>   
 </plugin>
