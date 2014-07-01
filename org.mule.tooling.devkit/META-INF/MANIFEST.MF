@@ -47,4 +47,5 @@ Bundle-ClassPath: .,
  lib/commons-codec.jar,
  lib/commons-logging.jar,
  lib/fluent-hc.jar,
- lib/httpclient-cache.jar
+ lib/httpclient-cache.jar,
+ lib/commons-validator.jar

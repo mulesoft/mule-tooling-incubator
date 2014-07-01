@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -21,8 +20,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -31,6 +28,7 @@ import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.devkit.dialogs.SelectWSDLDialog;
 import org.mule.tooling.ui.MuleUiConstants;
 import org.mule.tooling.ui.common.ServerChooserComponent;
 import org.mule.tooling.ui.preferences.MuleStudioPreference;
@@ -133,8 +131,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         wsdlLabel.setToolTipText("Select a wsdl file, folder containing the wsdl or just use the url where it is located.");
         wsdlLabel.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).span(4, 1).hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
 
-        wsdlLocation = new Text(apiGroupBox, SWT.BORDER|SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
-        wsdlLocation.setLayoutData(GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(3, 1).grab(true, false).create());
+        wsdlLocation = new Text(apiGroupBox, SWT.BORDER);
+        wsdlLocation.setLayoutData(GridDataFactory.fillDefaults().span(3, 1).grab(true, false).create());
 
         wsdlLocation.addModifyListener(new ModifyListener() {
 
@@ -147,47 +145,19 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
         Composite pickButtons = new Composite(apiGroupBox, SWT.NULL);
         final Button buttonPickFile = new Button(pickButtons, SWT.NONE);
-        buttonPickFile.setText("File...");
+        buttonPickFile.setText("...");
         buttonPickFile.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.END).create());
         buttonPickFile.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
-                FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-                dialog.setText("Select WSDL file");
-                dialog.setFilterExtensions(new String[] { "*.wsdl", "*.*" });
-                String path = wsdlLocation.getText();
-                if (path.length() == 0) {
-                    path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPortableString();
-                }
-                dialog.setFilterPath(path);
 
-                String result = dialog.open();
-                if (result != null) {
-                    wsdlLocation.setText(result);
+                SelectWSDLDialog dialog = new SelectWSDLDialog(getShell(), wsdlLocation.getText());
+
+                int result = dialog.open();
+                if (result == 0) {
+                    wsdlLocation.setText(dialog.getPath());
                 }
             }
-        });
-
-        final Button buttonPickFolder = new Button(pickButtons, SWT.NONE);
-        buttonPickFolder.setText("Folder...");
-        buttonPickFolder.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.END).create());
-        buttonPickFolder.addSelectionListener(new SelectionAdapter() {
-
-            public void widgetSelected(SelectionEvent e) {
-                DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
-                dialog.setText("Select Directory containing one WSDL");
-                String path = wsdlLocation.getText();
-                if (path.length() == 0) {
-                    path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPortableString();
-                }
-                dialog.setFilterPath(path);
-
-                String result = dialog.open();
-                if (result != null) {
-                    wsdlLocation.setText(result);
-                }
-            }
-
         });
 
         GridLayoutFactory.fillDefaults().numColumns(1).applyTo(pickButtons);
@@ -198,11 +168,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         final Label label = new Label(container, SWT.NULL);
         label.setText(OTHER_COMMENT);
         label.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).create());
-        
+
         wsdlLabel.setVisible(false);
         wsdlLocation.setVisible(false);
         buttonPickFile.setVisible(false);
-        buttonPickFolder.setVisible(false);
 
         apiType.addModifyListener(new ModifyListener() {
 
@@ -212,7 +181,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 wsdlLabel.setVisible(isVisible);
                 wsdlLocation.setVisible(isVisible);
                 buttonPickFile.setVisible(isVisible);
-                buttonPickFolder.setVisible(isVisible);
                 if (SOAP.equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS[0]);
@@ -318,7 +286,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             updateStatus("There is no need for you to add the Connector word at the end.");
             return;
         } else if (!connectorName.matcher(this.getName()).matches()) {
-            updateStatus("The Name must start with an uppper case character followed by other alphanumeric characters.");
+            updateStatus("The Name must start with an upper case character followed by other alphanumeric characters.");
             return;
         } else if (!isValidateFileOrFolder(this.wsdlLocation.getText())) {
             updateStatus("The selected folder does not contains a wsdl file.");
