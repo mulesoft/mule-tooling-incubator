@@ -44,6 +44,7 @@ import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
 import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
+import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
@@ -59,6 +60,7 @@ import org.mule.tooling.devkit.template.replacer.NullReplacer;
 public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard implements INewWizard {
 
     private static final String MAIN_TEMPLATE_PATH = "/templates/connector_main.tmpl";
+    private static final String MAIN_NONE_ABSTRACT_TEMPLATE_PATH = "/templates/connector_none_abstract_main.tmpl";
     private static final String TEST_TEMPLATE_PATH = "/templates/connector_test.tmpl";
     private static final String TEST_RESOURCE_PATH = "/templates/connector-test-resource.tmpl";
 
@@ -110,6 +112,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         final String minMuleVersion = getMinMuleVersion();
         final boolean isSoapWithCXF = isSoapWithCXF() && !getWsdlPath().isEmpty();
         final String wsdlPath = getWsdlPath();
+        final ApiType apiType = getApiType();
         mavenModel.setOAuthEnabled(isOAuth);
         mavenModel.setAuthenticationType(getAuthenticationType());
         IRunnableWithProgress op = new IRunnableWithProgress() {
@@ -118,7 +121,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
                     IJavaProject javaProject = doFinish(mavenModel, runtimeId, packageName, connectorName, monitor, isMetaDataEnabled, hasQuery, minMuleVersion, isSoapWithCXF,
-                            wsdlPath);
+                            wsdlPath, apiType);
                     boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
                     if (!autoBuilding) {
                         UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject);
@@ -195,11 +198,12 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
      * @param isOauth
      * @param isMetaDataEnabled
      * @param minMuleVersion
+     * @param apiType
      * @return
      */
 
     private IJavaProject doFinish(ConnectorMavenModel mavenModel, String runtimeId, String connectorPackage, String connectorName, IProgressMonitor monitor,
-            boolean isMetaDataEnabled, boolean hasQuery, String minMuleVersion, boolean isSoapWithCXF, String wsdlPath) throws CoreException {
+            boolean isMetaDataEnabled, boolean hasQuery, String minMuleVersion, boolean isSoapWithCXF, String wsdlPath, Object apiType) throws CoreException {
         String artifactId = mavenModel.getArtifactId();
 
         String wsdlFileName = "Dummy";
@@ -255,9 +259,10 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                 throw new RuntimeException("Could not copy wsdl file to local directory");
             }
         }
+        String mainTemplatePath = apiType.equals(ApiType.GENERIC) ? MAIN_NONE_ABSTRACT_TEMPLATE_PATH : MAIN_TEMPLATE_PATH;
         templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, new MavenParameterReplacer(mavenModel, runtimeId, connectorName, isSoapWithCXF, wsdlFileName));
-        create(connectorName, monitor, getMainTemplatePath(), getTestResourcePath(), DevkitUtils.createConnectorNameFrom(connectorName), connectorPackage, project, classReplacer,
-                mavenModel.getAuthenticationType(), isSoapWithCXF);
+        create(connectorName, monitor, mainTemplatePath, getTestResourcePath(), DevkitUtils.createConnectorNameFrom(connectorName), connectorPackage, project, classReplacer,
+                mavenModel.getAuthenticationType(), isSoapWithCXF, apiType);
 
         configureDevkitAPT(javaProject);
 
@@ -266,14 +271,14 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     }
 
     protected void create(String moduleName, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className, String packageName,
-            IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, boolean isSoapCxf) throws CoreException {
+            IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, boolean isSoapCxf, Object apiType) throws CoreException {
 
         TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
         ImageWriter imageWriter = new ImageWriter(project, monitor);
         if (!isSoapCxf) {
             fileWriter.apply(mainTemplatePath, buildMainTargetFilePath(packageName, className), classReplacer);
         }
-        if (authenticationType.equals(AuthenticationType.BASIC) || authenticationType.equals(AuthenticationType.NONE)) {
+        if (!apiType.equals(ApiType.REST)) {
             fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(moduleName), classReplacer);
             fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);
         }
@@ -320,10 +325,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         return TEST_RESOURCE_PATH;
     }
 
-    protected String getMainTemplatePath() {
-        return MAIN_TEMPLATE_PATH;
-    }
-
     private String getWsdlPath() {
 
         return page.getWsdlFileOrDirectory();
@@ -332,4 +333,9 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private boolean isSoapWithCXF() {
         return page.isCxfSoap();
     }
+
+    private ApiType getApiType() {
+        return page.getApiType();
+    }
+
 }

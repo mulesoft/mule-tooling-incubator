@@ -274,6 +274,13 @@
          class="org.mule.tooling.devkit.wizards.ConnectorImportWizzard" 
          icon="icons/icon.png">
       </wizard> 
+      <wizard 
+      	 category="org.mule.tooling.ui.muleImportCategory"
+         id="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportPage" 
+         name="Anypoint Connector Project from External Location (.zip)" 
+         class="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportWizard" 
+         icon="icons/importzip.gif">
+      </wizard>
    </extension>
    <extension point="org.eclipse.ui.decorators">
      <decorator

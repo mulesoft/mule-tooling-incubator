@@ -56,7 +56,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
     protected static final int MAX_HISTORY = 10;
 
     /** Unique page id */
-    public static final String PAGE_ID = "muleProjectImportPage";
+    public static final String PAGE_ID = "connectorProjectImportPage";
 
     /** Projects dropdown */
     protected ComboViewer projects;

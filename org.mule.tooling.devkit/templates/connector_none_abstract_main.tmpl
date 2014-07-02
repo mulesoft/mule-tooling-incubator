@@ -3,7 +3,7 @@ package ${package};
 import java.util.List;
 #end
 import org.mule.api.annotations.Connector;
-#if($OAuthEnaled == false)
+#if($OAuthEnaled == false )
 import org.mule.api.annotations.Connect;
 import org.mule.api.annotations.ValidateConnection;
 import org.mule.api.annotations.ConnectionIdentifier;
@@ -14,15 +14,8 @@ import org.mule.api.annotations.display.Password;
 #end
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Processor;
-
-
 #if($OAuthEnaled == true)
-import java.io.IOException;
 import org.mule.api.annotations.ReconnectOn;
-import org.mule.api.annotations.rest.HttpMethod;
-import org.mule.api.annotations.rest.RestCall;
-import org.mule.api.annotations.rest.RestHeaderParam;
-import org.mule.api.annotations.rest.RestUriParam;
 #if( $authenticationType=='OAUTH_V1')
 import org.mule.api.annotations.oauth.OAuth;
 #end
@@ -32,6 +25,7 @@ import org.mule.api.annotations.oauth.OAuth2;
 import org.mule.api.annotations.oauth.OAuthAccessToken;
 import org.mule.api.annotations.oauth.OAuthConsumerKey;
 import org.mule.api.annotations.oauth.OAuthConsumerSecret;
+import org.mule.api.annotations.oauth.OAuthPostAuthorization;
 import org.mule.api.annotations.oauth.OAuthAccessTokenSecret;
 import org.mule.api.annotations.oauth.OAuthProtected;
 #end
@@ -63,10 +57,8 @@ import org.mule.api.annotations.param.Default;
 accessTokenUrl = "https://api.mycommector.com/uas/oauth/accessToken", 
 authorizationUrl = "https://api.mycommector.com/uas/oauth/authorize")
 #end
-public abstract class ${className}
-#else
-public class ${className}
 #end
+public class ${className}
 {
     /**
      * Configurable
@@ -75,13 +67,7 @@ public class ${className}
     @Default("value")
     private String myProperty;
 
-#if($OAuthEnaled == true )
-    /**
-     * Header Param
-     */
-    @Configurable
-    @RestHeaderParam(value= "headerParamName")
-    private String headerParamValue;    
+#if($OAuthEnaled == true ) 
 
     /**
      * The OAuth2 client id
@@ -99,25 +85,115 @@ public class ${className}
 
     @OAuthAccessToken
     private String accessToken;
-
-    /**
-     * Set property
-     *
-     * @param headerParamValue My Header Param Value
-     */
-    public void setHeaderParamValue(String headerParamValue)
-    {
-        this.headerParamValue = headerParamValue;
-    }
-
-    /**
-     * Get property
-     */
-    public String getHeaderParamValue()
-    {
-        return this.headerParamValue;
-    }
     
+    @Configurable
+    @OAuthAccessTokenSecret
+    private String accessTokenSecret;
+
+#end
+    
+#if($metadataEnabled == true )    
+    @MetaDataKeyRetriever
+    public List<MetaDataKey> getMetaDataKeys() throws Exception {
+        return null;
+    }
+
+    @MetaDataRetriever
+    public MetaData getMetaData(MetaDataKey key) throws Exception {
+		return null;	
+    }
+#end
+#if($OAuthEnaled == false )
+
+    /**
+     * Connect
+     *
+     * @param username A username
+     * @param password A password
+     * @throws ConnectionException
+     */
+    @Connect
+    public void connect(@ConnectionKey String username, @Password String password)
+        throws ConnectionException {
+        /*
+         * CODE FOR ESTABLISHING A CONNECTION GOES IN HERE
+         */
+    }
+
+    /**
+     * Disconnect
+     */
+    @Disconnect
+    public void disconnect() {
+        /*
+         * CODE FOR CLOSING A CONNECTION GOES IN HERE
+         */
+    }
+
+    /**
+     * Are we connected
+     */
+    @ValidateConnection
+    public boolean isConnected() {
+        return true;
+    }
+
+    /**
+     * Are we connected
+     */
+    @ConnectionIdentifier
+    public String connectionId() {
+        return "001";
+    }
+#end
+    /**
+     * Custom processor
+     *
+     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:myProcessor}
+     *
+     * @param content Content to be processed
+     * @return Some string
+#if($OAuthEnaled == true )
+     * @throws Exception Comment for Exception     
+#end
+     */
+    @Processor
+#if($OAuthEnaled == true )
+    @OAuthProtected
+    @ReconnectOn(exceptions = { Exception.class })
+    public String myProcessor(@Default("content") String content) throws Exception
+#else
+    public String myProcessor(String content)
+#end  
+    {
+        /*
+         * MESSAGE PROCESSOR CODE GOES HERE
+         */
+
+        return content;
+    }
+
+#if($hasQuery == true )
+
+    /**
+     * Description for query
+     *
+     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query}
+     *
+     *  @param query The dsql query
+     *  @return List of elements that match the criteria
+     */
+    @Processor
+    public List<Object> query(@Query String query) {
+        //TODO
+        /*
+         * MESSAGE PROCESSOR CODE GOES HERE
+         */
+        return null;
+    }
+#end
+#if($OAuthEnaled == true ) 
+
     /**
      * Set accessToken
      *
@@ -171,10 +247,6 @@ public class ${className}
     {
         return this.clientSecret;
     }
-    
-    @Configurable
-    @OAuthAccessTokenSecret
-    private String accessTokenSecret;
 
     public String getAccessTokenSecret() {
         return accessTokenSecret;
@@ -184,19 +256,6 @@ public class ${className}
         this.accessTokenSecret = accessTokenSecret;
     }
 #end
-    
-#if($metadataEnabled == true )    
-    @MetaDataKeyRetriever
-    public List<MetaDataKey> getMetaDataKeys() throws Exception {
-        return null;
-    }
-
-    @MetaDataRetriever
-    public MetaData getMetaData(MetaDataKey key) throws Exception {
-		return null;	
-    }
-#end    
-
     /**
      * Set property
      *
@@ -214,96 +273,4 @@ public class ${className}
     {
         return this.myProperty;
     }
-
-#if($OAuthEnaled == false)
-    /**
-     * Connect
-     *
-     * @param username A username
-     * @param password A password
-     * @throws ConnectionException
-     */
-    @Connect
-    public void connect(@ConnectionKey String username, @Password String password)
-        throws ConnectionException {
-        /*
-         * CODE FOR ESTABLISHING A CONNECTION GOES IN HERE
-         */
-    }
-
-    /**
-     * Disconnect
-     */
-    @Disconnect
-    public void disconnect() {
-        /*
-         * CODE FOR CLOSING A CONNECTION GOES IN HERE
-         */
-    }
-
-    /**
-     * Are we connected
-     */
-    @ValidateConnection
-    public boolean isConnected() {
-        return true;
-    }
-
-    /**
-     * Are we connected
-     */
-    @ConnectionIdentifier
-    public String connectionId() {
-        return "001";
-    }
-
-#end 
-    /**
-     * Custom processor
-     *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:myProcessor}
-     *
-     * @param content Content to be processed
-     * @return Some string
-#if($OAuthEnaled == true )
-     * @throws IOException Comment for Exception     
-#end
-     */
-    @Processor
-#if($OAuthEnaled == true )
-    @OAuthProtected
-    @ReconnectOn(exceptions = { Exception.class })
-    @RestCall(uri="https://myapiurl/{content}", method=HttpMethod.GET)
-    public abstract void myProcessor(@RestUriParam("content") String content) throws IOException;
-
-#else
-    public String myProcessor(String content)
-    {
-        /*
-         * MESSAGE PROCESSOR CODE GOES HERE
-         */
-
-        return content;
-    }
-#end    
-
-#if($hasQuery == true )
-
-    /**
-     * Description for query
-     *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query}
-     *
-     *  @param query The dsql query
-     *  @return List of elements that match the criteria
-     */
-    @Processor
-    public List<Object> query(@Query String query) {
-        //TODO
-        /*
-         * MESSAGE PROCESSOR CODE GOES HERE
-         */
-        return null;
-    }
-#end
 }

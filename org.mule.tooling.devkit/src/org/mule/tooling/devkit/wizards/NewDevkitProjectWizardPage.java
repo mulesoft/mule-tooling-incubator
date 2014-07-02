@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.eclipse.jface.dialogs.IDialogPage;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelection;
@@ -25,6 +26,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
+import org.mule.tooling.core.utils.CoreUtils;
+import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
@@ -42,17 +45,14 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
     private static final String GROUP_TITLE_CONNECTOR = "Anypoint Connector";
     private static final String GROUP_TITLE_API = "API";
-    private static final String SOAP = "Soap";
-    private static final String REST = "Rest";
-    private static final String OTHER = "Generic";
     private static final String NONE = "none";
     private static final String OAUTH_V1 = "OAuth V1";
     private static final String OAUTH_V2 = "OAuth V2";
     private static final String BASIC = "Basic";
     private static final String[] SUPPORTED_AUTHENTICATION_SOAP_OPTIONS = new String[] { NONE };
-    private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { NONE, BASIC, OAUTH_V1, OAUTH_V2 };
-    private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { NONE };
-    private static final String[] SUPPORTED_API_OPTIONS = new String[] { OTHER, SOAP, REST };
+    private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { BASIC, OAUTH_V1, OAUTH_V2 };
+    private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { BASIC, OAUTH_V1, OAUTH_V2 };
+    private static final String[] SUPPORTED_API_OPTIONS = new String[] { ApiType.GENERIC.label(), ApiType.SOAP.label(), ApiType.REST.label() };
     private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.\nYou can specify the folder where the wsdl and schemas are located if you need to copy multiple files.";
     private static final String OTHER_COMMENT = "This will generate the scaffolding for the connector.\nIf you want to create a connector for a java client this will help you get started.";
     private static final String REST_COMMENT = "This will generate the scaffolding for the connector using @RestCall.";
@@ -121,7 +121,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         apiType = initializeComboField(apiGroupBox, "Type: ", SUPPORTED_API_OPTIONS,
                 "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener, 3);
 
-        comboAuthentication = initializeComboField(apiGroupBox, "Authentication: ", SUPPORTED_AUTHENTICATION_SOAP_OPTIONS, "Authentication type", connectorNameListener, 1);
+        comboAuthentication = initializeComboField(apiGroupBox, "Authentication: ", SUPPORTED_AUTHENTICATION_OTHER_OPTIONS, "Authentication type", connectorNameListener, 1);
         final Label comment = new Label(apiGroupBox, SWT.NULL);
         comment.setText("For some Authentication methods we can generate\na better code base for your connector");
         comment.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
@@ -177,21 +177,21 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
             @Override
             public void modifyText(ModifyEvent e) {
-                boolean isVisible = SOAP.equals(apiType.getText());
+                boolean isVisible = ApiType.SOAP.label().equals(apiType.getText());
                 wsdlLabel.setVisible(isVisible);
                 wsdlLocation.setVisible(isVisible);
                 buttonPickFile.setVisible(isVisible);
-                if (SOAP.equals(apiType.getText())) {
+                if (ApiType.SOAP.label().equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS[0]);
                     label.setText(SOAP_COMMENT);
                 }
-                if (REST.equals(apiType.getText())) {
+                if (ApiType.REST.label().equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_REST_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_REST_OPTIONS[0]);
                     label.setText(REST_COMMENT);
                 }
-                if (OTHER.equals(apiType.getText())) {
+                if (ApiType.GENERIC.label().equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS[0]);
                     label.setText(OTHER_COMMENT);
@@ -199,7 +199,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             }
         });
 
-        apiType.setText(OTHER);
+        apiType.setText(ApiType.GENERIC.label());
         setControl(container);
         initialize();
     }
@@ -292,6 +292,12 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             updateStatus("The selected folder does not contains a wsdl file.");
             return;
         }
+        final String projectName = getName();
+        final File workspaceDir = CoreUtils.getWorkspaceLocation();
+        if ((new File(workspaceDir, projectName)).exists()) {
+            updateStatus("A project with the given name already exists.");
+            return;
+        }
 
         updateStatus(null);
     }
@@ -340,7 +346,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private void updateComponentsEnablement() {
-        boolean enabled = isBasic() && !apiType.getText().equals(REST);
+        boolean enabled = isBasic() && !apiType.getText().equals(ApiType.REST.label());
         datasense.setEnabled(enabled);
         query.setEnabled(enabled);
         if (enabled) {
@@ -350,7 +356,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private boolean isBasic() {
-        return !apiType.getText().equals(REST) || (comboAuthentication.getText().equals(BASIC));
+        return !(comboAuthentication.getText().equals(OAUTH_V1) || comboAuthentication.getText().equals(OAUTH_V2) );
     }
 
     private String getDevkitVersion(ServerDefinition selectedServerDefinition) {
@@ -380,11 +386,15 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     public boolean isCxfSoap() {
-        return apiType.getText().equals(SOAP);
+        return apiType.getText().equals(ApiType.SOAP.label());
     }
 
     public AuthenticationType getAuthenticationType() {
         return AuthenticationType.fromLabel(comboAuthentication.getText());
+    }
+
+    public ApiType getApiType() {
+        return ApiType.fromLabel(this.apiType.getText());
     }
 
     private boolean isValidateFileOrFolder(String result) {
