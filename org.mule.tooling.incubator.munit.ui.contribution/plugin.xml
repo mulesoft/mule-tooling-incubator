@@ -6,49 +6,45 @@
          point="org.eclipse.core.contenttype.contentTypes">
          <content-type
                base-type="org.eclipse.core.runtime.xml"
-               file-extensions="xml, mflow"
+               file-extensions="xml"
                id="org.mule.tooling.messageflow.munit.contentType"
                name="Munit ContentType"
                priority="high">
             <describer
-                  class="org.mule.tooling.ui.contribution.munit.MunitContentTypeDescriber">
-               
+                  class="org.mule.tooling.ui.contribution.munit.MunitContentTypeDescriber">               
             </describer>
          </content-type>
-       
-        
    </extension>
    
    <extension
          point="org.eclipse.ui.editors">
       <editor
             class="org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor"
-            contributorClass="org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditorContributor"            
+            contributorClass="org.mule.tooling.messageflow.editor.MultiActionBarContributor"            
             extensions="xml"
             icon="icons/munit-16x16.png"
-            id="org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor"
-           
+            id="org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor"           
             name="Munit Page Editor">
              <contentTypeBinding
                   contentTypeId="org.mule.tooling.messageflow.munit.contentType">
-            </contentTypeBinding>
-             
+            </contentTypeBinding>             
       </editor>
    </extension>
+   
    <extension
          point="org.mule.tooling.messageflow.nodecontextmenu">
       <nodecontextmenu
             class="org.mule.tooling.ui.contribution.munit.extensions.CreateNewExtension">
-      </nodecontextmenu>
-      
-   </extension>
+      </nodecontextmenu>      
+   </extension>   
    
-    <extension
+   <extension
          point="org.mule.tooling.messageflow.nodecontextmenu">
       <nodecontextmenu
             class="org.mule.tooling.ui.contribution.munit.extensions.RunTestExtension">
       </nodecontextmenu>
    </extension>
+   
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -62,11 +58,11 @@
 	              	icon="icons/Suite.png"
 	              	style="toggle">
 	              	<visibleWhen>
-                     <with variable="activeContexts">
-                <iterate ifEmpty="false" operator="or">
-            <equals value="org.mule.tooling.keybindings.contexts.munitEditor"/>
-        </iterate>
-              </with>
+	                     <with variable="activeContexts">
+	           			     <iterate ifEmpty="false" operator="or">
+	            				<equals value="org.mule.tooling.keybindings.contexts.munitEditor"/>
+	        				 </iterate>
+	              		</with>
 	              	</visibleWhen>
             	</command>
            </toolbar>
