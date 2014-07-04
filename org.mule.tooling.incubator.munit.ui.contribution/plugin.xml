@@ -23,8 +23,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor"
-            contributorClass="org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditorContributor"
-            matchingStrategy="org.mule.tooling.messageflow.editor.MuleEditorMatchingStrategy"
+            contributorClass="org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditorContributor"            
             extensions="xml"
             icon="icons/munit-16x16.png"
             id="org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor"
