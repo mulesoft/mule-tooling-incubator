@@ -326,19 +326,26 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
         }
         current = project;
         IPackageFragment[] packages = JavaCore.create(project).getPackageFragments();
-        // parse(JavaCore.create(project));
+        boolean hasConnector = false;
         for (IPackageFragment mypackage : packages) {
             if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE && mypackage.exists()) {
                 if (!mypackage.getPath().toString().contains(DevkitUtils.MAIN_JAVA_FOLDER)) {
                     continue;
                 }
-                createAST(mypackage);
+                hasConnector |= createAST(mypackage);
             }
+        }
+        if (!hasConnector) {
+            Display.getDefault().asyncExec(new Runnable() {
 
+                public void run() {
+                    viewer.setInput(new ProjectRoot());
+                }
+            });
         }
     }
 
-    private void createAST(IPackageFragment mypackage) throws JavaModelException {
+    private boolean createAST(IPackageFragment mypackage) throws JavaModelException {
 
         ModuleVisitor visitor = new ModuleVisitor();
         for (ICompilationUnit unit : mypackage.getCompilationUnits()) {
@@ -357,6 +364,8 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                     viewer.setInput(root);
                 }
             });
+            return true;
         }
+        return false;
     }
 }

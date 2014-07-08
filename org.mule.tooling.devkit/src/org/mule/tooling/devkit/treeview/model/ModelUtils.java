@@ -20,7 +20,7 @@ public class ModelUtils {
     }
 
     public static boolean isConnectionAnnotation(String annotation) {
-        return !(annotation.equals(SUPPORTED_METHOD_ANNOTATIONS[0]) || annotation.equals(SUPPORTED_METHOD_ANNOTATIONS[1])) && !isMetadaMethod(annotation);
+        return !(annotation.equals(SUPPORTED_METHOD_ANNOTATIONS[0])) && !isMetadaMethod(annotation);
     }
 
     public static boolean isMetadaMethod(String annotation) {
