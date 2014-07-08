@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.eclipse.jface.dialogs.IDialogPage;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,6 +26,7 @@ import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.core.utils.CoreUtils;
+import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
@@ -43,7 +43,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
     private static final String DEFAULT_NAME = "Hello";
     private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
-    private static final String GROUP_TITLE_CONNECTOR = "Anypoint Connector";
+    private static final String GROUP_TITLE_CONNECTOR = "";
     private static final String GROUP_TITLE_API = "API";
     private static final String NONE = "none";
     private static final String OAUTH_V1 = "OAuth V1";
@@ -55,7 +55,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String[] SUPPORTED_API_OPTIONS = new String[] { ApiType.GENERIC.label(), ApiType.SOAP.label(), ApiType.REST.label() };
     private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.\nYou can specify the folder where the wsdl and schemas are located if you need to copy multiple files.";
     private static final String OTHER_COMMENT = "This will generate the scaffolding for the connector.\nIf you want to create a connector for a java client this will help you get started.";
-    private static final String REST_COMMENT = "This will generate the scaffolding for the connector using @RestCall.";
+    private static final String REST_COMMENT = "This will generate the scaffolding for the connector using @RestCall.\nIt is the easiest way to make a connector for a Rest API.";
     private Text name;
     private String connectorCategory = DEFAULT_CATEGORY;
     private final Pattern connectorName = Pattern.compile("[A-Z]+[a-zA-Z0-9]+");
@@ -101,7 +101,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 updateComponentsEnablement();
             }
         };
-        name = initializeTextField(connectorGroupBox, "Name: ", DEFAULT_NAME,
+        name = initializeTextField(connectorGroupBox, "Connector Name: ", DEFAULT_NAME,
                 "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener);
 
         name.addModifyListener(new ModifyListener() {
@@ -133,7 +133,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
         wsdlLocation = new Text(apiGroupBox, SWT.BORDER);
         wsdlLocation.setLayoutData(GridDataFactory.fillDefaults().span(3, 1).grab(true, false).create());
-
+        
         wsdlLocation.addModifyListener(new ModifyListener() {
 
             @Override
@@ -145,7 +145,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
         Composite pickButtons = new Composite(apiGroupBox, SWT.NULL);
         final Button buttonPickFile = new Button(pickButtons, SWT.NONE);
-        buttonPickFile.setText("...");
+        buttonPickFile.setText("Browse");
         buttonPickFile.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.END).create());
         buttonPickFile.addSelectionListener(new SelectionAdapter() {
 
@@ -162,10 +162,14 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
         GridLayoutFactory.fillDefaults().numColumns(1).applyTo(pickButtons);
 
-        GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0).applyTo(container);
+        GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 0, 0).margins(0, 0).spacing(0, 0).applyTo(container);
         GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
-
-        final Label label = new Label(container, SWT.NULL);
+        
+        Composite containerTip = new Composite(container, SWT.NULL);
+        GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0).applyTo(containerTip);
+        final Label image = new Label(containerTip, SWT.NULL);
+        image.setImage(DevkitImages.getManagedImage("", "quickassist.gif"));
+        final Label label = new Label(containerTip, SWT.NULL);
         label.setText(OTHER_COMMENT);
         label.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).create());
 
@@ -185,16 +189,19 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS[0]);
                     label.setText(SOAP_COMMENT);
+                    image.setImage(DevkitImages.getManagedImage("", "quickassist.gif"));
                 }
                 if (ApiType.REST.label().equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_REST_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_REST_OPTIONS[0]);
                     label.setText(REST_COMMENT);
+                    image.setImage(DevkitImages.getManagedImage("", "quickassist.gif"));
                 }
                 if (ApiType.GENERIC.label().equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS[0]);
                     label.setText(OTHER_COMMENT);
+                    image.setImage(DevkitImages.getManagedImage("", "quickassist.gif"));
                 }
             }
         });

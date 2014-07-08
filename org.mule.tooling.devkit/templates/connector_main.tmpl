@@ -21,7 +21,6 @@ import java.io.IOException;
 import org.mule.api.annotations.ReconnectOn;
 import org.mule.api.annotations.rest.HttpMethod;
 import org.mule.api.annotations.rest.RestCall;
-import org.mule.api.annotations.rest.RestHeaderParam;
 import org.mule.api.annotations.rest.RestUriParam;
 #if( $authenticationType=='OAUTH_V1')
 import org.mule.api.annotations.oauth.OAuth;
@@ -75,114 +74,35 @@ public class ${className}
     @Default("value")
     private String myProperty;
 
-#if($OAuthEnaled == true )
-    /**
-     * Header Param
-     */
-    @Configurable
-    @RestHeaderParam(value= "headerParamName")
-    private String headerParamValue;    
+#if($OAuthEnaled == true )  
 
     /**
-     * The OAuth2 client id
+     * The OAuth consumer key
      */
     @Configurable
     @OAuthConsumerKey
-    private String clientId;
+    private String consumerKey;
 
     /**
-     * The OAuth2 client secret
+     * The OAuth consumer secret
      */
     @Configurable
     @OAuthConsumerSecret
-    private String clientSecret;
+    private String consumerSecret;
 
+    /**
+     * The OAuth access token
+     */
     @OAuthAccessToken
     private String accessToken;
 
     /**
-     * Set property
-     *
-     * @param headerParamValue My Header Param Value
+     * The OAuth access token secret
      */
-    public void setHeaderParamValue(String headerParamValue)
-    {
-        this.headerParamValue = headerParamValue;
-    }
-
-    /**
-     * Get property
-     */
-    public String getHeaderParamValue()
-    {
-        return this.headerParamValue;
-    }
-    
-    /**
-     * Set accessToken
-     *
-     * @param accessToken The accessToken
-     */
-    public void setAccessToken(String accessToken)
-    {
-        this.accessToken = accessToken;
-    }
-
-    /**
-     * Get ClientSecret
-     */
-    public String getAccessToken()
-    {
-        return this.accessToken;
-    }
-
-    /**
-     * Set clientId
-     *
-     * @param clientId The clientId
-     */
-    public void setClientId(String clientId)
-    {
-        this.clientId = clientId;
-    }
-
-    /**
-     * Get ClientId
-     */
-    public String getClientId()
-    {
-        return this.clientId;
-    }
-
-    /**
-     * Set clientSecret
-     *
-     * @param clientSecret The clientSecret
-     */
-    public void setClientSecret(String clientSecret)
-    {
-        this.clientSecret = clientSecret;
-    }
-
-    /**
-     * Get ClientSecret
-     */
-    public String getClientSecret()
-    {
-        return this.clientSecret;
-    }
-    
     @Configurable
     @OAuthAccessTokenSecret
     private String accessTokenSecret;
 
-    public String getAccessTokenSecret() {
-        return accessTokenSecret;
-    }
-
-    public void setAccessTokenSecret(String accessTokenSecret) {
-        this.accessTokenSecret = accessTokenSecret;
-    }
 #end
     
 #if($metadataEnabled == true )    
@@ -304,6 +224,78 @@ public class ${className}
          * MESSAGE PROCESSOR CODE GOES HERE
          */
         return null;
+    }
+#end
+
+#if($OAuthEnaled == true )  
+    /**
+     * Set accessToken
+     *
+     * @param accessToken The accessToken
+     */
+    public void setAccessToken(String accessToken)
+    {
+        this.accessToken = accessToken;
+    }
+
+    /**
+     * Get accessToken
+     */
+    public String getAccessToken()
+    {
+        return this.accessToken;
+    }
+
+    /**
+     * Set consumerKey
+     *
+     * @param consumerKey The consumerKey
+     */
+    public void setConsumerKey(String consumerKey)
+    {
+        this.consumerKey = consumerKey;
+    }
+
+    /**
+     * Get consumerKey
+     */
+    public String getConsumerKey()
+    {
+        return this.consumerKey;
+    }
+
+    /**
+     * Set consumerSecret
+     *
+     * @param consumerSecret The consumerSecret
+     */
+    public void setConsumerSecret(String consumerSecret)
+    {
+        this.consumerSecret = consumerSecret;
+    }
+
+    /**
+     * Get consumerSecret
+     */
+    public String getConsumerSecret()
+    {
+        return this.consumerSecret;
+    }
+
+    /**
+     * Get accessTokenSecret
+     */
+    public String getAccessTokenSecret() {
+        return this.accessTokenSecret;
+    }
+
+    /**
+     * Set accessTokenSecret
+     *
+     * @param accessTokenSecret The accessTokenSecret
+     */
+    public void setAccessTokenSecret(String accessTokenSecret) {
+        this.accessTokenSecret = accessTokenSecret;
     }
 #end
 }

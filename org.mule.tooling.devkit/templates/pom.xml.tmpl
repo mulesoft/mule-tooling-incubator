@@ -64,7 +64,7 @@
         <profile>
             <id>cxf-generate</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>
@@ -75,7 +75,7 @@
                         <version>${cxf.version}</version>
                         <executions>
                             <execution>
-                                <phase>clean</phase> <!-- This is so it work with the DEV Kit -->
+                                <phase>clean</phase> <!-- This is so it work with the Devkit -->
                                 <goals>
                                     <goal>wsdl2java</goal>
                                 </goals>
@@ -84,7 +84,7 @@
                                         <wsdlOption>
                                             <wsdl>${wsdlUrl}</wsdl>
                                             <autoNameResolution>true</autoNameResolution>
-                                            <extendedSoapHeaders>true</extendedSoapHeaders>
+                                            <extendedSoapHeaders>false</extendedSoapHeaders>
                                             <extraargs>
                                                 <extraarg>-xjc-Xbg</extraarg>
                                                 <extraarg>-xjc-Xcollection-setter-injector</extraarg>

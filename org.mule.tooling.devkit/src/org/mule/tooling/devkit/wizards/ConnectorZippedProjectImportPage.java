@@ -47,16 +47,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.mule.tooling.core.packageManager.ImportPackageManager;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
 import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
 import org.mule.tooling.devkit.common.DevkitUtils;
-import org.mule.tooling.devkit.maven.MavenInfo;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
 import org.mule.tooling.ui.common.FileChooserComposite;
-import org.mule.tooling.ui.common.RuntimeChooser;
 
 /**
  * Page for importing a Mule project from a zip file.
@@ -226,7 +223,6 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
                 return false;
         }
         final File tempExpanded = tempExpandedZipFile;
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
         final IRunnableWithProgress op = new IRunnableWithProgress() {
 

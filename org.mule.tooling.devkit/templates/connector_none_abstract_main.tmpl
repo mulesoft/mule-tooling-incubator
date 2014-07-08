@@ -70,22 +70,28 @@ public class ${className}
 #if($OAuthEnaled == true ) 
 
     /**
-     * The OAuth2 client id
+     * The OAuth consumer key
      */
     @Configurable
     @OAuthConsumerKey
-    private String clientId;
+    private String consumerKey;
 
     /**
-     * The OAuth2 client secret
+     * The OAuth consumer secret
      */
     @Configurable
     @OAuthConsumerSecret
-    private String clientSecret;
+    private String consumerSecret;
 
+    /**
+     * The OAuth access token
+     */
     @OAuthAccessToken
     private String accessToken;
     
+    /**
+     * The OAuth access token secret
+     */
     @Configurable
     @OAuthAccessTokenSecret
     private String accessTokenSecret;
@@ -205,7 +211,7 @@ public class ${className}
     }
 
     /**
-     * Get ClientSecret
+     * Get accessToken
      */
     public String getAccessToken()
     {
@@ -213,45 +219,53 @@ public class ${className}
     }
 
     /**
-     * Set clientId
+     * Set consumer key
      *
-     * @param clientId The clientId
+     * @param consumerKey The consumerKey
      */
-    public void setClientId(String clientId)
+    public void setConsumerKey(String consumerKey)
     {
-        this.clientId = clientId;
+        this.consumerKey = consumerKey;
     }
 
     /**
-     * Get ClientId
+     * Get consumer key
      */
-    public String getClientId()
+    public String getConsumerKey()
     {
-        return this.clientId;
+        return this.consumerKey;
     }
 
     /**
-     * Set clientSecret
+     * Set consumer secret
      *
-     * @param clientSecret The clientSecret
+     * @param consumerSecret The consumerSecret
      */
-    public void setClientSecret(String clientSecret)
+    public void setConsumerSecret(String consumerSecret)
     {
-        this.clientSecret = clientSecret;
+        this.consumerSecret = consumerSecret;
     }
 
     /**
-     * Get ClientSecret
+     * Get consumer secret
      */
-    public String getClientSecret()
+    public String getConsumerSecret()
     {
-        return this.clientSecret;
+        return this.consumerSecret;
     }
 
+    /**
+     * Get accessTokenSecret
+     */
     public String getAccessTokenSecret() {
-        return accessTokenSecret;
+        return this.accessTokenSecret;
     }
 
+    /**
+     * Set accessTokenSecret
+     *
+     * @param accessTokenSecret The accessTokenSecret
+     */
     public void setAccessTokenSecret(String accessTokenSecret) {
         this.accessTokenSecret = accessTokenSecret;
     }
