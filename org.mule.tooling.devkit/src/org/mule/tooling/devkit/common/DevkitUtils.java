@@ -132,7 +132,6 @@ public class DevkitUtils {
     private static CompilationUnit locateConnectorInResource(IProject project, IPath folderResource) {
         
         IFolder folder = project.getFolder(folderResource.makeRelative());
-        ICompilationUnit connectorElement = null;
 
         try {
             for (IResource resource : folder.members()) {
@@ -148,7 +147,6 @@ public class DevkitUtils {
                             LocateModuleNameVisitor locator = new LocateModuleNameVisitor();
                             connectorClass.accept(locator);
                             if (!locator.getValue().isEmpty()) {
-                                connectorElement = (ICompilationUnit) element;
                                 return connectorClass;
                             }
                             break;
