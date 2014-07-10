@@ -53,7 +53,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { BASIC, OAUTH_V1, OAUTH_V2 };
     private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { BASIC, OAUTH_V1, OAUTH_V2 };
     private static final String[] SUPPORTED_API_OPTIONS = new String[] { ApiType.GENERIC.label(), ApiType.SOAP.label(), ApiType.REST.label() };
-    private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.\nYou can specify the folder where the wsdl and schemas are located if you need to copy multiple files.";
+    private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.";
     private static final String OTHER_COMMENT = "This will generate the scaffolding for the connector.\nIf you want to create a connector for a java client this will help you get started.";
     private static final String REST_COMMENT = "This will generate the scaffolding for the connector using @RestCall.\nIt is the easiest way to make a connector for a Rest API.";
     private Text name;
@@ -119,12 +119,19 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
         Group apiGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_API, 4);
         apiType = initializeComboField(apiGroupBox, "Type: ", SUPPORTED_API_OPTIONS,
-                "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener, 3);
+                "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener, 1);
+
+        final Label tooltipApi = new Label(apiGroupBox, SWT.NULL);
+        tooltipApi.setImage(DevkitImages.getManagedImage("", "quickassist.gif"));
+        tooltipApi.setToolTipText(OTHER_COMMENT);
+        tooltipApi.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).align(SWT.BEGINNING, SWT.CENTER).grab(false, false).create());
 
         comboAuthentication = initializeComboField(apiGroupBox, "Authentication: ", SUPPORTED_AUTHENTICATION_OTHER_OPTIONS, "Authentication type", connectorNameListener, 1);
-        final Label comment = new Label(apiGroupBox, SWT.NULL);
-        comment.setText("For some Authentication methods we can generate\na better code base for your connector");
-        comment.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
+
+        final Label authenticationTooltip = new Label(apiGroupBox, SWT.NULL);
+        authenticationTooltip.setImage(DevkitImages.getManagedImage("", "quickassist.gif"));
+        authenticationTooltip.setToolTipText(OTHER_COMMENT);
+        authenticationTooltip.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).align(SWT.BEGINNING, SWT.CENTER).grab(false, false).create());
 
         final Label wsdlLabel = new Label(apiGroupBox, SWT.NULL);
         wsdlLabel.setText("WSDL location:");
@@ -133,7 +140,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
         wsdlLocation = new Text(apiGroupBox, SWT.BORDER);
         wsdlLocation.setLayoutData(GridDataFactory.fillDefaults().span(3, 1).grab(true, false).create());
-        
+
         wsdlLocation.addModifyListener(new ModifyListener() {
 
             @Override
@@ -143,10 +150,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
         });
 
-        Composite pickButtons = new Composite(apiGroupBox, SWT.NULL);
-        final Button buttonPickFile = new Button(pickButtons, SWT.NONE);
+        final Button buttonPickFile = new Button(apiGroupBox, SWT.NONE);
         buttonPickFile.setText("Browse");
-        buttonPickFile.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.END).create());
+        buttonPickFile.setLayoutData(GridDataFactory.fillDefaults().create());
         buttonPickFile.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
@@ -160,24 +166,32 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             }
         });
 
-        GridLayoutFactory.fillDefaults().numColumns(1).applyTo(pickButtons);
 
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 0, 0).margins(0, 0).spacing(0, 0).applyTo(container);
         GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
-        
+
         Composite containerTip = new Composite(container, SWT.NULL);
         GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0).applyTo(containerTip);
-        final Label image = new Label(containerTip, SWT.NULL);
-        image.setImage(DevkitImages.getManagedImage("", "quickassist.gif"));
-        final Label label = new Label(containerTip, SWT.NULL);
-        label.setText(OTHER_COMMENT);
-        label.setLayoutData(GridDataFactory.swtDefaults().span(1, 1).align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).create());
-
         wsdlLabel.setVisible(false);
         wsdlLocation.setVisible(false);
         buttonPickFile.setVisible(false);
+        final ModifyListener authenticationChange = new ModifyListener() {
 
-        apiType.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                if (ApiType.SOAP.label().equals(apiType.getText())) {
+                    authenticationTooltip.setToolTipText(getAuthenticationDescription());
+                }
+                if (ApiType.REST.label().equals(apiType.getText())) {
+                    authenticationTooltip.setToolTipText(getAuthenticationDescription());
+                }
+                if (ApiType.GENERIC.label().equals(apiType.getText())) {
+                    authenticationTooltip.setToolTipText(getAuthenticationDescription());
+                }
+            }
+
+        };
+        final ModifyListener changeListener = new ModifyListener() {
 
             @Override
             public void modifyText(ModifyEvent e) {
@@ -188,24 +202,22 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 if (ApiType.SOAP.label().equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS[0]);
-                    label.setText(SOAP_COMMENT);
-                    image.setImage(DevkitImages.getManagedImage("", "quickassist.gif"));
+                    tooltipApi.setToolTipText(SOAP_COMMENT);
                 }
                 if (ApiType.REST.label().equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_REST_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_REST_OPTIONS[0]);
-                    label.setText(REST_COMMENT);
-                    image.setImage(DevkitImages.getManagedImage("", "quickassist.gif"));
+                    tooltipApi.setToolTipText(REST_COMMENT);
                 }
                 if (ApiType.GENERIC.label().equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS[0]);
-                    label.setText(OTHER_COMMENT);
-                    image.setImage(DevkitImages.getManagedImage("", "quickassist.gif"));
+                    tooltipApi.setToolTipText(OTHER_COMMENT);
                 }
             }
-        });
-
+        };
+        apiType.addModifyListener(changeListener);
+        comboAuthentication.addModifyListener(authenticationChange);
         apiType.setText(ApiType.GENERIC.label());
         setControl(container);
         initialize();
@@ -302,7 +314,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         final String projectName = getName();
         final File workspaceDir = CoreUtils.getWorkspaceLocation();
         if ((new File(workspaceDir, projectName)).exists()) {
-            updateStatus("A project with the given name already exists.");
+            updateStatus("A project with the given name already exists in your workspace folder.");
             return;
         }
 
@@ -343,7 +355,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         label.setText(labelText);
         label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
         Combo textField = new Combo(groupBox, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-        textField.setLayoutData(GridDataFactory.swtDefaults().span(horizontalSpan, 1).create());
+        textField.setLayoutData(GridDataFactory.swtDefaults().span(horizontalSpan, 1).grab(true, false).align(SWT.FILL, SWT.FILL).create());
         textField.setItems(initialValues);
         textField.setText(initialValues[0]);
         textField.addModifyListener(modifyListener);
@@ -363,7 +375,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private boolean isBasic() {
-        return !(comboAuthentication.getText().equals(OAUTH_V1) || comboAuthentication.getText().equals(OAUTH_V2) );
+        return !(comboAuthentication.getText().equals(OAUTH_V1) || comboAuthentication.getText().equals(OAUTH_V2));
     }
 
     private String getDevkitVersion(ServerDefinition selectedServerDefinition) {
@@ -420,5 +432,15 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             }
         }
         return true;
+    }
+
+    private String getAuthenticationDescription() {
+        if (comboAuthentication.getText().equals(BASIC))
+            return "Basic authentication provides username and password when making each request.";
+        if (comboAuthentication.getText().equals(OAUTH_V1))
+            return "OAuth V1 provides a method for Mule applications to access server resources on behalf of a resource owner without sharing their credentials.";
+        if (comboAuthentication.getText().equals(OAUTH_V2))
+            return "OAuth V2, the next�evolution of the OAuth protocol,�provides a method for Mule applications to access server resources on behalf of a resource owner without sharing their credentials.";
+        return "";
     }
 }
