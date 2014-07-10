@@ -48,4 +48,5 @@ Bundle-ClassPath: .,
  lib/commons-logging.jar,
  lib/fluent-hc.jar,
  lib/httpclient-cache.jar,
- lib/commons-validator.jar
+ lib/commons-validator.jar,
+ lib/mule-devkit-code-utils.jar
