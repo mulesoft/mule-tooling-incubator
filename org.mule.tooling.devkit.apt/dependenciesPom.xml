@@ -19,6 +19,11 @@
 
 	<dependencies>
 		<dependency>
+            <groupId>org.mule.tools.devkit</groupId>
+            <artifactId>mule-devkit-code-utils</artifactId>
+            <version>${devkit-version}</version>
+        </dependency>
+		<dependency>
 			<groupId>org.mule.tools.devkit</groupId>
 			<artifactId>mule-devkit-annotations-processor</artifactId>
 			<version>${devkit-version}</version>

@@ -84,8 +84,15 @@ Bundle-ClassPath: .,
  lib/junit.jar,
  lib/devkit-module.jar,
  lib/grabbag.jar,
- lib/guava.jar
-Export-Package: org.mule.devkit.generation.api.gatherer,org.mule.devki
- t.generation.utils,org.mule.tooling.devkit.apt; uses:="javax.lang.mod
- el.util,  javax.lang.model.type,  org.mule.devkit.model.visitor,  org
- .mule.devkit.model,  com.sun.source.util,  javax.lang.model.element"
+ lib/guava.jar,
+ lib/mule-devkit-code-utils.jar
+Export-Package: org.mule.api.annotations,
+ org.mule.devkit.generation.api.gatherer,
+ org.mule.devkit.utils,
+ org.mule.tooling.devkit.apt;
+  uses:="javax.lang.model.util,
+   javax.lang.model.type,
+   org.mule.devkit.model.visitor,
+   org.mule.devkit.model,
+   com.sun.source.util,
+   javax.lang.model.element"
