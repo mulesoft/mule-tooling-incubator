@@ -2,7 +2,7 @@ package org.mule.tooling.devkit.dialogs;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.mule.tooling.devkit.common.TestDataModelDto.ExportPolicy;
+import org.mule.tooling.devkit.popup.dto.TestDataModelDto.ExportPolicy;
 
 
 public class ExportTypeSelectionDialog extends MessageDialog {

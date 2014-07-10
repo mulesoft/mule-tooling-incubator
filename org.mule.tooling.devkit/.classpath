@@ -12,5 +12,11 @@
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/fluent-hc.jar"/>
 	<classpathentry kind="lib" path="lib/httpclient-cache.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/commons-digester.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang.jar"/>
+	<classpathentry kind="lib" path="lib/JavaEWAH.jar"/>
+	<classpathentry kind="lib" path="lib/jsch.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jgit.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

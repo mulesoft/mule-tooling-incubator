@@ -54,7 +54,7 @@ public class GenerateSourcesCommand extends AbstractHandler {
                             MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator.decorate(javaProject);
                             new BaseDevkitGoalRunner(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=true", "-Ddevkit.javadoc.check.skip=true",
                                     "-Dmaven.javadoc.skip=true" }, javaProject).run(mavenProject.getPomFile(), monitor);
-                            DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.GENERATED_SOURCES_FOLDER), monitor).execute();
+                            DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.GENERATED_SOURCES_FOLDER), monitor).execute(Status.OK);
                             monitor.done();
                             return Status.OK_STATUS;
                         }

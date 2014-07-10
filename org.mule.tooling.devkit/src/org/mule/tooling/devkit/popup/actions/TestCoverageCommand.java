@@ -2,6 +2,7 @@ package org.mule.tooling.devkit.popup.actions;
 
 import org.eclipse.core.resources.IProject;
 import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.devkit.maven.MavenUtils;
 
 public class TestCoverageCommand extends AbstractMavenCommandRunner {
 
@@ -16,7 +17,8 @@ public class TestCoverageCommand extends AbstractMavenCommandRunner {
 			
 			final String jobMsg = "Analyzing Sources...";
 			
-			runMavenGoalJob(selectedProject, mavenCommand, jobMsg,DevkitUtils.openFileInBrower(selectedProject.getFile("/target/reports/certification/automation-coverage-report.html")));
+			MavenUtils.runMavenGoalJob(selectedProject, mavenCommand, jobMsg,
+			        DevkitUtils.openFileInBrower(selectedProject.getFile("/target/reports/certification/automation-coverage-report.html")));
 
 	}
 
