@@ -35,7 +35,46 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <module>org.mule.tooling.incubator.aop.extension</module>
     <module>org.mule.tooling.incubator.updatesite</module>
   </modules>
-  
+  <profiles>
+      <profile>
+          <id>sign</id>
+          <build>
+              <plugins>
+                  <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-jarsigner-plugin</artifactId>
+                      <version>1.2</version>
+                      <executions>
+                          <execution>
+                              <id>sign</id>
+                              <goals>
+                                  <goal>sign</goal>
+                              </goals>
+                          </execution>
+                          <execution>
+                              <id>verify</id>
+                              <goals>
+                                  <goal>verify</goal>
+                              </goals>
+                          </execution>
+                      </executions>
+                      <configuration>
+                          <certs>true</certs>
+                          <verbose>false</verbose>
+                          <storetype>JKS</storetype>
+                          <keystore>${keystore.path}</keystore>
+                          <alias>mulesoft</alias>
+                          <storepass>${keystore.store.password}</storepass>
+                          <arguments>
+                              <argument>-tsa</argument>
+                              <argument>https://timestamp.geotrust.com/tsa</argument>
+                          </arguments>
+                      </configuration>
+                  </plugin>
+              </plugins>
+          </build>
+      </profile>
+  </profiles>
   <build>
   	 <pluginManagement>
 	      <plugins>
