@@ -73,7 +73,7 @@ public class CreateDocumentationCommand extends AbstractHandler {
 							if (result == BaseDevkitGoalRunner.CANCELED)
                                 return null;
                             
-							DevkitUtils.openFileInBrower(selectedProject.getFile("/target/apidocs/index.html")).execute();
+							DevkitUtils.openFileInBrower(selectedProject.getFile("/target/apidocs/index.html")).execute(result);
 							
 							return Status.OK_STATUS;
 						}

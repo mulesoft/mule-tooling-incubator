@@ -6,21 +6,12 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
-import org.mule.tooling.devkit.maven.MavenDevkitProjectDecorator;
 
 public abstract class AbstractMavenCommandRunner extends AbstractHandler {
 
@@ -35,13 +26,8 @@ public abstract class AbstractMavenCommandRunner extends AbstractHandler {
             if (selected instanceof IJavaElement) {
                 final IProject selectedProject = ((IJavaElement) selected).getJavaProject().getProject();
                 if (selectedProject != null) {
-                    int errorCount = countErrors(selectedProject);
-
-                    if (errorCount > 0) {
-                        boolean ignoreErrors = errorHandling(errorCount);
-                        if (!ignoreErrors) {
-                            return null;
-                        }
+                    if (!ignoreErrorsInProject(countErrors(selectedProject))){
+                        return null;
                     }
 
                     doCommandJobOnProject(selectedProject);
@@ -53,31 +39,10 @@ public abstract class AbstractMavenCommandRunner extends AbstractHandler {
 
     protected abstract void doCommandJobOnProject(final IProject selectedProject);
 
-    protected void runMavenGoalJob(final IProject selectedProject, final String[] mavenCommand, final String jobMsg, final DevkitCallback onSuccess) {
-
-        final WorkspaceJob changeClasspathJob = new WorkspaceJob(jobMsg) {
-
-            @Override
-            public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-                monitor.beginTask(jobMsg, 100);
-                IJavaProject javaProject = JavaCore.create(selectedProject);
-                MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator.decorate(javaProject);
-
-                int result = new BaseDevkitGoalRunner(mavenCommand, javaProject).run(mavenProject.getPomFile(), monitor);
-
-                if (result == Status.OK && onSuccess != null) {
-                    onSuccess.execute();
-                }
-                return Status.OK_STATUS;
-            }
-        };
-        changeClasspathJob.setUser(true);
-        changeClasspathJob.setRule(selectedProject);
-        changeClasspathJob.setPriority(Job.SHORT);
-        changeClasspathJob.schedule();
-    }
-
-    protected boolean errorHandling(int errorCount) {
+    protected boolean ignoreErrorsInProject(int errorCount) {
+        if (errorCount == 0)
+            return true;
+        
         String errorText = "Your project has (" + errorCount + ") " + ((errorCount > 1) ? "errors" : "error" + ".");
         boolean result = MessageDialog.openConfirm(null, "Warning", errorText + "\n\nDo you want to continue with this operation?.");
         return result;

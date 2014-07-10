@@ -1,8 +1,4 @@
-package org.mule.tooling.devkit.common;
-
-import java.util.ArrayList;
-import java.util.List;
-
+package org.mule.tooling.devkit.popup.dto;
 
 public class TestDataModelDto {
 

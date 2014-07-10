@@ -1,12 +1,17 @@
 package org.mule.tooling.devkit.common;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.operations.OperationStatus;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -22,6 +27,14 @@ import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand.ListMode;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
@@ -32,6 +45,7 @@ import org.mule.tooling.utils.SilentRunner;
 @SuppressWarnings("restriction")
 public class DevkitUtils {
 
+    public static final String DOT_GIT_PATH = "/.git/";
     public static final String PROCESSOR = "Processor";
 
     public static final String ICONS_FOLDER = "icons";
@@ -71,14 +85,15 @@ public class DevkitUtils {
     public static DevkitCallback refreshFolder(final IFolder folder, IProgressMonitor monitor) {
         return new DevkitCallback() {
 
-            public void execute() {
+            public int execute(int previousResult) {
                 try {
                     if (folder.exists()) {
                         folder.refreshLocal(IResource.DEPTH_INFINITE, null);
                     }
                 } catch (CoreException e) {
-
+                    return Status.ERROR;
                 }
+                return Status.OK;
             }
         };
     }
@@ -90,7 +105,7 @@ public class DevkitUtils {
     public static DevkitCallback openFileInBrower(final IFile file) {
         return new DevkitCallback() {
 
-            public void execute() {
+            public int execute(int previousResult) {
                 Display.getDefault().syncExec(new Runnable() {
 
                     @Override
@@ -114,6 +129,8 @@ public class DevkitUtils {
                         });
                     }
                 });
+                
+                return Status.OK;
             };
         };
     }
@@ -196,5 +213,59 @@ public class DevkitUtils {
         }
 
         return processors;
+    }
+    
+    public static void setControlsEnable(boolean enabled, Control... controls) {
+        for (Control part : controls) {
+            part.setEnabled(enabled);
+            if (part instanceof Composite) {
+                Composite comp = (Composite) part;
+                for (Control child : comp.getChildren())
+                    setControlsEnable(enabled, child);
+            }
+        }
+    }
+    
+    public static String findResourceInFolder(IContainer folder, String resourceNameFormat) throws CoreException {
+
+        String resourceName = "";
+
+        IResource[] resources = folder.members();
+        for (int i = 0; i < resources.length; i++) {
+            IResource resource = resources[i];
+
+            if (resource.getName().matches(resourceNameFormat) && resourceName.equals("")) {
+                resourceName = resource.getLocation().toOSString();
+            }
+
+            if (!resourceName.equals(""))
+                break;
+        }
+
+        return resourceName;
+    }
+
+    public static List<String> getProjectBranches(IProject project, ListMode mode){
+        List<String> branches = new LinkedList<String>();
+        if (project == null){
+            return branches;
+        }
+        
+        String repoPath = project.getLocationURI().getPath() + DOT_GIT_PATH;
+        FileRepositoryBuilder builder = new FileRepositoryBuilder();
+        try {
+            Repository repository = builder.setGitDir(new File(repoPath)).build();
+            List<Ref> call = new Git(repository).branchList().setListMode(mode).call();
+            for (Ref ref : call) {
+                branches.add(StringUtils.substring(ref.getName(), ref.getName().lastIndexOf("/")+1));
+//                System.out.println("Branch: " + StringUtils.substring(ref.getName(), ref.getName().lastIndexOf("/")+1));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (GitAPIException e) {
+            e.printStackTrace();
+        }
+        
+        return branches;
     }
 }

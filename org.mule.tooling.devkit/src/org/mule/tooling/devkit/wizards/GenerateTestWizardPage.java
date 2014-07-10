@@ -42,8 +42,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.common.DevkitUtils;
-import org.mule.tooling.devkit.common.TestDataModelDto;
-import org.mule.tooling.devkit.common.TestDataModelDto.ExportPolicy;
+import org.mule.tooling.devkit.popup.dto.TestDataModelDto;
+import org.mule.tooling.devkit.popup.dto.TestDataModelDto.ExportPolicy;
 import org.mule.tooling.ui.MuleUiConstants;
 import org.mule.tooling.ui.utils.UiUtils;
 
@@ -152,17 +152,11 @@ public class GenerateTestWizardPage extends WizardPage {
     }
 
     private void initializeFields() {
-        setControlsEnable(false, functionalGroup.getChildren());
-        setControlsEnable(false, interopGroup.getChildren());
+        DevkitUtils.setControlsEnable(false, functionalGroup.getChildren());
+        DevkitUtils.setControlsEnable(false, interopGroup.getChildren());
         setPageComplete(false);
     }
     
-    private void setControlsEnable(boolean enabled, Control... controls){
-        for (Control part : controls){
-            part.setEnabled(enabled);
-        }
-    }
-
     private void createNameInput(Composite container) {
         ModifyListener interopFileListener = new ModifyListener() {
             @Override
@@ -350,14 +344,14 @@ public class GenerateTestWizardPage extends WizardPage {
     }
     
     private void disableGlobalFields() {
-        setControlsEnable(false, functionalGroup.getChildren());
-        setControlsEnable(false, interopGroup.getChildren());
+        DevkitUtils.setControlsEnable(false, functionalGroup.getChildren());
+        DevkitUtils.setControlsEnable(false, interopGroup.getChildren());
         setPageComplete(false);
     }
 
     private void enableGlobalFields() {
-        setControlsEnable(true, functionalGroup.getChildren());
-        setControlsEnable(true, interopGroup.getChildren());
+        DevkitUtils.setControlsEnable(true, functionalGroup.getChildren());
+        DevkitUtils.setControlsEnable(true, interopGroup.getChildren());
         
         setInteropInputEnable(false);
         setPageComplete(true);

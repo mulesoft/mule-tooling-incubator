@@ -10,8 +10,9 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.mule.tooling.devkit.common.DevkitUtils;
-import org.mule.tooling.devkit.common.TestDataModelDto;
 import org.mule.tooling.devkit.dialogs.ExportTypeSelectionDialog;
+import org.mule.tooling.devkit.maven.MavenUtils;
+import org.mule.tooling.devkit.popup.dto.TestDataModelDto;
 import org.mule.tooling.devkit.wizards.GenerateTestWizard;
 
 public class GenerateTestsCommand extends AbstractMavenCommandRunner {
@@ -37,23 +38,19 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
 
             if (testdataDto.selectedScafolding()) {
 
-                String[] generateTestsCommand = new String[] { 
-                        "compile",
+                String[] generateTestsCommand = new String[] { "compile",
                         "-Ddevkit.studio.package.skip=true",
                         "-Ddevkit.javadoc.check.skip=true",
                         "-Dmaven.javadoc.skip=true",
-                        "org.mule.tools.devkit:"+
-                        "connector-automation-generator-maven-plugin:"+
-                        "connector-automation-generator"
-                };
+                        "org.mule.tools.devkit:" + "connector-automation-generator-maven-plugin:" + "connector-automation-generator" };
                 commandArgs.addAll(Arrays.asList(generateTestsCommand));
                 final String[] command = new String[commandArgs.size()];
-                commandArgs.toArray( command);
+                commandArgs.toArray(command);
                 System.out.println("** Command :: " + StringUtils.join(command, " "));
-                runMavenGoalJob(selectedProject, command, "Generating Tests Cases...",
+                MavenUtils.runMavenGoalJob(selectedProject, command, "Generating Tests Cases...",
                         DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.TEST_JAVA_FOLDER), null));
 
-            } 
+            }
             commandArgs = new ArrayList<String>();
 
             if (!testdataDto.selectedScafolding()) {
@@ -61,23 +58,23 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
             }
             
             if (testdataDto.selectedInterop() || testdataDto.selectedFunctional()) {
-                final String[] mavenCommand = new String[] { "package", "-P", "testdata-generator",
+                final String[] mavenCommand = new String[] { "package",
+                        "-P", "testdata-generator",
                         "-Dtype=" + getGenerationType(),
                         "-DinteropPolicy=" + testdataDto.getExportInteropPolicy(),
                         "-DfunctionalPolicy=" + testdataDto.getExportFunctionalPolicy(),
                         "-DcredentialsFile=" + testdataDto.getCredentialsFile(),
                         "-DoutputFile=" + testdataDto.getOutputFile(),
                         "-DprocessorsList=" + testdataDto.getFilteredProcessors(),
-                        "-DskipTests","-Ddevkit.javadoc.check.skip=true", "-Dmaven.javadoc.skip=true"};
+                        "-DskipTests", "-Ddevkit.javadoc.check.skip=true", "-Dmaven.javadoc.skip=true" };
 
                 commandArgs.addAll(Arrays.asList(mavenCommand));
                 final String jobMsg = "Generating Sources...";
 
                 final String[] command = new String[commandArgs.size()];
-                commandArgs.toArray( command);
+                commandArgs.toArray(command);
                 System.out.println("** Command :: " + StringUtils.join(command, " "));
-                runMavenGoalJob(selectedProject, command, jobMsg,
-                        DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.TEST_RESOURCES_FOLDER), null));
+                MavenUtils.runMavenGoalJob(selectedProject, command, jobMsg, DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.TEST_RESOURCES_FOLDER), null));
             }
         }
     }
@@ -150,4 +147,7 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
 
         return "";
     }
+    
+    
+
 }
