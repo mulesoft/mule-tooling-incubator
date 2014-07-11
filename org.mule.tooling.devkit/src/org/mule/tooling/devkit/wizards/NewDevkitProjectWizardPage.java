@@ -166,7 +166,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             }
         });
 
-
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 0, 0).margins(0, 0).spacing(0, 0).applyTo(container);
         GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
 
@@ -313,8 +312,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         }
         final String projectName = getName();
         final File workspaceDir = CoreUtils.getWorkspaceLocation();
-        if ((new File(workspaceDir, projectName)).exists()) {
-            updateStatus("A project with the given name already exists in your workspace folder.");
+        if ((new File(workspaceDir, projectName.toLowerCase() + "-connector")).exists()) {
+            updateStatus("A project with the name [" + projectName.toLowerCase() + "-connector] already exists in your workspace folder.");
             return;
         }
 
@@ -385,7 +384,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             return "3.4.1";
         if (selectedServerDefinition.getId().contains("3.4.0"))
             return "3.4.0";
-        return "3.5.0";
+        if (selectedServerDefinition.getId().contains("3.5.0"))
+            return "3.5.0";
+        return "3.5.1";
     }
 
     public boolean hasQuery() {

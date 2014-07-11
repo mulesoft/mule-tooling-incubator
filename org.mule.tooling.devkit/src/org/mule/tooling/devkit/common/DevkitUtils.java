@@ -31,7 +31,7 @@ import org.mule.tooling.utils.SilentRunner;
 
 @SuppressWarnings("restriction")
 public class DevkitUtils {
-    
+
     public static final String PROCESSOR = "Processor";
 
     public static final String ICONS_FOLDER = "icons";
@@ -52,9 +52,10 @@ public class DevkitUtils {
     public static final String DEVKIT_3_4_0 = "3.4.0";
     public static final String DEVKIT_3_4_1 = "3.4.1";
     public static final String DEVKIT_3_4_2 = "3.4.2";
-    public static final String DEVKIT_3_5_0 = "3.5.0-cascade";
+    public static final String DEVKIT_3_5_0 = "3.5.0";
+    public static final String DEVKIT_3_5_1 = "3.5.1";
 
-    public static final String devkitVersions[] = { DEVKIT_3_4_0, DEVKIT_3_4_1, DEVKIT_3_4_2, DEVKIT_3_5_0 };
+    public static final String devkitVersions[] = { DEVKIT_3_4_0, DEVKIT_3_4_1, DEVKIT_3_4_2, DEVKIT_3_5_0, DEVKIT_3_5_1 };
     public static final String CATEGORY_COMMUNITY = "Community";
     public static final String CATEGORY_STANDARD = "Standard";
     public static final String connectorCategories[] = { CATEGORY_COMMUNITY, CATEGORY_STANDARD };
@@ -116,12 +117,12 @@ public class DevkitUtils {
             };
         };
     }
-    
+
     public static CompilationUnit getConnectorClass(IProject selectedProject, IPath folderResource) {
 
         return locateConnectorInResource(selectedProject, folderResource);
     }
-    
+
     public static CompilationUnit getConnectorClass(IProject selectedProject) {
 
         IFolder folder = selectedProject.getFolder(DevkitUtils.MAIN_JAVA_FOLDER);
@@ -130,7 +131,7 @@ public class DevkitUtils {
     }
 
     private static CompilationUnit locateConnectorInResource(IProject project, IPath folderResource) {
-        
+
         IFolder folder = project.getFolder(folderResource.makeRelative());
 
         try {
@@ -138,21 +139,21 @@ public class DevkitUtils {
                 IJavaElement element = (IJavaElement) resource.getAdapter(IJavaElement.class);
                 if (element != null) {
                     switch (element.getElementType()) {
-                        case IJavaElement.PACKAGE_FRAGMENT:
-                            System.out.println(element);
-                            return locateConnectorInResource(project, element.getPath().makeRelativeTo(folderResource));
-                       
-                        case IJavaElement.COMPILATION_UNIT:
-                            CompilationUnit connectorClass = ASTUtils.parse((ICompilationUnit) element);
-                            LocateModuleNameVisitor locator = new LocateModuleNameVisitor();
-                            connectorClass.accept(locator);
-                            if (!locator.getValue().isEmpty()) {
-                                return connectorClass;
-                            }
-                            break;
-                        default:
-                            System.out.println(element);
-                            break;
+                    case IJavaElement.PACKAGE_FRAGMENT:
+                        System.out.println(element);
+                        return locateConnectorInResource(project, element.getPath().makeRelativeTo(folderResource));
+
+                    case IJavaElement.COMPILATION_UNIT:
+                        CompilationUnit connectorClass = ASTUtils.parse((ICompilationUnit) element);
+                        LocateModuleNameVisitor locator = new LocateModuleNameVisitor();
+                        connectorClass.accept(locator);
+                        if (!locator.getValue().isEmpty()) {
+                            return connectorClass;
+                        }
+                        break;
+                    default:
+                        System.out.println(element);
+                        break;
                     }
                 }
             }
@@ -162,38 +163,38 @@ public class DevkitUtils {
 
         return null;
     }
-   
+
     public static List<MethodDeclaration> getProjectProcessors(IProject selectedProject) throws FileNotFoundException {
 
         CompilationUnit unit = DevkitUtils.getConnectorClass(selectedProject);
         return getProjectProcessors(unit);
     }
-    
+
     public static List<MethodDeclaration> getProjectProcessors(CompilationUnit connector) throws FileNotFoundException {
         List<MethodDeclaration> processors = new ArrayList<MethodDeclaration>();
 
         MethodVisitor visitor = new MethodVisitor();
         if (connector != null)
             connector.accept(visitor);
-        
+
         List<MethodDeclaration> methods = visitor.getMethods();
-        
-        if (methods == null){
+
+        if (methods == null) {
             throw new FileNotFoundException("Unable to locate the Connector's compilation unit");
         }
 
         for (MethodDeclaration method : methods) {
             Iterator<IExtendedModifier> modifiers = method.modifiers().iterator();
             boolean isProcessor = false;
-            while(modifiers.hasNext() && !isProcessor){
-                IExtendedModifier modifier = modifiers.next(); 
+            while (modifiers.hasNext() && !isProcessor) {
+                IExtendedModifier modifier = modifiers.next();
                 if (modifier.isAnnotation())
-                    isProcessor = ((Annotation)modifier).getTypeName().toString().equals(PROCESSOR);
+                    isProcessor = ((Annotation) modifier).getTypeName().toString().equals(PROCESSOR);
             }
             if (isProcessor)
-                processors.add(method);    
+                processors.add(method);
         }
-        
+
         return processors;
     }
 }

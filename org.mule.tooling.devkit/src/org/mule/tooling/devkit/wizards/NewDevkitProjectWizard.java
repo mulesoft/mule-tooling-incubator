@@ -181,7 +181,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
     private String getMinMuleVersion() {
         String minMuleVersion = "3.5";
-        if (page.hasQuery() || page.getDevkitVersion().equals(DevkitUtils.DEVKIT_3_5_0)) {
+        if (page.hasQuery() || page.getDevkitVersion().startsWith("3.5")) {
             minMuleVersion = "3.5";
         } else {
             if (page.isMetadaEnabled() || page.getDevkitVersion().startsWith("3.4")) {
