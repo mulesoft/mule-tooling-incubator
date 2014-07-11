@@ -22,8 +22,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -115,32 +119,40 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         final ApiType apiType = getApiType();
         mavenModel.setOAuthEnabled(isOAuth);
         mavenModel.setAuthenticationType(getAuthenticationType());
-        IRunnableWithProgress op = new IRunnableWithProgress() {
+        final IRunnableWithProgress op = new IRunnableWithProgress() {
 
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
-                    IJavaProject javaProject = doFinish(mavenModel, runtimeId, packageName, connectorName, monitor, isMetaDataEnabled, hasQuery, minMuleVersion, isSoapWithCXF,
+                    final IJavaProject javaProject = doFinish(mavenModel, runtimeId, packageName, connectorName, monitor, isMetaDataEnabled, hasQuery, minMuleVersion, isSoapWithCXF,
                             wsdlPath, apiType);
-                    boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
-                    if (!autoBuilding) {
-                        UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject);
-                        job.run(monitor);
-                        ProjectSubsetBuildAction projectBuild = new ProjectSubsetBuildAction(new IShellProvider() {
+                    Job job = new WorkspaceJob("Compiling connector") {
 
-                            @Override
-                            public Shell getShell() {
-                                return page.getShell();
+                        @Override
+                        public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+                            boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
+                            if (!autoBuilding) {
+                                UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject);
+                                job.run(monitor);
+                                ProjectSubsetBuildAction projectBuild = new ProjectSubsetBuildAction(new IShellProvider() {
+
+                                    @Override
+                                    public Shell getShell() {
+                                        return page.getShell();
+                                    }
+                                }, IncrementalProjectBuilder.CLEAN_BUILD, new IProject[] { javaProject.getProject() });
+                                projectBuild.run();
+                                javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
                             }
-                        }, IncrementalProjectBuilder.CLEAN_BUILD, new IProject[] { javaProject.getProject() });
-                        projectBuild.run();
-                        javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                    }
-                    if (isSoapWithCXF) {
-                        new BaseDevkitGoalRunner(new String[] { "clean", "compile", "-Pconnector-generator" }, javaProject).run(javaProject.getProject().getFile("pom.xml")
-                                .getRawLocation().toFile(), monitor);
-                        javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                    }
+                            if (isSoapWithCXF) {
+                                new BaseDevkitGoalRunner(new String[] { "clean", "compile", "-Pconnector-generator" }, javaProject).run(javaProject.getProject().getFile("pom.xml")
+                                        .getRawLocation().toFile(), monitor);
+                                javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+                            }
+                            return Status.OK_STATUS;
+                        }
+                    };
+                    job.schedule();
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
                 } finally {
