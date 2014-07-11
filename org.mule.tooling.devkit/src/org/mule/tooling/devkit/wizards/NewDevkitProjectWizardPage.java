@@ -441,7 +441,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         if (comboAuthentication.getText().equals(OAUTH_V1))
             return "OAuth V1 provides a method for Mule applications to access server resources on behalf of a resource owner without sharing their credentials.";
         if (comboAuthentication.getText().equals(OAUTH_V2))
-            return "OAuth V2, the next�evolution of the OAuth protocol,�provides a method for Mule applications to access server resources on behalf of a resource owner without sharing their credentials.";
+            return "OAuth V2, the next evolution of the OAuth protocol, provides a method for Mule applications to access server resources on behalf of a resource owner without sharing their credentials.";
         return "";
     }
 }
