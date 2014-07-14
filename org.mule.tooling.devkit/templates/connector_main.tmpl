@@ -58,9 +58,9 @@ import org.mule.api.annotations.param.Default;
 @OAuth2(authorizationUrl = "", accessTokenUrl = "", accessTokenRegex = "", expirationRegex = "FOO-EXPRESSION", refreshTokenRegex = "")
 #end
 #if( $authenticationType=='OAUTH_V1')
-@OAuth(requestTokenUrl = "https://api.mycommector.com/uas/oauth/requestToken", 
-accessTokenUrl = "https://api.mycommector.com/uas/oauth/accessToken", 
-authorizationUrl = "https://api.mycommector.com/uas/oauth/authorize")
+@OAuth(requestTokenUrl = "https://api.myconnector.com/uas/oauth/requestToken", 
+accessTokenUrl = "https://api.myconnector.com/uas/oauth/accessToken", 
+authorizationUrl = "https://api.myconnector.com/uas/oauth/authorize")
 #end
 public abstract class ${className}
 #else
