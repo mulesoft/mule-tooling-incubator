@@ -86,6 +86,9 @@ public class GenerateTestWizardPage extends WizardPage {
         this.dataModel = dataModel != null ? new TestDataModelDto(dataModel) : new TestDataModelDto();
         this.project = selectedProject;
         this.processors = getProjectProcessorsNames();
+        if (processors.isEmpty()){
+            getWizard().performCancel();
+        }
     }
 
     @Override
@@ -397,7 +400,11 @@ public class GenerateTestWizardPage extends WizardPage {
         
         try {
             methods = DevkitUtils.getProjectProcessors(project);
-        
+            
+            if (methods.isEmpty()){
+                MessageDialog.openWarning(Display.getCurrent().getActiveShell(), "No processors found", "Unable to find any processor declaration, please select a connector with processors");
+                methods = getConnectorFromUserPrompt(methods);
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             MessageDialog.openWarning(Display.getCurrent().getActiveShell(), "Connector not found", "Unable to find the connector class, please select one");
