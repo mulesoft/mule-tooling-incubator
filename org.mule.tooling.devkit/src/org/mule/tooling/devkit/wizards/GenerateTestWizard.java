@@ -6,7 +6,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.mule.tooling.devkit.DevkitImages;
-import org.mule.tooling.devkit.common.TestDataModelDto;
+import org.mule.tooling.devkit.popup.dto.TestDataModelDto;
 
 
 public class GenerateTestWizard extends AbstractDevkitProjectWizzard implements INewWizard {
