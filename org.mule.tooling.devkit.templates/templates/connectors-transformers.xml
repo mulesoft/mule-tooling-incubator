@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates>
+	<template id="org.mule.tooling.devkit.templates.transformer"
+		autoinsert="true" context="java-members" description="Add transformer method"
+		enabled="true" name="transformer">
+	${imp:import(org.mule.api.annotations.Transformer)}
+	/**
+	* Description for ${transformerName}
+	*/
+	@Transformer(sourceTypes = {${inputType}.class})
+	public static ${outputType} ${transformerName}(${inputType} input){
+		//${todo}
+		${cursor}
+		return null;
+	}
+	</template>
+</templates>
