@@ -79,14 +79,14 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
     private void runAsLocalTest(final IProject selectedProject) {
         String jobMsg = "Generating Test Project...";
 
-        String[] mavenCommand = new String[] { "mule.connectors.interop:interop-ce-runtime-generation:create"};
+        String[] mavenCommand = new String[] { "org.mule.connectors.interop:interop-ce-runtime-generation:create"};
         
         System.out.println("** Command :: " + StringUtils.join(mavenCommand, " "));
         
         MavenUtils.runMavenGoalJob(selectedProject, mavenCommand, jobMsg, DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.TEST_RESOURCES_FOLDER), null));
         
 
-        mavenCommand = new String[] {"test",
+        mavenCommand = new String[] {"install",
                                      "-f", projectPath + "/target/interop-ce-project/pom.xml",
                                      "-Dsuite.testData=" + runnerConfig.getTestDataPath(), 
                                      "-Dsuite.testDataOverride=" + runnerConfig.getTestDataOverridePath(), 
