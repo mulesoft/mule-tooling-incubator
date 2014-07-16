@@ -139,7 +139,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         wsdlLabel.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).span(4, 1).hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
 
         wsdlLocation = new Text(apiGroupBox, SWT.BORDER);
-        wsdlLocation.setLayoutData(GridDataFactory.fillDefaults().span(3, 1).grab(true, false).create());
+        GridData gData = new GridData(GridData.FILL_HORIZONTAL);
+        gData.horizontalSpan = 3;
+        wsdlLocation.setLayoutData(gData);
 
         wsdlLocation.addModifyListener(new ModifyListener() {
 
