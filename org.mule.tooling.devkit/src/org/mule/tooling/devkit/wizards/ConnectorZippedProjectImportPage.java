@@ -31,6 +31,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -53,6 +54,9 @@ import org.mule.tooling.devkit.builder.DevkitNature;
 import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
+import org.mule.tooling.maven.ui.MavenUIPlugin;
+import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
+import org.mule.tooling.maven.ui.preferences.MavenPreferences;
 import org.mule.tooling.ui.common.FileChooserComposite;
 
 /**
@@ -69,6 +73,8 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
 
     /** Widget for project name */
     private Text txtProjectName;
+
+    private boolean mavenFailure;
 
     public ConnectorZippedProjectImportPage() {
         super(PAGE_ID);
@@ -123,6 +129,7 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
         });
 
         setControl(control);
+        testMaven();
         setPageComplete(false);
     }
 
@@ -130,6 +137,11 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
      * Update the indicator for whether the page is complete.
      */
     protected void updatePageComplete() {
+        if (mavenFailure) {
+            setMessage("Maven home is not properly configured. Check your maven preferences.", IMessageProvider.ERROR);
+            setPageComplete(false);
+            return;
+        }
         boolean complete = true;
         String projectName = txtProjectName.getText();
         if (StringUtils.isEmpty(zipChooser.getFilePath())) {
@@ -380,5 +392,19 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
         path.enablePlugin(org.mule.tooling.devkit.apt.Activator.PLUGIN_ID);
         AptConfig.setFactoryPath(javaProject, path);
         AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "false");
+    }
+
+    protected void testMaven() {
+        mavenFailure = false;
+        MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
+        final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
+        // Using a callback doesn't work. Set null callback and just handle the result.
+        int result = mavenInstallationTester.test(null);
+        onTestFinished(result);
+    }
+
+    void onTestFinished(final int result) {
+        mavenFailure = result != 0;
+        updatePageComplete();
     }
 }
