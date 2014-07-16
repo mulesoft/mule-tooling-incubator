@@ -32,6 +32,9 @@ import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.dialogs.SelectWSDLDialog;
+import org.mule.tooling.maven.ui.MavenUIPlugin;
+import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
+import org.mule.tooling.maven.ui.preferences.MavenPreferences;
 import org.mule.tooling.ui.MuleUiConstants;
 import org.mule.tooling.ui.common.ServerChooserComponent;
 import org.mule.tooling.ui.preferences.MuleStudioPreference;
@@ -68,6 +71,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private Text wsdlLocation;
     private Button datasense;
     private Button query;
+    private boolean mavenFailure = false;
 
     public NewDevkitProjectWizardPage(ISelection selection, ConnectorMavenModel model) {
         super("wizardPage");
@@ -222,6 +226,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         apiType.setText(ApiType.GENERIC.label());
         setControl(container);
         initialize();
+        testMaven();
     }
 
     private void addDatasense(Composite container) {
@@ -291,6 +296,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private void dialogChanged() {
+        if (mavenFailure) {
+            updateStatus("Maven home is not properly configured. Check your maven preferences.");
+            return;
+        }
 
         if (this.selectedServerDefinition.getId() == null) {
             updateStatus("Select a runtime.");
@@ -445,5 +454,19 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         if (comboAuthentication.getText().equals(OAUTH_V2))
             return "OAuth V2, the next evolution of the OAuth protocol, provides a method for Mule applications to access server resources on behalf of a resource owner without sharing their credentials.";
         return "No tip";
+    }
+
+    protected void testMaven() {
+        mavenFailure = false;
+        MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
+        final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
+        // Using a callback doesn't work. Set null callback and just handle the result.
+        int result = mavenInstallationTester.test(null);
+        onTestFinished(result);
+    }
+
+    void onTestFinished(final int result) {
+        mavenFailure = result != 0;
+        this.dialogChanged();
     }
 }

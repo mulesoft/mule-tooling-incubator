@@ -49,6 +49,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.maven.MavenInfo;
 import org.mule.tooling.devkit.maven.ScanProject;
+import org.mule.tooling.maven.ui.MavenUIPlugin;
+import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
+import org.mule.tooling.maven.ui.preferences.MavenPreferences;
 
 public class ConnectorImportWizzardPage extends WizardPage {
 
@@ -75,6 +78,8 @@ public class ConnectorImportWizzardPage extends WizardPage {
 
     /** dialog settings to store input history */
     protected IDialogSettings dialogSettings;
+
+    private boolean mavenFailure = false;
 
     public ConnectorImportWizzardPage(IJavaProject selected) {
         super(PAGE_ID);
@@ -253,6 +258,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
         projectTreeViewer.setInput(root);
         projectTreeViewer.refresh();
         projectTreeViewer.expandAll();
+        testMaven();
         setPageComplete();
     }
 
@@ -431,6 +437,11 @@ public class ConnectorImportWizzardPage extends WizardPage {
     }
 
     void setPageComplete() {
+        if (mavenFailure) {
+            setMessage("Maven home is not properly configured. Check your maven preferences.", IMessageProvider.ERROR);
+            setPageComplete(false);
+            return;
+        }
         Object[] checkedElements = projectTreeViewer.getCheckedElements();
         setPageComplete(checkedElements != null && checkedElements.length > 0);
         if (checkedElements != null && checkedElements.length > 0) {
@@ -476,5 +487,19 @@ public class ConnectorImportWizzardPage extends WizardPage {
 
         }
         validate();
+    }
+
+    protected void testMaven() {
+        mavenFailure = false;
+        MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
+        final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
+        // Using a callback doesn't work. Set null callback and just handle the result.
+        int result = mavenInstallationTester.test(null);
+        onTestFinished(result);
+    }
+
+    void onTestFinished(final int result) {
+        mavenFailure = result != 0;
+        this.setPageComplete();
     }
 }
