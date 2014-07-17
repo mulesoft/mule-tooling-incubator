@@ -13,7 +13,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <tycho-version>0.19.0</tycho-version>
     <maven.clean.plugin.version>2.4.1</maven.clean.plugin.version>
     <eclipse-updatesite>http://download.eclipse.org/eclipse/updates/3.8/R-3.8.1-201209141540</eclipse-updatesite>
-    <studio-updatesite>http://studio-nightly-update.s3.amazonaws.com</studio-updatesite>
+    <studio-updatesite>http://studio.mulesoft.org/staging/r3/updates</studio-updatesite>
     <eclipse-gef-updatesite>http://download.eclipse.org/releases/juno/201209280900</eclipse-gef-updatesite>
   </properties>
   <modules>

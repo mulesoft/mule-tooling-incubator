@@ -21,11 +21,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.mule.tools.devkit</groupId>
-			<artifactId>mule-devkit-code-utils</artifactId>
-			<version>${devkit-version}</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.9</version>
