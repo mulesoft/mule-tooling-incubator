@@ -53,12 +53,12 @@
          <dependency>
             <groupId>org.mule.munit.plugins</groupId>
             <artifactId>munit-mule-extension-loader</artifactId>
-            <version>3.4-SNAPSHOT</version>
+            <version>${munit.version}</version>
         </dependency>
  	    <dependency>
             <groupId>org.mule.munit.plugins</groupId>
             <artifactId>munit-coverage-plugin</artifactId>
-            <version>3.4-SNAPSHOT</version>
+            <version>${munit.version}</version>
         </dependency>
              <dependency>
             <groupId>com.google.code.gson</groupId>
