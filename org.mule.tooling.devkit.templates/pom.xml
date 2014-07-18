@@ -5,7 +5,7 @@
   <parent>
   		<groupId>org.mule.tooling.incubator</groupId>
   		<artifactId>org.mule.tooling.incubator.parent</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.0.2-SNAPSHOT</version>
 	</parent>
   <artifactId>org.mule.tooling.devkit.templates</artifactId>
   <packaging>eclipse-plugin</packaging>
