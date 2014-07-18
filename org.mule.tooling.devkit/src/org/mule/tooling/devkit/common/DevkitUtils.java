@@ -60,7 +60,7 @@ public class DevkitUtils {
     public static final String MAIN_RESOURCES_FOLDER = "src/main/resources";
     public static final String MAIN_JAVA_FOLDER = "src/main/java";
     public static final String POM_FILENAME = "pom.xml";
-    public static final String POM_TEMPLATE_PATH = "/templates/pom.xml.tmpl";
+    public static final String POM_TEMPLATE_PATH = "/templates/devkit-pom.xml.tmpl";
     public static final String UPDATE_SITE_FOLDER = "/target/update-site/";
 
     public static final String DEVKIT_3_4_0 = "3.4.0";
