@@ -2,7 +2,7 @@
 <feature
       id="org.mule.tooling.incubator.aop.extension"
       label="Mule AOP"
-      version="1.0.1.qualifier"
+      version="1.0.1"
       provider-name="MuleSoft Inc."
       plugin="org.mule.tooling.incubator.aop.ui.contribution"
       exclusive="true">

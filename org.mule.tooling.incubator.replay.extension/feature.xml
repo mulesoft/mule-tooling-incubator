@@ -2,7 +2,7 @@
 <feature
       id="org.mule.tooling.incubator.replay.extension"
       label="Mule Replay Project"
-      version="1.0.1.qualifier"
+      version="1.0.1"
       provider-name="MuleSoft Inc."
       plugin="org.mule.tooling.incubator.replay.extension"
       exclusive="true">

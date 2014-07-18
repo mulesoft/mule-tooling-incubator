@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Munit Runtime (3.5)
 Bundle-SymbolicName: org.mule.tooling.munit.runtime.3.5;singleton:=true
-Bundle-Version: 1.0.1.qualifier
+Bundle-Version: 1.0.1
 Bundle-ClassPath: .,
  lib/mule-interceptor-module.jar,
  lib/munit-assert.jar,
