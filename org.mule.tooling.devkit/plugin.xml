@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
+   <!-- Forces startup of this plugin -->
+   <extension
+         point="org.eclipse.ui.startup">
+   </extension>
    <extension
          point="org.eclipse.ui.newWizards">
       
