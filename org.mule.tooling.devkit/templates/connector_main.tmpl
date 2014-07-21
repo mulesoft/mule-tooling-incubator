@@ -15,13 +15,12 @@ import org.mule.api.annotations.display.Password;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Processor;
 
-
-#if($OAuthEnaled == true)
 import java.io.IOException;
 import org.mule.api.annotations.ReconnectOn;
 import org.mule.api.annotations.rest.HttpMethod;
 import org.mule.api.annotations.rest.RestCall;
 import org.mule.api.annotations.rest.RestUriParam;
+#if($OAuthEnaled == true)
 #if( $authenticationType=='OAUTH_V1')
 import org.mule.api.annotations.oauth.OAuth;
 #end
@@ -62,10 +61,8 @@ import org.mule.api.annotations.param.Default;
 accessTokenUrl = "https://api.myconnector.com/uas/oauth/accessToken", 
 authorizationUrl = "https://api.myconnector.com/uas/oauth/authorize")
 #end
-public abstract class ${className}
-#else
-public class ${className}
 #end
+public abstract class ${className}
 {
     /**
      * Configurable
@@ -135,7 +132,44 @@ public class ${className}
         return this.myProperty;
     }
 
-#if($OAuthEnaled == false)
+    /**
+     * Custom processor
+     *
+     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:myProcessor}
+     *
+     * @param content Content to be processed
+     * @return Some string
+     * @throws IOException Comment for Exception
+     */
+    @Processor
+#if($OAuthEnaled == true)    
+    @OAuthProtected
+#end
+    @ReconnectOn(exceptions = { Exception.class })
+    @RestCall(uri="https://myapiurl/{content}", method=HttpMethod.GET)
+    public abstract void myProcessor(@RestUriParam("content") String content) throws IOException;  
+
+#if($hasQuery == true )
+
+    /**
+     * Description for query
+     *
+     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query}
+     *
+     *  @param query The dsql query
+     *  @return List of elements that match the criteria
+     */
+    @Processor
+    public List<Object> query(@Query String query) {
+        //TODO
+        /*
+         * MESSAGE PROCESSOR CODE GOES HERE
+         */
+        return null;
+    }
+#end
+#if($OAuthEnaled == false )
+
     /**
      * Connect
      *
@@ -176,57 +210,7 @@ public class ${className}
     public String connectionId() {
         return "001";
     }
-
-#end 
-    /**
-     * Custom processor
-     *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:myProcessor}
-     *
-     * @param content Content to be processed
-     * @return Some string
-#if($OAuthEnaled == true )
-     * @throws IOException Comment for Exception     
 #end
-     */
-    @Processor
-#if($OAuthEnaled == true )
-    @OAuthProtected
-    @ReconnectOn(exceptions = { Exception.class })
-    @RestCall(uri="https://myapiurl/{content}", method=HttpMethod.GET)
-    public abstract void myProcessor(@RestUriParam("content") String content) throws IOException;
-
-#else
-    public String myProcessor(String content)
-    {
-        /*
-         * MESSAGE PROCESSOR CODE GOES HERE
-         */
-
-        return content;
-    }
-#end    
-
-#if($hasQuery == true )
-
-    /**
-     * Description for query
-     *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query}
-     *
-     *  @param query The dsql query
-     *  @return List of elements that match the criteria
-     */
-    @Processor
-    public List<Object> query(@Query String query) {
-        //TODO
-        /*
-         * MESSAGE PROCESSOR CODE GOES HERE
-         */
-        return null;
-    }
-#end
-
 #if($OAuthEnaled == true )  
     /**
      * Set accessToken
