@@ -7,8 +7,8 @@ import org.apache.commons.lang.StringUtils;
 
 public class InteropConfigDto {
     
-    private String testDataPath;
-    private String testDataOverridePath;
+    private String testDataPath = "";
+    private String testDataOverridePath = "";
 
     private Boolean runLocal = true;
     private Boolean runConnectivityTest = false;

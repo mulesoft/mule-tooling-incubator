@@ -115,7 +115,7 @@
 			name="Generate Testdata">
 		</command>
 		<command id="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
-			name="Run Interop Test"
+			name="Run Interop Tests"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand">
 		</command>
 		<command id="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand"
@@ -181,7 +181,7 @@
                          style="push">
                 </command>
                 <command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
-                    label="Run Remote Interop"
+                    label="Run Interop Tests"
                     icon="icons/run.png"
                     style="push">
                 </command>

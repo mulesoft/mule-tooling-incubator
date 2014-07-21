@@ -22,8 +22,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.dialogs.InteropRunOptionsSelectionDialog;
 import org.mule.tooling.devkit.maven.MavenUtils;
@@ -31,8 +37,10 @@ import org.mule.tooling.devkit.popup.dto.InteropConfigDto;
 
 public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
 
+    private static final String SUREFIRE_XML = "target/surefire-reports/TEST-suite.ConnectorsInteropTestSuite.xml";
     private static final String GENERATED_REPORTS_PATH = "interop-ce-project/ce-interop-testsuite/target/surefire-reports";
-    private InteropConfigDto runnerConfig = new InteropConfigDto();
+    
+    private InteropConfigDto runnerConfig;
     private String projectPath;
     private String projectTarget;
     private IProject selectedProject;
@@ -42,7 +50,8 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
         this.selectedProject = selectedProject;
         this.projectPath = selectedProject.getLocationURI().getPath();
         this.projectTarget = projectPath + "/target/";
-        
+        this.runnerConfig = new InteropConfigDto();
+
         setTestdataFilesInProjectAsDefault(selectedProject);
 
         setProjectInformation();
@@ -113,8 +122,29 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
                         e.printStackTrace();
                         return Status.ERROR;
                     }
+
+                    DevkitUtils.refreshFolder(selectedProject.getFolder("target"),null).execute(Status.OK);
+
+                    try {
+                        // Workaround for refresh delay of folder resource on viewPart
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ignored) {}
+
+                    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            IWorkbenchPage page = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage();
+                            IViewPart viewPart = page.findView("org.eclipse.jdt.ui.PackageExplorer");
+
+                            Viewer selectionService = (Viewer) viewPart.getSite().getSelectionProvider();
+                            TreePath[] tp = new TreePath[]{new TreePath(new Object[] { selectedProject.getFile(SUREFIRE_XML)})};
+                            TreeSelection selection = new TreeSelection(tp);
+                            selectionService.setSelection(selection, true);
+                        }
+                    });
                     
-                    return DevkitUtils.refreshFolder(selectedProject.getFolder(projectTarget),null).execute(Status.OK);
+                    return Status.OK;
                 }
             });
     }

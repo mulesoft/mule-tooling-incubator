@@ -86,7 +86,7 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
   //      newShell.setSize(750, newShell.getBounds().height);
-        newShell.setSize(700, 400);
+        newShell.setSize(700, 370);
     }
 
     @Override
