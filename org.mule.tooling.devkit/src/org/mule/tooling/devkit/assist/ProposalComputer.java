@@ -17,27 +17,16 @@ import org.eclipse.jdt.ui.text.java.IQuickAssistProcessor;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.Template;
-import org.eclipse.jface.text.templates.TemplateContext;
-import org.eclipse.jface.text.templates.TemplateContextType;
-import org.eclipse.jface.text.templates.TemplateVariableResolver;
-import org.eclipse.jdt.internal.corext.template.java.CompilationUnitContext;
-import org.eclipse.jdt.internal.corext.template.java.CompilationUnitContextType;
-import org.eclipse.jdt.internal.corext.template.java.ImportsResolver;
-import org.eclipse.jdt.internal.corext.template.java.JavaContext;
-import org.eclipse.jdt.internal.corext.template.java.JavaContextType;
-import org.eclipse.jdt.internal.ui.text.java.TemplateCompletionProposalComputer;
-import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
-import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
 import org.eclipse.ui.part.FileEditorInput;
 import org.mule.tooling.devkit.assist.rules.ASTVisitorDispatcher;
 import org.mule.tooling.devkit.assist.rules.ChainASTNodeFactory;
 import org.mule.tooling.devkit.assist.rules.ChainASTNodeType;
+import org.mule.tooling.devkit.assist.rules.ExistsMethodWithAnnotation;
 import org.mule.tooling.devkit.assist.rules.HasAnnotation;
 import org.mule.tooling.devkit.assist.rules.IsAbstract;
+import org.mule.tooling.devkit.assist.rules.IsFieldType;
 import org.mule.tooling.devkit.assist.rules.LocateNode;
 import org.mule.tooling.devkit.assist.rules.Negation;
 
@@ -139,7 +128,8 @@ public final class ProposalComputer implements IQuickAssistProcessor {
         // proposals.add(new DevkitTemplateProposal("Has Optional"));
         // }
 
-        LocateNode node = new LocateNode(context.getSelectionOffset());
+        int selectionOffset = context.getSelectionOffset();
+        LocateNode node = new LocateNode(selectionOffset);
         obj.accept(node);
         for (ASTNode nodeItem : node.getStackNodes()) {
             System.out.print(nodeItem.getClass().getSimpleName() + ":" + (nodeItem.getParent() == null ? "" : nodeItem.getParent().getNodeType()) + "-");
@@ -147,34 +137,17 @@ public final class ProposalComputer implements IQuickAssistProcessor {
         System.out.println("");
         ChainASTNodeType verifier = ChainASTNodeFactory.createAtClassVerifier();
         if (verifier.matches(node.getStackNodes().iterator())) {
-            HasAnnotation hasAnnotation = new HasAnnotation("Connector", context.getSelectionOffset());
+            HasAnnotation hasAnnotation = new HasAnnotation("Connector", selectionOffset);
             new ASTVisitorDispatcher(ASTNode.COMPILATION_UNIT).dispactch(node.getStackNodes(), hasAnnotation);
             if (hasAnnotation.applies()) {
                 IsAbstract isAbstract = new IsAbstract();
                 obj.accept(isAbstract);
                 if (isAbstract.applies()) {
                     proposals.add(new DevkitTemplateProposal("Add Rest Template"));
-                    HasAnnotation hasOAuth = new HasAnnotation("OAuth", context.getSelectionOffset());
+                    HasAnnotation hasOAuth = new HasAnnotation("OAuth", selectionOffset);
                     obj.accept(hasOAuth);
                     if (!hasOAuth.applies()) {
-                        ICompilationUnit cu = context.getCompilationUnit();
-                        IDocument document = getDocument(cu);
-
-                        // You can generate template dynamically here!
-                        Template template = new Template("sample", "sample description", "java-members",
-                                "${imp:import (java.util.List)}/**\n*${name} ${moduleName}\n*/private ${return_type} ${name}(){\r\n"
-                                        + "\tSystem.out.println(\"${name}\")\r\n return null;\r\n" + "}\r\n", true);
-                        IRegion region = new Region(context.getSelectionOffset(), 0);
-                        JavaContextType contextType2 = new JavaContextType();
-                        contextType2.setId("java-members");
-                        contextType2.initializeContextTypeResolvers();
-                        CompilationUnitContext ctx = contextType2.createContext(document, region.getOffset(), 0, cu);
-                        ctx.setVariable("selection", null);
-
-                        ctx.setForceEvaluation(true);
-                        TemplateProposal temp = new TemplateProposal(template, ctx, region, null);
-                        proposals.add(temp);
-                        // proposals.add(new DevkitTemplateProposal("Add OAuth annotation"));
+                        proposals.add(new DevkitTemplateProposal("Add OAuth annotation"));
                     }
                 } else {
                     proposals.add(new DevkitTemplateProposal("Add NOT Rest Template"));
@@ -185,20 +158,43 @@ public final class ProposalComputer implements IQuickAssistProcessor {
 
         verifier = ChainASTNodeFactory.createAtClassBodyVerifier();
         if (verifier.matches(node.getStackNodes().iterator())) {
-            HasAnnotation hasAnnotation = new HasAnnotation("Connector", context.getSelectionOffset());
+            HasAnnotation hasAnnotation = new HasAnnotation("Connector", selectionOffset);
             new ASTVisitorDispatcher(ASTNode.COMPILATION_UNIT).dispactch(node.getStackNodes(), hasAnnotation);
             if (hasAnnotation.applies()) {
-                proposals.add(new DevkitTemplateProposal("Add New Configurable with Default"));
-                proposals.add(new DevkitTemplateProposal("Add New Configurable"));
-                proposals.add(new DevkitTemplateProposal("Add New Processor"));
+                proposals.add(new DevkitTemplateProposal("Add New Configurable", 9));
+                proposals.add(new DevkitTemplateProposal("Add New Processor", 10));
+                proposals.add(new DevkitTemplateProposal("Add New Source", 6));
+                proposals.add(new DevkitTemplateProposal("Add New Transformer", 7));
+                ExistsMethodWithAnnotation methodCheck = new ExistsMethodWithAnnotation("MetaDataKeyRetriever");
+                new ASTVisitorDispatcher(ASTNode.COMPILATION_UNIT).dispactch(node.getStackNodes(), methodCheck);
+                if (!methodCheck.applies()) {
+                    proposals.add(new DevkitTemplateProposal("Add MetaDataKeyRetriever", 5));
+                } else {
+                    methodCheck = new ExistsMethodWithAnnotation("MetaDataRetriever");
+                    new ASTVisitorDispatcher(ASTNode.COMPILATION_UNIT).dispactch(node.getStackNodes(), methodCheck);
+                    if (!methodCheck.applies()) {
+                        proposals.add(new DevkitTemplateProposal("Add MetaDataRetriever", 9));
+                    } else {
+                        methodCheck = new ExistsMethodWithAnnotation("QueryTranslator");
+                        new ASTVisitorDispatcher(ASTNode.COMPILATION_UNIT).dispactch(node.getStackNodes(), methodCheck);
+                        if (!methodCheck.applies()) {
+                            proposals.add(new DevkitTemplateProposal("Add QueryTranslator", 9));
+                        }
+                    }
+
+                }
             }
         }
         verifier = ChainASTNodeFactory.createAtFieldVerifier();
         if (verifier.matches(node.getStackNodes().iterator())) {
-            HasAnnotation hasAnnotation = new HasAnnotation("Configurable", context.getSelectionOffset());
-            HasAnnotation hasDefault = new HasAnnotation("Default", context.getSelectionOffset());
+            HasAnnotation hasAnnotation = new HasAnnotation("Configurable", selectionOffset);
+            HasAnnotation hasDefault = new HasAnnotation("Default", selectionOffset);
+            HasAnnotation hasInject = new HasAnnotation("Inject", selectionOffset);
+            IsFieldType inyectable = new IsFieldType("MuleContext",selectionOffset);
             new ASTVisitorDispatcher(ASTNode.FIELD_DECLARATION).dispactch(node.getStackNodes(), hasAnnotation);
             new ASTVisitorDispatcher(ASTNode.FIELD_DECLARATION).dispactch(node.getStackNodes(), hasDefault);
+            new ASTVisitorDispatcher(ASTNode.FIELD_DECLARATION).dispactch(node.getStackNodes(), hasInject);
+            new ASTVisitorDispatcher(ASTNode.FIELD_DECLARATION).dispactch(node.getStackNodes(), inyectable);
             if (!hasAnnotation.applies()) {
                 proposals.add(new DevkitTemplateProposal("Add Configurable"));
             } else {
@@ -208,36 +204,46 @@ public final class ProposalComputer implements IQuickAssistProcessor {
                     proposals.add(new DevkitTemplateProposal("Add Default"));
                 }
             }
+            if(!hasInject.applies() && inyectable.applies()){
+                proposals.add(new DevkitTemplateProposal("Add Inject"));
+            }
         }
 
         verifier = ChainASTNodeFactory.createAtMethodVerifier();
         if (verifier.matches(node.getStackNodes().iterator())) {
-            HasAnnotation hasConnect = new HasAnnotation("Connect", context.getSelectionOffset()).addAnnotation("Disconnect").addAnnotation("ValidateConnection")
+            HasAnnotation hasConnect = new HasAnnotation("Connect", selectionOffset).addAnnotation("Disconnect").addAnnotation("ValidateConnection")
                     .addAnnotation("ConnectionIdentifier");
-            HasAnnotation hasAnnotation = new HasAnnotation("Processor", context.getSelectionOffset());
+            HasAnnotation hasAnnotation = new HasAnnotation("Processor", selectionOffset);
             new ASTVisitorDispatcher(ASTNode.METHOD_DECLARATION).dispactch(node.getStackNodes(), hasAnnotation);
             new ASTVisitorDispatcher(ASTNode.METHOD_DECLARATION).dispactch(node.getStackNodes(), hasConnect);
 
             if (!hasAnnotation.applies() && !(hasConnect.applies())) {
                 proposals.add(new DevkitTemplateProposal("Add Processor"));
             }
+            if (hasAnnotation.applies()) {
+                hasAnnotation = new HasAnnotation("ReconnectOn", selectionOffset);
+                new ASTVisitorDispatcher(ASTNode.METHOD_DECLARATION).dispactch(node.getStackNodes(), hasAnnotation);
+                if (!hasAnnotation.applies()) {
+                    proposals.add(new DevkitTemplateProposal("Add ReconnectOn"));
+                }
+            }
         }
         verifier = ChainASTNodeFactory.createAtParameterVerifier();
         if (verifier.matches(node.getStackNodes().iterator())) {
-            HasAnnotation hasAnnotation = new HasAnnotation("Processor", context.getSelectionOffset());
+            HasAnnotation hasAnnotation = new HasAnnotation("Processor", selectionOffset);
             new ASTVisitorDispatcher(ASTNode.METHOD_DECLARATION).dispactch(node.getStackNodes(), hasAnnotation);
             if (hasAnnotation.applies()) {
-                HasAnnotation hasOptional = new HasAnnotation("Optional", context.getSelectionOffset());
+                HasAnnotation hasOptional = new HasAnnotation("Optional", selectionOffset);
                 new ASTVisitorDispatcher(ASTNode.SINGLE_VARIABLE_DECLARATION).dispactch(node.getStackNodes(), hasOptional);
                 if (!hasOptional.applies()) {
                     proposals.add(new DevkitTemplateProposal("Add Optional"));
-                    HasAnnotation hasDefault = new HasAnnotation("Default", context.getSelectionOffset());
+                    HasAnnotation hasDefault = new HasAnnotation("Default", selectionOffset);
                     new ASTVisitorDispatcher(ASTNode.SINGLE_VARIABLE_DECLARATION).dispactch(node.getStackNodes(), hasDefault);
                     if (!hasDefault.applies()) {
                         proposals.add(new DevkitTemplateProposal("Add Default"));
                     }
                 } else {
-                    HasAnnotation hasDefault = new HasAnnotation("Default", context.getSelectionOffset());
+                    HasAnnotation hasDefault = new HasAnnotation("Default", selectionOffset);
                     new ASTVisitorDispatcher(ASTNode.SINGLE_VARIABLE_DECLARATION).dispactch(node.getStackNodes(), hasDefault);
                     if (!hasDefault.applies()) {
                         proposals.add(new DevkitTemplateProposal("Add Default"));

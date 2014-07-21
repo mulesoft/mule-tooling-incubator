@@ -20,9 +20,16 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
         ICompletionProposalExtension6 {
 
     private final String label;
+    int relevance;
 
     public DevkitTemplateProposal(String label) {
         this.label = label;
+        relevance = 0;
+    }
+
+    public DevkitTemplateProposal(String label, int relevance) {
+        this.label = label;
+        this.relevance = relevance;
     }
 
     @Override
@@ -64,7 +71,7 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
     public StyledString getStyledDisplayString() {
         StyledString ss = new StyledString();
         ss.append(label);
-        ss.append("( muajajajaja )", StyledString.COUNTER_STYLER);
+        // ss.append("( Templa )", StyledString.COUNTER_STYLER);
         return ss;
     }
 
@@ -93,7 +100,6 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
 
     @Override
     public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
-        
 
     }
 
@@ -117,8 +123,7 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
 
     @Override
     public int getRelevance() {
-        // TODO Auto-generated method stub
-        return 0;
+        return relevance;
     }
 
 }

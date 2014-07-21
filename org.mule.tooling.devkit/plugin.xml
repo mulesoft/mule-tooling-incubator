@@ -400,4 +400,22 @@
             </parameter>
       </key>
    </extension>
+    <extension point="org.eclipse.jdt.ui.quickAssistProcessors">
+  <quickAssistProcessor
+   id="org.mule.tooling.devkit.assist.ProposalComputer"
+   name="Devkit Quick Assist Processor"  
+   class="org.mule.tooling.devkit.assist.ProposalComputer">
+   <enablement>
+      <with
+            variable="projectNatures">
+         <iterate
+               operator="or">
+            <equals
+                  value="org.mule.tooling.devkit.devkitNature">
+            </equals>
+         </iterate>
+      </with>
+   </enablement>
+  </quickAssistProcessor>
+ </extension>
 </plugin>
