@@ -5,7 +5,12 @@
 		enabled="true" name="source">
 		${imp:import(org.mule.api.annotations.Source,org.mule.api.callback.SourceCallback)}
 		/**
-		* Description for ${sourceOperation}
+		*	Description for ${sourceOperation}
+		*	
+		*	{@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:${sourceOperation}}
+		*
+		*	@param callback The comment for callback
+		*	@throws Exception Comment for Exception
 		*/
 		@Source
 		public void ${sourceOperation}(SourceCallback callback) throws Exception {

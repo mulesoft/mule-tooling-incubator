@@ -5,7 +5,9 @@
 		enabled="true" name="transformer">
 	${imp:import(org.mule.api.annotations.Transformer)}
 	/**
-	* Description for ${transformerName}
+	*	Description for ${transformerName}
+	*	@param input The comment for input
+	*	@return return comment 
 	*/
 	@Transformer(sourceTypes = {${inputType}.class})
 	public static ${outputType} ${transformerName}(${inputType} input){
