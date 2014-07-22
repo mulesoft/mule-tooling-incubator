@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-  	<groupId>org.mule.tooling.incubator</groupId>
-  	<artifactId>org.mule.tooling.incubator.parent</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
-  </parent>
-  <artifactId>org.mule.tooling.devkit.apt</artifactId>
-  <packaging>eclipse-plugin</packaging>
-  	<properties>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.mule.tooling.incubator</groupId>
+		<artifactId>org.mule.tooling.incubator.parent</artifactId>
+		<version>1.0.2-SNAPSHOT</version>
+	</parent>
+	<artifactId>org.mule.tooling.devkit.apt</artifactId>
+	<packaging>eclipse-plugin</packaging>
+	<properties>
 		<lib-dir>lib</lib-dir>
 		<maven.clean.plugin.version>2.4.1</maven.clean.plugin.version>
 	</properties>
 
 	<build>
-		<plugins>			
+		<plugins>
 			<plugin>
 				<artifactId>maven-invoker-plugin</artifactId>
 				<version>1.7</version>
@@ -37,11 +38,12 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -74,6 +76,6 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-	</build>  
+	</build>
 </project>
 

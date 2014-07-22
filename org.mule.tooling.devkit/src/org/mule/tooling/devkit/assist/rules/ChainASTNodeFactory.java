@@ -1,8 +1,13 @@
 package org.mule.tooling.devkit.assist.rules;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 
 public class ChainASTNodeFactory {
+
+    private static Map<Integer, ChainASTNodeType> cache = new HashMap<Integer, ChainASTNodeType>();
 
     public static ChainASTNodeType createAtClassVerifier() {
         ChainASTNodeType root = getCompilationUnitVerifier();
@@ -58,8 +63,11 @@ public class ChainASTNodeFactory {
     }
 
     private static ChainASTNodeType getVerifier(int type) {
-        ChainASTNodeType node = new ChainASTNodeType();
-        node.setAstNodeType(type);
+        ChainASTNodeType node = cache.get(type);
+        if (node == null) {
+            node = new ChainASTNodeType();
+            node.setAstNodeType(type);
+        }
         return node;
     }
 
