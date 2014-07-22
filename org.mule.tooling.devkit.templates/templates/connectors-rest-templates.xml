@@ -31,7 +31,7 @@
 	* Description for ${name}
 	*
 	* {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:${name}}
-	*
+	*	@param ${uriParam} The comment for ${uriParam}
 	*	@return return comment
 	*/
 	@Processor
