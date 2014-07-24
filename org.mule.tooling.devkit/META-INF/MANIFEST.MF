@@ -4,7 +4,9 @@ Bundle-Name: org.mule.tooling.devkit
 Bundle-SymbolicName: org.mule.tooling.devkit;singleton:=true
 Bundle-Version: 1.0.2.qualifier
 Bundle-Activator: org.mule.tooling.devkit.DevkitUIPlugin
-Require-Bundle: org.mule.tooling.runtime;bundle-version="[4.0.0,4.1.0)",
+Require-Bundle: org.mule.tooling.runtime;bundle-version="
+
+[4.0.0,4.2.0)",
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
@@ -16,19 +18,31 @@ Require-Bundle: org.mule.tooling.runtime;bundle-version="[4.0.0,4.1.0)",
  org.apache.commons.io;bundle-version="2.0.1",
  org.apache.velocity;bundle-version="1.5.0",
  org.eclipse.jdt.launching;bundle-version="3.6.101",
- org.mule.tooling.maven;bundle-version="[4.0.0,4.1.0)",
- org.mule.tooling.core;bundle-version="[4.0.0,4.1.0)",
+ org.mule.tooling.maven;bundle-version="
+
+[4.0.0,4.2.0)",
+ org.mule.tooling.core;bundle-version="
+
+[4.0.0,4.2.0)",
  org.eclipse.ui.console;bundle-version="3.5.100",
  org.eclipse.help.ui;bundle-version="3.5.201",
- org.mule.tooling.maven.ui;bundle-version="[4.0.0,4.1.0)",
- org.mule.tooling.ui;bundle-version="[4.0.0,4.1.0)",
- org.mule.tooling.ui.widgets;bundle-version="[4.0.0,4.1.0)",
+ org.mule.tooling.maven.ui;bundle-version="
+
+[4.0.0,4.2.0)",
+ org.mule.tooling.ui;bundle-version="
+
+[4.0.0,4.2.0)",
+ org.mule.tooling.ui.widgets;bundle-version="
+
+[4.0.0,4.2.0)",
  org.eclipse.equinox.p2.core;bundle-version="2.2.0",
  org.eclipse.equinox.p2.repository;bundle-version="2.2.0",
  org.eclipse.equinox.p2.metadata;bundle-version="2.1.0",
  org.eclipse.equinox.p2.operations;bundle-version="2.2.0",
  org.eclipse.equinox.p2.engine;bundle-version="2.2.0",
- org.mule.tooling.messageflow;bundle-version="[4.0.0,4.1.0)",
+ org.mule.tooling.messageflow;bundle-version="
+
+[4.0.0,4.2.0)",
  org.eclipse.jdt.ui;bundle-version="3.8.2",
  org.eclipse.ltk.core.refactoring;bundle-version="3.6.0",
  org.eclipse.jdt.apt.core;bundle-version="3.3.500",
@@ -37,7 +51,9 @@ Require-Bundle: org.mule.tooling.runtime;bundle-version="[4.0.0,4.1.0)",
  org.eclipse.equinox.util;bundle-version="1.0.400",
  org.eclipse.equinox.p2.ui.sdk;bundle-version="1.0.200",
  org.eclipse.ui.forms;bundle-version="3.5.200",
- org.mule.tooling.utils;bundle-version="[4.0.0,4.1.0)"
+ org.mule.tooling.utils;bundle-version="
+
+[4.0.0,4.2.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.mule.tooling.devkit.builder
