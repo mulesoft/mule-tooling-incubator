@@ -6,35 +6,19 @@ Bundle-Version: 1.0.2.qualifier
 Bundle-Activator: org.mule.tooling.incubator.replay.ReplayPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.mule.tooling.ui.contribution.debugger;bundle-version="
-
-[4.0.0,4.2.0)",
- org.mule.tooling.core;bundle-version="
-
-[4.0.0,4.2.0)",
- org.mule.tooling.messageflow;bundle-version="
-
-[4.0.0,4.2.0)",
- org.mule.tooling.ui;bundle-version="
-
-[4.0.0,4.2.0)",
+ org.mule.tooling.ui.contribution.debugger;bundle-version="[4.0.0,4.2.0)",
+ org.mule.tooling.core;bundle-version="[4.0.0,4.2.0)",
+ org.mule.tooling.messageflow;bundle-version="[4.0.0,4.2.0)",
+ org.mule.tooling.ui;bundle-version="[4.0.0,4.2.0)",
  org.codehaus.groovy;bundle-version="1.8.6",
- org.mule.tooling.model;bundle-version="
-
-[4.0.0,4.2.0)",
+ org.mule.tooling.model;bundle-version="[4.0.0,4.2.0)",
  org.eclipse.gef;bundle-version="3.8.1",
  org.eclipse.ui.ide;bundle-version="3.8.2",
  org.eclipse.core.resources;bundle-version="3.8.1",
  org.eclipse.ui.forms;bundle-version="3.5.200",
- org.mule.tooling.ui.widgets;bundle-version="
-
-[4.0.0,4.2.0)",
- org.mule.tooling.metadata;bundle-version="
-
-[4.0.0,4.2.0)",
- org.mule.tooling.utils;bundle-version="
-
-[4.0.0,4.2.0)"
+ org.mule.tooling.ui.widgets;bundle-version="[4.0.0,4.2.0)",
+ org.mule.tooling.metadata;bundle-version="[4.0.0,4.2.0)",
+ org.mule.tooling.utils;bundle-version="[4.0.0,4.2.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .
