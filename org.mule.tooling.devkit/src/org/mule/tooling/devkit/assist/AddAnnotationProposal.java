@@ -1,14 +1,18 @@
 package org.mule.tooling.devkit.assist;
 
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.StringLiteral;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
@@ -30,29 +34,19 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.mule.tooling.devkit.assist.rules.LocateNode;
 
 @SuppressWarnings("restriction")
-public class DevkitTemplateProposal implements IJavaCompletionProposal, ICompletionProposalExtension2, ICompletionProposalExtension3, ICompletionProposalExtension4,
+public class AddAnnotationProposal implements IJavaCompletionProposal, ICompletionProposalExtension2, ICompletionProposalExtension3, ICompletionProposalExtension4,
         ICompletionProposalExtension6 {
 
     private final String label;
     int relevance;
     CompilationUnit compilationUnit;
+    final QualifiedName annotation;
 
-    public DevkitTemplateProposal(String label) {
-        this.label = label;
-        relevance = 0;
-        compilationUnit = null;
-    }
-
-    public DevkitTemplateProposal(String label, int relevance) {
-        this.label = label;
-        this.relevance = relevance;
-        compilationUnit = null;
-    }
-
-    public DevkitTemplateProposal(String label, int relevance, CompilationUnit unit) {
+    public AddAnnotationProposal(String label, int relevance, CompilationUnit unit, QualifiedName annotation) {
         this.label = label;
         this.relevance = relevance;
         compilationUnit = unit;
+        this.annotation = annotation;
     }
 
     @Override
@@ -128,20 +122,7 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
                 AST ast = compilationUnit.getAST();
 
                 ASTRewrite rewrite = ASTRewrite.create(ast);
-                FieldDeclaration field = (FieldDeclaration) ((VariableDeclarationFragment)((SimpleName)visitor.getNode()).getParent()).getParent();
-                NormalAnnotation replacement = ast.newNormalAnnotation();
-                replacement.setTypeName(ast.newName("Default"));
-                MemberValuePair valuePair = ast.newMemberValuePair();
-
-                StringLiteral literal = ast.newStringLiteral();
-                literal.setLiteralValue("value");
-                valuePair.setValue(literal);
-                ListRewrite values = rewrite.getListRewrite(replacement, NormalAnnotation.VALUES_PROPERTY);
-                values.insertFirst(literal, null);
-
-                ListRewrite annotations = rewrite.getListRewrite(field, FieldDeclaration.MODIFIERS2_PROPERTY);
-                annotations.insertFirst(replacement, null);
-                addImportIfRequired(compilationUnit, rewrite, "org.mule.api.annotations.param.Default");
+                populateRewrite(visitor, ast, rewrite);
                 try {
                     rewrite.rewriteAST(viewer.getDocument(), null).apply(viewer.getDocument());
                 } catch (MalformedTreeException e) {
@@ -156,6 +137,35 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
                 }
             }
         }
+    }
+
+    protected void populateRewrite(LocateNode visitor, AST ast, ASTRewrite rewrite) {
+        if (visitor.getNode().getParent() instanceof MethodDeclaration) {
+
+            NormalAnnotation normalAnnotation = ast.newNormalAnnotation();
+            normalAnnotation.setTypeName(ast.newName(annotation.getName().toString()));
+            MemberValuePair memberValuePair = ast.newMemberValuePair();
+            memberValuePair.setName(ast.newSimpleName("exceptions"));
+            TypeLiteral value = ast.newTypeLiteral();
+            SimpleType arrayType = ast.newSimpleType(ast.newName("Exception"));
+            value.setType(arrayType);
+            memberValuePair.setValue(value);
+            normalAnnotation.values().add(memberValuePair);
+
+            ListRewrite annotations = rewrite.getListRewrite(visitor.getNode().getParent(), MethodDeclaration.MODIFIERS2_PROPERTY);
+            annotations.insertFirst(normalAnnotation, null);
+        } else {
+            MarkerAnnotation replacement = ast.newMarkerAnnotation();
+            replacement.setTypeName(ast.newName(annotation.getName().toString()));
+
+            ListRewrite annotations = rewrite.getListRewrite(visitor.getNode().getParent().getParent(), FieldDeclaration.MODIFIERS2_PROPERTY);
+            annotations.insertFirst(replacement, null);
+            ASTNode node = rewrite.createStringPlaceholder("public void processor(String param){\n}", ASTNode.METHOD_DECLARATION);
+            TypeDeclaration typeDecl = (TypeDeclaration) compilationUnit.types().get(0);
+            ListRewrite list = rewrite.getListRewrite(typeDecl, TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
+            list.insertLast(node, null);
+        }
+        addImportIfRequired(compilationUnit, rewrite, annotation.getFullyQualifiedName());
     }
 
     @Override
