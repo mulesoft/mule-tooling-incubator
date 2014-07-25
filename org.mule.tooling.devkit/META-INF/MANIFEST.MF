@@ -37,7 +37,8 @@ Require-Bundle: org.mule.tooling.runtime;bundle-version="[4.0.0,4.1.0)",
  org.eclipse.equinox.util;bundle-version="1.0.400",
  org.eclipse.equinox.p2.ui.sdk;bundle-version="1.0.200",
  org.eclipse.ui.forms;bundle-version="3.5.200",
- org.mule.tooling.utils;bundle-version="[4.0.0,4.1.0)"
+ org.mule.tooling.utils;bundle-version="[4.0.0,4.1.0)",
+ org.eclipse.ui.workbench.texteditor;bundle-version="3.8.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.mule.tooling.devkit.builder

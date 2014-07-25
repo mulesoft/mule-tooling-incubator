@@ -25,8 +25,8 @@ public class ClassBodyContext extends SmartContext {
         HasAnnotation hasAnnotation = new HasAnnotation("Connector", selectionOffset);
         new ASTVisitorDispatcher(ASTNode.COMPILATION_UNIT).dispactch(node.getStackNodes(), hasAnnotation);
         if (hasAnnotation.applies()) {
-            proposals.add(new DevkitTemplateProposal("Add New Configurable", 9));
-            proposals.add(new DevkitTemplateProposal("Add New Processor", 10));
+            proposals.add(new DevkitTemplateProposal("Add New Configurable", 9,cu));
+            proposals.add(new DevkitTemplateProposal("Add New Processor", 10,cu));
             proposals.add(new DevkitTemplateProposal("Add New Source", 6));
             proposals.add(new DevkitTemplateProposal("Add New Transformer", 7));
             ExistsMethodWithAnnotation methodCheck = new ExistsMethodWithAnnotation("MetaDataKeyRetriever");
