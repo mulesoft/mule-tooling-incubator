@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.mule.tooling.incubator.maven.extension"
+      label="Maven extension"
+      version="1.0.2.qualifier">
+
+   <description url="http://www.mulesoft.org/">
+       Anypoint Maven Plugin.
+   </description>
+
+   <copyright url="http://www.mulesoft.org">
+      Copyright 2014 Mulesoft Inc.
+   </copyright>
+
+   <plugin
+         id="org.mule.tooling.incubator.maven.ui.contribution"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

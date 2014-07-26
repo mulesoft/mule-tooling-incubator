@@ -9,6 +9,9 @@
     <feature id="org.mule.tooling.incubator.installer.extension">
       <category name="org.mule.tooling.incubator.category"/>
     </feature>
+    <feature id="org.mule.tooling.incubator.maven.extension">
+        <category name="org.mule.tooling.incubator.category.maven"/>
+    </feature>
     <feature id="org.mule.tooling.incubator.munit.extension">
       <category name="org.mule.tooling.incubator.category.munit"/>
     </feature>
@@ -47,4 +50,9 @@
            Munit Tools for Mule
        </description>
    </category-def>
+    <category-def name="org.mule.tooling.incubator.category.maven" label="Maven Tools for Mule">
+        <description>
+            Maven Tools for Mule
+        </description>
+    </category-def>
 </site>
