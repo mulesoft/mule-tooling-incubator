@@ -6,11 +6,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IOConsoleOutputStream;
+import org.eclipse.ui.console.MessageConsole;
 import org.mule.tooling.core.utils.VMUtils;
 import org.mule.tooling.incubator.maven.ui.view.InstallJarDialog;
 import org.mule.tooling.maven.MavenPlugin;
@@ -32,16 +35,24 @@ import org.mule.tooling.maven.runner.MavenRunnerBuilder;
 import org.mule.tooling.maven.runner.SyncGetResultCallback;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.preferences.MavenPreferences;
+import org.mule.tooling.maven.utils.MavenOutputToMonitorRedirectorThread;
+import org.mule.tooling.maven.utils.OutputRedirectorThread;
+import org.mule.tooling.maven.utils.RunnableUtils;
+import org.mule.tooling.ui.utils.UiUtils;
 
 public class InstallJar extends AbstractHandler {
 
     private MavenRunner mavenRunner;
+    //TODO: Refactor and create a base run with plugable output redirectors
+    private Thread redirectOutputToMonitorThread;
+    private OutputRedirectorThread redirectOutputToConsoleThread;
 
     org.apache.maven.artifact.Artifact mavenArtifact;
     File jarFile;
     File pomFile;
 
     public void cancelBuild() {
+        stopOutputThreads();
         mavenRunner.cancelBuild();
     }
 
@@ -59,7 +70,11 @@ public class InstallJar extends AbstractHandler {
         try {
 
             runCommand(jarFile, pomFile, pipedOutputStream, callback);
+            PipedOutputStream nextOutput = new PipedOutputStream();
 
+            redirectOutputToMonitor(pipedOutputStream, monitor, nextOutput);
+            redirectOutputToConsole(nextOutput);
+            
             while (callback.getResult(100) == SyncGetResultCallback.STILL_NOT_FINISHED) {
                 if (monitor.isCanceled()) {
                     this.cancelBuild();
@@ -81,7 +96,6 @@ public class InstallJar extends AbstractHandler {
         JarFile artifact;
         try {
             artifact = new JarFile(jarFile);
-            ZipEntry entry = artifact.getEntry("META-INF/maven/");
             for (Enumeration<JarEntry> e = artifact.entries(); e.hasMoreElements();) {
                 JarEntry item = e.nextElement();
                 System.out.println(item.getName());
@@ -144,5 +158,37 @@ public class InstallJar extends AbstractHandler {
 
         return null;
     }
+    private void redirectOutputToConsole(PipedOutputStream nextOutput) {
+        MessageConsole messageConsole = MavenUIPlugin.getDefault().getGenericOutputConsole();
+        final IOConsoleOutputStream consoleStream = messageConsole.newOutputStream();
+        PipedInputStream inputStream = null;
+        try {
+            inputStream = new PipedInputStream(nextOutput);
+        } catch (IOException e) {
+            throw new RuntimeException("IO exception creating piped streams (should not happen)", e);
+        }
+        redirectOutputToConsoleThread = new OutputRedirectorThread(inputStream, consoleStream, RunnableUtils.newRunnableClosing(inputStream, consoleStream));
 
+        UiUtils.showConsoleView();
+        // STUDIO-2676 - bring new console to front
+        ConsolePlugin.getDefault().getConsoleManager().showConsoleView(messageConsole);
+        redirectOutputToConsoleThread.start();
+    }
+
+    protected void redirectOutputToMonitor(final PipedOutputStream pipedOutputStream, final IProgressMonitor monitor, PipedOutputStream nextOutput) {
+        String taskName = "Executing Studio goal";
+        PipedInputStream sourceStream = null;
+        try {
+            sourceStream = new PipedInputStream(pipedOutputStream);
+        } catch (IOException e) {
+            throw new RuntimeException("IO exception creating piped streams (should not happen)", e);
+        }
+        redirectOutputToMonitorThread = new MavenOutputToMonitorRedirectorThread(sourceStream, monitor, taskName, nextOutput);
+        redirectOutputToMonitorThread.start();
+    }
+    
+    private void stopOutputThreads() {
+        redirectOutputToMonitorThread.interrupt();
+        redirectOutputToConsoleThread.interrupt();
+    }
 }
