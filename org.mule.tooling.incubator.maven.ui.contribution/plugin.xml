@@ -112,4 +112,13 @@
             </toolbar>
       </menuContribution>
    </extension>
+   <!-- POM Hyperlink detector -->
+   <extension point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+  		<hyperlinkDetector
+    		id="org.mule.tooling.devkit.links.DevkitSampleHyperlinkDetector"
+    		targetId="org.eclipse.core.runtime.xml"
+    		class="org.mule.tooling.incubator.maven.ui.link.ParentPomLinkDetector"
+    		name="Devkit Sample Link Detector">
+		</hyperlinkDetector>
+	</extension>
 </plugin>

@@ -41,7 +41,7 @@ public class MavenArtifactResolver {
 
     private ArtifactRepository localRepository;
 
-    protected File getLocalArtifactPath(Artifact artifact) {
+    public File getLocalArtifactPath(Artifact artifact) {
         return new File(localRepository.getBasedir(), localRepository.pathOf(artifact));
     }
 
