@@ -27,7 +27,6 @@ import org.mule.tooling.incubator.maven.model.ILifeCycle;
 import org.mule.tooling.incubator.maven.ui.MavenCommandLineConfigurationComponent;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.preferences.MavenPreferences;
-import org.mule.tooling.incubator.maven.ui.launch.MavenLaunchDelegate;
 import org.mule.tooling.incubator.maven.ui.launch.MavenLaunchShortcut;
 import org.mule.tooling.maven.MavenPlugin;
 import org.mule.tooling.maven.cmdline.MavenCommandLine;

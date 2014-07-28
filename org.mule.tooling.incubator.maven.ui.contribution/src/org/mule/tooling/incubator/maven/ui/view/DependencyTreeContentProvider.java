@@ -14,6 +14,7 @@ public class DependencyTreeContentProvider implements ITreeContentProvider {
     public void dispose() {
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
@@ -25,6 +26,7 @@ public class DependencyTreeContentProvider implements ITreeContentProvider {
         return getChildren(inputElement);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Object[] getChildren(Object parentElement) {
         if (parentElement.equals(section)) {

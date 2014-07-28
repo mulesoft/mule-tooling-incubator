@@ -10,6 +10,7 @@ import org.mule.tooling.incubator.maven.ui.MavenImages;
 
 public class DependencyTreeLabelProvider extends LabelProvider implements DelegatingStyledCellLabelProvider.IStyledLabelProvider {
 
+    @SuppressWarnings("rawtypes")
     @Override
     public String getText(Object element) {
         StringBuilder stringBuffer = new StringBuilder();
@@ -28,6 +29,7 @@ public class DependencyTreeLabelProvider extends LabelProvider implements Delega
         return MavenImages.JAR;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public StyledString getStyledText(Object element) {
         StyledString ss = new StyledString();

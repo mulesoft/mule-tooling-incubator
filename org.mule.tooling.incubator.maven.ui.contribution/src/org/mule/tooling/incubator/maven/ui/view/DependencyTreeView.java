@@ -94,6 +94,7 @@ public class DependencyTreeView extends ViewPart implements ISelectionListener, 
 
         viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+            @SuppressWarnings("unchecked")
             @Override
             public void doubleClick(DoubleClickEvent event) {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -237,11 +238,8 @@ public class DependencyTreeView extends ViewPart implements ISelectionListener, 
         getSite().registerContextMenu(menuMgr, viewer);
     }
 
+    @SuppressWarnings("unchecked")
     private void fillContextMenu(IMenuManager mgr) {
-
-        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-        IViewPart viewPart = page.findView("org.eclipse.jdt.ui.PackageExplorer");
-        Viewer selectionService = (Viewer) viewPart.getSite().getSelectionProvider();
 
         IJavaProject javaProject = JavaCore.create(currentProject);
         TreeSelection selected = (TreeSelection) viewer.getSelection();
@@ -361,6 +359,7 @@ public class DependencyTreeView extends ViewPart implements ISelectionListener, 
 
                                 }
 
+                                @SuppressWarnings("unchecked")
                                 @Override
                                 public void done(IJobChangeEvent event) {
                                     final Object result = command.getDepResult();
@@ -457,6 +456,7 @@ public class DependencyTreeView extends ViewPart implements ISelectionListener, 
                     public void done(IJobChangeEvent event) {
                         Display.getDefault().asyncExec(new Runnable() {
 
+                            @SuppressWarnings("unchecked")
                             @Override
                             public void run() {
                                 Object result = command.getDepResult();
