@@ -51,7 +51,7 @@ public class ParentPomHyperlink implements IHyperlink {
             file = MavenArtifactResolver.getInstance().getLocalArtifactPath(artifact);
             if (file.exists() && file.isFile()) {
                 // Hack to open the parent pom in the default xml editor
-                File temp = new File(FileUtils.getTempDirectory(), "parentPom.xml");
+                File temp = new File(FileUtils.getTempDirectory(), artifact.getGroupId()+File.separator+artifact.getArtifactId()+File.pathSeparator+artifact.getVersion()+".pom.xml");
                 if (temp.exists()) {
                     temp.delete();
                 }
