@@ -1,8 +1,21 @@
 package org.mule.tooling.incubator.maven.ui.command;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PipedOutputStream;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -65,9 +78,33 @@ public class InstallJar extends AbstractHandler {
     protected void runCommand(File jarFile, File pomFile, final PipedOutputStream pipedOutputStream, SyncGetResultCallback callback) {
         StringBuilder commandString = new StringBuilder();
         commandString.append(" install:install-file -Dfile=" + jarFile.getAbsolutePath());
+        JarFile artifact;
+        try {
+            artifact = new JarFile(jarFile);
+            ZipEntry entry = artifact.getEntry("META-INF/maven/");
+            for (Enumeration<JarEntry> e = artifact.entries(); e.hasMoreElements();) {
+                JarEntry item = e.nextElement();
+                System.out.println(item.getName());
+                if (item.getName().startsWith("META-INF/maven/") && item.getName().endsWith("pom.xml")) {
+                    InputStream plugin = artifact.getInputStream(item);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(plugin));
+                    Model model = new MavenXpp3Reader().read(in);
+                    MavenXpp3Writer writter = new MavenXpp3Writer();
+                    File tempFile = File.createTempFile("pom", ".xml");
+                    FileWriter fWriter = new FileWriter(tempFile);
+                    writter.write(fWriter, model);
+                    pomFile = tempFile;
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (XmlPullParserException e1) {
+            e1.printStackTrace();
+        }
         if (pomFile != null) {
             commandString.append(" -DpomFile=" + pomFile.getAbsolutePath());
-        }else{
+        } else {
             commandString.append("  -DgroupId=" + mavenArtifact.getGroupId());
             commandString.append("  -DartifactId=" + mavenArtifact.getArtifactId());
             commandString.append("  -Dversion=" + mavenArtifact.getVersion());
@@ -87,12 +124,12 @@ public class InstallJar extends AbstractHandler {
         InstallJarDialog dialog = new InstallJarDialog(null);
         if (dialog.open() == 0) {
             pomFile = dialog.getPomFile();
-            if(pomFile==null){
+            if (pomFile == null) {
                 mavenArtifact = dialog.getArtifact();
                 dialog.getPomFile();
             }
             jarFile = dialog.getJarFile();
-            
+
             Job job = new Job("Installing jar") {
 
                 @Override

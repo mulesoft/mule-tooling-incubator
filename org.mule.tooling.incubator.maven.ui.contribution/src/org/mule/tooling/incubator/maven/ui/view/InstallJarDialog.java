@@ -37,7 +37,7 @@ public class InstallJarDialog extends TitleAreaDialog {
     public void create() {
         super.create();
         setTitle("Install Jar into local repository");
-        setMessage("Install the selected jar using the information provided");
+        setMessage("Selecte the jar to be installed. If it was built with maven, there is no need to specify a pom. If not, specify a pom or the groupId,artifactId and version.");
     }
 
     Text groupId;
