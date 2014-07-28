@@ -36,141 +36,106 @@ import org.mule.tooling.devkit.maven.MavenDevkitProjectDecorator;
 
 public class InstallOrUpdateConnector extends AbstractHandler {
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IJavaProject selectedProject = getSelectedJavaProject(event);
-		if (selectedProject != null) {
-			final String installingPalette = "Installing Connector...";
-			final WorkspaceJob installOrUpdate = new WorkspaceJob(
-					installingPalette) {
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        final IJavaProject selectedProject = getSelectedJavaProject(event);
+        if (selectedProject != null && !DevkitUtils.existsUnsavedChanges(selectedProject.getProject())) {
+            final String installingPalette = "Installing Connector...";
+            final WorkspaceJob installOrUpdate = new WorkspaceJob(installingPalette) {
 
-				@Override
-				public IStatus runInWorkspace(final IProgressMonitor monitor)
-						throws CoreException {
-					monitor.beginTask(installingPalette, 100);
-					final Integer result = generateUpdateSite(selectedProject,
-							monitor);
+                @Override
+                public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+                    monitor.beginTask(installingPalette, 100);
+                    final Integer result = generateUpdateSite(selectedProject, monitor);
 
-					if (result == BaseDevkitGoalRunner.CANCELED)
-						return Status.CANCEL_STATUS;
+                    if (result == BaseDevkitGoalRunner.CANCELED)
+                        return Status.CANCEL_STATUS;
 
-					if (selectedProject.getProject().getFolder(
-							DevkitUtils.UPDATE_SITE_FOLDER) != null && (result == Status.OK) ) {
+                    if (selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER) != null && (result == Status.OK)) {
 
-						final List<IInstallableUnit> list = new ArrayList<IInstallableUnit>();
-						final URI uri = selectedProject.getProject()
-								.getFolder(DevkitUtils.UPDATE_SITE_FOLDER)
-								.getLocationURI();
+                        final List<IInstallableUnit> list = new ArrayList<IInstallableUnit>();
+                        final URI uri = selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER).getLocationURI();
 
-						refreshRepository(monitor, uri);
+                        refreshRepository(monitor, uri);
 
-						getInstallablesFromRepo(monitor, list, uri);
+                        getInstallablesFromRepo(monitor, list, uri);
 
-						if (list.isEmpty()) {
-							return new OperationStatus(Status.ERROR,
-									DevkitUIPlugin.PLUGIN_ID,
-									OperationStatus.ERROR,
-									"No installable was found at repository: "
-											+ uri, null);
-						}
-						openInstallWizzard(monitor, list, uri);
+                        if (list.isEmpty()) {
+                            return new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR, "No installable was found at repository: " + uri, null);
+                        }
+                        openInstallWizzard(monitor, list, uri);
 
-					} else {
-						return new OperationStatus(Status.ERROR,
-								DevkitUIPlugin.PLUGIN_ID,
-								OperationStatus.ERROR,
-								"Failed to generate Update Site. Check the logs for more details.", null);
-					}
-					return Status.OK_STATUS;
-				}
+                    } else {
+                        return new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR,
+                                "Failed to generate Update Site. Check the logs for more details.", null);
+                    }
+                    return Status.OK_STATUS;
+                }
 
-				private void getInstallablesFromRepo(
-						final IProgressMonitor monitor,
-						final List<IInstallableUnit> list, final URI uri)
-						throws ProvisionException {
-					IMetadataRepository repo = ProvisioningUI.getDefaultUI()
-							.loadMetadataRepository(uri, false, null);
-					repo.setProperty("name", selectedProject.getElementName()+" local Update Site");
-					IQueryResult<IInstallableUnit> queryResult = repo.query(
-							QueryUtil.createIUAnyQuery(), monitor);
+                private void getInstallablesFromRepo(final IProgressMonitor monitor, final List<IInstallableUnit> list, final URI uri) throws ProvisionException {
+                    IMetadataRepository repo = ProvisioningUI.getDefaultUI().loadMetadataRepository(uri, false, null);
+                    repo.setProperty("name", selectedProject.getElementName() + " local Update Site");
+                    IQueryResult<IInstallableUnit> queryResult = repo.query(QueryUtil.createIUAnyQuery(), monitor);
 
-					for (Iterator<IInstallableUnit> iterator = queryResult
-							.iterator(); iterator.hasNext();) {
-						IInstallableUnit current = iterator.next();
-						if (current.getId().endsWith("feature.group")) {
-							list.add(current);
-							break;
-						}
-					}
-				}
+                    for (Iterator<IInstallableUnit> iterator = queryResult.iterator(); iterator.hasNext();) {
+                        IInstallableUnit current = iterator.next();
+                        if (current.getId().endsWith("feature.group")) {
+                            list.add(current);
+                            break;
+                        }
+                    }
+                }
 
-				private void refreshRepository(final IProgressMonitor monitor,
-						final URI uri) {
-					try {
-						((IMetadataRepositoryManager) ProvisioningUI
-								.getDefaultUI()
-								.getSession()
-								.getProvisioningAgent()
-								.getService(
-										IMetadataRepositoryManager.SERVICE_NAME))
-								.refreshRepository(uri, monitor);
+                private void refreshRepository(final IProgressMonitor monitor, final URI uri) {
+                    try {
+                        ((IMetadataRepositoryManager) ProvisioningUI.getDefaultUI().getSession().getProvisioningAgent().getService(IMetadataRepositoryManager.SERVICE_NAME))
+                                .refreshRepository(uri, monitor);
 
-					} catch (ProvisionException e) {
-						// If the repo diesn't exist
-					}
-				}
+                    } catch (ProvisionException e) {
+                        // If the repo diesn't exist
+                    }
+                }
 
-				private void openInstallWizzard(final IProgressMonitor monitor,
-						final List<IInstallableUnit> list, final URI uri) {
-					Display.getDefault().syncExec(new Runnable() {
-						public void run() {
-							InstallOperation op = ProvisioningUI.getDefaultUI()
-									.getInstallOperation(list,
-											new URI[] { uri });
+                private void openInstallWizzard(final IProgressMonitor monitor, final List<IInstallableUnit> list, final URI uri) {
+                    Display.getDefault().syncExec(new Runnable() {
 
-							op.resolveModal(monitor);
+                        public void run() {
+                            InstallOperation op = ProvisioningUI.getDefaultUI().getInstallOperation(list, new URI[] { uri });
 
-							ProvisioningUI.getDefaultUI().openInstallWizard(
-									list, op, null);
-						}
-					});
-				}
+                            op.resolveModal(monitor);
 
-				private Integer generateUpdateSite(
-						final IJavaProject selectedProject,
-						final IProgressMonitor monitor) {
-					MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator
-							.decorate(selectedProject);
+                            ProvisioningUI.getDefaultUI().openInstallWizard(list, op, null);
+                        }
+                    });
+                }
 
-					final Integer result = new BaseDevkitGoalRunner(
-							new String[] { "clean", "package", "-DskipTests",
-									"-Ddevkit.studio.package.skip=false" },
-							selectedProject).run(mavenProject.getPomFile(),
-							monitor);
-					return result;
-				}
-			};
-			installOrUpdate.setUser(true);
-			installOrUpdate.setRule(selectedProject.getProject());
-			installOrUpdate.setPriority(Job.LONG);
-			installOrUpdate.schedule();
+                private Integer generateUpdateSite(final IJavaProject selectedProject, final IProgressMonitor monitor) {
+                    MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator.decorate(selectedProject);
 
-		}
-		return null;
-	}
+                    final Integer result = new BaseDevkitGoalRunner(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=false" }, selectedProject).run(
+                            mavenProject.getPomFile(), monitor);
+                    return result;
+                }
+            };
+            installOrUpdate.setUser(true);
+            installOrUpdate.setRule(selectedProject.getProject());
+            installOrUpdate.setPriority(Job.LONG);
+            installOrUpdate.schedule();
 
-	private IJavaProject getSelectedJavaProject(ExecutionEvent event) {
-		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event)
-				.getActivePage().getSelection();
-		if (selection != null & selection instanceof IStructuredSelection) {
-			Object selected = ((IStructuredSelection) selection)
-					.getFirstElement();
+        }
+        return null;
+    }
 
-			if (selected instanceof IJavaElement) {
-				return ((IJavaElement) selected).getJavaProject();
-			}
-		}
-		return null;
-	}
+    private IJavaProject getSelectedJavaProject(ExecutionEvent event) {
+        ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
+        if (selection != null & selection instanceof IStructuredSelection) {
+            Object selected = ((IStructuredSelection) selection).getFirstElement();
+
+            if (selected instanceof IJavaElement) {
+                return ((IJavaElement) selected).getJavaProject();
+            }
+        }
+        return null;
+    }
 
 }

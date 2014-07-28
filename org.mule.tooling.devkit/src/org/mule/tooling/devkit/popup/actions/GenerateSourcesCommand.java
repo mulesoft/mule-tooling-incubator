@@ -33,7 +33,7 @@ public class GenerateSourcesCommand extends AbstractHandler {
 
             if (selected instanceof IJavaElement) {
                 final IProject selectedProject = ((IJavaElement) selected).getJavaProject().getProject();
-                if (selectedProject != null) {
+                if (selectedProject != null && !DevkitUtils.existsUnsavedChanges(selectedProject.getProject())) {
                     int errorCount = getErrorsCount(selectedProject);
 
                     if (errorCount > 0) {

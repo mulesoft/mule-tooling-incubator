@@ -36,10 +36,13 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorPart;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.popup.actions.DevkitCallback;
 import org.mule.tooling.devkit.quickfix.LocateModuleNameVisitor;
+import org.mule.tooling.ui.utils.SaveModifiedResourcesDialog;
+import org.mule.tooling.ui.utils.UiUtils;
 import org.mule.tooling.utils.SilentRunner;
 
 @SuppressWarnings("restriction")
@@ -129,7 +132,7 @@ public class DevkitUtils {
                         });
                     }
                 });
-                
+
                 return Status.OK;
             };
         };
@@ -214,7 +217,7 @@ public class DevkitUtils {
 
         return processors;
     }
-    
+
     public static void setControlsEnable(boolean enabled, Control... controls) {
         for (Control part : controls) {
             part.setEnabled(enabled);
@@ -225,7 +228,7 @@ public class DevkitUtils {
             }
         }
     }
-    
+
     public static String findResourceInFolder(IContainer folder, String resourceNameFormat) throws CoreException {
 
         String resourceName = "";
@@ -245,27 +248,38 @@ public class DevkitUtils {
         return resourceName;
     }
 
-    public static List<String> getProjectBranches(IProject project, ListMode mode){
+    public static List<String> getProjectBranches(IProject project, ListMode mode) {
         List<String> branches = new LinkedList<String>();
-        if (project == null){
+        if (project == null) {
             return branches;
         }
-        
+
         String repoPath = project.getLocationURI().getPath() + DOT_GIT_PATH;
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         try {
             Repository repository = builder.setGitDir(new File(repoPath)).build();
             List<Ref> call = new Git(repository).branchList().setListMode(mode).call();
             for (Ref ref : call) {
-                branches.add(StringUtils.substring(ref.getName(), ref.getName().lastIndexOf("/")+1));
-//                System.out.println("Branch: " + StringUtils.substring(ref.getName(), ref.getName().lastIndexOf("/")+1));
+                branches.add(StringUtils.substring(ref.getName(), ref.getName().lastIndexOf("/") + 1));
+                // System.out.println("Branch: " + StringUtils.substring(ref.getName(), ref.getName().lastIndexOf("/")+1));
             }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (GitAPIException e) {
             e.printStackTrace();
         }
-        
+
         return branches;
+    }
+
+    public static boolean existsUnsavedChanges(IProject project) {
+        List<IEditorPart> dirtyEditors = UiUtils.getDirtyEditors(project.getProject());
+        if (dirtyEditors.isEmpty())
+            return true;
+        SaveModifiedResourcesDialog dialog = new SaveModifiedResourcesDialog(Display.getDefault().getActiveShell());
+        
+        if (dialog.open(Display.getDefault().getActiveShell(), dirtyEditors))
+            return false;
+        return true;
     }
 }
