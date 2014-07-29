@@ -111,10 +111,16 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
                     try {
                         File report = new File(projectTarget + GENERATED_REPORTS_PATH);
                         File reportTarget = new File(projectTarget + "surefire-reports");
+                        File textReport = new File(reportTarget, "suite.ConnectorsInteropTestSuite.txt");
                         
                         FileUtils.deleteDirectory(reportTarget);
                         FileUtils.moveDirectory(report, reportTarget);
-                        System.out.println("Moved Report");
+                        if (textReport.exists()){
+                            FileUtils.writeStringToFile(textReport, FileUtils.readFileToString(textReport)
+                                                                         .replaceAll(" skipped", " skipped\n")
+                                                                         .replaceAll(" sectest", " sec\ntest"));
+                        }
+                        System.out.println("Moved and formatted Report");
                         
                         FileUtils.deleteDirectory(new File(projectTarget + "interop-ce-project"));
                         System.out.println("Delete dir");
