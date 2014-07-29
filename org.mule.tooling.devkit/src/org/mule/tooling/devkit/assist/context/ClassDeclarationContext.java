@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.mule.tooling.devkit.assist.DevkitTemplateProposal;
 import org.mule.tooling.devkit.assist.rules.ASTVisitorDispatcher;
@@ -15,13 +16,19 @@ import org.mule.tooling.devkit.assist.rules.LocateNode;
 
 public class ClassDeclarationContext extends SmartContext {
 
+    public ClassDeclarationContext(IInvocationContext context) {
+        super(context);
+    }
+
     @Override
     protected ChainASTNodeType getVerifier() {
         return ChainASTNodeFactory.createAtClassVerifier();
     }
 
     @Override
-    protected void doAddProposals(List<IJavaCompletionProposal> proposals, LocateNode node, CompilationUnit cu, int selectionOffset) {
+    protected void doAddProposals(List<IJavaCompletionProposal> proposals, LocateNode node) {
+        CompilationUnit cu = getCompilationUnit();
+        int selectionOffset = getOffset();
         HasAnnotation hasAnnotation = new HasAnnotation("Connector", selectionOffset);
         new ASTVisitorDispatcher(ASTNode.COMPILATION_UNIT).dispactch(node.getStackNodes(), hasAnnotation);
         if (hasAnnotation.applies()) {
@@ -35,7 +42,7 @@ public class ClassDeclarationContext extends SmartContext {
                     proposals.add(new DevkitTemplateProposal("Add OAuth annotation"));
                 }
             } else {
-                proposals.add(new DevkitTemplateProposal("Add NOT Rest Template"));
+                //ReconnectOn
             }
 
         }

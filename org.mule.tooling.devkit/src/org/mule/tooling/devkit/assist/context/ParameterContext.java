@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.mule.tooling.devkit.assist.DevkitTemplateProposal;
 import org.mule.tooling.devkit.assist.rules.ASTVisitorDispatcher;
@@ -14,13 +15,19 @@ import org.mule.tooling.devkit.assist.rules.LocateNode;
 
 public class ParameterContext extends SmartContext {
 
+    public ParameterContext(IInvocationContext context) {
+        super(context);
+    }
+
     @Override
     protected ChainASTNodeType getVerifier() {
         return ChainASTNodeFactory.createAtParameterVerifier();
     }
 
     @Override
-    protected void doAddProposals(List<IJavaCompletionProposal> proposals, LocateNode node, CompilationUnit cu, int selectionOffset) {
+    protected void doAddProposals(List<IJavaCompletionProposal> proposals, LocateNode node) {
+        CompilationUnit cu = getCompilationUnit();
+        int selectionOffset = getOffset();
         HasAnnotation hasAnnotation = new HasAnnotation("Processor", selectionOffset);
         new ASTVisitorDispatcher(ASTNode.METHOD_DECLARATION).dispactch(node.getStackNodes(), hasAnnotation);
         if (hasAnnotation.applies()) {

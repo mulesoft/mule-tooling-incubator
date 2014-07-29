@@ -17,7 +17,7 @@ import org.mule.tooling.devkit.assist.context.SmartContextFactory;
 public final class ProposalComputer implements IQuickAssistProcessor {
 
     public ProposalComputer() {
-        // fEngine= new TemplateCompletionProposalComputer();
+        
     }
 
     @Override
@@ -30,8 +30,8 @@ public final class ProposalComputer implements IQuickAssistProcessor {
 
         List<IJavaCompletionProposal> proposals = new ArrayList<IJavaCompletionProposal>();
 
-        for (SmartContext smartContext : SmartContextFactory.getContexts()) {
-            smartContext.addProposals(proposals, context);
+        for (SmartContext smartContext : SmartContextFactory.getContexts(context)) {
+            smartContext.addProposals(proposals);
         }
 
         return proposals.toArray(new IJavaCompletionProposal[proposals.size()]);

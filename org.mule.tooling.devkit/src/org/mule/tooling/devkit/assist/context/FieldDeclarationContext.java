@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.mule.tooling.devkit.assist.AddAnnotationProposal;
 import org.mule.tooling.devkit.assist.DevkitTemplateProposal;
@@ -18,13 +19,19 @@ import org.mule.tooling.devkit.assist.rules.Negation;
 
 public class FieldDeclarationContext extends SmartContext {
 
+    public FieldDeclarationContext(IInvocationContext context) {
+        super(context);
+    }
+
     @Override
     protected ChainASTNodeType getVerifier() {
         return ChainASTNodeFactory.createAtFieldVerifier();
     }
 
     @Override
-    protected void doAddProposals(List<IJavaCompletionProposal> proposals, LocateNode node, CompilationUnit cu, int selectionOffset) {
+    protected void doAddProposals(List<IJavaCompletionProposal> proposals, LocateNode node) {
+        CompilationUnit cu = getCompilationUnit();
+        int selectionOffset = getOffset();
         HasAnnotation hasAnnotation = new HasAnnotation("Configurable", selectionOffset);
         HasAnnotation hasDefault = new HasAnnotation("Default", selectionOffset);
         HasAnnotation hasInject = new HasAnnotation("Inject", selectionOffset);

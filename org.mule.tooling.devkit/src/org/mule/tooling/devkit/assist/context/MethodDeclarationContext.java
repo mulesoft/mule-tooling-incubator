@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.mule.tooling.devkit.assist.AddAnnotationProposal;
 import org.mule.tooling.devkit.assist.DevkitTemplateProposal;
@@ -16,13 +17,19 @@ import org.mule.tooling.devkit.assist.rules.LocateNode;
 
 public class MethodDeclarationContext extends SmartContext {
 
+    public MethodDeclarationContext(IInvocationContext context) {
+        super(context);
+    }
+
     @Override
     protected ChainASTNodeType getVerifier() {
         return ChainASTNodeFactory.createAtMethodVerifier();
     }
 
     @Override
-    protected void doAddProposals(List<IJavaCompletionProposal> proposals, LocateNode node, CompilationUnit cu, int selectionOffset) {
+    protected void doAddProposals(List<IJavaCompletionProposal> proposals, LocateNode node) {
+        CompilationUnit cu = getCompilationUnit();
+        int selectionOffset = getOffset();
         AST ast = AST.newAST(AST.JLS4);
         HasAnnotation hasConnect = new HasAnnotation("Connect", selectionOffset).addAnnotation("Disconnect").addAnnotation("ValidateConnection")
                 .addAnnotation("ConnectionIdentifier").addAnnotation("MetaDataKeyRetriever").addAnnotation("MetaDataRetriever");
