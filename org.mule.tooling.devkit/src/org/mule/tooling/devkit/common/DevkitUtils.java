@@ -275,11 +275,34 @@ public class DevkitUtils {
     public static boolean existsUnsavedChanges(IProject project) {
         List<IEditorPart> dirtyEditors = UiUtils.getDirtyEditors(project.getProject());
         if (dirtyEditors.isEmpty())
-            return true;
+            return false;
         SaveModifiedResourcesDialog dialog = new SaveModifiedResourcesDialog(Display.getDefault().getActiveShell());
-        
+
         if (dialog.open(Display.getDefault().getActiveShell(), dirtyEditors))
             return false;
         return true;
+    }
+
+    public static String toConnectorName(String camelCaseName) {
+        return splitWithSeparator(camelCaseName, "-").toLowerCase();
+    }
+
+    private static String splitWithSeparator(String camelCaseName, String separator) {
+        StringBuilder result = new StringBuilder();
+        String[] parts = camelCaseName.split("(?<!^)(?=[A-Z])");
+
+        boolean wasSizeOne = false;
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i].length() == 1) {
+                result.append(parts[i]);
+                wasSizeOne = true;
+            } else {
+
+                result.append(((wasSizeOne) ? separator : "") + parts[i] + (i < parts.length - 1 ? separator : ""));
+                wasSizeOne = false;
+            }
+        }
+
+        return result.toString();
     }
 }
