@@ -124,8 +124,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
-                    final IJavaProject javaProject = doFinish(mavenModel, runtimeId, packageName, connectorName, monitor, isMetaDataEnabled, hasQuery, minMuleVersion, isSoapWithCXF,
-                            wsdlPath, apiType);
+                    final IJavaProject javaProject = doFinish(mavenModel, runtimeId, packageName, connectorName, monitor, isMetaDataEnabled, hasQuery, minMuleVersion,
+                            isSoapWithCXF, wsdlPath, apiType);
                     Job job = new WorkspaceJob("Compiling connector") {
 
                         @Override
@@ -284,19 +284,20 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
     protected void create(String moduleName, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className, String packageName,
             IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, boolean isSoapCxf, Object apiType) throws CoreException {
-
+        String uncammelName = DevkitUtils.toConnectorName(moduleName);
         TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
         ImageWriter imageWriter = new ImageWriter(project, monitor);
         if (!isSoapCxf) {
             fileWriter.apply(mainTemplatePath, buildMainTargetFilePath(packageName, className), classReplacer);
         }
         if (!apiType.equals(ApiType.REST)) {
-            fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(moduleName), classReplacer);
+            fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(uncammelName), classReplacer);
             fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);
         }
-        fileWriter.apply("/templates/example.tmpl", getExampleFileName(moduleName), classReplacer);
-        imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(moduleName));
-        imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(moduleName));
+
+        fileWriter.apply("/templates/example.tmpl", getExampleFileName(uncammelName), classReplacer);
+        imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(uncammelName));
+        imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
 
     }
 
