@@ -154,6 +154,22 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.mule.tools.devkit</groupId>
+                        <artifactId>connector-sample-generator-maven-plugin</artifactId>
+                        <version>${connector.generator.version}</version>
+                        <configuration>
+                            <inputFile>${basedir}/target/generated-sources/mule/META-INF/mule-${moduleName}.xsd</inputFile>
+                            <outputFile>${basedir}/doc/</outputFile>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>sample-generator</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
