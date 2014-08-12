@@ -153,6 +153,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                         }
                     };
                     job.schedule();
+                    downloadJavadocForAnnotations(javaProject, monitor);
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
                 } finally {
@@ -351,4 +352,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         return page.getApiType();
     }
 
+    private void downloadJavadocForAnnotations(IJavaProject javaProject, IProgressMonitor monitor) {
+        new BaseDevkitGoalRunner(new String[] { "dependency:resolve", "-Dclassifier=javadoc", "-DexcludeTransitive=false", "-DincludeGroupIds=org.mule.tools.devkit",
+                "-DincludeArtifactIds=mule-devkit-annotations" }, javaProject).run(javaProject.getProject().getFile("pom.xml").getLocation().toFile(), monitor);
+    }
 }
