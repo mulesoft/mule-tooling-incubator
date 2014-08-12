@@ -400,4 +400,32 @@
             </parameter>
       </key>
    </extension>
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension targetID="org.mule.tooling.devkit.perspective">
+			<newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard">
+			</newWizardShortcut>
+			<newWizardShortcut id="org.eclipse.jdt.ui.wizards.JavaProjectWizard">
+			</newWizardShortcut>
+			<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewPackageCreationWizard">
+			</newWizardShortcut>
+			<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewClassCreationWizard">
+			</newWizardShortcut>
+			<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard">
+			</newWizardShortcut>
+			<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewEnumCreationWizard">
+			</newWizardShortcut>
+			<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewAnnotationCreationWizard">
+			</newWizardShortcut>
+			<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewSourceFolderCreationWizard">
+			</newWizardShortcut>
+			<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewJavaWorkingSetWizard">
+			</newWizardShortcut>
+			<newWizardShortcut id="org.eclipse.ui.wizards.new.folder">
+			</newWizardShortcut>
+			<newWizardShortcut id="org.eclipse.ui.wizards.new.file">
+			</newWizardShortcut>
+			<newWizardShortcut id="org.eclipse.ui.editors.wizards.UntitledTextFileWizard">
+			</newWizardShortcut>
+		</perspectiveExtension>
+   </extension>
 </plugin>
