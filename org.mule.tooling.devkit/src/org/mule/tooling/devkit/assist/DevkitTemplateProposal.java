@@ -141,33 +141,57 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
 
     @Override
     public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
-        String templateString = "\n\t/**" + "\n" + "\t * Description for PUTO  ${method}" + "\n" + "\t *" + "\n"
-                + "\t * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:${method}" + "\n" + "\t *" + "\n" + "\t */" + "\n" + "\t@Processor\n"
-                + "\tpublic void ${method}(){" + "\n" + "\t\t//TODO" + "\n" + "\t}" + "\n";
+        String templateString = "${imp:import (org.mule.api.annotations.Processor,org.mule.api.annotations.Optional)}\n\t/**" + "\n" + "\t * Description for PUTO  ${method}"
+                + "\n" + "\t *" + "\n" + "\t * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:${method}" + "\n" + "\t *" + "\n" + "\t */" + "\n"
+                + "\t@Processor\n" + "\tpublic void ${method}(){" + "\n" + "\t\t//TODO${cursor}" + "\n" + "\t}" + "\n";
         IDocument document = viewer.getDocument();
         TemplateContextType contextType = new TemplateContextType("java");
         DevkitVariableResolver resolver = new DevkitVariableResolver();
+        ImportResolver importResolver = new ImportResolver();
+        importResolver.setType("import");
+        importResolver.setCompilationUnit(compilationUnit);
         resolver.setCompilationUnit(compilationUnit);
         resolver.setType("moduleName");
+        importResolver.setDocument(viewer.getDocument());
         contextType.addResolver(resolver);
+        contextType.addResolver(new GlobalTemplateVariables.Cursor());
+        contextType.addResolver(importResolver);
         fContext = new DocumentTemplateContext(contextType, viewer.getDocument(), offset, 0);
+
         fTemplate = new Template("Dummy", "My Description", "java", templateString, true);
         fContext.setReadOnly(false);
         int start;
         TemplateBuffer templateBuffer = null;
         try {
             beginCompoundChange(viewer);
+            int importOffset = 0;
+            // AST ast = compilationUnit.getAST();
+            // ASTRewrite rewrite = ASTRewrite.create(ast);
+            // if (addImportIfRequired(compilationUnit, rewrite, "org.mule.api.annotations.Processor")) {
+            // importOffset = "org.mule.api.annotations.Processor".length() + "import ; ".length();
+            // try {
+            // rewrite.rewriteAST(viewer.getDocument(), null).apply(viewer.getDocument());
+            // } catch (MalformedTreeException e) {
+            // e.printStackTrace();
+            // } catch (IllegalArgumentException e) {
+            // e.printStackTrace();
+            // } catch (BadLocationException e) {
+            // // TODO Auto-generated catch block
+            // e.printStackTrace();
+            // }
+            // }
 
-            int oldReplaceOffset = getReplaceOffset();
             try {
-
                 templateBuffer = fContext.evaluate(fTemplate);
-
             } catch (TemplateException e1) {
                 return;
             } catch (BadLocationException e) {
                 DevkitUIPlugin.getDefault().getLog().log(new Status(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, Status.OK, "TemplateError", e));
             }
+            importOffset = importResolver.getOffset();
+            offset += importOffset;
+            int oldReplaceOffset = getReplaceOffset();
+            oldReplaceOffset += importOffset;
             // Map options = compilationUnit.getJavaElement().getJavaProject().getOptions(true);
             // CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(options);
 
@@ -237,19 +261,7 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
                 model.addGroup(group);
                 hasPositions = true;
             }
-            AST ast = compilationUnit.getAST();
-            ASTRewrite rewrite = ASTRewrite.create(ast);
-            addImportIfRequired(compilationUnit, rewrite, "org.mule.api.annotations.Processor");
-            try {
-                rewrite.rewriteAST(viewer.getDocument(), null).apply(viewer.getDocument());
-            } catch (MalformedTreeException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (BadLocationException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+
             if (hasPositions) {
                 model.forceInstall();
                 JavaEditor editor = getJavaEditor();
@@ -325,7 +337,7 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
         return relevance;
     }
 
-    protected void addImportIfRequired(CompilationUnit compilationUnit, ASTRewrite rewrite, String fullyQualifiedName) {
+    protected boolean addImportIfRequired(CompilationUnit compilationUnit, ASTRewrite rewrite, String fullyQualifiedName) {
         AST ast = compilationUnit.getAST();
         boolean hasConnectorAnnotationImport = false;
 
@@ -344,7 +356,9 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
             id = ast.newImportDeclaration();
             id.setName(ast.newName(fullyQualifiedName));
             listImports.insertLast(id, null);
+            return true;
         }
+        return false;
     }
 
     private void endCompoundChange(ITextViewer viewer) {
