@@ -130,6 +130,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
                         @Override
                         public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+                            downloadJavadocForAnnotations(javaProject, monitor);
                             boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
                             if (!autoBuilding) {
                                 UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject);
@@ -153,7 +154,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                         }
                     };
                     job.schedule();
-                    downloadJavadocForAnnotations(javaProject, monitor);
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
                 } finally {
