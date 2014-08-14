@@ -44,7 +44,7 @@ public class ParameterContext extends SmartContext {
                 HasAnnotation hasDefault = new HasAnnotation("Default", selectionOffset);
                 new ASTVisitorDispatcher(ASTNode.SINGLE_VARIABLE_DECLARATION).dispactch(node.getStackNodes(), hasDefault);
                 if (!hasDefault.applies()) {
-                    proposals.add(new DevkitTemplateProposal("Add Default"));
+                    proposals.add(new DevkitTemplateProposal("org.mule.tooling.devkit.templates.defaultParam",0,cu));
                 }
             }
         }

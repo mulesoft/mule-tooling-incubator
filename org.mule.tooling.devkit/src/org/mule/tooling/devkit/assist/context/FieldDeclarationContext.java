@@ -45,12 +45,12 @@ public class FieldDeclarationContext extends SmartContext {
         new ASTVisitorDispatcher(ASTNode.FIELD_DECLARATION).dispactch(node.getStackNodes(), hasInject);
         new ASTVisitorDispatcher(ASTNode.FIELD_DECLARATION).dispactch(node.getStackNodes(), inyectable);
         if (!hasAnnotation.applies() && !hasInject.applies() && !inyectable.applies()) {
-            proposals.add(new AddAnnotationProposal("Add Configurable", 0, cu, ast.newQualifiedName(ast.newName("org.mule.api.annotations"), ast.newSimpleName("Configurable"))));
+            proposals.add(new DevkitTemplateProposal("org.mule.tooling.devkit.templates.configurable", 0, cu));
         } else {
             Negation negation = new Negation();
             negation.addRule(hasDefault);
             if (negation.applies() && !hasInject.applies() && !inyectable.applies()) {
-                proposals.add(new DevkitTemplateProposal("Add Default", 0, cu));
+                proposals.add(new DevkitTemplateProposal("org.mule.tooling.devkit.templates.default", 0, cu));
             }
         }
         if (!hasInject.applies() && inyectable.applies()) {

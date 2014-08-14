@@ -38,13 +38,14 @@ public class MethodDeclarationContext extends SmartContext {
         new ASTVisitorDispatcher(ASTNode.METHOD_DECLARATION).dispactch(node.getStackNodes(), hasConnect);
 
         if (!hasAnnotation.applies() && !(hasConnect.applies())) {
-            proposals.add(new DevkitTemplateProposal("Add Processor"));
+            proposals.add(new DevkitTemplateProposal("org.mule.tooling.devkit.templates.reconnectOn"));
         }
         if (hasAnnotation.applies()) {
             hasAnnotation = new HasAnnotation("ReconnectOn", selectionOffset);
             new ASTVisitorDispatcher(ASTNode.METHOD_DECLARATION).dispactch(node.getStackNodes(), hasAnnotation);
             if (!hasAnnotation.applies()) {
-                proposals.add(new AddAnnotationProposal("Add ReconnectOn", 0, cu, ast.newQualifiedName(ast.newName("org.mule.api.annotations"), ast.newSimpleName("ReconnectOn"))));
+                //proposals.add(new AddAnnotationProposal("Add ReconnectOn", 0, cu, ast.newQualifiedName(ast.newName("org.mule.api.annotations"), ast.newSimpleName("ReconnectOn"))));
+                proposals.add(new DevkitTemplateProposal("org.mule.tooling.devkit.templates.reconnectOn",0,cu));
             }
         }
     }

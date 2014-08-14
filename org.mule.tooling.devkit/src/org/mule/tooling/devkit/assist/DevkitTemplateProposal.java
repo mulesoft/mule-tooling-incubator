@@ -1,24 +1,35 @@
 package org.mule.tooling.devkit.assist;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.ChildPropertyDescriptor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.SimplePropertyDescriptor;
+import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorHighlightingSynchronizer;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.PositionBasedCompletionProposal;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
@@ -44,13 +55,12 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateVariable;
-import org.eclipse.jface.text.templates.TemplateVariableResolver;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.ui.IEditorPart;
 import org.mule.tooling.devkit.DevkitUIPlugin;
+import org.mule.tooling.devkit.assist.rules.LocateNode;
 
 @SuppressWarnings("restriction")
 public class DevkitTemplateProposal implements IJavaCompletionProposal, ICompletionProposalExtension2, ICompletionProposalExtension3, ICompletionProposalExtension4,
@@ -58,28 +68,23 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
 
     private Template fTemplate;
     private TemplateContext fContext;
-    private String label;
     int relevance;
     CompilationUnit compilationUnit;
     private InclusivePositionUpdater fUpdater;
 
-    public DevkitTemplateProposal(String label) {
-        this.label = label;
-        relevance = 0;
-        compilationUnit = null;
+    public DevkitTemplateProposal(String id) {
+        this(id, 0, null);
 
     }
 
-    public DevkitTemplateProposal(String label, int relevance) {
-        this.label = label;
-        this.relevance = relevance;
-        compilationUnit = null;
+    public DevkitTemplateProposal(String id, int relevance) {
+        this(id, relevance, null);
     }
 
-    public DevkitTemplateProposal(String label, int relevance, CompilationUnit unit) {
-        this.label = label;
+    public DevkitTemplateProposal(String id, int relevance, CompilationUnit unit) {
         this.relevance = relevance;
         compilationUnit = unit;
+        fTemplate = DevkitUIPlugin.getDefault().getCodeTemplateStore().findTemplateById(id);
     }
 
     @Override
@@ -94,17 +99,23 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
 
     @Override
     public String getAdditionalProposalInfo() {
-        return "Aditiona Info";
+        if (fTemplate == null) {
+            return "Fixmee";
+        }
+        return fTemplate.getDescription();
     }
 
     @Override
     public String getDisplayString() {
-        return label;
+        if (fTemplate == null) {
+            return "Fixmee";
+        }
+        return fTemplate.getName();
     }
 
     @Override
     public Image getImage() {
-        return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_ANNOTATION);
+        return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_ANNOTATION);
     }
 
     @Override
@@ -115,7 +126,11 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
     @Override
     public StyledString getStyledDisplayString() {
         StyledString ss = new StyledString();
-        ss.append(label);
+        if (fTemplate != null) {
+            ss.append(fTemplate.getDescription());
+        } else {
+            ss.append("FIXME");
+        }
         return ss;
     }
 
@@ -141,45 +156,59 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
 
     @Override
     public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
-        String templateString = "${imp:import (org.mule.api.annotations.Processor,org.mule.api.annotations.Optional)}\n\t/**" + "\n" + "\t * Description for PUTO  ${method}"
-                + "\n" + "\t *" + "\n" + "\t * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:${method}" + "\n" + "\t *" + "\n" + "\t */" + "\n"
-                + "\t@Processor\n" + "\tpublic void ${method}(){" + "\n" + "\t\t//TODO${cursor}" + "\n" + "\t}" + "\n";
+
+        LocateNode visitor = new LocateNode(offset);
+        compilationUnit.accept(visitor);
+        if (visitor.getNode() != null) {
+            if (visitor.getNode().getParent().getParent() instanceof BodyDeclaration) {
+                StructuralPropertyDescriptor location = visitor.getNode().getLocationInParent();
+                ChildPropertyDescriptor simple = (ChildPropertyDescriptor) location;
+                BodyDeclaration node = (BodyDeclaration) visitor.getNode().getParent().getParent();
+                List<ASTNode> fragments = node.modifiers();
+                for (ASTNode obj : fragments) {
+                    if (obj instanceof Modifier) {
+                        offset = obj.getStartPosition();
+                        break;
+                    }
+                }
+            }
+            if (visitor.getNode().getParent() instanceof MethodDeclaration) {
+                StructuralPropertyDescriptor location = visitor.getNode().getLocationInParent();
+                ChildPropertyDescriptor simple = (ChildPropertyDescriptor) location;
+                MethodDeclaration node = (MethodDeclaration) visitor.getNode().getParent();
+                List<ASTNode> fragments = node.modifiers();
+                for (ASTNode obj : fragments) {
+                    if (obj instanceof Modifier) {
+                        offset = obj.getStartPosition();
+                        break;
+                    }
+                }
+            }
+        }
+        TemplateContextType contextType = DevkitUIPlugin.getDefault().getTemplateContextRegistry().getContextType(fTemplate.getContextTypeId());
+        String templateString = "";
         IDocument document = viewer.getDocument();
-        TemplateContextType contextType = new TemplateContextType("java");
-        DevkitVariableResolver resolver = new DevkitVariableResolver();
-        ImportResolver importResolver = new ImportResolver();
-        importResolver.setType("import");
-        importResolver.setCompilationUnit(compilationUnit);
-        resolver.setCompilationUnit(compilationUnit);
-        resolver.setType("moduleName");
-        importResolver.setDocument(viewer.getDocument());
-        contextType.addResolver(resolver);
-        contextType.addResolver(new GlobalTemplateVariables.Cursor());
-        contextType.addResolver(importResolver);
+        Iterator it = contextType.resolvers();
+        ImportResolver importResolver = null;
+        while (it.hasNext()) {
+            Object resolver = it.next();
+            if (resolver instanceof ImportResolver) {
+                importResolver = (ImportResolver) resolver;
+                importResolver.setDocument(document);
+                importResolver.setCompilationUnit(compilationUnit);
+            }
+            if (resolver instanceof DevkitVariableResolver) {
+                ((DevkitVariableResolver) resolver).setCompilationUnit(compilationUnit);
+            }
+        }
         fContext = new DocumentTemplateContext(contextType, viewer.getDocument(), offset, 0);
 
-        fTemplate = new Template("Dummy", "My Description", "java", templateString, true);
         fContext.setReadOnly(false);
         int start;
         TemplateBuffer templateBuffer = null;
         try {
             beginCompoundChange(viewer);
             int importOffset = 0;
-            // AST ast = compilationUnit.getAST();
-            // ASTRewrite rewrite = ASTRewrite.create(ast);
-            // if (addImportIfRequired(compilationUnit, rewrite, "org.mule.api.annotations.Processor")) {
-            // importOffset = "org.mule.api.annotations.Processor".length() + "import ; ".length();
-            // try {
-            // rewrite.rewriteAST(viewer.getDocument(), null).apply(viewer.getDocument());
-            // } catch (MalformedTreeException e) {
-            // e.printStackTrace();
-            // } catch (IllegalArgumentException e) {
-            // e.printStackTrace();
-            // } catch (BadLocationException e) {
-            // // TODO Auto-generated catch block
-            // e.printStackTrace();
-            // }
-            // }
 
             try {
                 templateBuffer = fContext.evaluate(fTemplate);
@@ -204,20 +233,6 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
                 end = offset;
             templateString = templateBuffer.getString();
             document.replace(start, end - start, templateString);
-            // TextEdit textEdit = codeFormatter.format(CodeFormatter.K_COMPILATION_UNIT, document.get(), start, templateString.length(), 0, System.getProperty("line.separator"));
-            //
-            // try {
-            // if (textEdit != null) {
-            // textEdit.apply(document);
-            // System.out.println(textEdit);
-            // String value=document.get(start, textEdit.getLength());
-            // System.out.println(value);
-            // }
-            // } catch (MalformedTreeException e2) {
-            // e2.printStackTrace();
-            // } catch (BadLocationException e2) {
-            // e2.printStackTrace();
-            // }
 
             // translate positions
             LinkedModeModel model = new LinkedModeModel();

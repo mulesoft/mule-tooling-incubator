@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates>
+	<template id="org.mule.tooling.devkit.templates.default" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Default value" enabled="true" name="default">${imp:import(org.mule.api.annotations.param.Default)}@Default("${value}")
+	</template>
+	<template id="org.mule.tooling.devkit.templates.configurable" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Mark it as Configurable" enabled="true" name="default">${imp:import(org.mule.api.annotations.Configurable)}@Configurable
+	</template>
+	<template id="org.mule.tooling.devkit.templates.addConfigurable" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Configurable" enabled="true" name="configurable">${imp:import(org.mule.api.annotations.Configurable)}
+	/**
+	 * Description for ${fieldName}
+	 */
+	@Configurable
+	private ${type} ${fieldName};${cursor}
+	</template>
+	<template id="org.mule.tooling.devkit.templates.addDefaultConfigurable" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Configurable with Default" enabled="true" name="configurableDefault">${imp:import(org.mule.api.annotations.Configurable,org.mule.api.annotations.param.Default)}
+	/**
+	 * Description for ${fieldName}
+	 */
+	@Configurable
+	@Default("${value}")
+	private ${type} ${fieldName};${cursor}
+	</template>
+	<template id="org.mule.tooling.devkit.templates.addProcessor" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="A simple processor that takes by default the payload as input" enabled="true" name="processor">
+	${imp:import(org.mule.api.annotations.Processor,org.mule.api.annotations.param.Default)}
+	/**
+	 * Description for ${name}
+	 *
+	 * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:${name}}
+	 *
+	 *	@param param The comment for param
+	 *	@return return comment
+	 */
+	@Processor
+	public ${return_type} ${name}(@Default("#[payload]") ${type} param) {
+		//TODO
+		${cursor}
+		return null;
+	}</template>
+	<template id="org.mule.tooling.devkit.templates.addSource" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType" description="Add @Source" enabled="true" name="source">
+	${imp:import(org.mule.api.annotations.Source,org.mule.api.callback.SourceCallback)}
+	/**
+	 *	Description for ${sourceOperation}
+	 */
+	@Source
+	public void ${sourceOperation}(SourceCallback callback) throws Exception {
+		${cursor}
+	}</template>
+	<template id="org.mule.tooling.devkit.templates.addTransformer" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType" description="Add transformer method" enabled="true" name="transformer">
+	${imp:import(org.mule.api.annotations.Transformer)}
+	/**
+	 * Description for ${transformerName}
+	 */
+	@Transformer(sourceTypes = {${inputType}.class})
+	public static ${outputType} ${transformerName}(${inputType} input){
+		//TODO
+		return null;${cursor}
+	}</template>
+	<template id="org.mule.tooling.devkit.templates.addMetadata" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Datasense basic operation" enabled="true" name="datasense">${imp:import (java.util.List,
+	org.mule.common.metadata.MetaData,
+	org.mule.common.metadata.MetaDataKey,
+	org.mule.common.metadata.datatype.DataType,
+	org.mule.api.annotations.MetaDataKeyRetriever,
+	org.mule.api.annotations.MetaDataRetriever)}
+	/**
+	 *	Returns the list of Keys
+	 */
+    @MetaDataKeyRetriever
+    public List&lt;MetaDataKey&gt; getMetaDataKeys() throws Exception {
+        return null;
+    }
+
+	/**
+	 *	Returns the MetaData for the given key
+	 */
+    @MetaDataRetriever
+    public MetaData getMetaData(MetaDataKey key) throws Exception {
+		return null;	
+    }</template>
+    <template id="org.mule.tooling.devkit.templates.addQueryTranslator" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Query Translator" enabled="true" name="query">${imp:import (org.mule.common.query.DsqlQuery,
+	org.mule.common.query.DsqlQueryVisitor,
+	org.mule.api.annotations.QueryTranslator)}
+	/**
+	 *	Returns the DsqlQuery object into a native query. 
+	 *	You should implement you own by extending org.mule.common.query.DefaultQueryVisitor.
+	 *	Check http://www.mulesoft.org/documentation/display/current/Adding+DataSense+Query+Language
+	 */
+    @QueryTranslator
+    public ${return_type} toNativeQuery(DsqlQuery query){
+        DsqlQueryVisitor visitor = new DsqlQueryVisitor();
+        query.accept(visitor);
+        return visitor.dsqlQuery();
+    }</template>
+	<template id="org.mule.tooling.devkit.templates.reconnectOn" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Exception that triggers Reconnection" enabled="true" name="default">${imp:import(org.mule.api.annotations.ReconnectOn)}@ReconnectOn(exceptions = { ${Exception}.class } )
+	</template>
+	<template id="org.mule.tooling.devkit.templates.defaultParam" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Param with Default value" enabled="true" name="defaultParam">${imp:import(org.mule.api.annotations.param.Default)}@Default("${value}") ${type} ${paramName}</template>
+</templates>

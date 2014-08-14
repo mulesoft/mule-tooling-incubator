@@ -418,4 +418,29 @@
    </enablement>
   </quickAssistProcessor>
  </extension>
+    <extension
+          point="org.eclipse.ui.editors.templates">
+       <contextTypeRegistry
+             id="org.mule.tooling.devkit.smartassist">
+       </contextTypeRegistry>
+       <contextType
+             class="org.mule.tooling.devkit.assist.SmartAssistTemplateContextType"
+             id="org.mule.tooling.devkit.smartassist.contextType"
+             name="Smart Content Assist Template Context"
+             registryId="org.mule.tooling.devkit.smartassist">
+       </contextType>
+       <include
+             file="templates/smart-content-assists-templates.xml">
+       </include>
+       <resolver
+             class="org.mule.tooling.devkit.assist.ImportResolver"
+             contextTypeId="org.mule.tooling.devkit.smartassist.contextType"
+             type="import">
+       </resolver>
+       <resolver
+             class="org.mule.tooling.devkit.assist.DevkitVariableResolver"
+             contextTypeId="org.mule.tooling.devkit.smartassist.contextType"
+             type="moduleName">
+       </resolver>
+    </extension>
 </plugin>
