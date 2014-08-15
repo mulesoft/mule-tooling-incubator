@@ -6,6 +6,7 @@ import java.io.Writer;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
+import org.mule.tooling.devkit.common.DevkitUtils;
 
 public class MavenParameterReplacer implements Replacer {
 
@@ -42,6 +43,7 @@ public class MavenParameterReplacer implements Replacer {
         context.put("isSoapWithCXF", isSoapWithCXF);
         context.put("wsdlFileName", wsdlFileName);
         context.put("authenticationType", mavenModel.getAuthenticationType());
+        context.put("moduleName", DevkitUtils.toConnectorName(connectorName));
         boolean evaluate = Velocity.evaluate(context, writer, "velocity pom.xml rendering", reader);
 
         if (evaluate == false) {

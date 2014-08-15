@@ -24,7 +24,7 @@
 #end
         <cxf.version>2.5.9</cxf.version>
         <cxf.version.boolean>2.6.0</cxf.version.boolean>
-        <connector.generator.version>1.0.2-SNAPSHOT</connector.generator.version>
+        <connector.generator.version>1.0.3-SNAPSHOT</connector.generator.version>
 #end
         <junit.version>4.9</junit.version>
         <mockito.version>1.8.2</mockito.version>
@@ -150,6 +150,22 @@
                                 <phase>validate</phase>
                                 <goals>
                                     <goal>connector-generator</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.mule.tools.devkit</groupId>
+                        <artifactId>connector-sample-generator-maven-plugin</artifactId>
+                        <version>${connector.generator.version}</version>
+                        <configuration>
+                            <inputFile>${basedir}/target/generated-sources/mule/META-INF/mule-${moduleName}.xsd</inputFile>
+                            <outputFile>${basedir}/doc/</outputFile>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>sample-generator</goal>
                                 </goals>
                             </execution>
                         </executions>

@@ -17,4 +17,8 @@
         </externalContribution>
     </extension>
 
+	<extension point="org.mule.tooling.maven.populate">
+      	<contribution-jar jar="mule-module-synchronize.jar"></contribution-jar>
+   </extension>
+
 </plugin>

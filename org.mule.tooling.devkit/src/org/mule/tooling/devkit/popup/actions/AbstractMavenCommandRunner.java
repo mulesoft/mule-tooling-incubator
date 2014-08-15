@@ -12,6 +12,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.mule.tooling.devkit.common.DevkitUtils;
 
 public abstract class AbstractMavenCommandRunner extends AbstractHandler {
 
@@ -25,7 +26,7 @@ public abstract class AbstractMavenCommandRunner extends AbstractHandler {
 
             if (selected instanceof IJavaElement) {
                 final IProject selectedProject = ((IJavaElement) selected).getJavaProject().getProject();
-                if (selectedProject != null) {
+                if (selectedProject != null && !DevkitUtils.existsUnsavedChanges(selectedProject.getProject())) {
                     if (!ignoreErrorsInProject(countErrors(selectedProject))){
                         return null;
                     }

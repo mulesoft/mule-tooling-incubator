@@ -86,7 +86,7 @@ public class StudioAnnotationProcessorContext implements Context {
 
         @Override
         public String getCategory() {
-            return "dummy";
+            return "Community";
         }
 
         @Override

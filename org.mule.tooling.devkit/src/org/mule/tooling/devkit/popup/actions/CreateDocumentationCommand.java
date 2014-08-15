@@ -36,7 +36,7 @@ public class CreateDocumentationCommand extends AbstractHandler {
 				final IProject selectedProject = ((IJavaElement) selected)
 						.getJavaProject().getProject();
 
-				if (selectedProject != null) {
+				if (selectedProject != null && !DevkitUtils.existsUnsavedChanges(selectedProject.getProject())) {
 					int errorCount = getErrorsCount(selectedProject);
 
 					if (errorCount > 0) {

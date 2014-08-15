@@ -42,7 +42,8 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
                         "-Ddevkit.studio.package.skip=true",
                         "-Ddevkit.javadoc.check.skip=true",
                         "-Dmaven.javadoc.skip=true",
-                        "org.mule.tools.devkit:" + "connector-automation-generator-maven-plugin:" + "connector-automation-generator" };
+                        "org.mule.tools.devkit:" + "connector-automation-generator-maven-plugin:" + "connector-automation-generator",
+                        "-DprocessorsList="+testdataDto.getFilteredProcessors()};
                 commandArgs.addAll(Arrays.asList(generateTestsCommand));
                 final String[] command = new String[commandArgs.size()];
                 commandArgs.toArray(command);

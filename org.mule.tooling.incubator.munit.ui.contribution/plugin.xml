@@ -244,12 +244,12 @@
    <extension
          point="org.mule.tooling.projectStructure">
          <projectStructure
-         id="org.mule.tooling.projectStructure.munit"
-         addToMuleRuntime="false"
-         isSourceFolder="true"
-         acceptsMuleConfigFiles="true"
-         name="munitFolder"
-               folderPath="/src/test/munit">
+		         id="org.mule.tooling.projectStructure.munit"
+		         addToMuleRuntime="false"
+		         isSourceFolder="true"
+		         acceptsMuleConfigFiles="true"
+		         name="munitFolder"
+                 folderPath="/src/test/munit">
          </projectStructure>
    </extension>
    

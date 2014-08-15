@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="lib/ant-launcher.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ant.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/backport-util-concurrent.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/classworlds.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-logging-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/google-collections.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-ant-tasks.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-artifact-manager.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-artifact.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-error-diagnostics.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-model-builder.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-model.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-plugin-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-plugin-descriptor.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-plugin-registry.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-profile.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-project.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-repository-metadata.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/maven-settings.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/nekohtml.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/plexus-classworlds.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/plexus-component-annotations.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/plexus-container-default.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/plexus-interpolation.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/plexus-utils.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/wagon-file.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/wagon-http-lightweight.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/wagon-http-shared.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/wagon-provider-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xbean-reflect.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xercesMinimal.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

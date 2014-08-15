@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   
+    <extension point="org.eclipse.ui.views">
+ 	<view
+            name="Maven Support"
+            icon="icons/maven-16x16.png"
+            class="org.mule.tooling.incubator.maven.ui.view.LaunchView"
+            id="org.mule.tooling.incubator.maven.ui.view.LaunchView">
+      </view>
+      <view
+            name="Dependencies Maven"
+            icon="icons/dependencies.gif"
+            class="org.mule.tooling.incubator.maven.ui.view.DependencyTreeView"
+            id="org.mule.tooling.incubator.maven.ui.view.DependencyTreeView">
+      </view>
+   </extension>
+      <!-- Maven - launch configuration extensions -->
+      <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="org.mule.tooling.incubator.maven.ui.launch.MavenLaunchShortcut"
+            icon="icons/maven-16x16.png"
+            id="org.mule.tooling.maven.mavenLaunchShortcut"
+            label="Maven Build"
+            modes="run,debug">
+         <contextualLaunch>
+            <enablement>
+            	<with variable="selection">
+					<count value="1"/>
+					<iterate>
+						<adapt type="org.eclipse.core.resources.IResource">
+							<and>
+								<test property="org.mule.tooling.maven.isMavenProject" forcePluginActivation="true"/>
+							</and>
+						</adapt>
+					</iterate>
+				</with>
+            </enablement>
+         </contextualLaunch>
+      </shortcut>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.mule.tooling.incubator.maven.ui.launch.MavenLaunchDelegate"
+            id="org.mule.tooling.maven.mavenLaunchType"
+            modes="run,debug"
+            name="Maven Run">
+      </launchConfigurationType>
+   </extension>
+      <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.mule.tooling.maven.mavenLaunchType"
+            icon="icons/maven-16x16.png"
+            id="org.mule.tooling.maven.mavenLaunchConfigurationImage">
+      </launchConfigurationTypeImage>
+   </extension>
+      
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.mule.tooling.incubator.maven.ui.launch.MavenLaunchTabGroup"
+            description="Maven Run"
+            id="org.mule.tooling.maven.ui.mavenLaunchTabGroup"
+            type="org.mule.tooling.maven.mavenLaunchType">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension point="org.eclipse.ui.commands">
+      <command
+            name="Run as Maven"
+            description="Maven build phase"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.mule.tooling.maven.mavenLaunchShortcut.run">
+      </command>
+      <command
+            name="Debug as Maven"
+            description="Maven build phase"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.mule.tooling.maven.mavenLaunchShortcut.debug">
+      </command>
+       <command
+            defaultHandler="org.mule.tooling.incubator.maven.ui.command.InstallJar"
+            id="org.mule.tooling.incubator.maven.ui.command.InstallJar"
+            name="Install Jar">
+      </command>
+   </extension>
+   
+   <!--<extension point="org.eclipse.ui.bindings">
+   <key
+            sequence="M1+M3+X M"
+            commandId="org.mule.tooling.maven.mavenLaunchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   	  <key
+            sequence="M1+M3+M4+D M"
+            commandId="org.mule.tooling.maven.mavenLaunchShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   </extension>-->
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+			<toolbar id="org.mule.tooling.incubator.ui.maven.toolbar" label="Maven Studio Toolbar">
+	            <command
+	                  commandId="org.mule.tooling.incubator.maven.ui.command.InstallJar"
+	                  icon="icons/install.gif"
+	                  tooltip="Install Jar in local repository"
+	                  id="org.mule.tooling.maven.toolbars.installJar">
+	            </command>
+            </toolbar>
+      </menuContribution>
+   </extension>
+   <!-- POM Hyperlink detector -->
+   <extension point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+  		<hyperlinkDetector
+    		id="org.mule.tooling.devkit.links.DevkitSampleHyperlinkDetector"
+    		targetId="org.eclipse.core.runtime.xml"
+    		class="org.mule.tooling.incubator.maven.ui.link.ParentPomLinkDetector"
+    		name="Devkit Sample Link Detector">
+		</hyperlinkDetector>
+	</extension>
+</plugin>
