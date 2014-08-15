@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.mule.tooling.core.MuleCorePlugin;
+import org.mule.tooling.core.event.MuleModuleManagerRestartedEvent;
 import org.mule.tooling.core.utils.BundleJarFileInspector;
 import org.mule.tooling.core.utils.BundleManifestReader;
 import org.mule.tooling.devkit.DevkitUIPlugin;
@@ -81,17 +82,7 @@ public class SendToPaletteCommand extends AbstractHandler {
 	}
 
 	private void reloadPalette() {
-		Display display = Display.getCurrent();
-		if (display == null) {
-			display = Display.getDefault();
-		}
-		display.asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				MuleCorePlugin.getModuleManager().reinit();
-			}
-		});
+	    MuleCorePlugin.getEventBus().fireEvent(new MuleModuleManagerRestartedEvent(MuleCorePlugin.getModuleManager()));	
 	}
 
 	@Override
