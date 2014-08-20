@@ -229,10 +229,16 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
         }
 
         if (!hasExpectedProjectStructure(tempExpandedZipFile)) {
-            boolean decision = MessageDialog.open(MessageDialog.CONFIRM, getShell(), "Warning",
-                    "The project you are trying to import has an invalid folder structure. \nContinue anyway?", SWT.NONE);
-            if (!decision)
+            //If the user wants to continue we will just create a project with the devkit nature in worst case scenario.
+            if (! MessageDialog.open(MessageDialog.CONFIRM, getShell(), "Warning",
+                    "The project you are trying to import has an invalid folder structure. \nContinue anyway?", SWT.NONE)){
                 return false;
+            }
+        }
+        File[] files=tempExpandedZipFile.listFiles();
+        //Check if the zip has just 1 folder, and the poin is inside of it
+        if(files.length==1 && files[0].isDirectory()){
+            tempExpandedZipFile = files[0]; 
         }
         final File tempExpanded = tempExpandedZipFile;
 
@@ -299,6 +305,11 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
 
     private boolean hasExpectedProjectStructure(File tempExpandedZipFile) {
 
+        File[] files=tempExpandedZipFile.listFiles();
+        //Check if the zip has just 1 folder, and the poin is inside of it
+        if(files.length==1 && files[0].isDirectory()){
+            tempExpandedZipFile = files[0]; 
+        }
         return new File(tempExpandedZipFile, "pom.xml").exists();
     }
 
