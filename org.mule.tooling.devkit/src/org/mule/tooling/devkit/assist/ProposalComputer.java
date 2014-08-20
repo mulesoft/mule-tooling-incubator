@@ -8,8 +8,6 @@ import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.IProblemLocation;
 import org.eclipse.jdt.ui.text.java.IQuickAssistProcessor;
-import org.eclipse.jface.text.templates.Template;
-import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.assist.context.SmartContext;
 import org.mule.tooling.devkit.assist.context.SmartContextFactory;
 
@@ -18,9 +16,6 @@ import org.mule.tooling.devkit.assist.context.SmartContextFactory;
  */
 public final class ProposalComputer implements IQuickAssistProcessor {
 
-    public ProposalComputer() {
-
-    }
 
     @Override
     public boolean hasAssists(IInvocationContext context) throws CoreException {

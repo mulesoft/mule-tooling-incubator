@@ -4,26 +4,19 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
-import org.eclipse.jdt.core.dom.ChildPropertyDescriptor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
-import org.eclipse.jdt.core.dom.SimplePropertyDescriptor;
-import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
+import org.eclipse.jdt.core.dom.NodeFinder;
+import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorHighlightingSynchronizer;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.PositionBasedCompletionProposal;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -59,8 +52,8 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
+import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
-import org.mule.tooling.devkit.assist.rules.LocateNode;
 
 @SuppressWarnings("restriction")
 public class DevkitTemplateProposal implements IJavaCompletionProposal, ICompletionProposalExtension2, ICompletionProposalExtension3, ICompletionProposalExtension4,
@@ -69,7 +62,7 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
     private Template fTemplate;
     private TemplateContext fContext;
     int relevance;
-    CompilationUnit compilationUnit;
+    IInvocationContext context;
     private InclusivePositionUpdater fUpdater;
 
     public DevkitTemplateProposal(String id) {
@@ -81,9 +74,9 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
         this(id, relevance, null);
     }
 
-    public DevkitTemplateProposal(String id, int relevance, CompilationUnit unit) {
+    public DevkitTemplateProposal(String id, int relevance, IInvocationContext context) {
         this.relevance = relevance;
-        compilationUnit = unit;
+        this.context = context;
         fTemplate = DevkitUIPlugin.getDefault().getCodeTemplateStore().findTemplateById(id);
     }
 
@@ -154,16 +147,14 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
         return 0;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
 
-        LocateNode visitor = new LocateNode(offset);
-        compilationUnit.accept(visitor);
-        if (visitor.getNode() != null) {
-            if (visitor.getNode().getParent().getParent() instanceof BodyDeclaration) {
-                StructuralPropertyDescriptor location = visitor.getNode().getLocationInParent();
-                ChildPropertyDescriptor simple = (ChildPropertyDescriptor) location;
-                BodyDeclaration node = (BodyDeclaration) visitor.getNode().getParent().getParent();
+        if (context.getCoveringNode() != null) {
+
+            if (context.getCoveringNode().getParent().getParent() instanceof BodyDeclaration) {
+                BodyDeclaration node = (BodyDeclaration) context.getCoveringNode().getParent().getParent();
                 List<ASTNode> fragments = node.modifiers();
                 for (ASTNode obj : fragments) {
                     if (obj instanceof Modifier) {
@@ -172,10 +163,12 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
                     }
                 }
             }
-            if (visitor.getNode().getParent() instanceof MethodDeclaration) {
-                StructuralPropertyDescriptor location = visitor.getNode().getLocationInParent();
-                ChildPropertyDescriptor simple = (ChildPropertyDescriptor) location;
-                MethodDeclaration node = (MethodDeclaration) visitor.getNode().getParent();
+            if (context.getCoveringNode().getParent() instanceof VariableDeclaration && context.getCoveringNode().getParent().getParent() instanceof MethodDeclaration) {
+                VariableDeclaration var = (VariableDeclaration) context.getCoveringNode().getParent();
+                offset = var.getStartPosition();
+            }
+            if (context.getCoveringNode().getParent() instanceof MethodDeclaration) {
+                MethodDeclaration node = (MethodDeclaration) context.getCoveringNode().getParent();
                 List<ASTNode> fragments = node.modifiers();
                 for (ASTNode obj : fragments) {
                     if (obj instanceof Modifier) {
@@ -195,10 +188,10 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
             if (resolver instanceof ImportResolver) {
                 importResolver = (ImportResolver) resolver;
                 importResolver.setDocument(document);
-                importResolver.setCompilationUnit(compilationUnit);
+                importResolver.setCompilationUnit(context.getASTRoot());
             }
             if (resolver instanceof DevkitVariableResolver) {
-                ((DevkitVariableResolver) resolver).setCompilationUnit(compilationUnit);
+                ((DevkitVariableResolver) resolver).setCompilationUnit(context.getASTRoot());
             }
         }
         fContext = new DocumentTemplateContext(contextType, viewer.getDocument(), offset, 0);
@@ -209,7 +202,6 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
         try {
             beginCompoundChange(viewer);
             int importOffset = 0;
-
             try {
                 templateBuffer = fContext.evaluate(fTemplate);
             } catch (TemplateException e1) {
@@ -218,6 +210,7 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
                 DevkitUIPlugin.getDefault().getLog().log(new Status(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, Status.OK, "TemplateError", e));
             }
             importOffset = importResolver.getOffset();
+            
             offset += importOffset;
             int oldReplaceOffset = getReplaceOffset();
             oldReplaceOffset += importOffset;
@@ -227,10 +220,14 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
             start = offset;
             int shift = start - oldReplaceOffset;
             int end = Math.max(getReplaceEndOffset(), offset + shift);
-
+            NodeFinder finder = new NodeFinder(ASTUtils.parse(context.getCompilationUnit()), offset, 0);
+            ASTNode node=finder.getCoveringNode();
             // insert template string
             if (end > document.getLength())
                 end = offset;
+            if(node.getStartPosition()!=offset){
+                offset=node.getStartPosition();
+            }
             templateString = templateBuffer.getString();
             document.replace(start, end - start, templateString);
 
@@ -298,38 +295,6 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
             endCompoundChange(viewer);
         }
 
-        // if (compilationUnit != null) {
-        // LocateNode visitor = new LocateNode(offset);
-        // compilationUnit.accept(visitor);
-        // if (visitor.getNode() != null) {
-        // AST ast = compilationUnit.getAST();
-        //
-        // ASTRewrite rewrite = ASTRewrite.create(ast);
-        // FieldDeclaration field = (FieldDeclaration) ((VariableDeclarationFragment) ((SimpleName) visitor.getNode()).getParent()).getParent();
-        // NormalAnnotation replacement = ast.newNormalAnnotation();
-        // replacement.setTypeName(ast.newName("Default"));
-        // MemberValuePair valuePair = ast.newMemberValuePair();
-        //
-        // StringLiteral literal = ast.newStringLiteral();
-        // literal.setLiteralValue("value");
-        // valuePair.setValue(literal);
-        // ListRewrite values = rewrite.getListRewrite(replacement, NormalAnnotation.VALUES_PROPERTY);
-        // values.insertFirst(literal, null);
-        //
-        // ListRewrite annotations = rewrite.getListRewrite(field, FieldDeclaration.MODIFIERS2_PROPERTY);
-        // annotations.insertFirst(replacement, null);
-        // addImportIfRequired(compilationUnit, rewrite, "org.mule.api.annotations.param.Default");
-        // try {
-        // rewrite.rewriteAST(viewer.getDocument(), null).apply(viewer.getDocument());
-        // } catch (MalformedTreeException e) {
-        // e.printStackTrace();
-        // } catch (IllegalArgumentException e) {
-        // e.printStackTrace();
-        // } catch (BadLocationException e) {
-        // e.printStackTrace();
-        // }
-        // }
-        // }
     }
 
     @Override
@@ -350,30 +315,6 @@ public class DevkitTemplateProposal implements IJavaCompletionProposal, IComplet
     @Override
     public int getRelevance() {
         return relevance;
-    }
-
-    protected boolean addImportIfRequired(CompilationUnit compilationUnit, ASTRewrite rewrite, String fullyQualifiedName) {
-        AST ast = compilationUnit.getAST();
-        boolean hasConnectorAnnotationImport = false;
-
-        ListRewrite listImports = rewrite.getListRewrite(compilationUnit, CompilationUnit.IMPORTS_PROPERTY);
-
-        for (Object obj : compilationUnit.imports()) {
-            ImportDeclaration importDec = (ImportDeclaration) obj;
-            if (importDec.getName().getFullyQualifiedName().equals(fullyQualifiedName)) {
-                hasConnectorAnnotationImport = true;
-            }
-        }
-
-        ImportDeclaration id = null;
-
-        if (!hasConnectorAnnotationImport) {
-            id = ast.newImportDeclaration();
-            id.setName(ast.newName(fullyQualifiedName));
-            listImports.insertLast(id, null);
-            return true;
-        }
-        return false;
     }
 
     private void endCompoundChange(ITextViewer viewer) {

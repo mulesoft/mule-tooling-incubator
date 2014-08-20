@@ -1,42 +1,41 @@
 package org.mule.tooling.devkit.assist.context;
 
 import java.util.List;
+import java.util.Stack;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.mule.tooling.devkit.assist.rules.ChainASTNodeType;
-import org.mule.tooling.devkit.assist.rules.LocateNode;
 
 public abstract class SmartContext {
 
-    private IInvocationContext context;
-    private CompilationUnit compilationUnit;
+    protected IInvocationContext context;
     private int offset;
 
     public SmartContext(IInvocationContext context) {
         this.context = context;
-        this.compilationUnit = context.getASTRoot();
         setOffset(context.getSelectionOffset());
-        ASTNode node = context.getCoveringNode();
-        System.out.println(node);
     }
 
     public void addProposals(List<IJavaCompletionProposal> proposals) {
         ChainASTNodeType verifier = getVerifier();
-        CompilationUnit obj = context.getASTRoot();
-        int selectionOffset = context.getSelectionOffset();
-        LocateNode node = new LocateNode(selectionOffset);
-        obj.accept(node);
-        if (verifier.matches(node.getStackNodes().iterator())) {
-            doAddProposals(proposals, node);
+        Stack<ASTNode> stackNodes = new Stack<ASTNode>();
+        ASTNode coveringNode = context.getCoveringNode();
+        ASTNode current = coveringNode;
+        while (current != null) {
+            stackNodes.add(0, current);
+            current = current.getParent();
+        }
+        if (verifier.matches(stackNodes.iterator())) {
+            doAddProposals(proposals, stackNodes);
         }
     }
 
     protected abstract ChainASTNodeType getVerifier();
 
-    protected abstract void doAddProposals(List<IJavaCompletionProposal> proposals, LocateNode node);
+    protected abstract void doAddProposals(List<IJavaCompletionProposal> proposals, Stack<ASTNode> stackNodes);
 
     public IInvocationContext getContext() {
         return context;
@@ -47,11 +46,7 @@ public abstract class SmartContext {
     }
 
     public CompilationUnit getCompilationUnit() {
-        return compilationUnit;
-    }
-
-    public void setCompilationUnit(CompilationUnit compilationUnit) {
-        this.compilationUnit = compilationUnit;
+        return context.getASTRoot();
     }
 
     public int getOffset() {

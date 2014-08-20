@@ -4,6 +4,8 @@
 	</template>
 	<template id="org.mule.tooling.devkit.templates.configurable" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Mark it as Configurable" enabled="true" name="default">${imp:import(org.mule.api.annotations.Configurable)}@Configurable
 	</template>
+	<template id="org.mule.tooling.devkit.templates.inject" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Mark it @Inject" enabled="true" name="inject">${imp:import(javax.inject.Inject)}@Inject
+	</template>
 	<template id="org.mule.tooling.devkit.templates.addConfigurable" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Configurable" enabled="true" name="configurable">${imp:import(org.mule.api.annotations.Configurable)}
 	/**
 	 * Description for ${fieldName}
@@ -75,6 +77,18 @@
     public MetaData getMetaData(MetaDataKey key) throws Exception {
 		return null;	
     }</template>
+	<template id="org.mule.tooling.devkit.templates.metadata.retriever" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add MetaData retriever" enabled="true" name="datasense">${imp:import (java.util.List,
+	org.mule.common.metadata.MetaData,
+	org.mule.common.metadata.MetaDataKey,
+	org.mule.common.metadata.datatype.DataType,
+	org.mule.api.annotations.MetaDataRetriever)}
+	/**
+	 *	Returns the MetaData for the given key
+	 */
+    @MetaDataRetriever
+    public MetaData getMetaData(MetaDataKey key) throws Exception {
+		return null;	
+    }</template>
     <template id="org.mule.tooling.devkit.templates.addQueryTranslator" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Query Translator" enabled="true" name="query">${imp:import (org.mule.common.query.DsqlQuery,
 	org.mule.common.query.DsqlQueryVisitor,
 	org.mule.api.annotations.QueryTranslator)}
@@ -92,4 +106,7 @@
 	<template id="org.mule.tooling.devkit.templates.reconnectOn" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Exception that triggers Reconnection" enabled="true" name="default">${imp:import(org.mule.api.annotations.ReconnectOn)}@ReconnectOn(exceptions = { ${Exception}.class } )
 	</template>
 	<template id="org.mule.tooling.devkit.templates.defaultParam" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Param with Default value" enabled="true" name="defaultParam">${imp:import(org.mule.api.annotations.param.Default)}@Default("${value}") ${type} ${paramName}</template>
+	<!-- Add annotations -->
+	<template id="org.mule.tooling.devkit.templates.annotation.default" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Add Default value" enabled="true" name="default">${imp:import(org.mule.api.annotations.param.Default)}@Default("${value}") </template>
+	<template id="org.mule.tooling.devkit.templates.annotation.optional" autoinsert="true" context="org.mule.tooling.devkit.smartassist.contextType"  description="Mark Param as Optional" enabled="true" name="default">${imp:import(org.mule.api.annotations.param.Optional)}Optional </template>
 </templates>
