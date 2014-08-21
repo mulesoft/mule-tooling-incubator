@@ -112,7 +112,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                 private Integer generateUpdateSite(final IJavaProject selectedProject, final IProgressMonitor monitor) {
                     MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator.decorate(selectedProject);
 
-                    final Integer result = new BaseDevkitGoalRunner(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=false" }, selectedProject).run(
+                    final Integer result = new BaseDevkitGoalRunner(new String[] { "clean", "install", "-DskipTests", "-Ddevkit.studio.package.skip=false" }, selectedProject).run(
                             mavenProject.getPomFile(), monitor);
                     return result;
                 }
