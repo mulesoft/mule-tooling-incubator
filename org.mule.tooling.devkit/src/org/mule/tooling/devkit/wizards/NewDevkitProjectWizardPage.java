@@ -405,7 +405,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     public boolean isMetadaEnabled() {
-        return datasense.getSelection();
+        return datasense.isEnabled() && datasense.getSelection();
     }
 
     public boolean isOAuth() {
