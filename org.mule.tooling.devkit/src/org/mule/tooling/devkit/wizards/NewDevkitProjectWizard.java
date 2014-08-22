@@ -68,6 +68,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private static final String TEST_TEMPLATE_PATH = "/templates/connector_test.tmpl";
     private static final String TEST_RESOURCE_PATH = "/templates/connector-test-resource.tmpl";
 
+    public static final String WIZZARD_PAGE_TITTLE = "Create an Anypoint Connector";
     private NewDevkitProjectWizardPage page;
     private NewDevkitProjectWizardPageAdvance advancePage;
     private ISelection selection;

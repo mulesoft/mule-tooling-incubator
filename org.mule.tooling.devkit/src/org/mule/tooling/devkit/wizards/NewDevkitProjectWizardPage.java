@@ -75,7 +75,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
     public NewDevkitProjectWizardPage(ISelection selection, ConnectorMavenModel model) {
         super("wizardPage");
-        setTitle("Create an Anypoint Connector");
+        setTitle(NewDevkitProjectWizard.WIZZARD_PAGE_TITTLE);
         setDescription("Enter a connector name");
 
         if (!MuleCorePlugin.getServerManager().getServerDefinitions().isEmpty()) {
@@ -313,6 +313,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             return;
         } else if (this.getName().endsWith("Connector")) {
             updateStatus("There is no need for you to add the Connector word at the end.");
+            return;
+        } else if (DevkitUtils.isReserved(this.getName().toLowerCase())) {
+            updateStatus("Cannot use Java language keywords for the name");
             return;
         } else if (!connectorName.matcher(this.getName()).matches()) {
             updateStatus("The Name must start with an upper case character followed by other alphanumeric characters.");

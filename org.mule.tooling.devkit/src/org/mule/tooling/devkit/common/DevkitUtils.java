@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.resources.IContainer;
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.equinox.internal.p2.core.helpers.CollectionUtils;
 import org.eclipse.help.ui.internal.DefaultHelpUI;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -76,6 +78,11 @@ public class DevkitUtils {
     public static final String CATEGORY_COMMUNITY = "Community";
     public static final String CATEGORY_STANDARD = "Standard";
     public static final String connectorCategories[] = { CATEGORY_COMMUNITY, CATEGORY_STANDARD };
+
+    private static final String[] RESERVED_NAMES = { "abstract", "continue", "for", "new", "switch", "assert", "default", "goto", "package", "synchronized", "boolean", "do", "if",
+            "private", "this", "break", "double", "implements", "protected", "throw", "byte", "else", "import", "public", "throws", "case", "enum", "instanceof", "return",
+            "transient", "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", "class", "finally", "long", "strictfp", "volatile", "const",
+            "float", "native", "super", "while" };
 
     public static String createModuleNameFrom(String name) {
         return name + "Module";
@@ -304,5 +311,9 @@ public class DevkitUtils {
         }
 
         return result.toString();
+    }
+
+    public static boolean isReserved(String word) {
+        return ArrayUtils.contains(RESERVED_NAMES, word);
     }
 }
