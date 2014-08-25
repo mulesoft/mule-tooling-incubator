@@ -6,8 +6,8 @@ Bundle-Version: 1.0.2.qualifier
 Bundle-Activator: org.mule.tooling.devkit.apt.Activator
 Bundle-Vendor: MuleSoft Inc.
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.jdt.apt.core;bundle-version="3.3.500",
- org.eclipse.core.resources;bundle-version="3.8.1",
+ org.eclipse.jdt.apt.core,
+ org.eclipse.core.resources,
  org.eclipse.jdt.apt.pluggable.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
