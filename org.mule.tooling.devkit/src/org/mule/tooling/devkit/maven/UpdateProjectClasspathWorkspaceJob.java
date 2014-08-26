@@ -7,16 +7,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.mule.tooling.devkit.DevkitUIPlugin;
-import org.mule.tooling.maven.ui.actions.StudioGoalRunner;
 
 public class UpdateProjectClasspathWorkspaceJob extends WorkspaceJob {
 
-    private MavenDevkitProjectDecorator project;
-    private StudioGoalRunner runner;
+    private IJavaProject project;
+    private BaseDevkitGoalRunner runner;
 
     public UpdateProjectClasspathWorkspaceJob(IJavaProject project) {
         super(project.getElementName());
-        this.project = MavenDevkitProjectDecorator.decorate(project);
+        this.project = project;
     }
 
     @Override
@@ -27,8 +26,8 @@ public class UpdateProjectClasspathWorkspaceJob extends WorkspaceJob {
 
     @Override
     public IStatus runInWorkspace(IProgressMonitor jobmonitor) throws CoreException {
-        runner = new BaseDevkitGoalRunner(project.getProject());
-        int result = runner.run(project.getPomFile(), jobmonitor);
+        runner = MavenRunBuilder.newMavenRunBuilder().withProject(project).build();
+        int result = runner.run(jobmonitor);
         if (result != 0) {
             return new Status(Status.CANCEL, DevkitUIPlugin.PLUGIN_ID, "There was an error running the eclipse:eclipse goal on project " + this.getName());
         } else {

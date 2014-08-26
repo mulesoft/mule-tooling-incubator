@@ -20,8 +20,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.mule.tooling.devkit.common.DevkitUtils;
-import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
-import org.mule.tooling.devkit.maven.MavenDevkitProjectDecorator;
+import org.mule.tooling.devkit.maven.MavenRunBuilder;
 
 public class GenerateSourcesCommand extends AbstractHandler {
 
@@ -51,9 +50,8 @@ public class GenerateSourcesCommand extends AbstractHandler {
                         public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
                             monitor.beginTask(convertingMsg, 100);
                             IJavaProject javaProject = JavaCore.create(selectedProject);
-                            MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator.decorate(javaProject);
-                            new BaseDevkitGoalRunner(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=true", "-Ddevkit.javadoc.check.skip=true",
-                                    "-Dmaven.javadoc.skip=true" }, javaProject).run(mavenProject.getPomFile(), monitor);
+                            MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArgs(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=true", "-Ddevkit.javadoc.check.skip=true",
+                                    "-Dmaven.javadoc.skip=true" }).build().run(monitor);
                             DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.GENERATED_SOURCES_FOLDER), monitor).execute(Status.OK);
                             monitor.done();
                             return Status.OK_STATUS;

@@ -25,8 +25,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
-import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
-import org.mule.tooling.devkit.maven.MavenDevkitProjectDecorator;
+import org.mule.tooling.devkit.maven.MavenRunBuilder;
 import org.mule.tooling.ui.utils.SaveModifiedResourcesDialog;
 import org.mule.tooling.ui.utils.UiUtils;
 
@@ -144,8 +143,7 @@ public class DevkitExportPage extends WizardPage {
 
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
-                    MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator.decorate(project);
-                    new BaseDevkitGoalRunner(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=false" },project).run(mavenProject.getPomFile(), monitor);
+                    MavenRunBuilder.newMavenRunBuilder().withProject(project).withArgs(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=false" }).build().run(monitor);
                     IFile updateSiteFile = project.getProject().getFile("/target/UpdateSite.zip");
 
                     FileUtils.moveFile(new File(updateSiteFile.getLocationURI()), outputFile);

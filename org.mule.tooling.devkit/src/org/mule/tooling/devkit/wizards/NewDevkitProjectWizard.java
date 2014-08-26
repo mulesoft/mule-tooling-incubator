@@ -52,7 +52,7 @@ import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
-import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
+import org.mule.tooling.devkit.maven.MavenRunBuilder;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
 import org.mule.tooling.devkit.template.ImageWriter;
 import org.mule.tooling.devkit.template.TemplateFileWriter;
@@ -147,8 +147,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                                 javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
                             }
                             if (isSoapWithCXF) {
-                                new BaseDevkitGoalRunner(new String[] { "clean", "compile", "-Pconnector-generator" }, javaProject).run(javaProject.getProject().getFile("pom.xml")
-                                        .getRawLocation().toFile(), monitor);
+                                MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("clean").withArg("compile").withArg("-Pconnector-generator").build()
+                                        .run(monitor);
                                 javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
                             }
                             return Status.OK_STATUS;
@@ -354,7 +354,11 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     }
 
     private void downloadJavadocForAnnotations(IJavaProject javaProject, IProgressMonitor monitor) {
-        new BaseDevkitGoalRunner(new String[] { "dependency:resolve", "-Dclassifier=javadoc", "-DexcludeTransitive=false", "-DincludeGroupIds=org.mule.tools.devkit",
-                "-DincludeArtifactIds=mule-devkit-annotations" }, javaProject).run(javaProject.getProject().getFile("pom.xml").getLocation().toFile(), monitor);
+        MavenRunBuilder
+                .newMavenRunBuilder()
+                .withProject(javaProject)
+                .withArgs(
+                        new String[] { "dependency:resolve", "-Dclassifier=javadoc", "-DexcludeTransitive=false", "-DincludeGroupIds=org.mule.tools.devkit",
+                                "-DincludeArtifactIds=mule-devkit-annotations" }).build().run(monitor);
     }
 }
