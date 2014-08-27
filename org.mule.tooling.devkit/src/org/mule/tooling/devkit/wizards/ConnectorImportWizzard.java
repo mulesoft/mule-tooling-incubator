@@ -76,8 +76,6 @@ public class ConnectorImportWizzard extends AbstractDevkitProjectWizzard impleme
                                     DevkitUtils.configureDevkitAPT(javaProject);
                                 }
 
-                                boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
-
                                 UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject, new String[] { "clean","compile", "eclipse:eclipse" });
                                 job.run(monitor);
                                 project.refreshLocal(IResource.DEPTH_INFINITE, monitor);

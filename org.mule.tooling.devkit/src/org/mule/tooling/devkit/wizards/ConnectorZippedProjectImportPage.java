@@ -265,7 +265,6 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
                             throw new RuntimeException(e1.getMessage());
                         }
                         DevkitUtils.configureDevkitAPT(javaProject);
-                        boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
 
                         UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject, new String[] { "clean","compile", "eclipse:eclipse" });
                         job.run(monitor);
