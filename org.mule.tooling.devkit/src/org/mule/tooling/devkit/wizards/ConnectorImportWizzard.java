@@ -78,13 +78,9 @@ public class ConnectorImportWizzard extends AbstractDevkitProjectWizzard impleme
 
                                 boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
 
-                                if (!autoBuilding) {
-                                    UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject);
-                                    job.run(monitor);
-                                    ProjectSubsetBuildAction projectBuild = new ProjectSubsetBuildAction(window, IncrementalProjectBuilder.CLEAN_BUILD, new IProject[] { project });
-                                    projectBuild.run();
-                                    project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                                }
+                                UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject, new String[] { "clean","compile", "eclipse:eclipse" });
+                                job.run(monitor);
+                                project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
                             } catch (CoreException e) {
                                 e.printStackTrace();
                             }

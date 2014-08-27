@@ -12,10 +12,18 @@ public class UpdateProjectClasspathWorkspaceJob extends WorkspaceJob {
 
     private IJavaProject project;
     private BaseDevkitGoalRunner runner;
+    private String[] commands;
 
     public UpdateProjectClasspathWorkspaceJob(IJavaProject project) {
         super(project.getElementName());
         this.project = project;
+        commands = null;
+    }
+
+    public UpdateProjectClasspathWorkspaceJob(IJavaProject project, String[] commands) {
+        super(project.getElementName());
+        this.project = project;
+        this.commands = commands;
     }
 
     @Override
@@ -26,7 +34,12 @@ public class UpdateProjectClasspathWorkspaceJob extends WorkspaceJob {
 
     @Override
     public IStatus runInWorkspace(IProgressMonitor jobmonitor) throws CoreException {
-        runner = MavenRunBuilder.newMavenRunBuilder().withProject(project).build();
+        MavenRunBuilder builder = MavenRunBuilder.newMavenRunBuilder().withProject(project);
+        if (commands == null) {
+            runner = builder.build();
+        } else {
+            runner = builder.withArgs(commands).build();
+        }
         int result = runner.run(jobmonitor);
         if (result != 0) {
             return new Status(Status.CANCEL, DevkitUIPlugin.PLUGIN_ID, "There was an error running the eclipse:eclipse goal on project " + this.getName());
