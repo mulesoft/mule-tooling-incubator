@@ -1,5 +1,6 @@
 package org.mule.tooling.devkit.quickfix;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.swt.graphics.Image;
@@ -21,7 +22,7 @@ public class RemoveAnnotation extends QuickFix {
 	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
 		ASTRewrite rewrite = null;
 		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
-				errorMarkerStart, annotation);
+				errorMarkerStart, annotation,(ICompilationUnit) unit.getJavaElement());
 
 		unit.accept(visitor);
 

@@ -47,8 +47,8 @@ public class ModuleVisitor extends ASTVisitor {
     @Override
     public boolean visit(CompilationUnit node) {
         compilationUnit = node;
-        LocateAnnotationVisitor visitorConnector = new LocateAnnotationVisitor(0, "Connector");
-        LocateAnnotationVisitor visitorModule = new LocateAnnotationVisitor(0, "Module");
+        LocateAnnotationVisitor visitorConnector = new LocateAnnotationVisitor(0, "org.mule.api.annotations.Connector",(ICompilationUnit) node.getJavaElement());
+        LocateAnnotationVisitor visitorModule = new LocateAnnotationVisitor(0, "org.mule.api.annotations.Module",(ICompilationUnit) node.getJavaElement());
         node.accept(visitorConnector);
         if (visitorConnector.getNode() != null) {
             module = new Module(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);

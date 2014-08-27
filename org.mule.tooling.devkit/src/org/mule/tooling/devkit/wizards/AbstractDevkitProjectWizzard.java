@@ -12,24 +12,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.apt.core.util.AptConfig;
-import org.eclipse.jdt.apt.core.util.IFactoryPath;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.wizard.Wizard;
 import org.mule.tooling.devkit.common.DevkitUtils;
 
 public abstract class AbstractDevkitProjectWizzard extends Wizard {
-
-    protected void configureDevkitAPT(IJavaProject javaProject) throws CoreException {
-        AptConfig.setEnabled(javaProject, true);
-        IFactoryPath path = AptConfig.getFactoryPath(javaProject);
-        path.enablePlugin(org.mule.tooling.devkit.apt.Activator.PLUGIN_ID);
-        AptConfig.setFactoryPath(javaProject, path);
-        AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "false");
-    }
     
     protected IProject getProjectWithDescription(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root, IProjectDescription projectDescription) throws CoreException {
         IProject project = root.getProject(artifactId);

@@ -229,16 +229,16 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
         }
 
         if (!hasExpectedProjectStructure(tempExpandedZipFile)) {
-            //If the user wants to continue we will just create a project with the devkit nature in worst case scenario.
-            if (! MessageDialog.open(MessageDialog.CONFIRM, getShell(), "Warning",
-                    "The project you are trying to import has an invalid folder structure. \nContinue anyway?", SWT.NONE)){
+            // If the user wants to continue we will just create a project with the devkit nature in worst case scenario.
+            if (!MessageDialog.open(MessageDialog.CONFIRM, getShell(), "Warning", "The project you are trying to import has an invalid folder structure. \nContinue anyway?",
+                    SWT.NONE)) {
                 return false;
             }
         }
-        File[] files=tempExpandedZipFile.listFiles();
-        //Check if the zip has just 1 folder, and the poin is inside of it
-        if(files.length==1 && files[0].isDirectory()){
-            tempExpandedZipFile = files[0]; 
+        File[] files = tempExpandedZipFile.listFiles();
+        // Check if the zip has just 1 folder, and the poin is inside of it
+        if (files.length == 1 && files[0].isDirectory()) {
+            tempExpandedZipFile = files[0];
         }
         final File tempExpanded = tempExpandedZipFile;
 
@@ -264,7 +264,7 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
                         } catch (IOException e1) {
                             throw new RuntimeException(e1.getMessage());
                         }
-                        configureDevkitAPT(javaProject);
+                        DevkitUtils.configureDevkitAPT(javaProject);
                         boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
 
                         if (!autoBuilding) {
@@ -305,10 +305,10 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
 
     private boolean hasExpectedProjectStructure(File tempExpandedZipFile) {
 
-        File[] files=tempExpandedZipFile.listFiles();
-        //Check if the zip has just 1 folder, and the poin is inside of it
-        if(files.length==1 && files[0].isDirectory()){
-            tempExpandedZipFile = files[0]; 
+        File[] files = tempExpandedZipFile.listFiles();
+        // Check if the zip has just 1 folder, and the poin is inside of it
+        if (files.length == 1 && files[0].isDirectory()) {
+            tempExpandedZipFile = files[0];
         }
         return new File(tempExpandedZipFile, "pom.xml").exists();
     }
@@ -395,14 +395,6 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
         case IResource.PROJECT:
             break;
         }
-    }
-
-    protected void configureDevkitAPT(IJavaProject javaProject) throws CoreException {
-        AptConfig.setEnabled(javaProject, true);
-        IFactoryPath path = AptConfig.getFactoryPath(javaProject);
-        path.enablePlugin(org.mule.tooling.devkit.apt.Activator.PLUGIN_ID);
-        AptConfig.setFactoryPath(javaProject, path);
-        AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "false");
     }
 
     protected void testMaven() {

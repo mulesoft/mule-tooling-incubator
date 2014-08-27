@@ -7,15 +7,102 @@ public class ConnectorMavenModel {
     private String artifactId;
     private String category;
     private String connectorName = "Hello";
-    private boolean	oAuthEnabled;
+    private boolean oAuthEnabled;
     private AuthenticationType authenticationType;
-    private boolean	metadataEnabled;
     private boolean addGitInformation;
     private String gitConnection;
     private String gitDevConnection;
     private String gitUrl;
     private String packageName;
-	public ConnectorMavenModel(String version, String groupId, String artifactId,String category,String packageName) {
+    private String devkitVersion;
+    private boolean isOAuth;
+    private boolean isMetaDataEnabled;
+    private boolean hasQuery;
+    private boolean isSoapWithCXF;
+    private String wsdlPath;
+    private ApiType apiType;
+
+    public boolean isoAuthEnabled() {
+        return oAuthEnabled;
+    }
+
+    public void setoAuthEnabled(boolean oAuthEnabled) {
+        this.oAuthEnabled = oAuthEnabled;
+    }
+
+    public String getDevkitVersion() {
+        return devkitVersion;
+    }
+
+    public void setDevkitVersion(String devkitVersion) {
+        this.devkitVersion = devkitVersion;
+    }
+
+    public boolean isOAuth() {
+        return isOAuth;
+    }
+
+    public void setOAuth(boolean isOAuth) {
+        this.isOAuth = isOAuth;
+    }
+
+    public boolean isMetaDataEnabled() {
+        return isMetaDataEnabled;
+    }
+
+    public void setMetaDataEnabled(boolean isMetaDataEnabled) {
+        this.isMetaDataEnabled = isMetaDataEnabled;
+    }
+
+    public boolean isHasQuery() {
+        return hasQuery;
+    }
+
+    public void setHasQuery(boolean hasQuery) {
+        this.hasQuery = hasQuery;
+    }
+
+    public boolean isSoapWithCXF() {
+        return isSoapWithCXF;
+    }
+
+    public void setSoapWithCXF(boolean isSoapWithCXF) {
+        this.isSoapWithCXF = isSoapWithCXF;
+    }
+
+    public String getWsdlPath() {
+        return wsdlPath;
+    }
+
+    public void setWsdlPath(String wsdlPath) {
+        this.wsdlPath = wsdlPath;
+    }
+
+    public ApiType getApiType() {
+        return apiType;
+    }
+
+    public void setApiType(ApiType apiType) {
+        this.apiType = apiType;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public ConnectorMavenModel(String version, String groupId, String artifactId, String category, String packageName) {
         this.version = version;
         this.groupId = groupId;
         this.artifactId = artifactId;
@@ -24,10 +111,10 @@ public class ConnectorMavenModel {
     }
 
     public ConnectorMavenModel() {
-    	
-	}
 
-	public String getVersion() {
+    }
+
+    public String getVersion() {
         return version;
     }
 
@@ -40,64 +127,56 @@ public class ConnectorMavenModel {
     }
 
     public String getCategory() {
-		return category;
-	}
+        return category;
+    }
 
-	public boolean isOAuthEnabled() {
-		return oAuthEnabled;
-	}
+    public boolean isOAuthEnabled() {
+        return oAuthEnabled;
+    }
 
-	public void setOAuthEnabled(boolean oAuthEnabled) {
-		this.oAuthEnabled = oAuthEnabled;
-	}
+    public void setOAuthEnabled(boolean oAuthEnabled) {
+        this.oAuthEnabled = oAuthEnabled;
+    }
 
-	public boolean isMetadataEnabled() {
-		return metadataEnabled;
-	}
+    public String getConnectorName() {
+        return connectorName;
+    }
 
-	public void setMetadataEnabled(boolean metadataEnabled) {
-		this.metadataEnabled = metadataEnabled;
-	}
+    public void setConnectorName(String connectorName) {
+        this.connectorName = connectorName;
+    }
 
-	public String getConnectorName() {
-		return connectorName;
-	}
+    public boolean isAddGitInformation() {
+        return addGitInformation;
+    }
 
-	public void setConnectorName(String connectorName) {
-		this.connectorName = connectorName;
-	}
+    public void setAddGitInformation(boolean addGitInformation) {
+        this.addGitInformation = addGitInformation;
+    }
 
-	public boolean isAddGitInformation() {
-		return addGitInformation;
-	}
+    public String getGitConnection() {
+        return gitConnection;
+    }
 
-	public void setAddGitInformation(boolean addGitInformation) {
-		this.addGitInformation = addGitInformation;
-	}
+    public void setGitConnection(String gitConnection) {
+        this.gitConnection = gitConnection;
+    }
 
-	public String getGitConnection() {
-		return gitConnection;
-	}
+    public String getGitDevConnection() {
+        return gitDevConnection;
+    }
 
-	public void setGitConnection(String gitConnection) {
-		this.gitConnection = gitConnection;
-	}
+    public void setGitDevConnection(String gitDevConnection) {
+        this.gitDevConnection = gitDevConnection;
+    }
 
-	public String getGitDevConnection() {
-		return gitDevConnection;
-	}
+    public String getGitUrl() {
+        return gitUrl;
+    }
 
-	public void setGitDevConnection(String gitDevConnection) {
-		this.gitDevConnection = gitDevConnection;
-	}
-
-	public String getGitUrl() {
-		return gitUrl;
-	}
-
-	public void setGitUrl(String gitUrl) {
-		this.gitUrl = gitUrl;
-	}
+    public void setGitUrl(String gitUrl) {
+        this.gitUrl = gitUrl;
+    }
 
     public AuthenticationType getAuthenticationType() {
         return authenticationType;
@@ -107,8 +186,12 @@ public class ConnectorMavenModel {
         this.authenticationType = authenticationType;
     }
 
-    public Object getPackage() {
+    public String getPackage() {
         return packageName;
     }
-	
+
+    public void setPackage(String packageName) {
+        this.packageName = packageName;
+    }
+
 }

@@ -382,7 +382,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         datasense.setEnabled(enabled);
         query.setEnabled(enabled);
         if (enabled) {
-            model.setMetadataEnabled(datasense.getSelection());
+            model.setMetaDataEnabled(datasense.getSelection());
         }
         query.setEnabled(datasense.getSelection() && enabled);
     }

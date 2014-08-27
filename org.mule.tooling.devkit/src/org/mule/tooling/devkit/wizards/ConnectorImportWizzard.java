@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
 import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
+import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.MavenInfo;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
 
@@ -72,7 +73,7 @@ public class ConnectorImportWizzard extends AbstractDevkitProjectWizzard impleme
                                 List<IClasspathEntry> classpathEntries = generateProjectEntries(monitor, project);
                                 javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[] {}), monitor);
                                 if (mavenProject.getPackaging() != null && mavenProject.getPackaging().equals("mule-module")) {
-                                    configureDevkitAPT(javaProject);
+                                    DevkitUtils.configureDevkitAPT(javaProject);
                                 }
 
                                 boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();

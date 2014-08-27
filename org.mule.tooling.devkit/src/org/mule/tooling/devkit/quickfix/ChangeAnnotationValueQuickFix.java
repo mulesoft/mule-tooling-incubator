@@ -37,7 +37,7 @@ public class ChangeAnnotationValueQuickFix extends QuickFix {
 	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
 		ASTRewrite rewrite = null;
 		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
-				errorMarkerStart, annotation);
+				errorMarkerStart, annotation,(ICompilationUnit) unit.getJavaElement());
 
 		LocateFieldOrMethodVisitor visitorField = new LocateFieldOrMethodVisitor(
 				errorMarkerStart);

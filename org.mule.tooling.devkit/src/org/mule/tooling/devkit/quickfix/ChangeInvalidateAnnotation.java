@@ -1,5 +1,6 @@
 package org.mule.tooling.devkit.quickfix;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -30,7 +31,7 @@ public class ChangeInvalidateAnnotation extends QuickFix {
 	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
 		ASTRewrite rewrite = null;
 		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
-				errorMarkerStart, annotation);
+				errorMarkerStart, annotation,(ICompilationUnit) unit.getJavaElement());
 
 		unit.accept(visitor);
 
