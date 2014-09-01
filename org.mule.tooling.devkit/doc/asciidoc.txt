@@ -1,0 +1,158 @@
+= Anypoint Devkit Studio Plugin
+
+[qanda]
+What is Devkit?::
+  http://www.mulesoft.org/documentation/display/current/Anypoint+Connector+DevKit[Anypoint(TM) DevKit] provides the tools and interfaces for building custom Anypoint Connectors for use with Mule ESB and Cloudhub.
+  
+== Installing the plugin
+
+In order to install the devkit plugin, you need to use the update site to install it.
+
+. Inside Help menu go to Install New Software
++
+image:images/screen01.png[]
+
+. Select Anypoint Studio addons Update site and from the list check the Anypoint Devkit Plugin and click on next button untill the finish button is enabled.
++
+image:images/screen02.png[]
+
+== Features
+* Wizzards for creating and importing connectors
+* Devkit View to easily navigate your connector
+* Lots of <<templates,templates>> that will assist you in the creation of your connector.
+* Quick Fixes and content assist
+* Several <<actions,actions>> to assist you in the development.
+* Create functional tests for your connectors with just 1 click
+
+== Create a new Connector
+
+* It is very easy to start building your own connectors. Just pick from the menu the New > Anypoint Connector Project
++
+image:images/screen03.png[]
+
+* You only need to specify a name and you will be able to get started
++
+image:images/screen04.png[]
+
+[TIP]
+====
+This will generate a project containing the structure with all the required elements so that you can start implementing it, like images, sample docs, and some basic test for you connector.
+====
+image:images/screen05.png[]
+
+== The Devkit View and actions
+
+The Devkit View allows you to easily navigate the elements you will allow the user to configure. In order to activate it you can either switch to the devkit perspective or add the view. For more details go the the <<links>> section.
+
+. To activate the perspective under the Window menu go to Open perspective > Other...
++
+image:images/screen00.png[]
+
+. Select the Devkit view
++
+image:images/screen07.png[]
+
+This view will list the Properties of your connector, the configurable fields and processors from all your connectors inside the selected project has. 
+
+image:images/screen08.png[]
+
+* Inside this view you can
++
+** Double click Configurable and methods to easily get to the line of code where it is defined.
+** Check the name your operation has in the XML.
+** Go to examples in the sample doc file by double clicking the xsd name.
+** Filter to find elements inside your connector.
+
+* The plugin also provides some <<actions,actions>> that can be easily triggered from the tool bar or from the pop-up menu.
++
+image:images/screen16.png[]
++
+image:images/screen21.png[]
+
+* Installing your connector is as easy as clicking the install button.
++
+image:images/screen17.png[]
+
+* After installing you will be able to use it in your mule applications. Just start typing the name in the filter and you will se your connector on the palette. Drag and drop it in the canvas and configure it.
++
+image:images/screen18.png[]
+
+== Understanding your connector
+
+Your Connector will basically consist in a set of operations and configurables elements the user will populate in order to consume the API your connector was developed for.
+
+=== Configurables
+A configurable field in your connector while look like this in the devki view:
+image:images/screen11_1.png[]
+
+This fields can be configured in studio after adding a configuration global element to your connector.
+
+. In order to do this select your connector and click the add buton.
++
+image:images/screen09.png[]
+
+. Set the value for your field
++
+image:images/screen10.png[]
+
+As you can see, the default value we configured in the connector is the one that will be set as initial value is we don't change it.
+image:images/screen15.png[]
+
+=== Processors
+Each processor will be listed in the Devkit View
+image:images/screen14.png[]
+
+After setting a configuration, you can select the operations you want to execute.
+image:images/screen11.png[]
+
+In our case we simple had a string as input, so we will specify a value for it.
+image:images/screen12.png[]
+
+== Working with your connector
+[[templates]]
+=== Templates
+Templates are customizable pieces of code that can be used to configure your connector. By typing the name or part and hitting [Command | Ctrl ] + space of it you will trigger the insertion of the template in the Connector Class.
+[horizontal]
+configurable:: Add a configurable field
+datasense:: Add datasense operations
+processor:: Adds a processor to your connector. There are several options with different templates.
+transformer:: Add transformer method. Transformers are used to convert an input of a particular type into a different one
+restconfig:: Add a configurable elements used in @RestCall based connectors. There are several configurables that can be added like uri params, query params or header params. 
+restprocessor:: Add a @RestCall processor.
+
+[%hardbreaks]
+* In this example we just type conf and trigger the list of suggestions.
++
+image:images/screen23.png[]
+
+[[actions]]
+=== Actions
+The plugin provides a series of actions than will assist the developers during the development of the connector. Actions will be enabled when selecting the root of a devkit project.
+[horizontal]
+image:../icons/tsuite.png[] Generate Tests:: Generates Functional tests cases for your connector processors.
+image:../icons/install.gif[] Install Or Update:: Installs or updates the connector in your Anypoint Studio and in your local repository
+image:../icons/generate_doc.gif[] Preview Documentation:: Generates the javadoc for your connector including the samples included at the sample doc file.
+image:../icons/coverage.gif[] Test Coverga Report:: Will check all the processors and your functional test cases to see the coverage based on the amount of operation that the processor has, the ones being used in a functional test case, and the existance of that flow.
+image:../icons/generate_sources.gif[] Generate Sources:: Generate the sources, schemas, editors and everything required to integrate with mule and Anypoint Studio, this can be usefull if you want to debug the behaviour of your connector in a mule app.
+image:../icons/javadoc.gif[] Enable / Disable Javadoc:: Before releasing a connector you will want to check that your javadocs are in order. By enabling this flag you will see all the processors that have missing javadoc or samples.
+
+[[Hyperlinks]]
+=== Creating samples
+
+In order to navigate to the samples you just need to go put the mouse over the sample link and press command key. If the sample exists, the sample editor will open at the processor sample.
+
+If you enable the javadoc check, the quickfixes will help you add the missing samples that can be triggered using control + space.
+image:images/screen24.png[]
+
+The sample has xml highligting and some basic templates
+image:images/screen25.png[]
+
+== Importing an existing connector
+
+You can import a connector from a zip file or an existing directory using the import menu.+
+
+image:images/screen26.png[]
+
+[[links]]
+== Links
+* http://www.mulesoft.org/documentation/display/current/Anypoint+Connector+Fundamentals[Anypoint Connector Fundamentals]
