@@ -6,7 +6,7 @@ public class ModelUtils {
 
     public static String[] SUPPORTED_SOURCE_METHOD = { "Source" };
 
-    public static String[] SUPPORTED_CLASS_ANNOTATIONS = { "org.mule.api.annotations.Connector","Connector", "Module", "MetaDataCategory" };
+    public static String[] SUPPORTED_CLASS_ANNOTATIONS = { "Connector", "Module", "MetaDataCategory" };
 
     public static String[] SUPPORTED_METHOD_ANNOTATIONS = { "Processor", "Connect", "Disconnect", "ValidateConnection", "ConnectionIdentifier" };
 
