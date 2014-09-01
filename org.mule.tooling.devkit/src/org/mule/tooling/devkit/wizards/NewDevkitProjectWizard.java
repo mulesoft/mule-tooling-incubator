@@ -33,7 +33,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -71,7 +70,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     public static final String WIZZARD_PAGE_TITTLE = "Create an Anypoint Connector";
     private NewDevkitProjectWizardPage page;
     private NewDevkitProjectWizardPageAdvance advancePage;
-    private ISelection selection;
     private ConnectorMavenModel connectorModel;
 
     public NewDevkitProjectWizard() {
@@ -84,7 +82,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
     @Override
     public void addPages() {
-        page = new NewDevkitProjectWizardPage(selection, connectorModel);
+        page = new NewDevkitProjectWizardPage(connectorModel);
         advancePage = new NewDevkitProjectWizardPageAdvance(connectorModel);
         addPage(page);
         addPage(advancePage);
@@ -333,7 +331,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
      */
     @Override
     public void init(IWorkbench workbench, IStructuredSelection selection) {
-        this.selection = selection;
+
     }
 
     protected String getTestResourcePath() {

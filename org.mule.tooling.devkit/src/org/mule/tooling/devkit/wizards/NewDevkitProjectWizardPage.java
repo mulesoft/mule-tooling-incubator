@@ -7,7 +7,6 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -73,7 +72,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private Button query;
     private boolean mavenFailure = false;
 
-    public NewDevkitProjectWizardPage(ISelection selection, ConnectorMavenModel model) {
+    public NewDevkitProjectWizardPage(ConnectorMavenModel model) {
         super("wizardPage");
         setTitle(NewDevkitProjectWizard.WIZZARD_PAGE_TITTLE);
         setDescription("Enter a connector name");
