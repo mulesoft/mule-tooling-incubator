@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Anypoint Gradle Plugin
+Bundle-SymbolicName: org.mule.tooling.incubator.gradle.extension
+Bundle-Version: 1.0.0.qualifier
+

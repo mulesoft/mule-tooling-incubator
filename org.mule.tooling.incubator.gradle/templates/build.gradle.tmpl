@@ -1,0 +1,22 @@
+buildscript {
+    dependencies {
+        classpath group: 'org.mulesoft.build', name: 'mule-gradle-plugin', version: '1.0.0'
+    }
+
+    repositories {
+        maven {
+            url 'http://repository.mulesoft.org/releases'
+        }
+    }
+}
+
+apply plugin: 'mulestudio'
+
+mule.version = '${runtimeVersion}'
+
+group = '${groupId}'
+version = '${version}'
+#if($isMuleEnterprise == true)
+mule.enterpriseRepoUsername = '${repoUser}'
+mule.enterpriseRepoPassword = '${repoPassword}'
+#end

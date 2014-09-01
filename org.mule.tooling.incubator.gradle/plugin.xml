@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+      		category="org.mule.tooling.ui.muleWizards"
+            class="org.mule.tooling.incubator.gradle.wizard.ProjectNewWizard"
+            icon="icons/gradle16x16.png"
+            id="org.mule.tooling.incubator.gradle.wizard"
+            name="New Gradle Mule Project"
+            project="true">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+      		category="org.mule.tooling.ui.messageflowpage"
+            class="org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage"
+            id="org.mule.tooling.gradle.preferences"
+            name="Gradle">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.mule.tooling.gradle"
+            name="Gradle">
+      </category>
+      <view
+            category="org.mule.tooling.gradle"
+            class="org.mule.tooling.incubator.gradle.views.TasksView"
+            icon="icons/gradle16x16.png"
+            id="org.mule.tooling.gradle.views.TasksView"
+            name="Gradle Tasks View">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="org.mule.tooling.gradle.views.TasksView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.ProblemView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>
