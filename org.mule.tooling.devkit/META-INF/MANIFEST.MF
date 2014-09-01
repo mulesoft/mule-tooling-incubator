@@ -39,7 +39,8 @@ Require-Bundle: org.mule.tooling.runtime;bundle-version="[4.0.0,4.2.0)",
  org.eclipse.ui.forms,
  org.mule.tooling.utils;bundle-version="[4.0.0,4.2.0)",
  org.eclipse.debug.ui,
- org.eclipse.search
+ org.eclipse.search,
+ org.apache.commons.lang
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.mule.tooling.devkit.builder
