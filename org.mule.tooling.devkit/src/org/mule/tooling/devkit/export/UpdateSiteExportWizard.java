@@ -18,7 +18,7 @@ public class UpdateSiteExportWizard extends Wizard implements IExportWizard {
     private static final String UPDATE_SITE_SECTION = "UpdateSiteExportWizard";
 
     /** Project associated with current selection */
-    private IJavaProject selected;
+    private IProject selected;
 
     /** Project export page */
     private DevkitExportPage mainPage;
@@ -32,7 +32,7 @@ public class UpdateSiteExportWizard extends Wizard implements IExportWizard {
             wizardSettings = workbenchSettings.addNewSection(UPDATE_SITE_SECTION);
         }
         setDialogSettings(wizardSettings);
-        setWindowTitle("Export Mule extension to Update Site");
+        setWindowTitle("Export an Anypoint Connector as an Update  Site");
     }
 
     public void addPages() {
@@ -57,7 +57,7 @@ public class UpdateSiteExportWizard extends Wizard implements IExportWizard {
                     selectedProject = ((IResource) oSelected).getProject();
                 }
                 if ((selectedProject != null) && (selectedProject.isAccessible())) {
-                    this.selected = JavaCore.create(selectedProject);
+                    this.selected = selectedProject;
                 }
             }
         } catch (Exception e) {
@@ -77,7 +77,7 @@ public class UpdateSiteExportWizard extends Wizard implements IExportWizard {
     /**
      * @return the selected
      */
-    public synchronized IJavaProject getSelectedProject() {
+    public synchronized IProject getSelectedProject() {
         return selected;
     }
 
@@ -85,7 +85,7 @@ public class UpdateSiteExportWizard extends Wizard implements IExportWizard {
      * @param selected
      *            the selected to set
      */
-    public synchronized void setSelectedProject(IJavaProject selected) {
+    public synchronized void setSelectedProject(IProject selected) {
         this.selected = selected;
     }
 }
