@@ -53,7 +53,7 @@ Bundle-ClassPath: .,
  lib/fluent-hc.jar,
  lib/httpclient-cache.jar,
  lib/commons-validator.jar,
- lib/mule-devkit-code-utils.jar
  lib/JavaEWAH.jar,
  lib/jsch.jar,
- lib/org.eclipse.jgit.jar
+ lib/org.eclipse.jgit.jar,
+ lib/mule-devkit-generation-api.jar

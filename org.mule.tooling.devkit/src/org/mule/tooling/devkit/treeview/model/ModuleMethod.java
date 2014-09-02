@@ -10,7 +10,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.swt.graphics.Image;
-import org.mule.devkit.utils.NameUtils;
+import org.mule.devkit.generation.utils.NameUtils;
 import org.mule.tooling.devkit.DevkitImages;
 
 public class ModuleMethod extends DefaultNodeItem {
