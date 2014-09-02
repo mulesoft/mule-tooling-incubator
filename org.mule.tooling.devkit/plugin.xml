@@ -287,6 +287,7 @@
     		name="Devkit Sample Link Detector">
 		</hyperlinkDetector>
 	</extension>
+	
 	<extension 
        point="org.eclipse.ui.importWizards"> 
       <wizard 
@@ -298,12 +299,38 @@
       </wizard> 
       <wizard 
       	 category="org.mule.tooling.ui.muleImportCategory"
-         id="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportPage" 
+         id="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportWizard" 
          name="Anypoint Connector Project from External Location (.zip)" 
          class="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportWizard" 
          icon="icons/importzip.gif">
       </wizard>
    </extension>
+	
+	<extension
+         point="org.eclipse.ui.menus">
+         
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.mule.tooling.ui.import">
+         <command
+               commandId="org.eclipse.ui.file.import"
+               style="push">
+            <parameter
+                  name="importWizardId"
+                  value="org.mule.tooling.devkit.wizards.ConnectorImportWizzard">
+            </parameter>
+         </command>
+         <command
+               commandId="org.eclipse.ui.file.import"
+               style="push">
+            <parameter
+                  name="importWizardId"
+                  value="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportWizard">
+            </parameter>
+         </command>
+      </menuContribution>
+   </extension>
+   
    <extension point="org.eclipse.ui.decorators">
      <decorator
            adaptable="true"
