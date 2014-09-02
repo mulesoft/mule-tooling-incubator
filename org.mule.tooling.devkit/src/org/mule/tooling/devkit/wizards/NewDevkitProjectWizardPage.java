@@ -118,7 +118,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
         addRuntime(container);
 
-        addDatasense(container);
+        
 
         Group apiGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_API, 4);
         apiType = initializeComboField(apiGroupBox, "Type: ", SUPPORTED_API_OPTIONS,
@@ -171,6 +171,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             }
         });
 
+        addDatasense(container);
+        
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 0, 0).margins(0, 0).spacing(0, 0).applyTo(container);
         GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
 
@@ -223,6 +225,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         apiType.addModifyListener(changeListener);
         comboAuthentication.addModifyListener(authenticationChange);
         apiType.setText(ApiType.GENERIC.label());
+        
+        
         setControl(container);
         initialize();
         testMaven();
