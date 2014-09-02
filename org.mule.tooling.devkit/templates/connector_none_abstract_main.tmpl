@@ -172,15 +172,13 @@ public class ${className}
 #if($OAuthEnaled == true )
     @OAuthProtected
     @ReconnectOn(exceptions = { Exception.class })
-    public String myProcessor(@Default("content") String content) throws Exception
+    public String myProcessor(@Default("content") String content) throws Exception {
 #else
-    public String myProcessor(String content)
-#end  
-    {
+    public String myProcessor(String content) {
+#end
         /*
          * MESSAGE PROCESSOR CODE GOES HERE
          */
-
         return content;
     }
 
@@ -210,16 +208,14 @@ public class ${className}
      *
      * @param accessToken The accessToken
      */
-    public void setAccessToken(String accessToken)
-    {
+    public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
     /**
      * Get accessToken
      */
-    public String getAccessToken()
-    {
+    public String getAccessToken() {
         return this.accessToken;
     }
 
@@ -228,16 +224,14 @@ public class ${className}
      *
      * @param consumerKey The consumerKey
      */
-    public void setConsumerKey(String consumerKey)
-    {
+    public void setConsumerKey(String consumerKey) {
         this.consumerKey = consumerKey;
     }
 
     /**
      * Get consumer key
      */
-    public String getConsumerKey()
-    {
+    public String getConsumerKey() {
         return this.consumerKey;
     }
 
@@ -246,16 +240,14 @@ public class ${className}
      *
      * @param consumerSecret The consumerSecret
      */
-    public void setConsumerSecret(String consumerSecret)
-    {
+    public void setConsumerSecret(String consumerSecret) {
         this.consumerSecret = consumerSecret;
     }
 
     /**
      * Get consumer secret
      */
-    public String getConsumerSecret()
-    {
+    public String getConsumerSecret() {
         return this.consumerSecret;
     }
 
@@ -280,16 +272,14 @@ public class ${className}
      *
      * @param myProperty My property
      */
-    public void setMyProperty(String myProperty)
-    {
+    public void setMyProperty(String myProperty) {
         this.myProperty = myProperty;
     }
 
     /**
      * Get property
      */
-    public String getMyProperty()
-    {
+    public String getMyProperty() {
         return this.myProperty;
     }
 }
