@@ -119,8 +119,7 @@
 			name="Generate Testdata">
 		</command>
 		<command id="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
-			name="Run Interop Tests"
-			defaultHandler="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand">
+			name="Run Interop Tests">
 		</command>
 		<command id="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand"
 			name="Generate Functional TestCases"
@@ -355,6 +354,12 @@
 	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
          	</activeWhen>
          </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
+			class="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
 	</extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -377,6 +382,10 @@
                 <command commandId="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
                          tooltip="Test Coverage Report"
                          icon="icons/coverage.gif">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
+                    tooltip="Run Interop Tests"
+                    icon="icons/run.png">
                 </command>
                 <command commandId="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
                          tooltip="Generate Sources"
