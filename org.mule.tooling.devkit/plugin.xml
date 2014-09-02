@@ -85,10 +85,11 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="Devkit"
-            icon="icons/icon.png"
+            category="org.mule.tooling.ui.views"
             class="org.mule.tooling.devkit.treeview.DevkitView"
-            id="org.mule.tooling.devkit.treeview.DevkitView">
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.treeview.DevkitView"
+            name="Devkit">
       </view>
    </extension>
    <extension
