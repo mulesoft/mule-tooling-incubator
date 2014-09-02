@@ -118,8 +118,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
         addRuntime(container);
 
-        
-
         Group apiGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_API, 4);
         apiType = initializeComboField(apiGroupBox, "Type: ", SUPPORTED_API_OPTIONS,
                 "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener, 1);
@@ -172,7 +170,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         });
 
         addDatasense(container);
-        
+
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 0, 0).margins(0, 0).spacing(0, 0).applyTo(container);
         GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
 
@@ -225,8 +223,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         apiType.addModifyListener(changeListener);
         comboAuthentication.addModifyListener(authenticationChange);
         apiType.setText(ApiType.GENERIC.label());
-        
-        
+
         setControl(container);
         initialize();
         testMaven();
@@ -381,7 +378,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private void updateComponentsEnablement() {
-        boolean enabled = isBasic() && !apiType.getText().equals(ApiType.REST.label());
+        boolean enabled = isBasic() && apiType.getText().equals(ApiType.GENERIC.label());
         datasense.setEnabled(enabled);
         query.setEnabled(enabled);
         if (enabled) {
