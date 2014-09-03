@@ -40,7 +40,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
         final IJavaProject selectedProject = getSelectedJavaProject(event);
         if (selectedProject != null && !DevkitUtils.existsUnsavedChanges(selectedProject.getProject())) {
-            final String installingPalette = "Installing Connector...";
+            final String installingPalette = "Installing Connector from [" + selectedProject.getProject().getName() + "] ...";
             final WorkspaceJob installOrUpdate = new WorkspaceJob(installingPalette) {
 
                 @Override
