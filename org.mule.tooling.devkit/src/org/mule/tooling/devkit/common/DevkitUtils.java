@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.equinox.internal.p2.core.helpers.CollectionUtils;
 import org.eclipse.help.ui.internal.DefaultHelpUI;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -39,6 +38,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
+import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.popup.actions.DevkitCallback;
@@ -213,6 +213,7 @@ public class DevkitUtils {
         }
 
         for (MethodDeclaration method : methods) {
+            @SuppressWarnings("unchecked")
             Iterator<IExtendedModifier> modifiers = method.modifiers().iterator();
             boolean isProcessor = false;
             while (modifiers.hasNext() && !isProcessor) {
@@ -317,5 +318,19 @@ public class DevkitUtils {
 
     public static boolean isReserved(String word) {
         return ArrayUtils.contains(RESERVED_NAMES, word);
+    }
+    
+    public static String getDevkitVersionForServerDefinition(ServerDefinition selectedServerDefinition) {
+        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_2))
+            return DevkitUtils.DEVKIT_3_4_2;
+        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_1))
+            return DevkitUtils.DEVKIT_3_4_1;
+        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_0))
+            return DevkitUtils.DEVKIT_3_4_0;
+        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_5_0))
+            return DevkitUtils.DEVKIT_3_5_0;
+        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_5_1))
+            return DevkitUtils.DEVKIT_3_5_1;
+        return DevkitUtils.DEVKIT_CURRENT;
     }
 }
