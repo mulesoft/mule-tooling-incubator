@@ -68,8 +68,8 @@
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20130827064939/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.codehaus.groovy" version="2.0.7.xx-20130703-1700-e42-RELEASE"/>
-<repository location="http://dist.springsource.org/release/GRECLIPSE/e4.2"/>
+<unit id="org.codehaus.groovy" version="2.0.7.xx-201407142131-e42-RELEASE"/>
+<repository location="http://dist.springsource.org/release/GRECLIPSE/2.9.0/e4.2"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.mule.tooling.datamapper.feature.group" version="0.0.0"/>
