@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -256,14 +257,21 @@ public class TasksView extends ViewPart implements ISelectionListener {
             public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
                 if (currentSelection instanceof IStructuredSelection) {
                     Object selected = ((IStructuredSelection) currentSelection).getFirstElement();
+                    
+                    //sometimes project might be a simple project.
+                    if (selected instanceof IJavaProject) {
+                    	//convert into a java project
+                    	selected = ((IJavaProject) selected).getProject();
+                    }
+                    
                     if (selected instanceof IProject) {
                         project = (IProject) selected;
-                        
+
                         //it should be valid always to run now.
                         if (connection != null) {
                             connection.close();
                         }
-                        connection  = GradlePluginUtils.buildConnectionForProject(project.getProject().getLocation().toFile().getAbsoluteFile()).connect();
+                        connection  = GradlePluginUtils.buildConnectionForProject(project.getLocation().toFile().getAbsoluteFile()).connect();
                         final GradleProject gradleProject = connection.getModel(GradleProject.class);
                         Display.getDefault().asyncExec(new Runnable() {
 
