@@ -8,8 +8,9 @@ public class GradleProject {
     final private boolean muleEnterprise;
     final private String repoUser;
     final private String repoPassword;
-
-    public GradleProject(String groupId, String runtimeVersion, String version, boolean muleEnterprise, String repoUser, String repoPassword) {
+    final private String pluginVersion;
+    
+    public GradleProject(String groupId, String runtimeVersion, String version, boolean muleEnterprise, String repoUser, String repoPassword, String pluginVersion) {
         super();
         this.groupId = groupId;
         this.runtimeVersion = runtimeVersion;
@@ -17,6 +18,7 @@ public class GradleProject {
         this.muleEnterprise = muleEnterprise;
         this.repoUser = repoUser;
         this.repoPassword = repoPassword;
+        this.pluginVersion = pluginVersion;
     }
 
     public String getGroupId() {
@@ -42,5 +44,9 @@ public class GradleProject {
     public String getRepoPassword() {
         return repoPassword;
     }
+
+	public String getPluginVersion() {
+		return pluginVersion;
+	}
 
 }

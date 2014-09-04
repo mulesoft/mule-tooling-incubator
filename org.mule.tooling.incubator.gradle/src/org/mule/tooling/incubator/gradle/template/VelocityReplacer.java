@@ -19,13 +19,11 @@ public class VelocityReplacer implements Replacer {
     public void replace(Reader reader, Writer writer) throws Exception {
         Velocity.init();
         VelocityContext context = new VelocityContext();
+        
+        //avoid having to copy the entire set of properties.
+        //see template.
+        context.put("project", this.model);
 
-        context.put("runtimeVersion", model.getRuntimeVersion());
-        context.put("groupId", model.getGroupId());
-        context.put("version", model.getVersion());
-        context.put("isMuleEnterprise", model.isMuleEnterprise());
-        context.put("repoUser", model.getRepoUser());
-        context.put("repoPassword",model.getRepoPassword());
         boolean evaluate = Velocity.evaluate(context, writer, "velocity class rendering", reader);
 
         if (evaluate == false) {

@@ -17,7 +17,9 @@ import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.core.utils.CoreUtils;
+import org.mule.tooling.incubator.gradle.Activator;
 import org.mule.tooling.incubator.gradle.model.GradleProject;
+import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 import org.mule.tooling.incubator.gradle.ui.Utils;
 import org.mule.tooling.ui.MuleUiConstants;
 import org.mule.tooling.ui.common.ServerChooserComponent;
@@ -125,8 +127,9 @@ public class ProjectNewWizardPage extends WizardPage {
     }
 
     public GradleProject getProject() {
-        return new GradleProject(groupId.getText(), selectedServerDefinition.getVersion(), version.getText(), selectedServerDefinition.isEnterpriseRuntime(), username.getText(),
-                password.getText());
+        String pluginVersion = Activator.getDefault().getPreferenceStore().getString(WorkbenchPreferencePage.GRADLE_PLUGIN_VERSION_ID);
+    	return new GradleProject(groupId.getText(), selectedServerDefinition.getVersion(), version.getText(), selectedServerDefinition.isEnterpriseRuntime(), username.getText(),
+                password.getText(), pluginVersion);
     }
 
     public String getProjectName() {

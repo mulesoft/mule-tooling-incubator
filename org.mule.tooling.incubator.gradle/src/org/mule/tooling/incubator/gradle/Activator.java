@@ -1,6 +1,8 @@
 package org.mule.tooling.incubator.gradle;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -27,6 +29,17 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		applyDefaultValues();
+	}
+
+	private void applyDefaultValues() {
+		
+		//apply default values to various settings.
+		IPreferenceStore prefsStore = getPreferenceStore();
+		
+		//set the default gradle plugin version.
+		prefsStore.setDefault(WorkbenchPreferencePage.GRADLE_PLUGIN_VERSION_ID, GradlePluginConstants.DEFAULT_PLUGIN_VERSION);
+		
 	}
 
 	/*
