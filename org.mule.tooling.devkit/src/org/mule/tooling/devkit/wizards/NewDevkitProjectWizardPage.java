@@ -406,10 +406,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             updateStatus("The selected wsdl location is not valid.");
             return;
         }
-        final String projectName = getName();
+        final String projectName = DevkitUtils.toConnectorName(getName()) + "-connector";
         final File workspaceDir = CoreUtils.getWorkspaceLocation();
-        if ((new File(workspaceDir, projectName.toLowerCase() + "-connector")).exists()) {
-            updateStatus("A project with the name [" + projectName.toLowerCase() + "-connector] already exists in your workspace folder.");
+        if (new File(workspaceDir, projectName).exists()) {
+            updateStatus("A project with the name [" + projectName + "] already exists in your workspace folder.");
             return;
         }
 
