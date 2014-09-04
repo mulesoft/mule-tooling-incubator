@@ -2,6 +2,7 @@ package org.mule.tooling.incubator.gradle.views;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
@@ -43,13 +44,11 @@ import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
-import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.GradleTask;
-import org.mule.tooling.incubator.gradle.Activator;
+import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.GradleRunner;
-import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view shows data obtained from the model. The sample creates a dummy model on the fly, but a real
@@ -71,7 +70,7 @@ public class TasksView extends ViewPart implements ISelectionListener {
     private DrillDownAdapter drillDownAdapter;
     private Action doubleClickAction;
     ProjectConnection connection;
-    IJavaProject project;
+    IProject project;
 
     class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
 
@@ -257,18 +256,14 @@ public class TasksView extends ViewPart implements ISelectionListener {
             public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
                 if (currentSelection instanceof IStructuredSelection) {
                     Object selected = ((IStructuredSelection) currentSelection).getFirstElement();
-                    if (selected instanceof IJavaProject) {
-                        project = (IJavaProject) selected;
-                        File gradleHome = new File(Activator.getDefault().getPreferenceStore().getString(WorkbenchPreferencePage.GRADLE_HOME_ID));
-                        if (!gradleHome.exists()) {
-                            // TODO Show the user an error when gradle is not configured
-                            return Status.OK_STATUS;
-                        }
+                    if (selected instanceof IProject) {
+                        project = (IProject) selected;
+                        
+                        //it should be valid always to run now.
                         if (connection != null) {
                             connection.close();
                         }
-                        connection = GradleConnector.newConnector().forProjectDirectory(project.getProject().getLocation().toFile().getAbsoluteFile())
-                                .useGradleUserHomeDir(gradleHome).connect();
+                        connection  = GradlePluginUtils.buildConnectionForProject(project.getProject().getLocation().toFile().getAbsoluteFile()).connect();
                         final GradleProject gradleProject = connection.getModel(GradleProject.class);
                         Display.getDefault().asyncExec(new Runnable() {
 

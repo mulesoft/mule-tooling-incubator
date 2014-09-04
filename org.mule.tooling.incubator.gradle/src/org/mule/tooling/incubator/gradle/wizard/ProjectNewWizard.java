@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbench;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.mule.tooling.incubator.gradle.Activator;
+import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.GradleRunner;
 import org.mule.tooling.incubator.gradle.model.GradleProject;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
@@ -76,12 +77,8 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
                     }
                     TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
                     fileWriter.apply("/templates/build.gradle.tmpl", "build.gradle", new VelocityReplacer(gradleProject));
-                    File gradleHome = new File(Activator.getDefault().getPreferenceStore().getString(WorkbenchPreferencePage.GRADLE_HOME_ID));
-                    if (!gradleHome.exists()) {
-                        throw new RuntimeException("Gradle home has not been configured");
-                    }
-                    ProjectConnection connection = GradleConnector.newConnector().forProjectDirectory(project.getLocation().toFile().getAbsoluteFile())
-                            .useGradleUserHomeDir(gradleHome).connect();
+
+                    ProjectConnection connection = GradlePluginUtils.buildConnectionForProject(project.getLocation().toFile().getAbsoluteFile()).connect();
 
                     GradleRunner.run(connection.newBuild().forTasks("initMuleProject", "studio"), monitor);
                     
@@ -91,7 +88,7 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
                     
                     //programmatically add the src/main/app folder to the build path
                     //this is required until https://github.com/mulesoft-labs/mule-gradle-plugin/issues/13 is fixed
-                    addSourceFolder(project, monitor, "src/main/app");
+                    GradlePluginUtils.addSourceFolder(project, monitor, "src/main/app");
                     
                     connection.close();
                     
@@ -113,14 +110,6 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
         return true;
     }
     
-    private void addSourceFolder(IProject project, IProgressMonitor monitor, String folder) throws JavaModelException {
-    	//now it should be a java project
-        IJavaProject javaProj = JavaCore.create(project);
-    	IPath entry = javaProj.getPath().append("src/main/app");
-        IClasspathEntry[] entries = javaProj.getRawClasspath(); 
-        IClasspathEntry[] newEntries = new IClasspathEntry[] {JavaCore.newSourceEntry(entry)};
-        entries = (IClasspathEntry[]) ArrayUtils.addAll(newEntries, entries);
-        javaProj.setRawClasspath(entries, monitor);    	
-    }
+
 
 }
