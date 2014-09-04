@@ -32,7 +32,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
-import org.mule.tooling.devkit.maven.MavenDevkitProjectDecorator;
+import org.mule.tooling.devkit.maven.MavenRunBuilder;
 
 public class InstallOrUpdateConnector extends AbstractHandler {
 
@@ -110,10 +110,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                 }
 
                 private Integer generateUpdateSite(final IJavaProject selectedProject, final IProgressMonitor monitor) {
-                    MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator.decorate(selectedProject);
-
-                    final Integer result = new BaseDevkitGoalRunner(new String[] { "clean", "install", "-DskipTests", "-Ddevkit.studio.package.skip=false" }, selectedProject).run(
-                            mavenProject.getPomFile(), monitor);
+                    final Integer result = MavenRunBuilder.newMavenRunBuilder().withProject(selectedProject).withArgs(new String[] { "clean", "install", "-DskipTests", "-Ddevkit.studio.package.skip=false" }).build().run(monitor);
                     return result;
                 }
             };

@@ -83,7 +83,7 @@ public abstract class QuickFix implements IMarkerResolution2, DevkitQuickFix {
 	 */
 	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
 		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
-				errorMarkerStart, "Optional");
+				errorMarkerStart, "Optional",(ICompilationUnit) unit.getJavaElement());
 
 		unit.accept(visitor);
 

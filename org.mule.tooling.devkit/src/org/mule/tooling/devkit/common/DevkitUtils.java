@@ -22,8 +22,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.ui.internal.DefaultHelpUI;
+import org.eclipse.jdt.apt.core.util.AptConfig;
+import org.eclipse.jdt.apt.core.util.IFactoryPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
@@ -332,5 +335,13 @@ public class DevkitUtils {
         if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_5_1))
             return DevkitUtils.DEVKIT_3_5_1;
         return DevkitUtils.DEVKIT_CURRENT;
+    }
+    
+    public static void configureDevkitAPT(IJavaProject javaProject) throws CoreException {
+        AptConfig.setEnabled(javaProject, true);
+        IFactoryPath path = AptConfig.getFactoryPath(javaProject);
+        path.enablePlugin(org.mule.tooling.devkit.apt.Activator.PLUGIN_ID);
+        AptConfig.setFactoryPath(javaProject, path);
+        AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "false");
     }
 }

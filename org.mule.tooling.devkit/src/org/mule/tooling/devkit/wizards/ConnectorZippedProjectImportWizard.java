@@ -1,7 +1,6 @@
 package org.mule.tooling.devkit.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -10,7 +9,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * Wizard for importing a Mule project into the workspace from a deployable zip file.
  * 
  */
-public class ConnectorZippedProjectImportWizard extends Wizard implements IImportWizard {
+public class ConnectorZippedProjectImportWizard extends AbstractDevkitProjectWizzard implements IImportWizard {
 
     private ConnectorZippedProjectImportPage mainPage;
 

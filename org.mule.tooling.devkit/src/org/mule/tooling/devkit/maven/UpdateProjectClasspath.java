@@ -57,6 +57,18 @@ public class UpdateProjectClasspath {
 
         WorkspaceJob updateJob = new UpdateProjectClasspathWorkspaceJob(project);
 
+        scheduleWork(project, monitor, updateJob);
+    }
+    
+    public void execute(final IJavaProject project, String[] commands,IProgressMonitor monitor) {
+        cancelExistingUpdateJobsForProject(project);
+
+        WorkspaceJob updateJob = new UpdateProjectClasspathWorkspaceJob(project,commands);
+
+        scheduleWork(project, monitor, updateJob);
+    }
+
+    protected void scheduleWork(final IJavaProject project, IProgressMonitor monitor, WorkspaceJob updateJob) {
         updateJob.setUser(false);
         updateJob.setPriority(Job.DECORATE);
         updateJob.setRule(project.getProject());
@@ -64,7 +76,7 @@ public class UpdateProjectClasspath {
         updateJob.addJobChangeListener(new RefreshWhenDoneChangeListener(project));
         monitor.worked(20);
     }
-
+    
     private void cancelExistingUpdateJobsForProject(final IJavaProject project) {
         Job[] existentJobs = Job.getJobManager().find(DevkitGoal.INSTANCE);
         for (Job job : existentJobs) {
