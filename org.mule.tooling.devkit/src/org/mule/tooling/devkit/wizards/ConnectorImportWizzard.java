@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
 import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
+import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.MavenInfo;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
 
@@ -72,18 +73,12 @@ public class ConnectorImportWizzard extends AbstractDevkitProjectWizzard impleme
                                 List<IClasspathEntry> classpathEntries = generateProjectEntries(monitor, project);
                                 javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[] {}), monitor);
                                 if (mavenProject.getPackaging() != null && mavenProject.getPackaging().equals("mule-module")) {
-                                    configureDevkitAPT(javaProject);
+                                    DevkitUtils.configureDevkitAPT(javaProject);
                                 }
 
-                                boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
-
-                                if (!autoBuilding) {
-                                    UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject);
-                                    job.run(monitor);
-                                    ProjectSubsetBuildAction projectBuild = new ProjectSubsetBuildAction(window, IncrementalProjectBuilder.CLEAN_BUILD, new IProject[] { project });
-                                    projectBuild.run();
-                                    project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                                }
+                                UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject, new String[] { "clean","compile", "eclipse:eclipse" });
+                                job.run(monitor);
+                                project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
                             } catch (CoreException e) {
                                 e.printStackTrace();
                             }

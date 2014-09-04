@@ -249,19 +249,19 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
     public String getVersion() {
         return version.getText();
     }
-    
+
     private void updateStatus() {
-        if(getGroupId().isEmpty()){
+        if (getGroupId().isEmpty()) {
             setErrorMessage("Group Id cannot be empty");
             setPageComplete(false);
             return;
         }
-        if(getArtifactId().isEmpty()){
+        if (getArtifactId().isEmpty()) {
             setErrorMessage("Artifact Id cannot be empty");
             setPageComplete(false);
             return;
         }
-        if(getVersion().isEmpty()){
+        if (getVersion().isEmpty()) {
             setErrorMessage("Version cannot be empty");
             setPageComplete(false);
             return;
