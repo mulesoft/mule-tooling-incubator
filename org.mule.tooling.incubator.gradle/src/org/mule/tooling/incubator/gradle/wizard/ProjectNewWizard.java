@@ -3,12 +3,18 @@ package org.mule.tooling.incubator.gradle.wizard;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -78,9 +84,17 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
                             .useGradleUserHomeDir(gradleHome).connect();
 
                     GradleRunner.run(connection.newBuild().forTasks("initMuleProject", "studio"), monitor);
+                    
+                    //needs to be refreshed
                     project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-
+                    
+                    
+                    //programmatically add the src/main/app folder to the build path
+                    //this is required until https://github.com/mulesoft-labs/mule-gradle-plugin/issues/13 is fixed
+                    addSourceFolder(project, monitor, "src/main/app");
+                    
                     connection.close();
+                    
                 } catch (CoreException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -97,6 +111,16 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
             return false;
         }
         return true;
+    }
+    
+    private void addSourceFolder(IProject project, IProgressMonitor monitor, String folder) throws JavaModelException {
+    	//now it should be a java project
+        IJavaProject javaProj = JavaCore.create(project);
+    	IPath entry = javaProj.getPath().append("src/main/app");
+        IClasspathEntry[] entries = javaProj.getRawClasspath(); 
+        IClasspathEntry[] newEntries = new IClasspathEntry[] {JavaCore.newSourceEntry(entry)};
+        entries = (IClasspathEntry[]) ArrayUtils.addAll(newEntries, entries);
+        javaProj.setRawClasspath(entries, monitor);    	
     }
 
 }
