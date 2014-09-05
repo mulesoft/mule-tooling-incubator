@@ -87,7 +87,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     public NewDevkitProjectWizardPage(ConnectorMavenModel model) {
         super("wizardPage");
         setTitle(NewDevkitProjectWizard.WIZZARD_PAGE_TITTLE);
-        setDescription("Create a project for an Anypoint Connector.");
+        setDescription("Create an Anypoint Connector project.");
 
         if (!MuleCorePlugin.getServerManager().getServerDefinitions().isEmpty()) {
             selectedServerDefinition = new MuleStudioPreference().getDefaultRuntimeSelection();
