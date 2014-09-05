@@ -108,10 +108,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
             @Override
             public void doubleClick(DoubleClickEvent event) {
                 IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
-                if (thisSelection.getFirstElement() instanceof Property) {
-                    goToSampleInDocSampleFile(thisSelection);
-
-                } else if (thisSelection.getFirstElement() instanceof NodeItem) {
+                if (thisSelection.getFirstElement() instanceof NodeItem) {
                     NodeItem method = (NodeItem) thisSelection.getFirstElement();
                     ICompilationUnit cu = method.getCompilationUnit();
                     IEditorPart javaEditor;
@@ -126,78 +123,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                 }
             }
 
-            private void goToSampleInDocSampleFile(IStructuredSelection thisSelection) {
-                IFile file = getFileFromResource();
-                if (file == null)
-                    return;
-                InputStreamReader isr = null;
-                try {
-
-                    isr = new InputStreamReader(file.getContents());
-                    BufferedReader ir = new BufferedReader(isr);
-                    String line;
-                    int lineNumber = 0;
-                    Property prop = (Property) thisSelection.getFirstElement();
-                    boolean found = false;
-                    while ((line = ir.readLine()) != null) {
-                        lineNumber++;
-                        if (line.contains(prop.getValue())) {
-                            found = true;
-                            break;
-                        }
-
-                    }
-                    if (!found) {
-                        lineNumber = 0;
-                    }
-                    openSampleAtLine(file, lineNumber);
-                } catch (CoreException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (isr != null) {
-                        try {
-                            isr.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            private IFile getFileFromResource() {
-                IFile file = null;
-                IFolder folder = getCurrent().getFolder(DevkitUtils.DOCS_FOLDER);
-
-                try {
-                    for (IResource resource : folder.members()) {
-                        if (resource.getName().matches(".*.sample")) {
-                            file = getCurrent().getFile(resource.getProjectRelativePath());
-                            break;
-                        }
-                    }
-                } catch (CoreException e1) {
-                    e1.printStackTrace();
-                }
-                return file;
-            }
-
-            @SuppressWarnings({ "unchecked", "deprecation" })
-            private void openSampleAtLine(IFile file, int lineNumber) throws CoreException, PartInitException {
-                @SuppressWarnings({ "rawtypes" })
-                HashMap map = new HashMap();
-                map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
-                map.put(IWorkbenchPage.EDITOR_ID_ATTR, "org.mule.tooling.devkit.sample.editor.XMLEditor");
-                IMarker marker;
-
-                marker = file.createMarker(IMarker.TEXT);
-
-                marker.setAttributes(map);
-                // page.openEditor(marker); //2.1 API
-                IDE.openEditor(getSite().getPage(), marker); // 3.0 API
-                marker.delete();
-            }
+            
         });
     }
 
