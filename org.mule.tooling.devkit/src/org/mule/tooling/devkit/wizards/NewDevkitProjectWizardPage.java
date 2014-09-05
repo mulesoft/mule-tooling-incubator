@@ -312,7 +312,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private void addDatasense(Composite container) {
-        Group mavenGroupBox = UiUtils.createGroupWithTitle(container, "Datasense", 2);
+        Group mavenGroupBox = UiUtils.createGroupWithTitle(container, "DataSense", 2);
         datasense = initButton(mavenGroupBox, "Add DataSense methods", SWT.CHECK);
         query = initButton(mavenGroupBox, "Add DataSense Query Method", SWT.CHECK);
         mavenGroupBox.layout();
