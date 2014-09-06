@@ -108,7 +108,14 @@ public class TasksView extends ViewPart implements ISelectionListener {
         public String getText(Object obj) {
             if (obj instanceof GradleTask) {
                 GradleTask task = (GradleTask) obj;
-                return task.getName();
+                
+                String text = task.getName();
+                
+                if (task.getDescription() != null) {
+                	text = text + " - " +task.getDescription();
+                }
+                
+                return text;
             }
             return obj.toString();
         }
@@ -196,7 +203,7 @@ public class TasksView extends ViewPart implements ISelectionListener {
                 GradleBuildJob buildJob = new GradleBuildJob("Running task " + task.getName(), project, task.getName()) {
 					@Override
 					protected void handleException(Exception ex) {
-						MessageDialog.openError(getSite().getShell(), "Synchronization Error", "Could not run synchronization task: " + ex.getMessage());
+						MessageDialog.openError(getSite().getShell(), "Task run Error", "Could not run task "+ task.getName() +" : " + ex.getMessage());
 					}
 				};
                 

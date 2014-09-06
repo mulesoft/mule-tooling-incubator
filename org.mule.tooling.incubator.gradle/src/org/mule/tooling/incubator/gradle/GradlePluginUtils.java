@@ -30,7 +30,7 @@ public class GradlePluginUtils {
 	
 	
 	public static final String[] TASK_BLACKLIST = {"studio", "eclipse", "cleanEclipse", "eclipseClasspath", "eclipseJdt", "eclipseProject", 
-		"cleanEclipseClasspath", "cleanEclipseJdt", "cleanEclipseProject", "muleDeps" , "unpackClover"}; 
+		"cleanEclipseClasspath", "cleanEclipseJdt", "cleanEclipseProject", "muleDeps" , "unpackClover", "configureInstall"}; 
 	
 	/**
 	 * Add a source folder to the project.
