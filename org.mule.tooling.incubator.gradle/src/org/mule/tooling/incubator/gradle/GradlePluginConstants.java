@@ -18,4 +18,16 @@ public class GradlePluginConstants {
 	 * If selected gradle version is equals to this constant, then gradle home should be used.
 	 */
 	public static final String USE_GRADLE_HOME_VERSION_VALUE = "@usehome";
+	
+	
+	/**
+	 * The default logging level for the gradle build.
+	 */
+	public static final String DEFAULT_LOG_LEVEL = "";
+	
+	
+	/**
+	 * Command line option for enabling stacktraces in the gradle build.
+	 */
+	public static final String ENABLE_STACKTRACE_FLAG = "--stacktrace";
 }

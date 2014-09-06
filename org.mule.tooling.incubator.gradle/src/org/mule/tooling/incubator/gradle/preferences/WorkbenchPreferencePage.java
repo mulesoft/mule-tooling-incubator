@@ -2,13 +2,12 @@ package org.mule.tooling.incubator.gradle.preferences;
 
 import java.io.File;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.mule.tooling.incubator.gradle.Activator;
@@ -20,6 +19,8 @@ public class WorkbenchPreferencePage extends FieldEditorPreferencePage implement
     public static String GRADLE_HOME_ID = "gradle.home";
     public static String GRADLE_PLUGIN_VERSION_ID = "gradle.plugin.version";
     public static String GRADLE_VERSION_ID = "gradle.version";
+    public static String GRADLE_LOG_LEVEL_ID = "gradle.log.level";
+    public static String GRADLE_PRINT_STACKTRACES_ID = "gradle.printstactraces";
     
     ComboFieldEditor versionsEditor;
     DirectoryFieldEditor gradleHomeField;
@@ -27,7 +28,13 @@ public class WorkbenchPreferencePage extends FieldEditorPreferencePage implement
     
     private static String[][] AVAILABLE_VERSIONS = {{"2.0", "2.0"}, {"1.12 (recommended)", "1.12"}, {"Custom", GradlePluginConstants.USE_GRADLE_HOME_VERSION_VALUE}};
     
+    /**
+     * Note: values are set here for convenience.
+     */
+    private static String[][] LOG_LEVELS = {{"None",  ""}, {"Info", "--info"}, {"Debug", "--debug"}};
+    
     public WorkbenchPreferencePage() {
+    	super(GRID);
     }
 
     @Override
@@ -49,7 +56,8 @@ public class WorkbenchPreferencePage extends FieldEditorPreferencePage implement
     	addField(versionsEditor);
     	addField(gradleHomeField);
         addField(new StringFieldEditor(GRADLE_PLUGIN_VERSION_ID, "Plugin Version", getFieldEditorParent()));
-        
+        addField(new ComboFieldEditor(GRADLE_LOG_LEVEL_ID, "Log level", LOG_LEVELS, getFieldEditorParent()));
+        addField(new BooleanFieldEditor(GRADLE_PRINT_STACKTRACES_ID, "Print stacktraces", getFieldEditorParent()));
     }
     
     @Override

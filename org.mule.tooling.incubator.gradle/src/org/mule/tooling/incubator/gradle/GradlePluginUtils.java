@@ -1,6 +1,7 @@
 package org.mule.tooling.incubator.gradle;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.resources.IProject;
@@ -11,6 +12,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.GradleConnector;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 
@@ -99,6 +101,30 @@ public class GradlePluginUtils {
 		}
 		
 		connector.useGradleVersion(gradleVersion);
+	}
+
+	public static void setBuildLoggingOptions(BuildLauncher build) {
+		setBuildLoggingOptions(build, Activator.getDefault().getPreferenceStore());
+	}
+	
+	static void setBuildLoggingOptions(BuildLauncher build, IPreferenceStore prefs) {
+		
+		ArrayList<String> buildArgs = new ArrayList<String>();
+		
+		String logLevel = prefs.getString(WorkbenchPreferencePage.GRADLE_LOG_LEVEL_ID);
+		if (!logLevel.isEmpty()) {
+			buildArgs.add(logLevel);	
+		}
+		if (prefs.getBoolean(WorkbenchPreferencePage.GRADLE_PRINT_STACKTRACES_ID)) {
+			buildArgs.add(GradlePluginConstants.ENABLE_STACKTRACE_FLAG);
+		}
+		
+		if(buildArgs.isEmpty()) {
+			//do not modify the build.
+			return;
+		}
+		
+		build.withArguments(buildArgs.toArray(new String[0]));
 	}
 	
 	

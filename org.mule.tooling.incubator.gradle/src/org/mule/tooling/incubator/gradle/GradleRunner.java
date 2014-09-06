@@ -15,6 +15,7 @@ public class GradleRunner {
         final IOConsoleOutputStream consoleStream = messageConsole.newOutputStream();
         build.setStandardOutput(consoleStream);
         build.setStandardError(consoleStream);
+        GradlePluginUtils.setBuildLoggingOptions(build);
         UiUtils.showConsoleView();
         // STUDIO-2676 - bring new console to front
         ConsolePlugin.getDefault().getConsoleManager().showConsoleView(messageConsole);

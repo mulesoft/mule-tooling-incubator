@@ -40,6 +40,8 @@ public class Activator extends AbstractUIPlugin {
 		//set the default gradle plugin version.
 		prefsStore.setDefault(WorkbenchPreferencePage.GRADLE_PLUGIN_VERSION_ID, GradlePluginConstants.DEFAULT_PLUGIN_VERSION);
 		prefsStore.setDefault(WorkbenchPreferencePage.GRADLE_VERSION_ID, GradlePluginConstants.RECOMMENDED_GRADLE_VERSION);
+		prefsStore.setDefault(WorkbenchPreferencePage.GRADLE_LOG_LEVEL_ID, "");
+		prefsStore.setDefault(WorkbenchPreferencePage.GRADLE_PRINT_STACKTRACES_ID, false);
 		
 	}
 
