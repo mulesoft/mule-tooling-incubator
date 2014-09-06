@@ -1,20 +1,13 @@
 package org.mule.tooling.incubator.gradle.wizard;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -22,20 +15,18 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
-import org.mule.tooling.incubator.gradle.Activator;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.GradleRunner;
 import org.mule.tooling.incubator.gradle.model.GradleProject;
-import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 import org.mule.tooling.incubator.gradle.template.TemplateFileWriter;
 import org.mule.tooling.incubator.gradle.template.VelocityReplacer;
 
 public class ProjectNewWizard extends Wizard implements INewWizard {
 
     ProjectNewWizardPage page;
-
+    
+    
     public ProjectNewWizard() {
         setNeedsProgressMonitor(true);
     }
@@ -67,10 +58,11 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                 monitor.beginTask("Creating project" + gradleProject.getGroupId(), 2);
+                IProject project = null;
                 try {
                     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
-                    IProject project = root.getProject(projectName);
+                    project = root.getProject(projectName);
                     if (!project.exists()) {
                         project.create(monitor);
                         project.open(monitor);
@@ -91,12 +83,17 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
                     GradlePluginUtils.addSourceFolder(project, monitor, "src/main/app");
                     
                     connection.close();
-                    
+                
+                } catch (RuntimeException e) {
+                	deleteFailedProject(project, monitor);
+                	throw new RuntimeException("Failed to create project", e);
                 } catch (CoreException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    deleteFailedProject(project, monitor);
+                	e.printStackTrace();
+                	throw new RuntimeException("Failed to create project", e);
                 }
             }
+
         };
         try {
             getContainer().run(true, true, op);
@@ -110,6 +107,20 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
         return true;
     }
     
-
+	private void deleteFailedProject(IProject project, IProgressMonitor monitor) {
+		
+		try {
+			if (project == null) {
+				return;
+			}
+			
+			if (project.exists()) {
+				project.delete(true, true, monitor);
+			}
+		} catch (CoreException ex) {
+			//TODO - handle exception better.
+			ex.printStackTrace();
+		}
+	}
 
 }
