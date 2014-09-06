@@ -31,7 +31,7 @@ public class WorkbenchPreferencePage extends FieldEditorPreferencePage implement
     /**
      * Note: values are set here for convenience.
      */
-    private static String[][] LOG_LEVELS = {{"None",  ""}, {"Info", "--info"}, {"Debug", "--debug"}};
+    private static String[][] LOG_LEVELS = {{"Default",  ""}, {"Info", "--info"}, {"Debug", "--debug"}};
     
     public WorkbenchPreferencePage() {
     	super(GRID);
