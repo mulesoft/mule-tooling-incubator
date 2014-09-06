@@ -2,6 +2,8 @@ package org.mule.tooling.incubator.gradle;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.core.resources.IProject;
@@ -14,6 +16,9 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.GradleConnector;
+import org.gradle.tooling.ProjectConnection;
+import org.gradle.tooling.model.GradleProject;
+import org.gradle.tooling.model.GradleTask;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 
 /**
@@ -22,6 +27,10 @@ import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
  *
  */
 public class GradlePluginUtils {
+	
+	
+	public static final String[] TASK_BLACKLIST = {"studio", "eclipse", "cleanEclipse", "eclipseClasspath", "eclipseJdt", "eclipseProject", 
+		"cleanEclipseClasspath", "cleanEclipseJdt", "cleanEclipseProject", "muleDeps" , "unpackClover"}; 
 	
 	/**
 	 * Add a source folder to the project.
@@ -127,5 +136,29 @@ public class GradlePluginUtils {
 		build.withArguments(buildArgs.toArray(new String[0]));
 	}
 	
+	
+	public static GradleProject getProjectModelForProject(IProject project) {
+		ProjectConnection connection = null;
+		try {
+			connection = buildConnectionForProject(project.getLocation().toFile().getAbsoluteFile()).connect();
+			return connection.getModel(GradleProject.class);
+		} finally {
+			connection.close();
+		}
+	}
+	
+	public static List<GradleTask> buildFilteredTaskList(GradleProject project) {
+		Set<GradleTask> tasks = (Set<GradleTask>) project.getTasks();
+		
+		List<GradleTask> callableTasks = new ArrayList<GradleTask>();
+		
+		for (GradleTask task : tasks) {
+			if (!ArrayUtils.contains(TASK_BLACKLIST, task.getName())) {
+				callableTasks.add(task);
+			}
+		}
+		
+		return callableTasks;
+	}
 	
 }

@@ -30,4 +30,7 @@ public class GradlePluginConstants {
 	 * Command line option for enabling stacktraces in the gradle build.
 	 */
 	public static final String ENABLE_STACKTRACE_FLAG = "--stacktrace";
+	
+	
+	
 }

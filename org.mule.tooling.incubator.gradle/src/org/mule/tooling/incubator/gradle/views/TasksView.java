@@ -1,12 +1,10 @@
 package org.mule.tooling.incubator.gradle.views;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
@@ -16,6 +14,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -41,11 +40,10 @@ import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
-import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.GradleTask;
+import org.mule.tooling.incubator.gradle.GradleBuildJob;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
-import org.mule.tooling.incubator.gradle.GradleRunner;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view shows data obtained from the model. The sample creates a dummy model on the fly, but a real
@@ -66,7 +64,6 @@ public class TasksView extends ViewPart implements ISelectionListener {
     private TreeViewer viewer;
     private DrillDownAdapter drillDownAdapter;
     private Action doubleClickAction;
-    ProjectConnection connection;
     IProject project;
 
     class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
@@ -92,7 +89,7 @@ public class TasksView extends ViewPart implements ISelectionListener {
 
         public Object[] getChildren(Object parent) {
             if (parent instanceof GradleProject) {
-                return ((GradleProject) parent).getTasks().toArray();
+                return GradlePluginUtils.buildFilteredTaskList((GradleProject) parent).toArray();
             }
             return new Object[0];
         }
@@ -196,25 +193,14 @@ public class TasksView extends ViewPart implements ISelectionListener {
                 ISelection selection = viewer.getSelection();
                 Object obj = ((IStructuredSelection) selection).getFirstElement();
                 final GradleTask task = (GradleTask) obj;
-
-                WorkspaceJob job = new WorkspaceJob("Running task " + task.getName()) {
-
-                    @Override
-                    public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-                        try {
-                            GradleRunner.run(connection.newBuild().forTasks(task), monitor);
-                            project.getProject().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-                        } catch (CoreException e) {
-                            return Status.CANCEL_STATUS;
-                        }
-                        return Status.OK_STATUS;
-                    }
-
-                };
-                job.setUser(false);
-                job.setPriority(Job.DECORATE);
-                job.setRule(project.getProject());
-                job.schedule();
+                GradleBuildJob buildJob = new GradleBuildJob("Running task " + task.getName(), project, task.getName()) {
+					@Override
+					protected void handleException(Exception ex) {
+						MessageDialog.openError(getSite().getShell(), "Synchronization Error", "Could not run synchronization task: " + ex.getMessage());
+					}
+				};
+                
+				buildJob.doSchedule();
 
             }
         };
@@ -258,12 +244,7 @@ public class TasksView extends ViewPart implements ISelectionListener {
                     if (selected instanceof IProject) {
                         project = (IProject) selected;
 
-                        //it should be valid always to run now.
-                        if (connection != null) {
-                            connection.close();
-                        }
-                        connection  = GradlePluginUtils.buildConnectionForProject(project.getLocation().toFile().getAbsoluteFile()).connect();
-                        final GradleProject gradleProject = connection.getModel(GradleProject.class);
+                        final GradleProject gradleProject = GradlePluginUtils.getProjectModelForProject(project);
                         Display.getDefault().asyncExec(new Runnable() {
 
                             @Override
