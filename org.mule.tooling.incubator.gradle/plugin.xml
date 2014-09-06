@@ -99,6 +99,12 @@
                label="Synchronize Project"
                menubarPath="org.mule.tooling.incubator.gradle.menu/group">
          </action>
+         <action
+               class="org.mule.tooling.incubator.gradle.actions.ShowTasksViewAction"
+               id="org.mule.tooling.incubator.gradle.showTasksView"
+               label="Run Tasks..."
+               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
+         </action>
       </objectContribution>
    </extension>
 

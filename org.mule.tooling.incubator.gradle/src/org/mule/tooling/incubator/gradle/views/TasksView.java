@@ -59,7 +59,7 @@ public class TasksView extends ViewPart implements ISelectionListener {
     /**
      * The ID of the view as specified by the extension.
      */
-    public static final String ID = "org.mule.tooling.incubator.gradle.views.TasksView";
+    public static final String ID = "org.mule.tooling.gradle.views.TasksView";
 
     private TreeViewer viewer;
     private DrillDownAdapter drillDownAdapter;
