@@ -26,7 +26,6 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
 
     ProjectNewWizardPage page;
     
-    
     public ProjectNewWizard() {
         setNeedsProgressMonitor(true);
     }

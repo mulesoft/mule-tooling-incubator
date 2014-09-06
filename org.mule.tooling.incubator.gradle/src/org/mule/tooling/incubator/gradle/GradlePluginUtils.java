@@ -12,7 +12,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.gradle.tooling.GradleConnector;
-import org.gradle.tooling.ProjectConnection;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 
 /**
