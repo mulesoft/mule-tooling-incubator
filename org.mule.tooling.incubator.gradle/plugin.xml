@@ -47,5 +47,59 @@
          </view>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.mule.tooling.incubator.gradle.resourceMenuContribution"
+            nameFilter="build.gradle"
+            objectClass="org.eclipse.core.resources.IResource">
+         <visibility>
+            <objectState
+                  name="projectNature"
+                  value="org.mule.tooling.core.muleNature">
+            </objectState></visibility>
+         <menu
+               icon="icons/gradle16x16.png"
+               id="org.mule.tooling.incubator.gradle.menu"
+               label="Gradle support in Studio"
+               path="additions">
+            <separator
+                  name="group">
+            </separator>
+         </menu>
+         <action
+               class="org.mule.tooling.incubator.gradle.actions.SynchronizeProjectAction"
+               id="org.mule.tooling.incubator.gradle.updateDeps"
+               label="Synchronize Project"
+               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
+         </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.mule.tooling.incubator.gradle.projectMenuContribution"
+            objectClass="org.eclipse.jdt.core.IJavaProject">
+         <visibility>
+            <objectState
+                  name="projectNature"
+                  value="org.mule.tooling.core.muleNature">
+            </objectState></visibility>
+         <menu
+               icon="icons/gradle16x16.png"
+               id="org.mule.tooling.incubator.gradle.menu"
+               label="Gradle support in Studio"
+               path="additions">
+            <separator
+                  name="group">
+            </separator>
+         </menu>
+         <action
+               class="org.mule.tooling.incubator.gradle.actions.SynchronizeProjectAction"
+               id="org.mule.tooling.incubator.gradle.updateDeps"
+               label="Synchronize Project"
+               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
+         </action>
+      </objectContribution>
+   </extension>
 
 </plugin>
