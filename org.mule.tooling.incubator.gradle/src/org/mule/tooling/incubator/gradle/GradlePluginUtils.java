@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
@@ -42,45 +43,14 @@ public class GradlePluginUtils {
     	File gradleHome = new File(Activator.getDefault().getPreferenceStore().getString(WorkbenchPreferencePage.GRADLE_HOME_ID));
         return isFileValidGradleInstallation(gradleHome);
     }
-    
-    /**
-     * Return the configured gradle home or else, try to find a suitable one in the OS
-     * @return
-     */
-    public static File findGradleHome() {
-    	File gradleHome = new File(Activator.getDefault().getPreferenceStore().getString(WorkbenchPreferencePage.GRADLE_HOME_ID));
-    	
-    	if (isFileValidGradleInstallation(gradleHome)) {
-    		return gradleHome;
-    	}
-    	
-    	return detectGradleInstallation();
-    }
-    
-    
-    /**
-     * Detect a gradle installation.
-     * @return
-     */
-	private static File detectGradleInstallation() {
-		
-		File ret = null;
-		
-		//check the enviroment variable
-		String envGradleHome = System.getenv("GRADLE_HOME");
-		
-		if (envGradleHome != null) {
-			ret = new File(envGradleHome);
-			if (isFileValidGradleInstallation(ret)) {
-				return ret;
-			}
-		}
-		
-		return ret;
-	}
-    
+        
 	
-	private static boolean isFileValidGradleInstallation(File gradleHome) {
+    /**
+     * Check if a given directory is a valid gradle home, at least in structure.
+     * @param gradleHome
+     * @return
+     */
+	public static boolean isFileValidGradleInstallation(File gradleHome) {
     	if (!gradleHome.exists()) {
     		return false;
     	}
@@ -104,17 +74,32 @@ public class GradlePluginUtils {
 	 */
 	public static GradleConnector buildConnectionForProject(File projectLocation) {
 		GradleConnector connector = GradleConnector.newConnector().forProjectDirectory(projectLocation);
-        
-		File gradleHome = findGradleHome();
+        configureGradleRuntime(connector, Activator.getDefault().getPreferenceStore());
+		return connector;
+	}
+	
+	/**
+	 * Configure the gradle runtime, version or home depending on the settings.
+	 * @param connector
+	 */
+	public static void configureGradleRuntime(GradleConnector connector, IPreferenceStore prefs) {
 		
-		if (gradleHome != null) {
-			connector.useGradleUserHomeDir(gradleHome);
-		} else {
-			//instruct the tooling api to download an appropriate one.
-			connector.useGradleVersion(GradlePluginConstants.RECOMMENDED_GRADLE_VERSION);
+		String gradleVersion = prefs.getString(WorkbenchPreferencePage.GRADLE_VERSION_ID);
+		
+		if (GradlePluginConstants.USE_GRADLE_HOME_VERSION_VALUE.equals(gradleVersion)) {
+			String gradleHome = prefs.getString(WorkbenchPreferencePage.GRADLE_HOME_ID);
+			
+			File gradleHomeDir = new File(gradleHome);
+			
+			if (isFileValidGradleInstallation(gradleHomeDir)) {
+				connector.useInstallation(gradleHomeDir);
+				return;
+			} else {
+				throw new IllegalStateException("Configured gradle home is not valid");
+			}
 		}
 		
-		return connector;
+		connector.useGradleVersion(gradleVersion);
 	}
 	
 	
