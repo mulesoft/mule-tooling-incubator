@@ -1,7 +1,5 @@
 package org.mule.tooling.incubator.gradle.views;
 
-import java.io.File;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -12,14 +10,12 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -233,10 +229,6 @@ public class TasksView extends ViewPart implements ISelectionListener {
         });
     }
 
-    private void showMessage(String message) {
-        MessageDialog.openInformation(viewer.getControl().getShell(), "Gradle Tasks View", message);
-    }
-
     /**
      * Passing the focus request to the viewer's control.
      */
@@ -249,7 +241,6 @@ public class TasksView extends ViewPart implements ISelectionListener {
         if (selection.isEmpty())
             return;
         final ISelection currentSelection = selection;
-        final IWorkbenchPart workbenchPart = part;
         final String convertingMsg = "Checking Modules in project...";
         final WorkspaceJob refreshDevkitViewJob = new WorkspaceJob(convertingMsg) {
 
