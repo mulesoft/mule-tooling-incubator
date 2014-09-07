@@ -6,6 +6,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.incubator.gradle.GradleBuildJob;
 
 public class BuildUpdatedListener implements IResourceChangeListener {
@@ -38,7 +39,14 @@ public class BuildUpdatedListener implements IResourceChangeListener {
 	}
 	
 	
-	private void doRefreshProject(IProject proj) {
+	private void doRefreshProject(IProject proj) throws CoreException {
+		
+		//the project should be a mule project.
+		if (!CoreUtils.hasMuleNature(proj)) {
+			//this is simply not a mule project. don't bother
+			return;
+		}
+		
 		GradleBuildJob refreshProjectJob = new GradleBuildJob("Refreshing project after change...", proj, "studio") {
 			
 			@Override
