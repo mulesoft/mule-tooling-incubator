@@ -3,10 +3,15 @@ package org.mule.tooling.incubator.gradle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+
 import org.apache.commons.lang.ArrayUtils;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,6 +25,8 @@ import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.GradleTask;
+import org.mule.tooling.incubator.gradle.model.StudioDepencencies;
+import org.mule.tooling.incubator.gradle.model.StudioDependency;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 
 /**
@@ -162,6 +169,29 @@ public class GradlePluginUtils {
 		}
 		
 		return callableTasks;
+	}
+	
+	
+	public static StudioDepencencies parseStudioDependencies(IProject project) {
+		
+		IFile inputFile = project.getFile("/studio-deps.xml");
+		
+		if (!inputFile.exists()) {
+			StudioDepencencies deps = new StudioDepencencies();
+			deps.setDependencies(new ArrayList<StudioDependency>());
+			return deps;
+		}
+		
+		try {
+			//TODO - to be improved.
+			JAXBContext context = JAXBContext.newInstance(StudioDepencencies.class);
+			Unmarshaller um = context.createUnmarshaller();
+			return (StudioDepencencies) um.unmarshal(inputFile.getContents());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 }

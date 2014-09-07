@@ -14,7 +14,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.core,
  org.eclipse.ui.ide,
  org.eclipse.ui.console,
- org.apache.commons.lang;bundle-version="2.4.0"
+ org.apache.commons.lang;bundle-version="2.4.0",
+ org.eclipse.ui.editors,
+ org.eclipse.ui.forms
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
