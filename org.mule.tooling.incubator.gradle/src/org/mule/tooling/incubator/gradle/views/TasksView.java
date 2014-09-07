@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -29,6 +30,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
@@ -185,6 +187,29 @@ public class TasksView extends ViewPart implements ISelectionListener {
         drillDownAdapter.addNavigationActions(manager);
         // Other plug-ins can contribute there actions here
         manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+        
+        Action runAction = new Action("Run with arguments...") {
+        	@Override
+        	public void runWithEvent(Event event) {
+        		InputDialog dialog = new InputDialog(getSite().getShell(), "Task Arguments", "Enter task run arguments", "", null);
+        		dialog.open();
+        		
+        		if (dialog.getReturnCode() == InputDialog.CANCEL) {
+        			return;
+        		}
+        		
+        		String args = dialog.getValue();
+        		
+        		String[] argsArr = args.split(" ");
+        		
+        		runSelectedTask(argsArr);
+        	}
+		};
+        
+        runAction.setEnabled(((IStructuredSelection)viewer.getSelection()).getFirstElement() != null);
+        
+        //add the actions.
+        manager.add(runAction);
     }
 
     private void fillLocalToolBar(IToolBarManager manager) {
@@ -197,18 +222,7 @@ public class TasksView extends ViewPart implements ISelectionListener {
         doubleClickAction = new Action() {
 
             public void run() {
-                ISelection selection = viewer.getSelection();
-                Object obj = ((IStructuredSelection) selection).getFirstElement();
-                final GradleTask task = (GradleTask) obj;
-                GradleBuildJob buildJob = new GradleBuildJob("Running task " + task.getName(), project, task.getName()) {
-					@Override
-					protected void handleException(Exception ex) {
-						MessageDialog.openError(getSite().getShell(), "Task run Error", "Could not run task "+ task.getName() +" : " + ex.getMessage());
-					}
-				};
-                
-				buildJob.doSchedule();
-
+            	runSelectedTask(null);
             }
         };
     }
@@ -271,7 +285,28 @@ public class TasksView extends ViewPart implements ISelectionListener {
         refreshDevkitViewJob.setPriority(Job.SHORT);
         refreshDevkitViewJob.schedule();
     }
-
+    
+    private void runSelectedTask(String[] arguments) {
+        ISelection selection = viewer.getSelection();
+        Object obj = ((IStructuredSelection) selection).getFirstElement();
+        
+        if (obj == null) {
+        	return;
+        }
+        
+        final GradleTask task = (GradleTask) obj;
+        GradleBuildJob buildJob = new GradleBuildJob("Running task " + task.getName(), project, task.getName()) {
+			@Override
+			protected void handleException(Exception ex) {
+				MessageDialog.openError(getSite().getShell(), "Task run Error", "Could not run task "+ task.getName() +" : " + ex.getMessage());
+			}
+		};
+        
+		buildJob.setArguments(arguments);
+		buildJob.doSchedule();
+    }
+    
+    
     public void dispose() {
         getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
     }

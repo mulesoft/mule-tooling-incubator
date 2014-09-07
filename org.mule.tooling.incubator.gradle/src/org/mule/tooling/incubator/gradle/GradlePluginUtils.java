@@ -2,6 +2,7 @@ package org.mule.tooling.incubator.gradle;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -112,13 +113,15 @@ public class GradlePluginUtils {
 		connector.useGradleVersion(gradleVersion);
 	}
 
-	public static void setBuildLoggingOptions(BuildLauncher build) {
-		setBuildLoggingOptions(build, Activator.getDefault().getPreferenceStore());
+	public static void setBuildLoggingOptions(BuildLauncher build, String... arguments) {
+		setBuildLoggingOptions(build, Activator.getDefault().getPreferenceStore(), arguments);
 	}
 	
-	static void setBuildLoggingOptions(BuildLauncher build, IPreferenceStore prefs) {
+	static void setBuildLoggingOptions(BuildLauncher build, IPreferenceStore prefs, String[] additionalArguments) {
 		
 		ArrayList<String> buildArgs = new ArrayList<String>();
+		
+		buildArgs.addAll(Arrays.asList(additionalArguments));
 		
 		String logLevel = prefs.getString(WorkbenchPreferencePage.GRADLE_LOG_LEVEL_ID);
 		if (!logLevel.isEmpty()) {

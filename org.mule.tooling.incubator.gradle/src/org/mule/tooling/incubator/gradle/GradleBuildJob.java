@@ -26,6 +26,7 @@ public abstract class GradleBuildJob extends WorkspaceJob {
 	
 	IProject project;
 	String[] tasks;
+	String[] arguments;
 	
 	public GradleBuildJob(String name, IProject project, String... tasks) {
 		super(name);
@@ -42,8 +43,14 @@ public abstract class GradleBuildJob extends WorkspaceJob {
 		try {
 			File projectPath = project.getLocation().toFile().getAbsoluteFile();
 			projConnection = GradlePluginUtils.buildConnectionForProject(projectPath).connect();
-			BuildLauncher build = projConnection.newBuild().forTasks("studio");
-			GradleRunner.run(build, monitor);
+			BuildLauncher build = projConnection.newBuild().forTasks(tasks);
+			
+			if (arguments != null) {
+				GradleRunner.run(build, monitor, arguments);
+			} else {
+				GradleRunner.run(build, monitor);
+			}
+			
 			project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 			return Status.OK_STATUS;
 		} catch (Exception ex) {
@@ -61,6 +68,26 @@ public abstract class GradleBuildJob extends WorkspaceJob {
         super.schedule();
 	}
 	
+	
+	public String[] getArguments() {
+		return arguments;
+	}
+
+
+	public void setArguments(String[] arguments) {
+		this.arguments = arguments;
+	}
+	
+	public String[] getTasks() {
+		return tasks;
+	}
+
+
+	public void setTasks(String[] tasks) {
+		this.tasks = tasks;
+	}
+
+
 	protected abstract void handleException(Exception ex);
 	
 }

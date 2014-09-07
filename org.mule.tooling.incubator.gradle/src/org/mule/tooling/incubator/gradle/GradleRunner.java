@@ -9,13 +9,13 @@ import org.mule.tooling.ui.utils.UiUtils;
 
 public class GradleRunner {
 
-    public static void run(final BuildLauncher build, IProgressMonitor monitor) {
+    public static void run(final BuildLauncher build, IProgressMonitor monitor, String... runArgs) {
         monitor.beginTask("Running gradle build", IProgressMonitor.UNKNOWN);
         MessageConsole messageConsole = UiUtils.getMessageConsole("Gradle run");
         final IOConsoleOutputStream consoleStream = messageConsole.newOutputStream();
         build.setStandardOutput(consoleStream);
         build.setStandardError(consoleStream);
-        GradlePluginUtils.setBuildLoggingOptions(build);
+        GradlePluginUtils.setBuildLoggingOptions(build, runArgs);
         UiUtils.showConsoleView();
         // STUDIO-2676 - bring new console to front
         ConsolePlugin.getDefault().getConsoleManager().showConsoleView(messageConsole);
