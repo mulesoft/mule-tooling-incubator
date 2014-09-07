@@ -1,7 +1,9 @@
 package org.mule.tooling.incubator.gradle;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.mule.tooling.incubator.gradle.listeners.BuildUpdatedListener;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 import org.osgi.framework.BundleContext;
 
@@ -16,10 +18,13 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 	
+	private BuildUpdatedListener buildRefreshListener;
+	
 	/**
 	 * The constructor
 	 */
 	public Activator() {
+
 	}
 
 	/*
@@ -30,6 +35,13 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		applyDefaultValues();
+		
+		//register the file change listener
+		//since plugins are lazy activated, this might not happen until the plugin is actually used.
+		//so if the user modifies the build.gradle before activating the plugin, the refresh will not get triggered.
+		//we'll have to live with that for now.
+		buildRefreshListener = new BuildUpdatedListener();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(buildRefreshListener);		
 	}
 
 	private void applyDefaultValues() {
@@ -52,6 +64,7 @@ public class Activator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(buildRefreshListener);
 	}
 
 	/**
