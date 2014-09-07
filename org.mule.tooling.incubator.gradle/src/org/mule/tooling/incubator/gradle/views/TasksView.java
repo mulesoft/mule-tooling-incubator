@@ -248,7 +248,7 @@ public class TasksView extends ViewPart implements ISelectionListener {
         if (selection.isEmpty())
             return;
         final ISelection currentSelection = selection;
-        final String convertingMsg = "Checking Modules in project...";
+        final String convertingMsg = "Listing gradle tasks...";
         final WorkspaceJob refreshDevkitViewJob = new WorkspaceJob(convertingMsg) {
 
             @Override
