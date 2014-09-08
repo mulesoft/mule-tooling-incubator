@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -15,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -25,7 +27,7 @@ import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.GradleTask;
-import org.mule.tooling.incubator.gradle.model.StudioDepencencies;
+import org.mule.tooling.incubator.gradle.model.StudioDependencies;
 import org.mule.tooling.incubator.gradle.model.StudioDependency;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 
@@ -37,6 +39,7 @@ import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 public class GradlePluginUtils {
 	
 	
+	public static final String STUDIO_DEPS_FILE = "studio-deps.xml";
 	public static final String[] TASK_BLACKLIST = {"studio", "eclipse", "cleanEclipse", "eclipseClasspath", "eclipseJdt", "eclipseProject", 
 		"cleanEclipseClasspath", "cleanEclipseJdt", "cleanEclipseProject", "muleDeps" , "unpackClover", "configureInstall"}; 
 	
@@ -172,26 +175,48 @@ public class GradlePluginUtils {
 	}
 	
 	
-	public static StudioDepencencies parseStudioDependencies(IProject project) {
+	public static StudioDependencies parseStudioDependencies(IProject project) {
 		
-		IFile inputFile = project.getFile("/studio-deps.xml");
+		IFile inputFile = project.getFile(STUDIO_DEPS_FILE);
 		
 		if (!inputFile.exists()) {
-			StudioDepencencies deps = new StudioDepencencies();
+			StudioDependencies deps = new StudioDependencies();
 			deps.setDependencies(new ArrayList<StudioDependency>());
 			return deps;
 		}
 		
 		try {
 			//TODO - to be improved.
-			JAXBContext context = JAXBContext.newInstance(StudioDepencencies.class);
+			JAXBContext context = JAXBContext.newInstance(StudioDependencies.class);
 			Unmarshaller um = context.createUnmarshaller();
-			return (StudioDepencencies) um.unmarshal(inputFile.getContents());
+			return (StudioDependencies) um.unmarshal(inputFile.getContents());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		
 		return null;
+	}
+
+	public static void saveStudioDependencies(IProject project,
+			StudioDependencies studioDependencies) {
+		
+		IFile depsFile = project.getFile(STUDIO_DEPS_FILE);
+		
+		try {
+			File outputFile = depsFile.getLocation().toFile().getAbsoluteFile();
+			if (!outputFile.exists()) {
+				outputFile.createNewFile();
+			}			
+			JAXBContext context = JAXBContext.newInstance(StudioDependencies.class);
+			Marshaller m = context.createMarshaller();
+			m.marshal(studioDependencies, outputFile);
+			
+			//two or noting
+			depsFile.touch(new NullProgressMonitor());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
 	}
 	
 }

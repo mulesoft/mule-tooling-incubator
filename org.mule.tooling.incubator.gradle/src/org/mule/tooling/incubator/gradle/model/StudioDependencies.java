@@ -9,10 +9,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="dependencies")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public class StudioDepencencies {
+public class StudioDependencies {
 	
 	
 	private List<StudioDependency> dependencies;
+	
+	
+	public StudioDependencies() {
+		
+	}
+	
+	public StudioDependencies(List<StudioDependency> dependencies) {
+		this.dependencies = dependencies;
+	}
 
 	@XmlElement(name="dependency")
 	public List<StudioDependency> getDependencies() {

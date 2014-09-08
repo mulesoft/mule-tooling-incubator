@@ -6,16 +6,12 @@ package org.mule.tooling.incubator.gradle.editors;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -25,9 +21,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.mule.tooling.incubator.gradle.GradlePluginUtils;
-import org.mule.tooling.incubator.gradle.model.StudioDepencencies;
-import org.mule.tooling.incubator.gradle.model.StudioDependency;
+import org.mule.tooling.incubator.gradle.GradleBuildJob;
 import org.mule.tooling.ui.MuleImages;
 
 
@@ -39,11 +33,9 @@ public class MuleGradleDependenciesEditor extends FormPage {
 	
 	public static final String FORM_PAGE_ID = "org.mule.tooling.gradle.dependenciesPage";
 	
-	private static final String[] TABLE_HEADERS = {"Group", "Artifact", "Version"};
-	
-	private Table dependenciesTable;
-	
 	private IProject project;
+	
+	private GradleDependenciesTablePart table;
 	
 	public MuleGradleDependenciesEditor(FormEditor editor,
 			String title, IProject project) {
@@ -78,48 +70,21 @@ public class MuleGradleDependenciesEditor extends FormPage {
 		toolBar.getSection().setLayoutData(toolbarData);
 		
 		
-		SectionPart depsTable = addDependenciesTable(toolkit, form);
+		GradleDependenciesTablePart depsTable = addDependenciesTable(toolkit, form);
 		managedForm.addPart(depsTable);
 		TableWrapData depsTableData = new TableWrapData(TableWrapData.FILL_GRAB);
 		depsTableData.rowspan = 2;
 		depsTableData.valign = TableWrapData.FILL;
 		depsTable.getSection().setLayoutData(depsTableData);
 		
-		
-		doRefreshTable();
+		this.table = depsTable;
+		table.refreshData();
 	}
 
 
-	private SectionPart addDependenciesTable(FormToolkit toolkit, ScrolledForm form) {
+	private GradleDependenciesTablePart addDependenciesTable(FormToolkit toolkit, ScrolledForm form) {
 		Composite formBody = form.getBody();
-		
-		SectionPart part = new SectionPart(formBody, toolkit, Section.TITLE_BAR);
-		
-		GridLayout layout = new GridLayout(2, false);
-		
-		part.getSection().setText("Dependencies");
-		
-		Composite client = toolkit.createComposite(part.getSection());
-		client.setLayout(layout);
-		
-		
-		
-		Table t = toolkit.createTable(client, SWT.BORDER | SWT.V_SCROLL);
-		
-		for(int colIndex = 0; colIndex < TABLE_HEADERS.length; colIndex ++) {
-			TableColumn col = new TableColumn(t, SWT.NONE);
-			col.setText(TABLE_HEADERS[colIndex]);
-			col.setWidth(200);
-		}
-		
-		t.setHeaderVisible(true);
-		
-		t.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		toolkit.paintBordersFor(client);
-		part.getSection().setClient(client);
-		
-		dependenciesTable = t;
+		GradleDependenciesTablePart part = new GradleDependenciesTablePart(formBody, toolkit, project);
 		return part;
 	}
 
@@ -145,11 +110,27 @@ public class MuleGradleDependenciesEditor extends FormPage {
 		Button addButton = new Button(client, SWT.PUSH);
 		addButton.setText("Add dependency...");
 		addButton.setLayoutData(buttonSizeData);
+		addButton.addListener(SWT.Selection, new Listener(){
+			
+			@Override
+			public void handleEvent(Event event) {
+				// TODO Auto-generated method stub
+				table.addNewRow();
+			}
+		});
 		
 		
 		Button deleteButton = new Button(client, SWT.PUSH);
 		deleteButton.setText("Remove dependency...");
 		deleteButton.setLayoutData(buttonSizeData);
+		deleteButton.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				table.removeSelectedRow();
+			}
+			
+		});
 		
 		
 		toolkit.paintBordersFor(client);
@@ -161,34 +142,27 @@ public class MuleGradleDependenciesEditor extends FormPage {
 	private void configureFormToolbarButtons(FormToolkit toolkit, ScrolledForm form) {
 		
 		form.getToolBarManager().add(new Action("Refresh project.") {
+			@Override
+			public void runWithEvent(Event event) {
+				doSynchronize();
+			}
 		});
 
 		form.getToolBarManager().update(true);
 	}
+
 	
-	
-	public void populateTable(StudioDepencencies deps) {
+	private void doSynchronize() {
+		GradleBuildJob job = new GradleBuildJob("removeDependency", project, "studio") {
+			
+			@Override
+			protected void handleException(Exception ex) {
+				// TODO Auto-generated method stub
+				ex.printStackTrace();
+			}
+		};
 		
-		if (deps == null) {
-			return;
-		}
-		
-		dependenciesTable.removeAll();
-		
-		//add items
-		for(StudioDependency dep : deps.getDependencies()) {
-			TableItem item = new TableItem(dependenciesTable, SWT.NONE);
-			item.setText(0, dep.getGroup() != null ? dep.getGroup() : "");
-			item.setText(1, dep.getName() != null ? dep.getName() : "");
-			item.setText(2, dep.getVersion() != null ? dep.getVersion() : "");
-		}
-		
-	}
-	
-	
-	private void doRefreshTable() {
-		//set the data to the table.
-		populateTable(GradlePluginUtils.parseStudioDependencies(project));
+		job.schedule();
 	}
 	
 }
