@@ -235,6 +235,11 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         templateFileWriter.apply("/templates/CHANGELOG.tmpl", "CHANGELOG.md", classReplacer);
         templateFileWriter.apply("/templates/LICENSE_HEADER.txt.tmpl", "LICENSE_HEADER.txt", classReplacer);
         templateFileWriter.apply("/templates/LICENSE.tmpl", "LICENSE.md", new NullReplacer());
+        String uncammelName = DevkitUtils.toConnectorName(mavenModel.getConnectorName());
+        ImageWriter imageWriter = new ImageWriter(project, monitor);
+        imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(uncammelName));
+        imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
+
         if (mavenModel.isSoapWithCXF()) {
             create(project.getFolder("src/main/resources/wsdl/"), monitor);
             templateFileWriter.apply("/templates/binding.xml.tmpl", "src/main/resources/wsdl/binding.xml", classReplacer);
@@ -277,7 +282,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
             IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, boolean isSoapCxf, Object apiType) throws CoreException {
         String uncammelName = DevkitUtils.toConnectorName(moduleName);
         TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
-        ImageWriter imageWriter = new ImageWriter(project, monitor);
         if (!isSoapCxf) {
             fileWriter.apply(mainTemplatePath, buildMainTargetFilePath(packageName, className), classReplacer);
         }
@@ -287,8 +291,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         }
 
         fileWriter.apply("/templates/example.tmpl", getExampleFileName(uncammelName), classReplacer);
-        imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(uncammelName));
-        imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
 
     }
 
