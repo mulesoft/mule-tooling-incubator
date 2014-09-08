@@ -211,8 +211,9 @@ public class GradlePluginUtils {
 			Marshaller m = context.createMarshaller();
 			m.marshal(studioDependencies, outputFile);
 			
-			//two or noting
-			depsFile.touch(new NullProgressMonitor());
+			//refresh the workspace.
+			project.refreshLocal(IProject.DEPTH_INFINITE, new NullProgressMonitor());
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
