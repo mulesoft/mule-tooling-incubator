@@ -3,7 +3,6 @@ package org.mule.tooling.incubator.gradle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -160,6 +159,7 @@ public class GradlePluginUtils {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static List<GradleTask> buildFilteredTaskList(GradleProject project) {
 		Set<GradleTask> tasks = (Set<GradleTask>) project.getTasks();
 		
