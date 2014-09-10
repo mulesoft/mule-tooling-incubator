@@ -1,12 +1,8 @@
 package org.mule.tooling.devkit.quickfix;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Annotation;
@@ -14,27 +10,21 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
-import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jdt.core.search.IJavaSearchScope;
-import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.core.search.SearchPattern;
-import org.eclipse.jdt.core.search.TypeNameMatch;
 
 public class LocateAnnotationVisitor extends ASTVisitor {
 
     private ASTNode node;
-    private final String annotation;
+    private List<QualifiedName> annotations;
     private int chartStart;
-    private ICompilationUnit cu;
 
-    public LocateAnnotationVisitor(int chartStart, String annotation, ICompilationUnit cu) {
-        this.annotation = annotation;
+    public LocateAnnotationVisitor(int chartStart, QualifiedName annotation) {
+        this.annotations = new ArrayList<QualifiedName>();
+        annotations.add(annotation);
         this.chartStart = chartStart;
-        this.cu = cu;
     }
 
     @SuppressWarnings("unchecked")
@@ -84,45 +74,21 @@ public class LocateAnnotationVisitor extends ASTVisitor {
     }
 
     protected boolean doVisit(Annotation node) {
-        String typeName = node.getTypeName().toString();
-        if (isFullyQualified(typeName)) {
-            if (annotation.equals(typeName)) {
+        for (QualifiedName annotationName : annotations) {
+            if (node.getTypeName().isQualifiedName()) {
+                if (node.getTypeName().getFullyQualifiedName().equals(annotationName.getFullyQualifiedName())) {
+                    this.setNode(node);
+                }
+            } else if (node.getTypeName() != null && node.getTypeName().resolveTypeBinding() != null
+                    && node.getTypeName().resolveTypeBinding().getBinaryName().equals(annotationName.getFullyQualifiedName())) {
                 this.setNode(node);
-            }
-        } else {
-            IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(new IJavaElement[] { cu.getJavaProject() });
-            SimpleName nameNode = null;
-            TypeNameMatch[] matches = findAllTypes(typeName, searchScope, nameNode, null);
-            if (matches.length == 0) {
-                // Not the best approach to check name of the class
-                if (annotation.endsWith("." + typeName)) {
-                    this.setNode(node);
-                }
-            } else if (matches.length != 1) {// only add import if we have a single match
-                return false;
-            } else if (matches.length == 1) {
-                TypeNameMatch match = matches[0];
-                if (match.getTypeQualifiedName().equals(annotation)) {
-                    this.setNode(node);
-                }
             }
         }
         return false;
     }
 
-    private boolean isFullyQualified(String typeName) {
-        return typeName.contains(".");
-    }
-
-    private TypeNameMatch[] findAllTypes(String string, IJavaSearchScope searchScope, SimpleName nameNode, Object object) {
-        List<TypeNameMatch> collection = new ArrayList<TypeNameMatch>();
-        try {
-            new SearchEngine().searchAllTypeNames(null, 0, annotation.toCharArray(), SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE,
-                    IJavaSearchConstants.ANNOTATION_TYPE, searchScope, new TypeNameMatchCollector(collection), IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
-        } catch (JavaModelException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return collection.toArray(new TypeNameMatch[0]);
+    public LocateAnnotationVisitor addAnnotation(QualifiedName annotation) {
+        annotations.add(annotation);
+        return this;
     }
 }
