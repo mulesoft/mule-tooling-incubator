@@ -285,7 +285,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         if (!isSoapCxf) {
             fileWriter.apply(mainTemplatePath, buildMainTargetFilePath(packageName, className), classReplacer);
         }
-        if (!apiType.equals(ApiType.REST)) {
+        if (!(apiType.equals(ApiType.REST) || apiType.equals(ApiType.SOAP))) {
             fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(uncammelName), classReplacer);
             fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);
         }

@@ -79,7 +79,7 @@ public class LocateAnnotationVisitor extends ASTVisitor {
                 if (node.getTypeName().getFullyQualifiedName().equals(annotationName.getFullyQualifiedName())) {
                     this.setNode(node);
                 }
-            } else if (node.getTypeName() != null && node.getTypeName().resolveTypeBinding() != null
+            } else if (node.getTypeName() != null && node.getTypeName().resolveTypeBinding() != null && node.getTypeName().resolveTypeBinding().getBinaryName() != null
                     && node.getTypeName().resolveTypeBinding().getBinaryName().equals(annotationName.getFullyQualifiedName())) {
                 this.setNode(node);
             }
