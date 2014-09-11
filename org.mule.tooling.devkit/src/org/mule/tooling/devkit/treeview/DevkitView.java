@@ -111,7 +111,6 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                 }
             }
 
-            
         });
     }
 
@@ -167,6 +166,9 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
     private void handleNewProjectSelectedChange(Object selected) {
         try {
             final IProject selectedProject = (IProject) selected;
+            if (current.equals(selectedProject)) {
+                return;
+            }
             if (selectedProject.isOpen() && selectedProject.hasNature(DevkitNature.NATURE_ID)) {
                 analyseMethods(selectedProject);
             } else {
@@ -222,6 +224,11 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                             IResourceDelta delta = event.getDelta().getAffectedChildren()[0];
 
                             if (delta.getResource().getProject() != null && delta.getResource().getProject().isOpen()) {
+                                // When the user navigates from the sample file to the JAVA File we don't want to trigger the mechanism
+                                if (!(delta.getProjectRelativePath() != null && delta.getProjectRelativePath().lastSegment() != null && delta.getProjectRelativePath()
+                                        .lastSegment().equalsIgnoreCase("doc"))) {
+                                    return;
+                                }
                                 analyseMethods(delta.getResource().getProject());
                             }
                         }
