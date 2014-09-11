@@ -4,9 +4,7 @@
  */
 
 package ${package};
-#if($hasQuery == true)
-import java.util.List;
-#end
+
 import org.mule.api.annotations.Connector;
 #if($OAuthEnaled == false )
 import org.mule.api.annotations.Connect;
@@ -224,18 +222,18 @@ public class ${className}
     /**
      * Description for query
      *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query}
+     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query-processor}
      *
      *  @param query The dsql query
      *  @return List of elements that match the criteria
      */
     @Processor
-    public List<Object> query(@Query String query) {
+    public List<Object> queryProcessor(@Query String query) {
         //TODO
         /*
          * MESSAGE PROCESSOR CODE GOES HERE
          */
-        return null;
+        return new ArrayList<Object>();
     }
 #end
 #if($OAuthEnaled == true ) 
