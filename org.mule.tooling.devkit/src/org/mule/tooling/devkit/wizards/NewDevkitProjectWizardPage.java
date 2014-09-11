@@ -6,13 +6,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.regex.Pattern;
 
-import javax.wsdl.WSDLException;
-import javax.wsdl.factory.WSDLFactory;
-import javax.wsdl.xml.WSDLReader;
-
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -37,7 +32,6 @@ import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.devkit.DevkitImages;
-import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
@@ -51,7 +45,6 @@ import org.mule.tooling.ui.preferences.MuleStudioPreference;
 import org.mule.tooling.ui.utils.UiUtils;
 import org.mule.tooling.ui.wizards.extensible.PartStatusHandler;
 import org.mule.tooling.ui.wizards.extensible.WizardPagePartExtension;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class NewDevkitProjectWizardPage extends WizardPage {
 
@@ -199,13 +192,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
                     String result = dialog.open();
                     if (result != null) {
-
-                        if (canParseWSDL(new NullProgressMonitor(), result)) {
-                            wsdlLocation.setText(result);
-                            updateStatus(null);
-                        } else {
-                            updateStatus("Unable to parse the selected file.");
-                        }
+                        wsdlLocation.setText(result);
+                        updateStatus(null);
                     }
 
                 } else {
@@ -232,13 +220,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                         if (wsdlFileName.isEmpty()) {
                             updateStatus("The selected directory does not contains a '.wsdl' file.");
                         } else {
-                            if (canParseWSDL(new NullProgressMonitor(), wsdlFile.getPath())) {
-                                wsdlLocation.setText(result);
-                                updateStatus(null);
-                            } else {
-                                updateStatus("Unable to parse the selected file.");
-                            }
-
+                            wsdlLocation.setText(result);
+                            updateStatus(null);
                         }
                     }
                 }
@@ -523,19 +506,17 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
                 if (wsdlFileName.isEmpty()) {
                     return false;
-                } else if (canParseWSDL(new NullProgressMonitor(), wsdlFile.getPath())) {
+                } else {
                     return true;
                 }
 
-            } else if (canParseWSDL(new NullProgressMonitor(), result)) {
+            } else {
                 return true;
             }
         }
 
         if (isValidURL(result)) {
-            if (canParseWSDL(new NullProgressMonitor(), result)) {
-                return true;
-            }
+            return true;
         }
         return false;
     }
@@ -562,22 +543,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     void onTestFinished(final int result) {
         mavenFailure = result != 0;
         this.dialogChanged();
-    }
-
-    protected boolean canParseWSDL(IProgressMonitor monitor, final String wsdlLocation) {
-        try {
-            monitor.beginTask("Parsing WSDL", 100);
-            monitor.worked(5);
-            WSDLReader wsdlReader = WSDLFactory.newInstance().newWSDLReader();
-            monitor.worked(15);
-            wsdlReader.readWSDL(wsdlLocation);
-            monitor.worked(80);
-            monitor.done();
-            return true;
-        } catch (WSDLException e) {
-            DevkitUIPlugin.getDefault().logError("Error Parsing WSDL", e);
-        }
-        return false;
     }
 
     private boolean isValidURL(String url) {

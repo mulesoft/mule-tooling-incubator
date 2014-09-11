@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -44,6 +48,7 @@ import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.mule.tooling.devkit.DevkitImages;
+import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
 import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
@@ -121,12 +126,20 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         mavenModel.setApiType(getApiType());
         mavenModel.setOAuthEnabled(isOAuth);
         mavenModel.setAuthenticationType(getAuthenticationType());
+
+        if (mavenModel.isSoapWithCXF()) {
+            if (!isValidWsdl(mavenModel)) {
+                return false;
+            }
+        }
         final IRunnableWithProgress op = new IRunnableWithProgress() {
 
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
+
                     final IJavaProject javaProject = doFinish(mavenModel, monitor);
+
                     Job job = new WorkspaceJob("Compiling connector") {
 
                         @Override
@@ -186,6 +199,29 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         } catch (CoreException e) {
             e.printStackTrace();
         }
+        return true;
+    }
+
+    private boolean isValidWsdl(final ConnectorMavenModel mavenModel) {
+        final IRunnableWithProgress parseWsdl = new IRunnableWithProgress() {
+
+            @Override
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                if (!canParseWSDL(monitor, mavenModel.getWsdlPath())) {
+                    throw new IllegalArgumentException("Unable to process the provided WSDL. Please, verify that the wsdl exists and it's well formed.");
+                }
+            }
+        };
+        try {
+            getContainer().run(true, true, parseWsdl);
+        } catch (InterruptedException e) {
+            return false;
+        } catch (InvocationTargetException e) {
+            Throwable realException = e.getTargetException();
+            MessageDialog.openError(getShell(), "Error", realException.getMessage());
+            return false;
+        }
+
         return true;
     }
 
@@ -351,5 +387,21 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                 .withArgs(
                         new String[] { "dependency:resolve", "-Dclassifier=javadoc", "-DexcludeTransitive=false", "-DincludeGroupIds=org.mule.tools.devkit",
                                 "-DincludeArtifactIds=mule-devkit-annotations" }).build().run(monitor);
+    }
+
+    protected boolean canParseWSDL(IProgressMonitor monitor, final String wsdlLocation) {
+        try {
+            monitor.beginTask("Parsing WSDL", 100);
+            monitor.worked(5);
+            WSDLReader wsdlReader = WSDLFactory.newInstance().newWSDLReader();
+            monitor.worked(15);
+            wsdlReader.readWSDL(wsdlLocation);
+            monitor.worked(80);
+            monitor.done();
+            return true;
+        } catch (WSDLException e) {
+            DevkitUIPlugin.getDefault().logError("Error Parsing WSDL", e);
+        }
+        return false;
     }
 }
