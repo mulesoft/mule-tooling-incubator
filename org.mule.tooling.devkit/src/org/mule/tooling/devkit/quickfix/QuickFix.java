@@ -17,6 +17,7 @@ import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.devkit.ASTUtils;
+import org.mule.tooling.devkit.treeview.model.ModelUtils;
 
 /**
  * This class is used to create a quickfix that can be applied to devkit errors.
@@ -25,156 +26,145 @@ import org.mule.tooling.devkit.ASTUtils;
  * 
  */
 public abstract class QuickFix implements IMarkerResolution2, DevkitQuickFix {
-	String label;
 
-	ICompilationUnit compilationUnit;
+    String label;
 
-	final ConditionMarkerEvaluator evaluator;
+    ICompilationUnit compilationUnit;
 
-	QuickFix(String label, ConditionMarkerEvaluator evaluator) {
-		this.label = label;
-		this.evaluator = evaluator;
-	}
+    final ConditionMarkerEvaluator evaluator;
 
-	@Override
-	public String getLabel() {
-		return label;
-	}
+    QuickFix(String label, ConditionMarkerEvaluator evaluator) {
+        this.label = label;
+        this.evaluator = evaluator;
+    }
 
-	@Override
-	public void run(IMarker marker) {
+    @Override
+    public String getLabel() {
+        return label;
+    }
 
-		try {
-			initializeCompilationUnit(marker);
+    @Override
+    public void run(IMarker marker) {
 
-			Integer errorMarkerStart = (Integer) marker
-					.getAttribute(IMarker.CHAR_START);
+        try {
+            initializeCompilationUnit(marker);
 
-			CompilationUnit astCompilationUnit = ASTUtils
-					.parse(compilationUnit);
+            Integer errorMarkerStart = (Integer) marker.getAttribute(IMarker.CHAR_START);
 
-			fixError(astCompilationUnit, errorMarkerStart, marker);
+            CompilationUnit astCompilationUnit = ASTUtils.parse(compilationUnit);
 
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-	}
+            fixError(astCompilationUnit, errorMarkerStart, marker);
 
-	private void fixError(CompilationUnit unit, Integer errorMarkerStart,
-			IMarker marker) throws CoreException {
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+    }
 
-		ASTRewrite rewrite = getFix(unit, errorMarkerStart);
-		if (rewrite != null) {
-			syncCodeChanges(compilationUnit, rewrite);
-			marker.delete();
-		}
-	}
+    private void fixError(CompilationUnit unit, Integer errorMarkerStart, IMarker marker) throws CoreException {
 
-	/**
-	 * This method creates all the necessary statements required to fix the
-	 * error.
-	 * 
-	 * @param unit
-	 *            The compilation unit that has the error
-	 * @param errorMarkerStart
-	 *            The start character where the error is located
-	 * @return The rewrite statement that contains the changes required to fix
-	 *         the issue, or null if this quickfix could not be applied.
-	 */
-	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
-		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
-				errorMarkerStart, "Optional",(ICompilationUnit) unit.getJavaElement());
+        ASTRewrite rewrite = getFix(unit, errorMarkerStart);
+        if (rewrite != null) {
+            syncCodeChanges(compilationUnit, rewrite);
+            marker.delete();
+        }
+    }
 
-		unit.accept(visitor);
+    /**
+     * This method creates all the necessary statements required to fix the error.
+     * 
+     * @param unit
+     *            The compilation unit that has the error
+     * @param errorMarkerStart
+     *            The start character where the error is located
+     * @return The rewrite statement that contains the changes required to fix the issue, or null if this quickfix could not be applied.
+     */
+    protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+        LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(errorMarkerStart, ModelUtils.CONFIGURABLE_ANNOTATION);
 
-		if (visitor.getNode() != null) {
-			ASTRewrite rewrite = ASTRewrite.create(unit.getAST());
-			rewrite.remove(visitor.getNode(), null);
-			return rewrite;
-		}
-		return null;
-	}
+        unit.accept(visitor);
 
-	/**
-	 * Applies the rewrite statement and sync the code changes.
-	 * 
-	 * @param unit
-	 *            Compilation unit that will receive the changes
-	 * @param rewrite
-	 *            Changes to apply
-	 * @throws JavaModelException
-	 */
-	private void syncCodeChanges(ICompilationUnit unit, ASTRewrite rewrite)
-			throws JavaModelException {
-		unit.applyTextEdit(rewrite.rewriteAST(), null);
-		unit.becomeWorkingCopy(null);
-		unit.commitWorkingCopy(true, null);
-		unit.discardWorkingCopy();
-	}
+        if (visitor.getNode() != null) {
+            ASTRewrite rewrite = ASTRewrite.create(unit.getAST());
+            rewrite.remove(visitor.getNode(), null);
+            return rewrite;
+        }
+        return null;
+    }
 
-	/**
-	 * Add imports if the CompilationUnit doesn't have them already.
-	 * 
-	 * @param compilationUnit
-	 * @param ast
-	 * @param rewrite
-	 * @param fullyQualifiedName
-	 */
-	protected void addImportIfRequired(CompilationUnit compilationUnit,
-			ASTRewrite rewrite, String fullyQualifiedName) {
-		AST ast = compilationUnit.getAST();
-		boolean hasConnectorAnnotationImport = false;
+    /**
+     * Applies the rewrite statement and sync the code changes.
+     * 
+     * @param unit
+     *            Compilation unit that will receive the changes
+     * @param rewrite
+     *            Changes to apply
+     * @throws JavaModelException
+     */
+    private void syncCodeChanges(ICompilationUnit unit, ASTRewrite rewrite) throws JavaModelException {
+        unit.applyTextEdit(rewrite.rewriteAST(), null);
+        unit.becomeWorkingCopy(null);
+        unit.commitWorkingCopy(true, null);
+        unit.discardWorkingCopy();
+    }
 
-		ListRewrite listImports = rewrite.getListRewrite(compilationUnit,
-				CompilationUnit.IMPORTS_PROPERTY);
+    /**
+     * Add imports if the CompilationUnit doesn't have them already.
+     * 
+     * @param compilationUnit
+     * @param ast
+     * @param rewrite
+     * @param fullyQualifiedName
+     */
+    protected void addImportIfRequired(CompilationUnit compilationUnit, ASTRewrite rewrite, String fullyQualifiedName) {
+        AST ast = compilationUnit.getAST();
+        boolean hasConnectorAnnotationImport = false;
 
-		for (Object obj : compilationUnit.imports()) {
-			ImportDeclaration importDec = (ImportDeclaration) obj;
-			if (importDec.getName().getFullyQualifiedName()
-					.equals(fullyQualifiedName)) {
-				hasConnectorAnnotationImport = true;
-			}
-		}
+        ListRewrite listImports = rewrite.getListRewrite(compilationUnit, CompilationUnit.IMPORTS_PROPERTY);
 
-		ImportDeclaration id = null;
+        for (Object obj : compilationUnit.imports()) {
+            ImportDeclaration importDec = (ImportDeclaration) obj;
+            if (importDec.getName().getFullyQualifiedName().equals(fullyQualifiedName)) {
+                hasConnectorAnnotationImport = true;
+            }
+        }
 
-		if (!hasConnectorAnnotationImport) {
-			id = ast.newImportDeclaration();
-			id.setName(ast.newName(fullyQualifiedName));
-			listImports.insertLast(id, null);
-		}
-	}
+        ImportDeclaration id = null;
 
-	@Override
-	public String getDescription() {
-		return null;
-	}
+        if (!hasConnectorAnnotationImport) {
+            id = ast.newImportDeclaration();
+            id.setName(ast.newName(fullyQualifiedName));
+            listImports.insertLast(id, null);
+        }
+    }
 
-	@Override
-	public Image getImage() {
-		return PlatformUI.getWorkbench().getSharedImages()
-				.getImage(ISharedImages.IMG_TOOL_DELETE);
-	}
+    @Override
+    public String getDescription() {
+        return null;
+    }
 
-	/**
-	 * Checks that this quickfix applies to the given marker
-	 */
-	@Override
-	public boolean hasFixForMarker(IMarker marker) {
-		return evaluator.hasFixForMarker(marker);
-	}
+    @Override
+    public Image getImage() {
+        return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE);
+    }
 
-	/**
-	 * Set the ICompilationUnit from the error marker.
-	 * 
-	 * @param marker
-	 *            Error/Warning located in a resource.
-	 */
-	private void initializeCompilationUnit(IMarker marker) {
-		IResource resource = marker.getResource();
-		IJavaElement javaElement = JavaCore.create(resource);
-		compilationUnit = (ICompilationUnit) javaElement
-				.getAdapter(ICompilationUnit.class);
-	}
+    /**
+     * Checks that this quickfix applies to the given marker
+     */
+    @Override
+    public boolean hasFixForMarker(IMarker marker) {
+        return evaluator.hasFixForMarker(marker);
+    }
+
+    /**
+     * Set the ICompilationUnit from the error marker.
+     * 
+     * @param marker
+     *            Error/Warning located in a resource.
+     */
+    private void initializeCompilationUnit(IMarker marker) {
+        IResource resource = marker.getResource();
+        IJavaElement javaElement = JavaCore.create(resource);
+        compilationUnit = (ICompilationUnit) javaElement.getAdapter(ICompilationUnit.class);
+    }
 
 }

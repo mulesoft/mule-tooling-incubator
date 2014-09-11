@@ -1,15 +1,6 @@
 package org.mule.tooling.devkit.treeview;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
@@ -44,12 +35,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.builder.DevkitNature;
@@ -57,7 +46,6 @@ import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.treeview.model.Module;
 import org.mule.tooling.devkit.treeview.model.NodeItem;
 import org.mule.tooling.devkit.treeview.model.ProjectRoot;
-import org.mule.tooling.devkit.treeview.model.Property;
 
 @SuppressWarnings("restriction")
 public class DevkitView extends ViewPart implements IResourceChangeListener, ISelectionListener {

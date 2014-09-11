@@ -1,8 +1,6 @@
 package org.mule.tooling.devkit;
 
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -86,4 +84,15 @@ public class DevkitUIPlugin extends AbstractUIPlugin {
         return new Status(type, PLUGIN_ID, message);
     }
 
+    public static void log(Throwable e) {
+        log(new Status(IStatus.ERROR, getPluginId(), 0x1001, "Internal Error", e));
+    }
+
+    private static String getPluginId() {
+        return PLUGIN_ID;
+    }
+
+    public static void log(IStatus status) {
+        getDefault().getLog().log(status);
+    }
 }

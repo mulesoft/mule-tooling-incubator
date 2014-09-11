@@ -10,6 +10,7 @@ import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 import org.mule.devkit.generation.api.gatherer.DevkitNotification;
 import org.mule.devkit.generation.api.gatherer.Message;
+import org.mule.tooling.devkit.treeview.model.ModelUtils;
 
 public class QuickFixer implements IMarkerResolutionGenerator {
 
@@ -58,16 +59,16 @@ public class QuickFixer implements IMarkerResolutionGenerator {
 		notifications.add(Message.PROCESSOR_CANNOT_BE_ABSTRACT_UNLESS_RESTCALL);
 
 		fixes.add(new RemoveAnnotation("Remove @Processor annotation",
-				"Processor", new MessageEquals(notifications)));
+				ModelUtils.PROCESSOR_ANNOTATION, new MessageEquals(notifications)));
 
 		notifications = new ArrayList<DevkitNotification>();
 		notifications.add(Message.MODULE_CONNECTOR_ASSIGNED_TO_INTERFACE);
 		notifications.add(Message.MODULE_CONNECTOR_CANNOT_HAVE_TYPE_PARAMS);
 
-		fixes.add(new RemoveAnnotation("Remove @Module annotation", "Module",
+		fixes.add(new RemoveAnnotation("Remove @Module annotation", ModelUtils.MODULE_ANNOTATION,
 				new MessageEquals(notifications)));
 		fixes.add(new RemoveAnnotation("Remove @Connector annotation",
-				"Connector", new MessageEquals(notifications)));
+		        ModelUtils.CONNECTOR_ANNOTATION, new MessageEquals(notifications)));
 
 		fixes.add(new ChangeModifier("Change modifier to public",
 				new MessageEquals(Message.MODULE_CONNECTOR_MUST_BE_PUBLIC)));
@@ -84,7 +85,7 @@ public class QuickFixer implements IMarkerResolutionGenerator {
 
 		fixes.add(new ChangeInvalidateAnnotation(
 				"Change annotation from @InvalidateConnectionOn @ReconnectOn",
-				new MessageEquals(Message.CONNECT_MUST_THROW_CONNECTION_EXCEPTION)));
+				new MessageEquals(Message.INVALIDATECONNECTIONON_IS_DEPRECATED)));
 
 		notifications = new ArrayList<DevkitNotification>();
 		notifications.add(Message.MODULE_CANNOT_HAVE_CONNECT);
@@ -114,7 +115,7 @@ public class QuickFixer implements IMarkerResolutionGenerator {
 		notifications.add(Message.OPTIONAL_REDUNDANT);
 		notifications.add(Message.DEFAULT_IMPLIES_OPTIONAL);
 		fixes.add(new RemoveAnnotation("Remove @Optional annotation",
-				"Optional", new MessageMatches(notifications)));
+		        ModelUtils.OPTIONAL_ANNOTATION, new MessageMatches(notifications)));
 
 		notifications = new ArrayList<DevkitNotification>();
 		notifications.add(Message.SAMPLE_PROCESSOR_XML_DOES_NOT_EXIST);
@@ -136,7 +137,7 @@ public class QuickFixer implements IMarkerResolutionGenerator {
 		notifications.add(Message.SOURCE_CANNOT_BE_STATIC);
 		notifications.add(Message.SOURCE_CANNOT_BE_GENERIC);
 		notifications.add(Message.SOURCE_MUST_BE_PUBLIC);
-		fixes.add(new RemoveAnnotation("Remove @Source annotation", "Source",
+		fixes.add(new RemoveAnnotation("Remove @Source annotation", ModelUtils.SOURCE_ANNOTATION,
 				new MessageEquals(notifications)));
 
 		notifications = new ArrayList<DevkitNotification>();
@@ -158,7 +159,7 @@ public class QuickFixer implements IMarkerResolutionGenerator {
 		notifications.add(Message.CONFIGURABLE_CANNOT_BE_STATIC);
 		notifications.add(Message.CONFIGURABLE_CANNOT_BE_ARRAY);
 		fixes.add(new RemoveAnnotation("Remove @Configurable annotation",
-				"Configurable", new MessageEquals(notifications)));
+				ModelUtils.CONFIGURABLE_ANNOTATION, new MessageEquals(notifications)));
 
 		fixes.add(new AddParamSourceCallbackQuickFix(
 				"Add SourceCallback parameter", new MessageEquals(
