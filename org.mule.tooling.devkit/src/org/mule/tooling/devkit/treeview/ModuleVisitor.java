@@ -123,6 +123,13 @@ public class ModuleVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(MarkerAnnotation node) {
+        // SHOULD NEVER ENTER THIS IF UNLESS USERS REMOVE ALL PARAMTERS FROM CONNECTOR, THAT IS NOT VALID
+        if (ModelUtils.annotationMatches(node.getTypeName(), ModelUtils.CONNECTOR_ANNOTATION)) {
+            module.setName(((TypeDeclaration) node.getParent()).getName().toString());
+            module.setType("@" + node.getTypeName().toString());
+            connectors.add((TypeDeclaration) node.getParent());
+            return true;
+        }
         if (ModelUtils.annotationMatches(node.getTypeName(), ModelUtils.CONFIGURABLE_ANNOTATION)) {
             configurable.add((FieldDeclaration) node.getParent());
             ModuleField field = new ModuleField(module, (ICompilationUnit) compilationUnit.getJavaElement(), node.getParent());

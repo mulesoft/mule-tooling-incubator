@@ -225,9 +225,12 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
 
                             if (delta.getResource().getProject() != null && delta.getResource().getProject().isOpen()) {
                                 // When the user navigates from the sample file to the JAVA File we don't want to trigger the mechanism
-                                if (!(delta.getProjectRelativePath() != null && delta.getProjectRelativePath().lastSegment() != null && delta.getProjectRelativePath()
-                                        .lastSegment().equalsIgnoreCase("doc"))) {
-                                    return;
+                                if (delta.getProjectRelativePath() != null) {
+                                    if (delta.getProjectRelativePath().lastSegment() != null) {
+                                        if (delta.getProjectRelativePath().lastSegment().equalsIgnoreCase("doc")) {
+                                            return;
+                                        }
+                                    }
                                 }
                                 analyseMethods(delta.getResource().getProject());
                             }
