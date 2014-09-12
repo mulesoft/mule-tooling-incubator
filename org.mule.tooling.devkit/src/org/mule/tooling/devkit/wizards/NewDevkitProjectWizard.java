@@ -130,7 +130,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         mavenModel.setAuthenticationType(getAuthenticationType());
 
         if (mavenModel.isSoapWithCXF()) {
-            if (!isValidWsdl(mavenModel)) {
+            if (!isValidWsdl(getWsdlPath())) {
                 return false;
             }
         }
@@ -204,12 +204,12 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         return true;
     }
 
-    private boolean isValidWsdl(final ConnectorMavenModel mavenModel) {
+    private boolean isValidWsdl(final String wsdlPath) {
         final IRunnableWithProgress parseWsdl = new IRunnableWithProgress() {
 
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                if (!canParseWSDL(monitor, mavenModel.getWsdlPath())) {
+                if (!canParseWSDL(monitor, wsdlPath)) {
                     throw new IllegalArgumentException("Unable to process the provided WSDL. Please, verify that the wsdl exists and it's well formed.");
                 }
             }
@@ -396,14 +396,26 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
     protected boolean canParseWSDL(IProgressMonitor monitor, final String wsdlLocation) {
         try {
-            monitor.beginTask("Parsing WSDL", 100);
-            monitor.worked(5);
-            WSDLReader wsdlReader = WSDLFactory.newInstance().newWSDLReader();
-            monitor.worked(15);
-            wsdlReader.readWSDL(wsdlLocation);
-            monitor.worked(80);
-            monitor.done();
-            return true;
+            File wsdlFileOrDirectory = new File(wsdlLocation);
+            File wsdlFile = wsdlFileOrDirectory;
+
+            if (wsdlFileOrDirectory.isDirectory()) {
+                String[] files = wsdlFileOrDirectory.list(new SuffixFileFilter(".wsdl"));
+                for (int i = 0; i < files.length; i++) {
+                    File temp = new File(files[i]);
+                    wsdlFile = new File(wsdlFileOrDirectory, temp.getName());
+                }
+            }
+            if (wsdlFile.exists()) {
+                monitor.beginTask("Parsing WSDL", 100);
+                monitor.worked(5);
+                WSDLReader wsdlReader = WSDLFactory.newInstance().newWSDLReader();
+                monitor.worked(15);
+                wsdlReader.readWSDL(wsdlFile.getAbsolutePath());
+                monitor.worked(80);
+                monitor.done();
+                return true;
+            }
         } catch (WSDLException e) {
             DevkitUIPlugin.getDefault().logError("Error Parsing WSDL", e);
         }
