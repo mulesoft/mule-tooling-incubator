@@ -67,9 +67,11 @@ import org.mule.tooling.devkit.template.replacer.NullReplacer;
 
 public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard implements INewWizard {
 
+    // TODO Re factor this, to many "if"s
     private static final String MAIN_TEMPLATE_PATH = "/templates/connector_main.tmpl";
     private static final String MAIN_NONE_ABSTRACT_TEMPLATE_PATH = "/templates/connector_none_abstract_main.tmpl";
     private static final String TEST_TEMPLATE_PATH = "/templates/connector_test.tmpl";
+    private static final String TEST_QUERY_TEMPLATE_PATH = "/templates/connector_query_test.tmpl";
     private static final String TEST_RESOURCE_PATH = "/templates/connector-test-resource.tmpl";
 
     public static final String WIZZARD_PAGE_TITTLE = "Create an Anypoint Connector";
@@ -306,7 +308,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME,
                 new MavenParameterReplacer(mavenModel, mavenModel.getDevkitVersion(), mavenModel.getConnectorName(), mavenModel.isSoapWithCXF(), wsdlFileName));
         create(mavenModel.getConnectorName(), monitor, mainTemplatePath, getTestResourcePath(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName()),
-                mavenModel.getPackage(), project, classReplacer, mavenModel.getAuthenticationType(), mavenModel.isSoapWithCXF(), mavenModel.getApiType());
+                mavenModel.getPackage(), project, classReplacer, mavenModel.getAuthenticationType(), mavenModel.isSoapWithCXF(), mavenModel.getApiType(), mavenModel.isHasQuery());
 
         DevkitUtils.configureDevkitAPT(javaProject);
 
@@ -315,7 +317,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     }
 
     protected void create(String moduleName, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className, String packageName,
-            IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, boolean isSoapCxf, Object apiType) throws CoreException {
+            IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, boolean isSoapCxf, Object apiType, boolean hasQuery) throws CoreException {
         String uncammelName = DevkitUtils.toConnectorName(moduleName);
         TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
         if (!isSoapCxf) {
@@ -324,6 +326,9 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         if (!(apiType.equals(ApiType.REST) || apiType.equals(ApiType.SOAP))) {
             fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(uncammelName), classReplacer);
             fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);
+            if (hasQuery) {
+                fileWriter.apply(TEST_QUERY_TEMPLATE_PATH, buildQueryTestTargetFilePath(packageName, className), classReplacer);
+            }
         }
 
         fileWriter.apply("/templates/example.tmpl", getExampleFileName(uncammelName), classReplacer);

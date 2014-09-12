@@ -76,7 +76,10 @@ public abstract class AbstractDevkitProjectWizzard extends Wizard {
         return DevkitUtils.TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + className + "Test.java";
     }
     
-
+    protected String buildQueryTestTargetFilePath(String packageName, String className) {
+        return DevkitUtils.TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + className + "QueryTest.java";
+    }
+    
     protected List<IClasspathEntry> generateProjectEntries(IProgressMonitor monitor, IProject project) throws CoreException {
         List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
         entries.add(createEntry(project.getFolder(DevkitUtils.MAIN_JAVA_FOLDER), monitor));

@@ -15,5 +15,9 @@
     <flow name="testFlow">
         <${moduleName}:my-processor content="Another string"/>
     </flow>
-
+#if($hasQuery == true )
+    <flow name="testQueryFlow">
+        <${moduleName}:query-processor query="My Query"/>
+    </flow>
+#end
 </mule>
