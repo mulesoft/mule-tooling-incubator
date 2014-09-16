@@ -378,7 +378,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                     wsdlFile = new File(wsdlFileOrDirectory, temp.getName());
                 }
             }
-            if (!wsdlFile.exists()) {
+            if (wsdlFile.exists()) {
                 wsdlLocation = wsdlFile.getAbsolutePath();
             }
             monitor.beginTask("Parsing WSDL", 100);
