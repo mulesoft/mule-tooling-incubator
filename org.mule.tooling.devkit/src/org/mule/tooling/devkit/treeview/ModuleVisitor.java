@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.mule.tooling.devkit.ASTUtils;
+import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.quickfix.LocateAnnotationVisitor;
 import org.mule.tooling.devkit.treeview.model.ModelUtils;
 import org.mule.tooling.devkit.treeview.model.Module;
@@ -109,10 +110,15 @@ public class ModuleVisitor extends ASTVisitor {
 
             Property prop = new Property(module, (ICompilationUnit) compilationUnit.getJavaElement(), valuePair);
             prop.setName(valuePair.getName().toString());
-            if (valuePair.getValue() instanceof StringLiteral) {
-                prop.setValue(((StringLiteral) valuePair.getValue()).getLiteralValue());
-            } else {
-                prop.setValue(valuePair.getValue().toString());
+            try {
+                if (valuePair.getValue() instanceof StringLiteral) {
+                    prop.setValue(((StringLiteral) valuePair.getValue()).getLiteralValue());
+                } else {
+                    prop.setValue(valuePair.getValue().toString());
+                }
+            } catch (Exception ex) {
+                DevkitUIPlugin.log(ex);
+                prop.setValue("");
             }
             module.getProperties().add(prop);
         }
