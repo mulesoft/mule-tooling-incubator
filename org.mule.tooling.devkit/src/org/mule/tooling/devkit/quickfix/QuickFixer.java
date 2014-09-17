@@ -187,5 +187,14 @@ public class QuickFixer implements IMarkerResolutionGenerator {
 		fixes.add(new ChangeMinMuleVersion("Change minMuleVersion to 3.4",
 				new MessageMatches(Message.METADATA_REQUIRES_MIN_MULE_340)));
 
+		notifications = new ArrayList<DevkitNotification>();
+		notifications.add(Message.METHOD_PARAMETER_MISSING_JAVADOC);
+        notifications.add(Message.METHOD_MISSING_DESCRIPTION);
+        notifications.add(Message.METHOD_PARAMETER_MISSING_JAVADOC);
+        notifications.add(Message.METHOD_MISSING_RETURN_TYPE_DOCUMENTATION);
+        notifications.add(Message.METHOD_MISSING_DOCUMENTATION_FOR_THROWN_EXCEPTIONS);
+        notifications.add(Message.SAMPLE_PROCESSOR_XML_DOES_NOT_EXIST);
+        notifications.add(Message.SAMPLE_FILE_CONTAINING_EXAMPLES_DOES_NOT_EXIST);
+		fixes.add(new DisableJavadocQuickFix(new MessageMatches(notifications)));
 	}
 }
