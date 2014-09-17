@@ -180,7 +180,7 @@ public class DevkitExportPage extends WizardPage {
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
                     IJavaProject javaProject = JavaCore.create(project);
-                    
+
                     MavenRunBuilder.newMavenRunBuilder().withProject(javaProject)
                             .withArgs(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=false" }).build().run(monitor);
 
@@ -245,5 +245,8 @@ public class DevkitExportPage extends WizardPage {
 
     private void updatePageComplete() {
         this.setPageComplete(project != null);
+        if (project != null) {
+            this.setErrorMessage(null);
+        }
     }
 }
