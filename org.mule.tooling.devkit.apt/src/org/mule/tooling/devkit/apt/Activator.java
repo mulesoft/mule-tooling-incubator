@@ -1,6 +1,8 @@
 package org.mule.tooling.devkit.apt;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -49,4 +51,15 @@ public class Activator extends Plugin {
         return plugin;
     }
 
+    public static void log(Throwable e) {
+        log(new Status(IStatus.ERROR, getPluginId(), 0x1001, "Internal Error", e));
+    }
+    
+    private static String getPluginId() {
+        return PLUGIN_ID;
+    }
+
+    public static void log(IStatus status) {
+        getDefault().getLog().log(status);
+    }
 }
