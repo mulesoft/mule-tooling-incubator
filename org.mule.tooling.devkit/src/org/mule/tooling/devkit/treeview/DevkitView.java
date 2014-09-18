@@ -1,6 +1,7 @@
 package org.mule.tooling.devkit.treeview;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
@@ -89,7 +90,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
 
         getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+        workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
 
         viewer.addDoubleClickListener(new IDoubleClickListener() {
 
@@ -238,6 +239,24 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                     }
                 } catch (CoreException e) {
                     e.printStackTrace();
+                }
+            }
+        } else {
+            // PRE CLOSE OR DELETE
+            if (event.getResource()!=null) {
+                IResource resource = event.getResource();
+
+                if (resource.getProject() != null && resource.getProject().isOpen()) {
+                    if (current != null && current.getName().equals(resource.getProject().getName())) {
+                        // Set empty project as input
+                        Display.getDefault().asyncExec(new Runnable() {
+
+                            public void run() {
+                                viewer.setInput(new ProjectRoot());
+                            }
+                        });
+
+                    }
                 }
             }
         }
