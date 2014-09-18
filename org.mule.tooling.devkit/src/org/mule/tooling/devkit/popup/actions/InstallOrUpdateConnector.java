@@ -32,6 +32,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
+import org.mule.tooling.devkit.maven.MavenDevkitProjectDecorator;
 import org.mule.tooling.devkit.maven.MavenRunBuilder;
 
 public class InstallOrUpdateConnector extends AbstractHandler {
@@ -40,7 +41,13 @@ public class InstallOrUpdateConnector extends AbstractHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
         final IJavaProject selectedProject = getSelectedJavaProject(event);
         if (selectedProject != null && !DevkitUtils.existsUnsavedChanges(selectedProject.getProject())) {
-            final String installingPalette = "Installing Connector from [" + selectedProject.getProject().getName() + "] ...";
+            MavenDevkitProjectDecorator maven = MavenDevkitProjectDecorator.decorate(selectedProject);
+            String label = ((maven.getGroupId() != null) ? maven.getGroupId() + ":" : "") + ((maven.getArtifactId() != null) ? maven.getArtifactId() + ":" : "")
+                    + ((maven.getVersion() != null) ? maven.getVersion() : "");
+            if (label.isEmpty()) {
+                label = selectedProject.getProject().getName();
+            }
+            final String installingPalette = "Installing " + label;
             final WorkspaceJob installOrUpdate = new WorkspaceJob(installingPalette) {
 
                 @Override
@@ -110,7 +117,8 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                 }
 
                 private Integer generateUpdateSite(final IJavaProject selectedProject, final IProgressMonitor monitor) {
-                    final Integer result = MavenRunBuilder.newMavenRunBuilder().withProject(selectedProject).withArgs(new String[] { "clean", "install", "-DskipTests", "-Ddevkit.studio.package.skip=false" }).build().run(monitor);
+                    final Integer result = MavenRunBuilder.newMavenRunBuilder().withProject(selectedProject)
+                            .withArgs(new String[] { "clean", "install", "-DskipTests", "-Ddevkit.studio.package.skip=false" }).build().run(monitor);
                     return result;
                 }
             };
