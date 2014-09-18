@@ -53,7 +53,7 @@ public class StudioAnnotationProcessor extends AnnotationProcessor {
 		try{
 			super.doVerify(module, moduleAnnotationVerifier);
 		}catch(ClassCastException ex){
-			System.out.println(ex);
+		    Activator.log(ex);
 		}		
 	}
 
@@ -65,7 +65,7 @@ public class StudioAnnotationProcessor extends AnnotationProcessor {
 		try{
 			super.doVerify(modules, moduleAnnotationVerifier);
 		}catch(ClassCastException ex){
-			System.out.println(ex);
+			Activator.log(ex);
 		}
 	}
 }

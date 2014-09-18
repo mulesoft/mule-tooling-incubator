@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+      		category="org.mule.tooling.ui.muleWizards"
+            class="org.mule.tooling.incubator.gradle.wizard.ProjectNewWizard"
+            icon="icons/gradle16x16.png"
+            id="org.mule.tooling.incubator.gradle.wizard"
+            name="New Gradle Mule Project"
+            project="true">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+      		category="org.mule.tooling.ui.messageflowpage"
+            class="org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage"
+            id="org.mule.tooling.gradle.preferences"
+            name="Gradle">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.mule.tooling.gradle"
+            name="Gradle">
+      </category>
+      <view
+            category="org.mule.tooling.gradle"
+            class="org.mule.tooling.incubator.gradle.views.TasksView"
+            icon="icons/gradle16x16.png"
+            id="org.mule.tooling.gradle.views.TasksView"
+            name="Gradle Tasks View">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="org.mule.tooling.gradle.views.TasksView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.ProblemView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.mule.tooling.incubator.gradle.resourceMenuContribution"
+            nameFilter="build.gradle"
+            objectClass="org.eclipse.core.resources.IResource">
+         <visibility>
+            <objectState
+                  name="projectNature"
+                  value="org.mule.tooling.core.muleNature">
+            </objectState></visibility>
+         <menu
+               icon="icons/gradle16x16.png"
+               id="org.mule.tooling.incubator.gradle.menu"
+               label="Gradle support in Studio"
+               path="additions">
+            <separator
+                  name="group">
+            </separator>
+         </menu>
+         <action
+               class="org.mule.tooling.incubator.gradle.actions.SynchronizeProjectAction"
+               id="org.mule.tooling.incubator.gradle.updateDeps"
+               label="Synchronize Project"
+               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
+         </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.mule.tooling.incubator.gradle.projectMenuContribution"
+            objectClass="org.eclipse.jdt.core.IJavaProject">
+         <visibility>
+            <objectState
+                  name="projectNature"
+                  value="org.mule.tooling.core.muleNature">
+            </objectState></visibility>
+         <menu
+               icon="icons/gradle16x16.png"
+               id="org.mule.tooling.incubator.gradle.menu"
+               label="Gradle support in Studio"
+               path="additions">
+            <separator
+                  name="group">
+            </separator>
+         </menu>
+         <action
+               class="org.mule.tooling.incubator.gradle.actions.SynchronizeProjectAction"
+               id="org.mule.tooling.incubator.gradle.updateDeps"
+               label="Synchronize Project"
+               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
+         </action>
+         <action
+               class="org.mule.tooling.incubator.gradle.actions.ShowTasksViewAction"
+               id="org.mule.tooling.incubator.gradle.showTasksView"
+               label="Run Tasks..."
+               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.mule.tooling.incubator.gradle.editors.GradleBuildEditor"
+            contributorClass="org.mule.tooling.incubator.gradle.editors.MultiPageEditorContributor"
+            extensions="gradle"
+            icon="icons/gradle16x16.png"
+            id="org.mule.tooling.incubator.gradle.editors.GradleBuildEditor"
+            name="Mule Gradle Build Editor">
+      </editor>
+   </extension>
+
+</plugin>

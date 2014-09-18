@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.resources.IContainer;
@@ -21,8 +22,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.ui.internal.DefaultHelpUI;
+import org.eclipse.jdt.apt.core.util.AptConfig;
+import org.eclipse.jdt.apt.core.util.IFactoryPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
@@ -37,6 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
+import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.popup.actions.DevkitCallback;
@@ -71,11 +76,18 @@ public class DevkitUtils {
     public static final String DEVKIT_3_4_2 = "3.4.2";
     public static final String DEVKIT_3_5_0 = "3.5.0";
     public static final String DEVKIT_3_5_1 = "3.5.1";
+    public static final String DEVKIT_3_5_2 = "3.5.2";
+    public static final String DEVKIT_CURRENT = "3.5.2-SNAPSHOT";
 
-    public static final String devkitVersions[] = { DEVKIT_3_4_0, DEVKIT_3_4_1, DEVKIT_3_4_2, DEVKIT_3_5_0, DEVKIT_3_5_1 };
+    public static final String devkitVersions[] = { DEVKIT_3_4_0, DEVKIT_3_4_1, DEVKIT_3_4_2, DEVKIT_3_5_0, DEVKIT_3_5_1, DEVKIT_3_5_2 };
     public static final String CATEGORY_COMMUNITY = "Community";
     public static final String CATEGORY_STANDARD = "Standard";
     public static final String connectorCategories[] = { CATEGORY_COMMUNITY, CATEGORY_STANDARD };
+
+    private static final String[] RESERVED_NAMES = { "abstract", "continue", "for", "new", "switch", "assert", "default", "goto", "package", "synchronized", "boolean", "do", "if",
+            "private", "this", "break", "double", "implements", "protected", "throw", "byte", "else", "import", "public", "throws", "case", "enum", "instanceof", "return",
+            "transient", "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", "class", "finally", "long", "strictfp", "volatile", "const",
+            "float", "native", "super", "while" };
 
     public static String createModuleNameFrom(String name) {
         return name + "Module";
@@ -204,6 +216,7 @@ public class DevkitUtils {
         }
 
         for (MethodDeclaration method : methods) {
+            @SuppressWarnings("unchecked")
             Iterator<IExtendedModifier> modifiers = method.modifiers().iterator();
             boolean isProcessor = false;
             while (modifiers.hasNext() && !isProcessor) {
@@ -304,5 +317,31 @@ public class DevkitUtils {
         }
 
         return result.toString();
+    }
+
+    public static boolean isReserved(String word) {
+        return ArrayUtils.contains(RESERVED_NAMES, word);
+    }
+    
+    public static String getDevkitVersionForServerDefinition(ServerDefinition selectedServerDefinition) {
+        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_2))
+            return DevkitUtils.DEVKIT_3_4_2;
+        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_1))
+            return DevkitUtils.DEVKIT_3_4_1;
+        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_0))
+            return DevkitUtils.DEVKIT_3_4_0;
+        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_5_0))
+            return DevkitUtils.DEVKIT_3_5_0;
+        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_5_1))
+            return DevkitUtils.DEVKIT_3_5_1;
+        return DevkitUtils.DEVKIT_CURRENT;
+    }
+    
+    public static void configureDevkitAPT(IJavaProject javaProject) throws CoreException {
+        AptConfig.setEnabled(javaProject, true);
+        IFactoryPath path = AptConfig.getFactoryPath(javaProject);
+        path.enablePlugin(org.mule.tooling.devkit.apt.Activator.PLUGIN_ID);
+        AptConfig.setFactoryPath(javaProject, path);
+        AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "false");
     }
 }

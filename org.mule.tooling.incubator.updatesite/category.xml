@@ -30,6 +30,9 @@
    <feature id="org.mule.tooling.ui.synchronize.extension">
        <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
    </feature>
+   <feature id="org.mule.tooling.incubator.gradle.extension">
+       <category name="org.mule.tooling.incubator.category.gradle"/>
+   </feature>
    <category-def name="org.mule.tooling.incubator.category.devkit" label="Anypoint Devkit Plugin">
       <description>
             Anypoint Devkit Plugin
@@ -55,4 +58,9 @@
             Maven Tools for Mule
         </description>
     </category-def>
+    <category-def name="org.mule.tooling.incubator.category.gradle" label="Anypoint Gradle Plugin">
+      <description>
+            Anypoint Gradle Plugin
+      </description>
+   </category-def>
 </site>

@@ -16,7 +16,6 @@ import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
-import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.mule.tooling.incubator.installer.Activator;
@@ -36,33 +35,37 @@ public class InstallerService implements IAdaptable {
         }
     }
 
-    public void install(final String featureId, String version) {
+    public void install(final String featureId) {
+    	
+		final IProvisioningAgent provisioningAgent = Activator.getDefault().getProvisioningAgent();
+		IQueryResult<IInstallableUnit> matches = getInstallableUnits(provisioningAgent, featureId);
 
-        final IProvisioningAgent provisioningAgent = Activator.getDefault().getProvisioningAgent();
-        IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) provisioningAgent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-        try {
-            IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) provisioningAgent.getService(IArtifactRepositoryManager.SERVICE_NAME);
-            artifactManager.addRepository(uri);
-            metadataManager.addRepository(uri);
-            metadataManager.loadRepository(uri, new NullProgressMonitor());
-            final ProvisioningSession session = new ProvisioningSession(provisioningAgent);
-            IQueryResult<IInstallableUnit> matches = metadataManager.query(QueryUtil.createIUQuery(featureId), new NullProgressMonitor());
+		if (!matches.isEmpty()) {
+			IInstallableUnit myIU = matches.iterator().next();
 
-            if (!matches.isEmpty()) {
-                IInstallableUnit myIU = matches.iterator().next();
-
-                InstallOperation op = new InstallOperation(session, Arrays.asList(myIU));
-                IStatus result = op.resolveModal(new NullProgressMonitor());
-                if (result.isOK() || result.isMultiStatus() ) {
-                	ProvisioningUI.getDefaultUI().openInstallWizard(Arrays.asList(myIU), op, null);
-                }
-            }
-        } catch (ProvisionException e) {
-            e.printStackTrace();
-        } catch (OperationCanceledException e) {
-            e.printStackTrace();
-        }
+			InstallOperation op = new InstallOperation(new ProvisioningSession(provisioningAgent), Arrays.asList(myIU));
+			IStatus result = op.resolveModal(new NullProgressMonitor());
+			if (result.isOK() || result.isMultiStatus()) {
+				ProvisioningUI.getDefaultUI().openInstallWizard(Arrays.asList(myIU), op, null);
+			}
+		}
     }
+    
+	public void update(final String featureId) {
+		final IProvisioningAgent provisioningAgent = Activator.getDefault().getProvisioningAgent();
+		IQueryResult<IInstallableUnit> matches = getInstallableUnits(provisioningAgent, featureId);
+
+		if (!matches.isEmpty()) {
+			IInstallableUnit myIU = matches.iterator().next();
+
+			UpdateOperation op = new UpdateOperation(new ProvisioningSession(provisioningAgent), Arrays.asList(myIU));
+			IStatus result = op.resolveModal(new NullProgressMonitor());
+			if (result.isOK() || result.isMultiStatus()) {
+				ProvisioningUI.getDefaultUI().openUpdateWizard(false, op, null);
+			}
+
+		}
+	}
 
     public InstallationStatus checkInstalled(final String featureId, String version) {
         BundleContext bundleContext = Activator.getDefault().getBundle().getBundleContext();
@@ -89,34 +92,24 @@ public class InstallerService implements IAdaptable {
         return null;
     }
 
-    public void update(final String featureId, String version) {
-        final IProvisioningAgent provisioningAgent = Activator.getDefault().getProvisioningAgent();
-        IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) provisioningAgent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-        try {
-            IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) provisioningAgent.getService(IArtifactRepositoryManager.SERVICE_NAME);
-            artifactManager.addRepository(uri);
-            metadataManager.addRepository(uri);
-            metadataManager.loadRepository(uri, new NullProgressMonitor());
-            final ProvisioningSession session = new ProvisioningSession(provisioningAgent);
-            IQueryResult<IInstallableUnit> matches = metadataManager.query(QueryUtil.createIUQuery(featureId), new NullProgressMonitor());
+	private IQueryResult<IInstallableUnit> getInstallableUnits(IProvisioningAgent provisioningAgent, String featureId) {
+		IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) provisioningAgent.getService(IMetadataRepositoryManager.SERVICE_NAME);
 
-            if (!matches.isEmpty()) {
-                IInstallableUnit myIU = matches.iterator().next();
+		metadataManager.addRepository(uri);
 
-                UpdateOperation op = new UpdateOperation(session, Arrays.asList(myIU));
-                IStatus result = op.resolveModal(new NullProgressMonitor());
-                if (result.isOK() || result.isMultiStatus() ) {
-                	
-                	ProvisioningUI.getDefaultUI().openUpdateWizard(false, op, null);
-                }
+		try {
+			metadataManager.loadRepository(uri, new NullProgressMonitor());
+			return metadataManager.query(QueryUtil.createIUQuery(featureId),new NullProgressMonitor());
 
-            }
-        } catch (ProvisionException e) {
-            e.printStackTrace();
-        } catch (OperationCanceledException e) {
-            e.printStackTrace();
-        }
-    }
+		} catch (ProvisionException e) {
+			e.printStackTrace();
+		} catch (OperationCanceledException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+
+	}
 
     @Override
     public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {

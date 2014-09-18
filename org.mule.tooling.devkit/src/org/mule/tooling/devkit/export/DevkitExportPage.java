@@ -7,11 +7,18 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -25,8 +32,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
-import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
-import org.mule.tooling.devkit.maven.MavenDevkitProjectDecorator;
+import org.mule.tooling.devkit.builder.DevkitNature;
+import org.mule.tooling.devkit.maven.MavenRunBuilder;
 import org.mule.tooling.ui.utils.SaveModifiedResourcesDialog;
 import org.mule.tooling.ui.utils.UiUtils;
 
@@ -35,8 +42,8 @@ public class DevkitExportPage extends WizardPage {
     /** Unique page id */
     public static final String PAGE_ID = "muleProjectExportPage";
 
-    /** Selected Mule project */
-    protected IJavaProject project;
+    /** Selected project */
+    protected IProject project;
 
     /** Projects dropdown */
     protected ComboViewer projects;
@@ -49,11 +56,18 @@ public class DevkitExportPage extends WizardPage {
 
     private Button browseButton;
 
-    protected DevkitExportPage(IJavaProject selected) {
+    protected DevkitExportPage(IProject selected) {
         super(PAGE_ID);
-        setTitle("Export Mule Extension");
-        setDescription("Export a Mule Extension as an Update  Site");
+        setTitle("Export Anypoint Connector");
+        setDescription("Export an Anypoint Connector as an Update  Site");
         this.project = selected;
+        try {
+            if (project != null && project.hasNature(DevkitNature.NATURE_ID)) {
+                this.setErrorMessage("The selected project doesn't seems to be a Devkit Project");
+            }
+        } catch (CoreException e) {
+
+        }
     }
 
     public void createControl(Composite parent) {
@@ -69,7 +83,28 @@ public class DevkitExportPage extends WizardPage {
         exportGroup.setLayout(layout);
         exportGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         exportGroup.setText("Export Settings");
+        Label projectLabel = new Label(exportGroup, SWT.NULL);
+        projectLabel.setText("Project:");
 
+        projects = new ComboViewer(exportGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+        GridData projectGridData = new GridData(GridData.FILL_HORIZONTAL);
+        projectGridData.grabExcessHorizontalSpace = true;
+        projectGridData.horizontalSpan = 2;
+        projects.getCombo().setLayoutData(projectGridData);
+        projects.setLabelProvider(new ProjectLabelProvider());
+        projects.setContentProvider(new ProjectNatureBaseContentProvider(DevkitNature.NATURE_ID));
+        projects.addSelectionChangedListener(new ISelectionChangedListener() {
+
+            public void selectionChanged(SelectionChangedEvent event) {
+                IStructuredSelection selection = (IStructuredSelection) projects.getSelection();
+                if (selection.size() > 0) {
+                    project = (IProject) selection.getFirstElement();
+                }
+                updatePageComplete();
+            }
+
+        });
+        projects.setInput(ResourcesPlugin.getWorkspace());
         Label outputFileName = new Label(exportGroup, SWT.NULL);
         outputFileName.setText("Location:");
         outputFileName.setToolTipText("The name for the archive that will be generated.");
@@ -144,8 +179,11 @@ public class DevkitExportPage extends WizardPage {
 
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
-                    MavenDevkitProjectDecorator mavenProject = MavenDevkitProjectDecorator.decorate(project);
-                    new BaseDevkitGoalRunner(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=false" },project).run(mavenProject.getPomFile(), monitor);
+                    IJavaProject javaProject = JavaCore.create(project);
+
+                    MavenRunBuilder.newMavenRunBuilder().withProject(javaProject)
+                            .withArgs(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=false" }).build().run(monitor);
+
                     IFile updateSiteFile = project.getProject().getFile("/target/UpdateSite.zip");
 
                     FileUtils.moveFile(new File(updateSiteFile.getLocationURI()), outputFile);
@@ -205,4 +243,10 @@ public class DevkitExportPage extends WizardPage {
         return new File(outputFolder, fileName);
     }
 
+    private void updatePageComplete() {
+        this.setPageComplete(project != null);
+        if (project != null) {
+            this.setErrorMessage(null);
+        }
+    }
 }

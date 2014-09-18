@@ -1,13 +1,18 @@
 package org.mule.tooling.devkit.wizards;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -20,18 +25,18 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
-import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
-import org.mule.tooling.devkit.dialogs.SelectWSDLDialog;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
 import org.mule.tooling.maven.ui.preferences.MavenPreferences;
@@ -73,10 +78,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private Button query;
     private boolean mavenFailure = false;
 
-    public NewDevkitProjectWizardPage(ISelection selection, ConnectorMavenModel model) {
+    public NewDevkitProjectWizardPage(ConnectorMavenModel model) {
         super("wizardPage");
-        setTitle("Create an Anypoint Connector");
-        setDescription("Enter a connector name");
+        setTitle(NewDevkitProjectWizard.WIZZARD_PAGE_TITTLE);
+        setDescription("Create an Anypoint Connector project.");
 
         if (!MuleCorePlugin.getServerManager().getServerDefinitions().isEmpty()) {
             selectedServerDefinition = new MuleStudioPreference().getDefaultRuntimeSelection();
@@ -111,6 +116,14 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         name.addModifyListener(new ModifyListener() {
 
             public void modifyText(ModifyEvent e) {
+                if (!name.getText().isEmpty()) {
+                    char character = name.getText().charAt(0);
+                    if (!Character.isUpperCase(character)) {
+                        name.setText(org.apache.commons.lang.StringUtils.capitalize(name.getText()));
+                        name.setSelection(1, 1);
+                        return;
+                    }
+                }
                 model.setConnectorName(name.getText());
                 dialogChanged();
             }
@@ -118,8 +131,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         name.setFocus();
 
         addRuntime(container);
-
-        addDatasense(container);
 
         Group apiGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_API, 4);
         apiType = initializeComboField(apiGroupBox, "Type: ", SUPPORTED_API_OPTIONS,
@@ -142,6 +153,21 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         wsdlLabel.setToolTipText("Select a wsdl file, folder containing the wsdl or just use the url where it is located.");
         wsdlLabel.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).span(4, 1).hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
 
+        Composite compositeRadio = new Composite(apiGroupBox, SWT.NULL);
+        GridLayoutFactory.fillDefaults().numColumns(2).margins(5, 5).applyTo(compositeRadio);
+        GridDataFactory.fillDefaults().span(2, 1).align(GridData.FILL, SWT.CENTER).applyTo(compositeRadio);
+
+        final Button fromFileRadioButton = new Button(compositeRadio, SWT.RADIO);
+        fromFileRadioButton.setText("From WSDL file or URL");
+        fromFileRadioButton.setSelection(true);
+        fromFileRadioButton.setToolTipText("It will import the selected root WSDL from a file or URL");
+        fromFileRadioButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1, 1));
+
+        final Button fromFolderRadioButton = new Button(compositeRadio, SWT.RADIO);
+        fromFolderRadioButton.setText("From folder");
+        fromFolderRadioButton.setToolTipText("It will import all the root WSDL files and their dependencies");
+        fromFolderRadioButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1, 1));
+
         wsdlLocation = new Text(apiGroupBox, SWT.BORDER);
         GridData gData = new GridData(GridData.FILL_HORIZONTAL);
         gData.horizontalSpan = 3;
@@ -157,20 +183,62 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         });
 
         final Button buttonPickFile = new Button(apiGroupBox, SWT.NONE);
-        buttonPickFile.setText("Browse");
+        buttonPickFile.setText("...");
         buttonPickFile.setLayoutData(GridDataFactory.fillDefaults().create());
         buttonPickFile.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
 
-                SelectWSDLDialog dialog = new SelectWSDLDialog(getShell(), wsdlLocation.getText());
+                if (fromFileRadioButton.getSelection()) {
+                    FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
+                    dialog.setText("Select WSDL file");
+                    dialog.setFilterExtensions(new String[] { "*.wsdl", "*.*" });
+                    String path = wsdlLocation.getText();
+                    if (path.length() == 0) {
+                        path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPortableString();
+                    }
+                    dialog.setFilterPath(path);
 
-                int result = dialog.open();
-                if (result == 0) {
-                    wsdlLocation.setText(dialog.getPath());
+                    String result = dialog.open();
+                    if (result != null) {
+                        wsdlLocation.setText(result);
+                        updateStatus(null);
+                    }
+
+                } else {
+                    DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
+                    dialog.setText("Select Directory containing one WSDL");
+                    String path = wsdlLocation.getText();
+                    if (path.length() == 0) {
+                        path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPortableString();
+                    }
+                    dialog.setFilterPath(path);
+
+                    String result = dialog.open();
+                    if (result != null) {
+
+                        // Check that the folder has a wsdl.
+                        String wsdlFileName = "";
+                        String[] files = new File(result).list(new SuffixFileFilter(".wsdl"));
+                        File wsdlFile = null;
+                        for (int i = 0; i < files.length; i++) {
+                            wsdlFile = new File(result, files[i]);
+                            wsdlFileName = wsdlFile.getName();
+                        }
+
+                        if (wsdlFileName.isEmpty()) {
+                            updateStatus("The selected directory does not contains a '.wsdl' file.");
+                        } else {
+                            wsdlLocation.setText(result);
+                            updateStatus(null);
+                        }
+                    }
                 }
+
             }
         });
+
+        addDatasense(container);
 
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 0, 0).margins(0, 0).spacing(0, 0).applyTo(container);
         GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
@@ -180,6 +248,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         wsdlLabel.setVisible(false);
         wsdlLocation.setVisible(false);
         buttonPickFile.setVisible(false);
+        fromFileRadioButton.setVisible(false);
+        fromFolderRadioButton.setVisible(false);
         final ModifyListener authenticationChange = new ModifyListener() {
 
             @Override
@@ -204,6 +274,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 wsdlLabel.setVisible(isVisible);
                 wsdlLocation.setVisible(isVisible);
                 buttonPickFile.setVisible(isVisible);
+                fromFileRadioButton.setVisible(isVisible);
+                fromFolderRadioButton.setVisible(isVisible);
+                dialogChanged();
                 if (ApiType.SOAP.label().equals(apiType.getText())) {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS[0]);
@@ -224,13 +297,14 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         apiType.addModifyListener(changeListener);
         comboAuthentication.addModifyListener(authenticationChange);
         apiType.setText(ApiType.GENERIC.label());
+
         setControl(container);
         initialize();
         testMaven();
     }
 
     private void addDatasense(Composite container) {
-        Group mavenGroupBox = UiUtils.createGroupWithTitle(container, "Datasense", 2);
+        Group mavenGroupBox = UiUtils.createGroupWithTitle(container, "DataSense", 2);
         datasense = initButton(mavenGroupBox, "Add DataSense methods", SWT.CHECK);
         query = initButton(mavenGroupBox, "Add DataSense Query Method", SWT.CHECK);
         mavenGroupBox.layout();
@@ -314,20 +388,29 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         } else if (this.getName().endsWith("Connector")) {
             updateStatus("There is no need for you to add the Connector word at the end.");
             return;
+        } else if (DevkitUtils.isReserved(this.getName().toLowerCase())) {
+            updateStatus("Cannot use Java language keywords for the name");
+            return;
         } else if (!connectorName.matcher(this.getName()).matches()) {
             updateStatus("The Name must start with an upper case character followed by other alphanumeric characters.");
             return;
-        } else if (!isValidateFileOrFolder(this.wsdlLocation.getText())) {
-            updateStatus("The selected folder does not contains a wsdl file.");
+        } else if (this.getApiType().equals(ApiType.SOAP) && !isValidateFileOrFolder(this.wsdlLocation.getText())) {
+            updateStatus("The selected wsdl location is not valid.");
             return;
         }
-        final String projectName = getName();
-        final File workspaceDir = CoreUtils.getWorkspaceLocation();
-        if ((new File(workspaceDir, projectName.toLowerCase() + "-connector")).exists()) {
-            updateStatus("A project with the name [" + projectName.toLowerCase() + "-connector] already exists in your workspace folder.");
+        final String projectName = DevkitUtils.toConnectorName(getName()) + "-connector";
+
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
+        if (root.exists(Path.fromOSString(projectName))) {
+            updateStatus("A project with the name [" + projectName + "] already exists in your workspace folder.");
             return;
         }
 
+        if (this.getApiType().equals(ApiType.SOAP) && this.getWsdlFileOrDirectory().isEmpty()) {
+            updateStatus("Specify a wsdl location.");
+            return;
+        }
         updateStatus(null);
     }
 
@@ -337,7 +420,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     public String getDevkitVersion() {
-        return getDevkitVersion(this.selectedServerDefinition);
+        return DevkitUtils.getDevkitVersionForServerDefinition(this.selectedServerDefinition);
     }
 
     public String getName() {
@@ -375,11 +458,11 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private void updateComponentsEnablement() {
-        boolean enabled = isBasic() && !apiType.getText().equals(ApiType.REST.label());
+        boolean enabled = isBasic() && apiType.getText().equals(ApiType.GENERIC.label());
         datasense.setEnabled(enabled);
         query.setEnabled(enabled);
         if (enabled) {
-            model.setMetadataEnabled(datasense.getSelection());
+            model.setMetaDataEnabled(datasense.getSelection());
         }
         query.setEnabled(datasense.getSelection() && enabled);
     }
@@ -388,24 +471,12 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         return !(comboAuthentication.getText().equals(OAUTH_V1) || comboAuthentication.getText().equals(OAUTH_V2));
     }
 
-    private String getDevkitVersion(ServerDefinition selectedServerDefinition) {
-        if (selectedServerDefinition.getId().contains("3.4.2"))
-            return "3.4.2";
-        if (selectedServerDefinition.getId().contains("3.4.1"))
-            return "3.4.1";
-        if (selectedServerDefinition.getId().contains("3.4.0"))
-            return "3.4.0";
-        if (selectedServerDefinition.getId().contains("3.5.0"))
-            return "3.5.0";
-        return "3.5.1";
-    }
-
     public boolean hasQuery() {
         return query.getSelection();
     }
 
     public boolean isMetadaEnabled() {
-        return datasense.getSelection();
+        return datasense.isEnabled() && datasense.getSelection();
     }
 
     public boolean isOAuth() {
@@ -429,21 +500,36 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private boolean isValidateFileOrFolder(String result) {
-        if (result.startsWith("http")) {
-            return true;
-        }
         File wsdlFileOrDirectory = new File(result);
 
-        if (!result.isEmpty() && !wsdlFileOrDirectory.exists()) {
+        if (result.isEmpty()) {
             return false;
         }
-        if (wsdlFileOrDirectory.isDirectory()) {
-            String[] files = wsdlFileOrDirectory.list(new SuffixFileFilter(".wsdl"));
-            if (files.length == 0) {
-                return false;
+        if (wsdlFileOrDirectory.exists()) {
+            if (wsdlFileOrDirectory.isDirectory()) {
+                String wsdlFileName = "";
+                String[] files = wsdlFileOrDirectory.list(new SuffixFileFilter(".wsdl"));
+                File wsdlFile = null;
+                for (int i = 0; i < files.length; i++) {
+                    wsdlFile = new File(wsdlFileOrDirectory, files[i]);
+                    wsdlFileName = wsdlFile.getName();
+                }
+
+                if (wsdlFileName.isEmpty()) {
+                    return false;
+                } else {
+                    return true;
+                }
+
+            } else {
+                return true;
             }
         }
-        return true;
+
+        if (isValidURL(result)) {
+            return true;
+        }
+        return false;
     }
 
     private String getAuthenticationDescription() {
@@ -468,5 +554,17 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     void onTestFinished(final int result) {
         mavenFailure = result != 0;
         this.dialogChanged();
+    }
+
+    private boolean isValidURL(String url) {
+        try {
+            URL u = new URL(url);
+            u.toURI();
+            return true;
+        } catch (MalformedURLException e) {
+            return false;
+        } catch (URISyntaxException e) {
+            return false;
+        }
     }
 }

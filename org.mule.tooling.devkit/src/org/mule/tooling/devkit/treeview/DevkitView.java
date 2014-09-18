@@ -1,13 +1,5 @@
 package org.mule.tooling.devkit.treeview;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -44,12 +36,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.builder.DevkitNature;
@@ -57,7 +47,6 @@ import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.treeview.model.Module;
 import org.mule.tooling.devkit.treeview.model.NodeItem;
 import org.mule.tooling.devkit.treeview.model.ProjectRoot;
-import org.mule.tooling.devkit.treeview.model.Property;
 
 @SuppressWarnings("restriction")
 public class DevkitView extends ViewPart implements IResourceChangeListener, ISelectionListener {
@@ -101,17 +90,14 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
 
         getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+        workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
 
         viewer.addDoubleClickListener(new IDoubleClickListener() {
 
             @Override
             public void doubleClick(DoubleClickEvent event) {
                 IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
-                if (thisSelection.getFirstElement() instanceof Property) {
-                    goToSampleInDocSampleFile(thisSelection);
-
-                } else if (thisSelection.getFirstElement() instanceof NodeItem) {
+                if (thisSelection.getFirstElement() instanceof NodeItem) {
                     NodeItem method = (NodeItem) thisSelection.getFirstElement();
                     ICompilationUnit cu = method.getCompilationUnit();
                     IEditorPart javaEditor;
@@ -126,78 +112,6 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                 }
             }
 
-            private void goToSampleInDocSampleFile(IStructuredSelection thisSelection) {
-                IFile file = getFileFromResource();
-                if (file == null)
-                    return;
-                InputStreamReader isr = null;
-                try {
-
-                    isr = new InputStreamReader(file.getContents());
-                    BufferedReader ir = new BufferedReader(isr);
-                    String line;
-                    int lineNumber = 0;
-                    Property prop = (Property) thisSelection.getFirstElement();
-                    boolean found = false;
-                    while ((line = ir.readLine()) != null) {
-                        lineNumber++;
-                        if (line.contains(prop.getValue())) {
-                            found = true;
-                            break;
-                        }
-
-                    }
-                    if (!found) {
-                        lineNumber = 0;
-                    }
-                    openSampleAtLine(file, lineNumber);
-                } catch (CoreException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (isr != null) {
-                        try {
-                            isr.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            private IFile getFileFromResource() {
-                IFile file = null;
-                IFolder folder = getCurrent().getFolder(DevkitUtils.DOCS_FOLDER);
-
-                try {
-                    for (IResource resource : folder.members()) {
-                        if (resource.getName().matches(".*.sample")) {
-                            file = getCurrent().getFile(resource.getProjectRelativePath());
-                            break;
-                        }
-                    }
-                } catch (CoreException e1) {
-                    e1.printStackTrace();
-                }
-                return file;
-            }
-
-            @SuppressWarnings({ "unchecked", "deprecation" })
-            private void openSampleAtLine(IFile file, int lineNumber) throws CoreException, PartInitException {
-                @SuppressWarnings({ "rawtypes" })
-                HashMap map = new HashMap();
-                map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
-                map.put(IWorkbenchPage.EDITOR_ID_ATTR, "org.mule.tooling.devkit.sample.editor.XMLEditor");
-                IMarker marker;
-
-                marker = file.createMarker(IMarker.TEXT);
-
-                marker.setAttributes(map);
-                // page.openEditor(marker); //2.1 API
-                IDE.openEditor(getSite().getPage(), marker); // 3.0 API
-                marker.delete();
-            }
         });
     }
 
@@ -253,6 +167,9 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
     private void handleNewProjectSelectedChange(Object selected) {
         try {
             final IProject selectedProject = (IProject) selected;
+            if (current.equals(selectedProject)) {
+                return;
+            }
             if (selectedProject.isOpen() && selectedProject.hasNature(DevkitNature.NATURE_ID)) {
                 analyseMethods(selectedProject);
             } else {
@@ -308,12 +225,38 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                             IResourceDelta delta = event.getDelta().getAffectedChildren()[0];
 
                             if (delta.getResource().getProject() != null && delta.getResource().getProject().isOpen()) {
+                                // When the user navigates from the sample file to the JAVA File we don't want to trigger the mechanism
+                                if (delta.getProjectRelativePath() != null) {
+                                    if (delta.getProjectRelativePath().lastSegment() != null) {
+                                        if (delta.getProjectRelativePath().lastSegment().equalsIgnoreCase("doc")) {
+                                            return;
+                                        }
+                                    }
+                                }
                                 analyseMethods(delta.getResource().getProject());
                             }
                         }
                     }
                 } catch (CoreException e) {
                     e.printStackTrace();
+                }
+            }
+        } else {
+            // PRE CLOSE OR DELETE
+            if (event.getResource()!=null) {
+                IResource resource = event.getResource();
+
+                if (resource.getProject() != null && resource.getProject().isOpen()) {
+                    if (current != null && current.getName().equals(resource.getProject().getName())) {
+                        // Set empty project as input
+                        Display.getDefault().asyncExec(new Runnable() {
+
+                            public void run() {
+                                viewer.setInput(new ProjectRoot());
+                            }
+                        });
+
+                    }
                 }
             }
         }

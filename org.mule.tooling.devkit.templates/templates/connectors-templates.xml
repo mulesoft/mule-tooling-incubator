@@ -19,21 +19,59 @@
 
 	</template>
 	<template id="org.mule.tooling.devkit.templates.metadata" autoinsert="true" context="java-members"  description="Add Datasense basic operation" enabled="true" name="datasense">${imp:import (java.util.List,
+	java.util.ArrayList,
+	org.mule.api.annotations.MetaDataKeyRetriever,
+	org.mule.api.annotations.MetaDataRetriever,
+	org.mule.common.metadata.datatype.DataType,
+	org.mule.common.metadata.DefaultMetaData,
+	org.mule.common.metadata.DefaultMetaDataKey,
 	org.mule.common.metadata.MetaData,
 	org.mule.common.metadata.MetaDataKey,
-	org.mule.common.metadata.datatype.DataType,
-	org.mule.api.annotations.MetaDataKeyRetriever,
-	org.mule.api.annotations.MetaDataRetriever)}
+	org.mule.common.metadata.MetaDataModel,
+	org.mule.common.metadata.builder.DefaultMetaDataBuilder,
+	org.mule.common.metadata.builder.DynamicObjectBuilder)}
 
+    /**
+     * Retrieves the list of keys
+     */
+	@MetaDataKeyRetriever
+	public List&lt;MetaDataKey&gt; getMetaDataKeys() throws Exception {
+		List&lt;MetaDataKey&gt; keys = new ArrayList&lt;MetaDataKey&gt;();
+		
+		//Generate the keys
+		keys.add(new DefaultMetaDataKey("id1", "User"));
+		keys.add(new DefaultMetaDataKey("id2", "Book"));
+		
+		return keys;
+	}
 
-    @MetaDataKeyRetriever
-    public List&lt;MetaDataKey&gt; getMetaDataKeys() throws Exception {
-        return null;
-    }
-
+	/**
+	 * Get MetaData given the Key the user selects
+	 * 
+	 * @param key The key selected from the list of valid keys
+	 * @return The MetaData model of that corresponds to the key
+	 * @throws Exception If anything fails
+	 */
     @MetaDataRetriever
     public MetaData getMetaData(MetaDataKey key) throws Exception {
-		return null;	
+		DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
+		//If you have a Pojo class
+		//PojoMetaDataBuilder&lt;?&gt;  pojoObject=builder.createPojo(Pojo.class);
+		
+		//If your build uses Maps as input
+		DynamicObjectBuilder&lt;?&gt; dynamicObject = builder.createDynamicObject(key.getId());
+		
+		if(key.getId().equals("id1")){
+			dynamicObject.addSimpleField("Username", DataType.STRING);
+			dynamicObject.addSimpleField("age", DataType.INTEGER);
+		}else{
+			dynamicObject.addSimpleField("Author", DataType.STRING);
+			dynamicObject.addSimpleField("Tittle", DataType.STRING);
+		}
+		MetaDataModel model = builder.build();
+		MetaData metaData = new DefaultMetaData(model);
+
+		return metaData;	
     }
 	</template>
 	<template id="org.mule.tooling.devkit.templates.processordefaultpayload" autoinsert="true" context="java-members"  description="A simple processor that takes by default the payload as input" enabled="true" name="processor">${imp:import(org.mule.api.annotations.Processor,org.mule.api.annotations.param.Default)}

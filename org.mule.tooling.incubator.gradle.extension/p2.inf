@@ -1,0 +1,6 @@
+properties.0.name=image.url
+properties.0.value=http://www.mulesoft.org/documentation/download/thumbnails/94110945/connector.png?version=1&modificationDate=1372094304960
+properties.1.name=doc.url
+properties.1.value=https://github.com/mulesoft/mule-tooling-incubator#mule-tooling-incubator
+properties.2.name=tutorial.url
+properties.2.value=http://www.youtube.com/watch?v=X6176iSszGM

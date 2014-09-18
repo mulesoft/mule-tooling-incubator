@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
@@ -25,8 +24,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.apt.core.util.AptConfig;
-import org.eclipse.jdt.apt.core.util.IFactoryPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -51,7 +48,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
-import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
@@ -229,10 +225,16 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
         }
 
         if (!hasExpectedProjectStructure(tempExpandedZipFile)) {
-            boolean decision = MessageDialog.open(MessageDialog.CONFIRM, getShell(), "Warning",
-                    "The project you are trying to import has an invalid folder structure. \nContinue anyway?", SWT.NONE);
-            if (!decision)
+            // If the user wants to continue we will just create a project with the devkit nature in worst case scenario.
+            if (!MessageDialog.open(MessageDialog.CONFIRM, getShell(), "Warning", "The project you are trying to import has an invalid folder structure. \nContinue anyway?",
+                    SWT.NONE)) {
                 return false;
+            }
+        }
+        File[] files = tempExpandedZipFile.listFiles();
+        // Check if the zip has just 1 folder, and the poin is inside of it
+        if (files.length == 1 && files[0].isDirectory()) {
+            tempExpandedZipFile = files[0];
         }
         final File tempExpanded = tempExpandedZipFile;
 
@@ -258,16 +260,11 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
                         } catch (IOException e1) {
                             throw new RuntimeException(e1.getMessage());
                         }
-                        configureDevkitAPT(javaProject);
-                        boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
+                        DevkitUtils.configureDevkitAPT(javaProject);
 
-                        if (!autoBuilding) {
-                            UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject);
-                            job.run(monitor);
-                            ProjectSubsetBuildAction projectBuild = new ProjectSubsetBuildAction(window, IncrementalProjectBuilder.CLEAN_BUILD, new IProject[] { project });
-                            projectBuild.run();
-                            project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                        }
+                        UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject, new String[] { "clean","compile", "eclipse:eclipse" });
+                        job.run(monitor);
+                        project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
                     } catch (CoreException e) {
                         e.printStackTrace();
                     }
@@ -299,6 +296,11 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
 
     private boolean hasExpectedProjectStructure(File tempExpandedZipFile) {
 
+        File[] files = tempExpandedZipFile.listFiles();
+        // Check if the zip has just 1 folder, and the poin is inside of it
+        if (files.length == 1 && files[0].isDirectory()) {
+            tempExpandedZipFile = files[0];
+        }
         return new File(tempExpandedZipFile, "pom.xml").exists();
     }
 
@@ -384,14 +386,6 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
         case IResource.PROJECT:
             break;
         }
-    }
-
-    protected void configureDevkitAPT(IJavaProject javaProject) throws CoreException {
-        AptConfig.setEnabled(javaProject, true);
-        IFactoryPath path = AptConfig.getFactoryPath(javaProject);
-        path.enablePlugin(org.mule.tooling.devkit.apt.Activator.PLUGIN_ID);
-        AptConfig.setFactoryPath(javaProject, path);
-        AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "false");
     }
 
     protected void testMaven() {

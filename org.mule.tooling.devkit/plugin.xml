@@ -7,7 +7,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
-      
       <wizard
             category="org.mule.tooling.ui.muleWizards"
             class="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard"
@@ -16,29 +15,58 @@
             name="Anypoint Connector Project"
             project="true">
       </wizard>
-
 	  </extension>
-
+	  <extension	
+        point="org.eclipse.ui.perspectives">
+        <perspective name="Devkit"
+                icon="icons/icon.png"
+                class="org.mule.tooling.devkit.perspective.DevkitPerspectiveFactory"
+                id="org.mule.tooling.devkit.perspective">
+		</perspective>
+ 	  </extension>
       <extension
          point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="*">
-            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard" />		
-      </perspectiveExtension>
+	      <perspectiveExtension
+	            targetID="*">
+	            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard" />		
+	      </perspectiveExtension>
+	      <perspectiveExtension targetID="org.mule.tooling.devkit.perspective">
+				<newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.JavaProjectWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewPackageCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewClassCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewEnumCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewAnnotationCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewSourceFolderCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewJavaWorkingSetWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.ui.wizards.new.folder">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.ui.wizards.new.file">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.ui.editors.wizards.UntitledTextFileWizard">
+				</newWizardShortcut>
+			</perspectiveExtension>
 	  </extension>
       <extension
             id="devkitBuilder"
             name="Devkit Project Builder"
             point="org.eclipse.core.resources.builders">
-         <builder
-               hasNature="true">
-            <run
-                  class="org.mule.tooling.devkit.builder.DevkitBuilder">
+         <builder hasNature="true">
+            <run class="org.mule.tooling.devkit.builder.DevkitBuilder">
             </run>
          </builder>
       </extension>
       
-
       <extension
             id="devkitNature"
             name="Devkit Project Nature"
@@ -70,25 +98,17 @@
             class="org.mule.tooling.devkit.export.UpdateSiteExportWizard"
             icon="icons/icon.png"
             id="org.mule.tooling.devkit.export.updateSiteExportWizard"
-            name="Mule extension Update Site">
+            name="Anypoint Connector Update  Site">
       </wizard>
-   </extension>
- 	<extension	
-         point="org.eclipse.ui.perspectives">
-         <perspective
-                name="Devkit"
-                icon="icons/icon.png"
-                class="org.mule.tooling.devkit.perspective.DevkitPerspectiveFactory"
-                id="org.mule.tooling.devkit.perspective">
-        </perspective>
    </extension>
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="Devkit"
-            icon="icons/icon.png"
+            category="org.mule.tooling.ui.views"
             class="org.mule.tooling.devkit.treeview.DevkitView"
-            id="org.mule.tooling.devkit.treeview.DevkitView">
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.treeview.DevkitView"
+            name="Devkit">
       </view>
    </extension>
    <extension
@@ -118,8 +138,7 @@
 			name="Generate Testdata">
 		</command>
 		<command id="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
-			name="Run Interop Tests"
-			defaultHandler="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand">
+			name="Run Interop Tests">
 		</command>
 		<command id="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand"
 			name="Generate Functional TestCases"
@@ -268,6 +287,7 @@
     		name="Devkit Sample Link Detector">
 		</hyperlinkDetector>
 	</extension>
+	
 	<extension 
        point="org.eclipse.ui.importWizards"> 
       <wizard 
@@ -279,12 +299,38 @@
       </wizard> 
       <wizard 
       	 category="org.mule.tooling.ui.muleImportCategory"
-         id="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportPage" 
+         id="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportWizard" 
          name="Anypoint Connector Project from External Location (.zip)" 
          class="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportWizard" 
          icon="icons/importzip.gif">
       </wizard>
    </extension>
+	
+	<extension
+         point="org.eclipse.ui.menus">
+         
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.mule.tooling.ui.import">
+         <command
+               commandId="org.eclipse.ui.file.import"
+               style="push">
+            <parameter
+                  name="importWizardId"
+                  value="org.mule.tooling.devkit.wizards.ConnectorImportWizzard">
+            </parameter>
+         </command>
+         <command
+               commandId="org.eclipse.ui.file.import"
+               style="push">
+            <parameter
+                  name="importWizardId"
+                  value="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportWizard">
+            </parameter>
+         </command>
+      </menuContribution>
+   </extension>
+   
    <extension point="org.eclipse.ui.decorators">
      <decorator
            adaptable="true"
@@ -354,6 +400,12 @@
 	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
          	</activeWhen>
          </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
+			class="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
 	</extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -376,6 +428,10 @@
                 <command commandId="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
                          tooltip="Test Coverage Report"
                          icon="icons/coverage.gif">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
+                    tooltip="Run Interop Tests"
+                    icon="icons/run.png">
                 </command>
                 <command commandId="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
                          tooltip="Generate Sources"

@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.StringLiteral;
@@ -21,16 +22,17 @@ import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.devkit.treeview.model.ModelUtils;
 
 @SuppressWarnings("restriction")
 public class ChangeAnnotationValueQuickFix extends QuickFix {
 
-	private final String annotation;
+	private final QualifiedName annotation;
 
 	public ChangeAnnotationValueQuickFix(String label,
 			ConditionMarkerEvaluator evaluator) {
 		super(label, evaluator);
-		this.annotation = "Default";
+		this.annotation = ModelUtils.DEFAULT_ANNOTATION;
 	}
 
 	@Override

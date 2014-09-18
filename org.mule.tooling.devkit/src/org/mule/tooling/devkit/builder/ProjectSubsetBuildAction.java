@@ -18,7 +18,7 @@ public class ProjectSubsetBuildAction extends BuildAction {
     }
 
     @Override
-    protected List getSelectedResources() {
+    protected List<IProject> getSelectedResources() {
         return Arrays.asList(this.projectsToBuild);
     }
 }

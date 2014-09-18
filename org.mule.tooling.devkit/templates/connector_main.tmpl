@@ -1,7 +1,10 @@
+/**
+ * (c) 2003-2014 MuleSoft, Inc. The software in this package is published under the terms of the CPAL v1.0 license,
+ * a copy of which has been included with this distribution in the LICENSE.md file.
+ */
+
 package ${package};
-#if($hasQuery == true)
-import java.util.List;
-#end
+
 import org.mule.api.annotations.Connector;
 #if($OAuthEnaled == false)
 import org.mule.api.annotations.Connect;
@@ -35,8 +38,11 @@ import org.mule.api.annotations.oauth.OAuthProtected;
 #end
 
 #if($metadataEnabled == true )
+import java.util.ArrayList;
 import java.util.List;
 import org.mule.common.metadata.*;
+import org.mule.common.metadata.builder.DefaultMetaDataBuilder; 
+import org.mule.common.metadata.builder.DynamicObjectBuilder;
 import org.mule.common.metadata.datatype.DataType;
 import org.mule.api.annotations.MetaDataKeyRetriever;
 import org.mule.api.annotations.MetaDataRetriever;
@@ -54,7 +60,11 @@ import org.mule.api.annotations.param.Default;
 @Connector(name="${moduleName}", schemaVersion="1.0", friendlyName="${connectorName}")
 #if($OAuthEnaled == true )
 #if( $authenticationType=='OAUTH_V2')
-@OAuth2(authorizationUrl = "", accessTokenUrl = "", accessTokenRegex = "", expirationRegex = "FOO-EXPRESSION", refreshTokenRegex = "")
+@OAuth2(authorizationUrl = "https://api.myconnector.com/uas/oauth/authorize", 
+accessTokenUrl = "https://api.myconnector.com/uas/oauth/accessToken", 
+accessTokenRegex = "FOO-EXPRESSION-ACCESS-TOKEN",
+expirationRegex = "FOO-EXPRESSION-EXPIRATION", 
+refreshTokenRegex = "FOO-EXPRESSION-REFRESH-TOKEN")
 #end
 #if( $authenticationType=='OAUTH_V1')
 @OAuth(requestTokenUrl = "https://api.myconnector.com/uas/oauth/requestToken", 
@@ -71,7 +81,6 @@ public abstract class ${className} {
     private String myProperty;
 
 #if($OAuthEnaled == true )  
-
     /**
      * The OAuth consumer key
      */
@@ -102,14 +111,48 @@ public abstract class ${className} {
 #end
     
 #if($metadataEnabled == true )    
+    /**
+     * Retrieves the list of keys
+     */
     @MetaDataKeyRetriever
     public List<MetaDataKey> getMetaDataKeys() throws Exception {
-        return null;
+        List<MetaDataKey> keys = new ArrayList<MetaDataKey>();
+
+        //Generate the keys
+        keys.add(new DefaultMetaDataKey("id1", "User"));
+        keys.add(new DefaultMetaDataKey("id2", "Book"));
+
+        return keys;
     }
 
+    /**
+     * Get MetaData given the Key the user selects
+     * 
+     * @param key The key selected from the list of valid keys
+     * @return The MetaData model of that corresponds to the key
+     * @throws Exception If anything fails
+     */
     @MetaDataRetriever
     public MetaData getMetaData(MetaDataKey key) throws Exception {
-		return null;	
+        DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
+        //If you have a Pojo class
+        //PojoMetaDataBuilder<?>  pojoObject=builder.createPojo(Pojo.class);
+
+        //If you use maps as input of your processors that work with DataSense
+        DynamicObjectBuilder<?> dynamicObject = builder.createDynamicObject(key
+                .getId());
+
+        if (key.getId().equals("id1")) {
+            dynamicObject.addSimpleField("Username", DataType.STRING);
+            dynamicObject.addSimpleField("age", DataType.INTEGER);
+        } else {
+            dynamicObject.addSimpleField("Author", DataType.STRING);
+            dynamicObject.addSimpleField("Tittle", DataType.STRING);
+        }
+        MetaDataModel model = builder.build();
+        MetaData metaData = new DefaultMetaData(model);
+
+        return metaData;
     }
 #end    
 
@@ -132,7 +175,7 @@ public abstract class ${className} {
     /**
      * Custom processor
      *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:myProcessor}
+     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:my-processor}
      *
      * @param content Content to be processed
      * @return Some string
@@ -151,18 +194,18 @@ public abstract class ${className} {
     /**
      * Description for query
      *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query}
+     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query-processor}
      *
      *  @param query The dsql query
      *  @return List of elements that match the criteria
      */
     @Processor
-    public List<Object> query(@Query String query) {
+    public List<Object> queryProcessor(@Query String query) {
         //TODO
         /*
          * MESSAGE PROCESSOR CODE GOES HERE
          */
-        return null;
+        return new ArrayList<Object>();
     }
 #end
 #if($OAuthEnaled == false )
@@ -197,7 +240,8 @@ public abstract class ${className} {
      */
     @ValidateConnection
     public boolean isConnected() {
-        return true;
+        //TODO: Change it to reflect that we are connected.
+        return false;
     }
 
     /**

@@ -5,16 +5,18 @@ import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.mule.tooling.devkit.treeview.model.ModelUtils;
 
 public class ChangeMinMuleVersion extends QuickFix {
 
-	private final String annotation;
+	private final QualifiedName annotation;
 
 	public ChangeMinMuleVersion(String label, ConditionMarkerEvaluator evaluator) {
 		super(label, evaluator);
-		this.annotation = "Connector";
+		this.annotation = ModelUtils.CONNECTOR_ANNOTATION;
 	}
 
 	@Override

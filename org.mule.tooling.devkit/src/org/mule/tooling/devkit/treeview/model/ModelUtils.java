@@ -1,37 +1,1 @@
-package org.mule.tooling.devkit.treeview.model;
-
-import java.util.Arrays;
-
-public class ModelUtils {
-
-    public static String[] SUPPORTED_SOURCE_METHOD = { "Source" };
-
-    public static String[] SUPPORTED_CLASS_ANNOTATIONS = { "Connector", "Module", "MetaDataCategory" };
-
-    public static String[] SUPPORTED_METHOD_ANNOTATIONS = { "Processor", "Connect", "Disconnect", "ValidateConnection", "ConnectionIdentifier" };
-
-    public static String[] SUPPORTED_TRANSFORMER_METHOD = { "Transformer", "TransformerResolver" };
-
-    public static String[] SUPPORTED_METADATA_METHOD = { "MetaDataKeyRetriever", "MetaDataRetriever", "MetaDataOutputRetriever" };
-
-    public static boolean isAnnotationSupported(String annotation) {
-        return Arrays.asList(SUPPORTED_CLASS_ANNOTATIONS).contains(annotation) || Arrays.asList(SUPPORTED_METHOD_ANNOTATIONS).contains(annotation) || isMetadaMethod(annotation)
-                || isTransformerMethod(annotation) || isSourceMethod(annotation);
-    }
-
-    public static boolean isConnectionAnnotation(String annotation) {
-        return !(annotation.equals(SUPPORTED_METHOD_ANNOTATIONS[0])) && !isMetadaMethod(annotation);
-    }
-
-    public static boolean isMetadaMethod(String annotation) {
-        return Arrays.asList(SUPPORTED_METADATA_METHOD).contains(annotation);
-    }
-
-    public static boolean isTransformerMethod(String annotation) {
-        return Arrays.asList(SUPPORTED_TRANSFORMER_METHOD).contains(annotation);
-    }
-
-    public static boolean isSourceMethod(String annotation) {
-        return Arrays.asList(SUPPORTED_SOURCE_METHOD).contains(annotation);
-    }
-}
+package org.mule.tooling.devkit.treeview.model;import org.eclipse.jdt.core.dom.AST;import org.eclipse.jdt.core.dom.ASTMatcher;import org.eclipse.jdt.core.dom.Name;import org.eclipse.jdt.core.dom.QualifiedName;import org.eclipse.jdt.core.dom.SimpleName;public class ModelUtils {    public static final String ORG_MULE_API_ANNOTATIONS = "org.mule.api.annotations";    public static QualifiedName DEFAULT_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "Default");    public static QualifiedName OPTIONAL_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "Optional");    public static QualifiedName CONFIGURABLE_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "Configurable");    public static QualifiedName SOURCE_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "Source");    public static QualifiedName CONNECTOR_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "Connector");    public static QualifiedName MODULE_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "Module");    public static QualifiedName METADATA_CATEGORY_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "MetaDataCategory");    public static QualifiedName PROCESSOR_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "Processor");    public static QualifiedName CONNECT_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "Connect");    public static QualifiedName VALIDATE_CONNECTION_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "Disconnect");    public static QualifiedName CONNECTION_IDENTIFIER_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "ConnectionIdentifier");    public static QualifiedName DISCONNECT_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "ValidateConnection");    public static QualifiedName TRANSFORMER_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "Transformer");    public static QualifiedName TRANSFORMER_RESOLVER_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "TransformerResolver");    public static QualifiedName METADATA_KEY_RETRIEVER_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "MetaDataKeyRetriever");    public static QualifiedName METADATA_RETRIEVER_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "MetaDataRetriever");    public static QualifiedName METADATA_OUTPUT_RETRIEVER_ANNOTATION = createAnnotation(ORG_MULE_API_ANNOTATIONS, "MetaDataOutputRetriever");    private static VerifyChainNode buildSupportedChain() {        VerifyChainNode next = new VerifyChainNode(METADATA_OUTPUT_RETRIEVER_ANNOTATION, null);        next = new VerifyChainNode(METADATA_RETRIEVER_ANNOTATION, next);        next = new VerifyChainNode(METADATA_KEY_RETRIEVER_ANNOTATION, next);        next = new VerifyChainNode(TRANSFORMER_RESOLVER_ANNOTATION, next);        next = new VerifyChainNode(TRANSFORMER_ANNOTATION, next);        next = new VerifyChainNode(DISCONNECT_ANNOTATION, next);        next = new VerifyChainNode(CONNECTION_IDENTIFIER_ANNOTATION, next);        next = new VerifyChainNode(VALIDATE_CONNECTION_ANNOTATION, next);        next = new VerifyChainNode(CONNECT_ANNOTATION, next);        next = new VerifyChainNode(PROCESSOR_ANNOTATION, next);        next = new VerifyChainNode(METADATA_CATEGORY_ANNOTATION, next);        next = new VerifyChainNode(MODULE_ANNOTATION, next);        next = new VerifyChainNode(CONNECTOR_ANNOTATION, next);        next = new VerifyChainNode(SOURCE_ANNOTATION, next);        return next;    }    private static VerifyChainNode buildConnectionChain() {        VerifyChainNode next = new VerifyChainNode(DISCONNECT_ANNOTATION, null);        next = new VerifyChainNode(CONNECTION_IDENTIFIER_ANNOTATION, next);        next = new VerifyChainNode(VALIDATE_CONNECTION_ANNOTATION, next);        next = new VerifyChainNode(CONNECT_ANNOTATION, next);        return next;    }    private static VerifyChainNode buildMetadataChain() {        VerifyChainNode next = new VerifyChainNode(METADATA_OUTPUT_RETRIEVER_ANNOTATION, null);        next = new VerifyChainNode(METADATA_RETRIEVER_ANNOTATION, next);        next = new VerifyChainNode(METADATA_KEY_RETRIEVER_ANNOTATION, next);        return next;    }    private static VerifyChainNode buildTransformerChain() {        VerifyChainNode next = new VerifyChainNode(TRANSFORMER_ANNOTATION, null);        next = new VerifyChainNode(TRANSFORMER_RESOLVER_ANNOTATION, next);        return next;    }    public static boolean isAnnotationSupported(Name annotationName) {        return buildSupportedChain().isSupported(annotationName);    }    public static boolean isConnectionAnnotation(Name annotationName) {        return buildConnectionChain().isSupported(annotationName);    }    public static boolean isMetadaMethod(Name annotationName) {        return buildMetadataChain().isSupported(annotationName);    }    public static boolean isTransformerMethod(Name annotationName) {        return buildTransformerChain().isSupported(annotationName);    }    public static boolean isSourceMethod(Name annotationName) {        return annotationMatches(annotationName, SOURCE_ANNOTATION);    }    public static QualifiedName createAnnotation(String qualifier, String name) {        @SuppressWarnings("deprecation")        AST astFactory = AST.newAST(AST.JLS3);        Name qualifierName = astFactory.newName(qualifier);        SimpleName simpleName = astFactory.newSimpleName(name);        QualifiedName annotation = astFactory.newQualifiedName(qualifierName, simpleName);        return annotation;    }    public static boolean annotationMatches(Name annotation, QualifiedName typeToVerify) {        boolean typeMatches = annotation.subtreeMatch(new ASTMatcher(), typeToVerify);        if (!typeMatches) {            if (annotation.resolveTypeBinding() != null && annotation.resolveTypeBinding().getBinaryName() != null) {                typeMatches = annotation.resolveTypeBinding().getBinaryName().equals(typeToVerify.getFullyQualifiedName());            }        }        return typeMatches;    }}
