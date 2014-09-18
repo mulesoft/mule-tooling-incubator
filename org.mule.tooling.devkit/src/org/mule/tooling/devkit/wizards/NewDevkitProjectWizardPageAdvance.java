@@ -1,5 +1,7 @@
 package org.mule.tooling.devkit.wizards;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.wizard.WizardPage;
@@ -29,7 +31,7 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
     private static final String DEFAULT_GROUP_ID = "org.mule.modules";
     private static final String GROUP_TITLE_MAVEN_SETTINGS = "Maven Settings";
     private static final String CREATE_POM_LABEL = "Manually set values";
-
+    private final Pattern ownerName = Pattern.compile("^[\\S]+$");
     private ConnectorMavenModel connectorModel;
 
     protected NewDevkitProjectWizardPageAdvance(ConnectorMavenModel connectorModel) {
@@ -252,17 +254,22 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 
     private void updateStatus() {
         if (getGroupId().isEmpty()) {
-            setErrorMessage("Group Id cannot be empty");
+            setErrorMessage("Group Id cannot be empty.");
             setPageComplete(false);
             return;
         }
         if (getArtifactId().isEmpty()) {
-            setErrorMessage("Artifact Id cannot be empty");
+            setErrorMessage("Artifact Id cannot be empty.");
             setPageComplete(false);
             return;
         }
         if (getVersion().isEmpty()) {
-            setErrorMessage("Version cannot be empty");
+            setErrorMessage("Version cannot be empty.");
+            setPageComplete(false);
+            return;
+        }
+        if (!ownerName.matcher(owner.getText()).find()) {
+            setErrorMessage("You are using characters that are not allowed.");
             setPageComplete(false);
             return;
         }
