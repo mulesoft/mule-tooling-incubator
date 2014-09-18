@@ -56,7 +56,11 @@ import org.mule.api.annotations.param.Default;
 @Connector(name="${moduleName}", schemaVersion="1.0", friendlyName="${connectorName}")
 #if($OAuthEnaled == true )
 #if( $authenticationType=='OAUTH_V2')
-@OAuth2(authorizationUrl = "", accessTokenUrl = "", accessTokenRegex = "", expirationRegex = "FOO-EXPRESSION", refreshTokenRegex = "")
+@OAuth2(authorizationUrl = "https://api.myconnector.com/uas/oauth/authorize", 
+accessTokenUrl = "https://api.myconnector.com/uas/oauth/accessToken", 
+accessTokenRegex = "FOO-EXPRESSION-ACCESS-TOKEN",
+expirationRegex = "FOO-EXPRESSION-EXPIRATION", 
+refreshTokenRegex = "FOO-EXPRESSION-REFRESH-TOKEN")
 #end
 #if( $authenticationType=='OAUTH_V1')
 @OAuth(requestTokenUrl = "https://api.mycommector.com/uas/oauth/requestToken", 
