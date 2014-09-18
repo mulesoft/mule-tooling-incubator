@@ -38,26 +38,18 @@ public class DisableJavadocQuickFix implements IMarkerResolution2, DevkitQuickFi
         IJavaElement javaElement = JavaCore.create(resource);
         project = javaElement.getJavaProject();
         if (project != null) {
-            Map<String, String> options = AptConfig.getProcessorOptions(project);
-            Boolean enabled = Boolean.parseBoolean(options.get("enableJavaDocValidation"));
-            enabled = !enabled;
+            Boolean enabled = Boolean.FALSE;
             AptConfig.addProcessorOption(project, "enableJavaDocValidation", enabled.toString());
 
             Display.getDefault().asyncExec(new Runnable() {
 
                 @Override
                 public void run() {
-                    SilentRunner.run(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            try {
-                                project.getProject().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-                            } catch (CoreException e) {
-                                // Ignore errors
-                            }
-                        }
-                    });
+                    try {
+                        project.getProject().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+                    } catch (CoreException e) {
+                        // Ignore errors
+                    }
                 }
             });
         }
