@@ -116,6 +116,14 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         name.addModifyListener(new ModifyListener() {
 
             public void modifyText(ModifyEvent e) {
+                if (!name.getText().isEmpty()) {
+                    char character = name.getText().charAt(0);
+                    if (!Character.isUpperCase(character)) {
+                        name.setText(org.apache.commons.lang.StringUtils.capitalize(name.getText()));
+                        name.setSelection(1, 1);
+                        return;
+                    }
+                }
                 model.setConnectorName(name.getText());
                 dialogChanged();
             }
