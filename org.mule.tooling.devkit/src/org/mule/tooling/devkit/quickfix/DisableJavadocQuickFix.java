@@ -1,7 +1,5 @@
 package org.mule.tooling.devkit.quickfix;
 
-import java.util.Map;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -14,7 +12,6 @@ import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMarkerResolution2;
-import org.mule.tooling.utils.SilentRunner;
 
 @SuppressWarnings("restriction")
 public class DisableJavadocQuickFix implements IMarkerResolution2, DevkitQuickFix {

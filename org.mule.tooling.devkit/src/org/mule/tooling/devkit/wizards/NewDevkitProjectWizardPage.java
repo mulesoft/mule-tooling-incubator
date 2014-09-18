@@ -7,7 +7,9 @@ import java.net.URL;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -30,7 +32,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
-import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
@@ -390,8 +391,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             return;
         }
         final String projectName = DevkitUtils.toConnectorName(getName()) + "-connector";
-        final File workspaceDir = CoreUtils.getWorkspaceLocation();
-        if (new File(workspaceDir, projectName).exists()) {
+
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
+        if (root.exists(Path.fromOSString(projectName))) {
             updateStatus("A project with the name [" + projectName + "] already exists in your workspace folder.");
             return;
         }
