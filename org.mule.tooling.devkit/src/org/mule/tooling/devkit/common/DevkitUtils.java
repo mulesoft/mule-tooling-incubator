@@ -44,6 +44,7 @@ import org.eclipse.ui.IEditorPart;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
+import org.mule.tooling.devkit.maven.MavenDevkitProjectDecorator;
 import org.mule.tooling.devkit.popup.actions.DevkitCallback;
 import org.mule.tooling.devkit.quickfix.LocateModuleNameVisitor;
 import org.mule.tooling.ui.utils.SaveModifiedResourcesDialog;
@@ -322,7 +323,7 @@ public class DevkitUtils {
     public static boolean isReserved(String word) {
         return ArrayUtils.contains(RESERVED_NAMES, word);
     }
-    
+
     public static String getDevkitVersionForServerDefinition(ServerDefinition selectedServerDefinition) {
         if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_2))
             return DevkitUtils.DEVKIT_3_4_2;
@@ -336,12 +337,29 @@ public class DevkitUtils {
             return DevkitUtils.DEVKIT_3_5_1;
         return DevkitUtils.DEVKIT_CURRENT;
     }
-    
+
     public static void configureDevkitAPT(IJavaProject javaProject) throws CoreException {
         AptConfig.setEnabled(javaProject, true);
         IFactoryPath path = AptConfig.getFactoryPath(javaProject);
         path.enablePlugin(org.mule.tooling.devkit.apt.Activator.PLUGIN_ID);
         AptConfig.setFactoryPath(javaProject, path);
         AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "false");
+    }
+
+    /**
+     * Get a label from the project with the following structure. { groupId } : { artifactId } : { version } or { project name } if the result was empty.
+     * 
+     * @param selectedProject
+     *            maven project with a valid pom.xml file
+     * @return the label.
+     */
+    public static String getProjectLabel(final IJavaProject selectedProject) {
+        MavenDevkitProjectDecorator maven = MavenDevkitProjectDecorator.decorate(selectedProject);
+        String label = ((maven.getGroupId() != null) ? maven.getGroupId() + ":" : "") + ((maven.getArtifactId() != null) ? maven.getArtifactId() + ":" : "")
+                + ((maven.getVersion() != null) ? maven.getVersion() : "");
+        if (label.isEmpty()) {
+            label = selectedProject.getProject().getName();
+        }
+        return label;
     }
 }

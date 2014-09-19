@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.mule.tooling.devkit.DevkitUIPlugin;
+import org.mule.tooling.devkit.common.DevkitUtils;
 
 public class UpdateProjectClasspathWorkspaceJob extends WorkspaceJob {
 
@@ -34,7 +35,8 @@ public class UpdateProjectClasspathWorkspaceJob extends WorkspaceJob {
 
     @Override
     public IStatus runInWorkspace(IProgressMonitor jobmonitor) throws CoreException {
-        MavenRunBuilder builder = MavenRunBuilder.newMavenRunBuilder().withProject(project);
+        String label = DevkitUtils.getProjectLabel(project);
+        MavenRunBuilder builder = MavenRunBuilder.newMavenRunBuilder().withProject(project).withTaskName("Building connector " + label);
         if (commands == null) {
             runner = builder.build();
         } else {

@@ -51,10 +51,11 @@ public class CreateDocumentationCommand extends AbstractHandler {
                             monitor.beginTask(convertingMsg, 100);
                             IJavaProject javaProject = JavaCore.create(selectedProject);
                             final Integer result = MavenRunBuilder.newMavenRunBuilder().withProject(javaProject)
-                                    .withArgs(new String[] { "clean", "package", "-DskipTests", "javadoc:javadoc" }).build().run(monitor);
+                                    .withArgs(new String[] { "clean", "package", "-DskipTests", "javadoc:javadoc" })
+                                    .withTaskName("Generating documentation for " + DevkitUtils.getProjectLabel(javaProject)).build().run(monitor);
 
                             if (result == BaseDevkitGoalRunner.CANCELED)
-                                return null;
+                                return Status.CANCEL_STATUS;
 
                             DevkitUtils.openFileInBrower(selectedProject.getFile("/target/apidocs/index.html")).execute(result);
 
@@ -69,7 +70,7 @@ public class CreateDocumentationCommand extends AbstractHandler {
                 }
             }
         }
-        return null;
+        return Status.OK_STATUS;
     }
 
     private int getErrorsCount(final IProject selectedProject) {
