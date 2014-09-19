@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.popup.actions.DevkitCallback;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Model;
@@ -22,7 +23,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 public class MavenUtils {
 
-    public static void runMavenGoalJob(final IProject selectedProject, final String[] mavenCommand, final String jobMsg, final DevkitCallback callback) {
+    public static void runMavenGoalJob(final IProject selectedProject, final String[] mavenCommand, final String jobMsg, final DevkitCallback callback, final String jobDetail) {
 
         final WorkspaceJob changeClasspathJob = new WorkspaceJob(jobMsg) {
 
@@ -31,7 +32,7 @@ public class MavenUtils {
                 monitor.beginTask(jobMsg, 100);
                 IJavaProject javaProject = JavaCore.create(selectedProject);
 
-                int result = new BaseDevkitGoalRunner(mavenCommand, javaProject).run(monitor);
+                int result = MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArgs(mavenCommand).withTaskName(jobDetail).build().run(monitor);
 
                 if (callback != null) {
                     callback.execute(result);

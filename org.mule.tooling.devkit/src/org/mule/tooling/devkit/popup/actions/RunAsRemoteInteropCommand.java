@@ -21,6 +21,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -39,7 +41,7 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
 
     private static final String SUREFIRE_XML = "target/surefire-reports/TEST-suite.ConnectorsInteropTestSuite.xml";
     private static final String GENERATED_REPORTS_PATH = "interop-ce-project/ce-interop-testsuite/target/surefire-reports";
-    
+
     private InteropConfigDto runnerConfig;
     private String projectPath;
     private String projectTarget;
@@ -55,20 +57,20 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
         setTestdataFilesInProjectAsDefault(selectedProject);
 
         setProjectInformation();
-       
+
         if (getConfigurationAndContinue()) {
             if (!runnerConfig.runAsLocal()) {
                 runAsRemoteTest();
             } else {
                 runAsLocalTest(selectedProject);
             }
-        }        
+        }
     }
- 
+
     private void setProjectInformation() {
-        
-        runnerConfig.setRepository(MavenUtils.getProjectScmUrl(new File(projectPath+"/pom.xml")));
-        for(String branch: DevkitUtils.getProjectBranches(selectedProject, ListMode.REMOTE)){
+
+        runnerConfig.setRepository(MavenUtils.getProjectScmUrl(new File(projectPath + "/pom.xml")));
+        for (String branch : DevkitUtils.getProjectBranches(selectedProject, ListMode.REMOTE)) {
             runnerConfig.addBranch(branch);
         }
 
@@ -84,75 +86,71 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
         return returnStatus == 0;
     }
 
-    
     private void runAsLocalTest(final IProject selectedProject) {
         String jobMsg = "Generating Test Project...";
+        final IJavaProject javaProject = JavaCore.create(selectedProject);
+        String jobDetail = "Generating test project for " + DevkitUtils.getProjectLabel(javaProject);
 
-        String[] mavenCommand = new String[] { "org.mule.connectors.interop:interop-ce-runtime-generation:create"};
-        
+        String[] mavenCommand = new String[] { "org.mule.connectors.interop:interop-ce-runtime-generation:create" };
+
         System.out.println("** Command :: " + StringUtils.join(mavenCommand, " "));
-        
-        MavenUtils.runMavenGoalJob(selectedProject, mavenCommand, jobMsg, DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.TEST_RESOURCES_FOLDER), null));
-        
 
-        mavenCommand = new String[] {"install",
-                                     "-f", projectPath + "/target/interop-ce-project/pom.xml",
-                                     "-Dsuite.testData=" + runnerConfig.getTestDataPath(), 
-                                     "-Dsuite.testDataOverride=" + runnerConfig.getTestDataOverridePath(), 
-                                     "-Dsuite.testConnect=" + runnerConfig.getRunConnectivityTest(),
-                                     "-Dsuite.testDMapper=" + runnerConfig.getRunDMapperTest(),
-                                     "-Dsuite.testXml=" + runnerConfig.getRunXmlTest()};
-        
+        MavenUtils.runMavenGoalJob(selectedProject, mavenCommand, jobMsg, DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.TEST_RESOURCES_FOLDER), null), jobDetail);
+
+        mavenCommand = new String[] { "install", "-f", projectPath + "/target/interop-ce-project/pom.xml", "-Dsuite.testData=" + runnerConfig.getTestDataPath(),
+                "-Dsuite.testDataOverride=" + runnerConfig.getTestDataOverridePath(), "-Dsuite.testConnect=" + runnerConfig.getRunConnectivityTest(),
+                "-Dsuite.testDMapper=" + runnerConfig.getRunDMapperTest(), "-Dsuite.testXml=" + runnerConfig.getRunXmlTest() };
+
         jobMsg = "Running Interop Test";
+        jobDetail = "Running interop test for " + DevkitUtils.getProjectLabel(javaProject);
         MavenUtils.runMavenGoalJob(selectedProject, mavenCommand, jobMsg, new DevkitCallback() {
-   
-                @Override
-                public int execute(int previousResult) {
-                    try {
-                        File report = new File(projectTarget + GENERATED_REPORTS_PATH);
-                        File reportTarget = new File(projectTarget + "surefire-reports");
-                        File textReport = new File(reportTarget, "suite.ConnectorsInteropTestSuite.txt");
-                        
-                        FileUtils.deleteDirectory(reportTarget);
-                        FileUtils.moveDirectory(report, reportTarget);
-                        if (textReport.exists()){
-                            FileUtils.writeStringToFile(textReport, FileUtils.readFileToString(textReport)
-                                                                         .replaceAll(" skipped", " skipped\n")
-                                                                         .replaceAll(" sectest", " sec\ntest"));
-                        }
-                        System.out.println("Moved and formatted Report");
-                        
-                        FileUtils.deleteDirectory(new File(projectTarget + "interop-ce-project"));
-                        System.out.println("Delete dir");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return Status.ERROR;
+
+            @Override
+            public int execute(int previousResult) {
+                try {
+                    File report = new File(projectTarget + GENERATED_REPORTS_PATH);
+                    File reportTarget = new File(projectTarget + "surefire-reports");
+                    File textReport = new File(reportTarget, "suite.ConnectorsInteropTestSuite.txt");
+
+                    FileUtils.deleteDirectory(reportTarget);
+                    FileUtils.moveDirectory(report, reportTarget);
+                    if (textReport.exists()) {
+                        FileUtils.writeStringToFile(textReport, FileUtils.readFileToString(textReport).replaceAll(" skipped", " skipped\n").replaceAll(" sectest", " sec\ntest"));
                     }
+                    System.out.println("Moved and formatted Report");
 
-                    DevkitUtils.refreshFolder(selectedProject.getFolder("target"),null).execute(Status.OK);
-
-                    try {
-                        // Workaround for refresh delay of folder resource on viewPart
-                        Thread.sleep(2000);
-                    } catch (InterruptedException ignored) {}
-
-                    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            IWorkbenchPage page = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage();
-                            IViewPart viewPart = page.findView("org.eclipse.jdt.ui.PackageExplorer");
-
-                            Viewer selectionService = (Viewer) viewPart.getSite().getSelectionProvider();
-                            TreePath[] tp = new TreePath[]{new TreePath(new Object[] { selectedProject.getFile(SUREFIRE_XML)})};
-                            TreeSelection selection = new TreeSelection(tp);
-                            selectionService.setSelection(selection, true);
-                        }
-                    });
-                    
-                    return Status.OK;
+                    FileUtils.deleteDirectory(new File(projectTarget + "interop-ce-project"));
+                    System.out.println("Delete dir");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return Status.ERROR;
                 }
-            });
+
+                DevkitUtils.refreshFolder(selectedProject.getFolder("target"), null).execute(Status.OK);
+
+                try {
+                    // Workaround for refresh delay of folder resource on viewPart
+                    Thread.sleep(2000);
+                } catch (InterruptedException ignored) {
+                }
+
+                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        IWorkbenchPage page = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getActivePage();
+                        IViewPart viewPart = page.findView("org.eclipse.jdt.ui.PackageExplorer");
+
+                        Viewer selectionService = (Viewer) viewPart.getSite().getSelectionProvider();
+                        TreePath[] tp = new TreePath[] { new TreePath(new Object[] { selectedProject.getFile(SUREFIRE_XML) }) };
+                        TreeSelection selection = new TreeSelection(tp);
+                        selectionService.setSelection(selection, true);
+                    }
+                });
+
+                return Status.OK;
+            }
+        }, jobDetail);
     }
 
     private void runAsRemoteTest() {
@@ -182,7 +180,6 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
         }
     }
 
-        
     private void setTestdataFilesInProjectAsDefault(final IProject selectedProject) {
         try {
 
@@ -199,7 +196,7 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
             testDataOverridePath = DevkitUtils.findResourceInFolder(testResourcesFolder, testDataOverrideNameFormat);
 
             if (testDataPath.equals("")) {
-                testDataPath = DevkitUtils.findResourceInFolder(generatedResourcesFolder, testDataNameFormat);                
+                testDataPath = DevkitUtils.findResourceInFolder(generatedResourcesFolder, testDataNameFormat);
             }
 
             if (testDataOverridePath.equals("")) {
@@ -262,7 +259,7 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
 
         Boolean selectedLinux = new Boolean(runnerConfig.getSelectedLinux());
         Boolean selectedWindows = new Boolean(runnerConfig.getSelectedWindows());
-        
+
         return (selectedLinux && selectedWindows ? "both" : (selectedLinux ? "linux" : "windows"));
     }
 

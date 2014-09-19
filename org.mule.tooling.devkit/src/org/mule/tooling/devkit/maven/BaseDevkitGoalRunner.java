@@ -18,12 +18,14 @@ import org.mule.tooling.maven.runner.MavenRunnerBuilder;
 import org.mule.tooling.maven.runner.SyncGetResultCallback;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.preferences.MavenPreferences;
-import org.mule.tooling.maven.utils.MavenOutputToMonitorRedirectorThread;
+import org.mule.tooling.devkit.maven.MavenOutputToMonitorRedirectorThread;
 import org.mule.tooling.maven.utils.OutputRedirectorThread;
 import org.mule.tooling.maven.utils.RunnableUtils;
 import org.mule.tooling.ui.utils.UiUtils;
 
 public class BaseDevkitGoalRunner {
+
+    private String taskName = "Executing Mule Extensions goal";
 
     protected MavenRunner mavenRunner;
     private Thread redirectOutputToMonitorThread;
@@ -55,7 +57,6 @@ public class BaseDevkitGoalRunner {
         mavenRunnerBuilder.setMavenInstallationHome(preferencesAccessor.getMavenInstallationHome());
         mavenRunnerBuilder.addMavenOpts(preferencesAccessor.getMavenOpts());
         mavenRunnerBuilder.setJavaHome(VMUtils.getDefaultJvmHome(project));
-
         final PipedOutputStream pipedOutputStream = new PipedOutputStream();
 
         mavenRunner = mavenRunnerBuilder.build();
@@ -111,14 +112,13 @@ public class BaseDevkitGoalRunner {
     }
 
     protected void redirectOutputToMonitor(final PipedOutputStream pipedOutputStream, final IProgressMonitor monitor, PipedOutputStream nextOutput) {
-        String taskName = "Executing Mule Extensions goal";
         PipedInputStream sourceStream = null;
         try {
             sourceStream = new PipedInputStream(pipedOutputStream);
         } catch (IOException e) {
             throw new RuntimeException("IO exception creating piped streams (should not happen)", e);
         }
-        redirectOutputToMonitorThread = new MavenOutputToMonitorRedirectorThread(sourceStream, monitor, taskName, nextOutput);
+        redirectOutputToMonitorThread = new MavenOutputToMonitorRedirectorThread(sourceStream, monitor, getTaskName(), nextOutput);
         redirectOutputToMonitorThread.start();
     }
 
@@ -133,8 +133,18 @@ public class BaseDevkitGoalRunner {
     }
 
     private void stopOutputThreads() {
-        redirectOutputToMonitorThread.interrupt();
-        redirectOutputToConsoleThread.interrupt();
+        if (redirectOutputToMonitorThread != null)
+            redirectOutputToMonitorThread.interrupt();
+        if (redirectOutputToConsoleThread != null)
+            redirectOutputToConsoleThread.interrupt();
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
 }

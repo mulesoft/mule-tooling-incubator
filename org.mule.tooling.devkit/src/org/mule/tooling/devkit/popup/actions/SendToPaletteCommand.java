@@ -107,8 +107,7 @@ public class SendToPaletteCommand extends AbstractHandler {
 
                             IJavaProject javaProject = JavaCore.create(selectedProject);
                             final Integer result = MavenRunBuilder.newMavenRunBuilder().withProject(javaProject)
-                                    .withArgs(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=false" }).build()
-                                    .run(monitor);
+                                    .withArgs(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=false" }).build().run(monitor);
 
                             if (result == BaseDevkitGoalRunner.CANCELED)
                                 return Status.CANCEL_STATUS;
@@ -129,7 +128,7 @@ public class SendToPaletteCommand extends AbstractHandler {
                 }
             }
         }
-        return null;
+        return Status.OK_STATUS;
     }
 
     private int getErrorsCount(final IProject selectedProject) {

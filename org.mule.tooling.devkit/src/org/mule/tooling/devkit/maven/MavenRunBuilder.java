@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.core.IJavaProject;
 
 /**
@@ -14,6 +15,7 @@ public class MavenRunBuilder {
 
     private List<String> arguments;
     private IJavaProject project;
+    private String taskName;
 
     MavenRunBuilder() {
         arguments = new ArrayList<String>();
@@ -30,10 +32,16 @@ public class MavenRunBuilder {
      * @return The configured Runner
      */
     public BaseDevkitGoalRunner build() {
+        BaseDevkitGoalRunner runner = null;
         if (arguments.isEmpty()) {
-            return new BaseDevkitGoalRunner(project);
+            runner = new BaseDevkitGoalRunner(project);
+        } else {
+            runner = new BaseDevkitGoalRunner(arguments.toArray(new String[0]), project);
         }
-        return new BaseDevkitGoalRunner(arguments.toArray(new String[0]), project);
+        if (!StringUtils.isEmpty(taskName)) {
+            runner.setTaskName(taskName);
+        }
+        return runner;
     }
 
     /**
@@ -76,4 +84,9 @@ public class MavenRunBuilder {
         return this;
     }
 
+    public MavenRunBuilder withTaskName(String taskName) {
+        this.taskName = taskName;
+        return this;
+
+    }
 }
