@@ -7,9 +7,11 @@ import java.net.URL;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageOne;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -49,7 +51,7 @@ import org.mule.tooling.ui.wizards.extensible.WizardPagePartExtension;
 
 public class NewDevkitProjectWizardPage extends WizardPage {
 
-    private static final String DEFAULT_NAME = "Hello";
+    private static final String DEFAULT_NAME = "";
     private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
     private static final String GROUP_TITLE_CONNECTOR = "";
     private static final String GROUP_TITLE_API = "API";
@@ -77,12 +79,13 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private Button datasense;
     private Button query;
     private boolean mavenFailure = false;
+    private NewJavaProjectWizardPageOne javaPageOne;
 
-    public NewDevkitProjectWizardPage(ConnectorMavenModel model) {
+    public NewDevkitProjectWizardPage(ConnectorMavenModel model, NewJavaProjectWizardPageOne javaPageOne) {
         super("wizardPage");
         setTitle(NewDevkitProjectWizard.WIZZARD_PAGE_TITTLE);
         setDescription("Create an Anypoint Connector project.");
-
+        this.javaPageOne = javaPageOne;
         if (!MuleCorePlugin.getServerManager().getServerDefinitions().isEmpty()) {
             selectedServerDefinition = new MuleStudioPreference().getDefaultRuntimeSelection();
         } else {
@@ -120,10 +123,13 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                     char character = name.getText().charAt(0);
                     if (!Character.isUpperCase(character)) {
                         name.setText(org.apache.commons.lang.StringUtils.capitalize(name.getText()));
+                        javaPageOne.setProjectName(getProjectName());
                         name.setSelection(1, 1);
                         return;
                     }
                 }
+                if (!StringUtils.isEmpty(name.getText()))
+                    javaPageOne.setProjectName(getProjectName());
                 model.setConnectorName(name.getText());
                 dialogChanged();
             }
@@ -380,10 +386,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             return;
         }
         if (this.getName().length() == 0) {
-            updateStatus("The Name must be specified.");
+            updateStatus("The Connector Name must be specified.");
             return;
         } else if (this.getName().equals("Test")) {
-            updateStatus("The Name cannot be Test.");
+            updateStatus("The Connector Name cannot be Test.");
             return;
         } else if (this.getName().endsWith("Connector")) {
             updateStatus("There is no need for you to add the Connector word at the end.");
@@ -398,7 +404,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             updateStatus("The selected wsdl location is not valid.");
             return;
         }
-        final String projectName = DevkitUtils.toConnectorName(getName()) + "-connector";
+        final String projectName = this.javaPageOne.getProjectName();
 
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
@@ -412,6 +418,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             return;
         }
         updateStatus(null);
+    }
+
+    private String getProjectName() {
+        return DevkitUtils.toConnectorName(getName()) + "-connector";
     }
 
     private void updateStatus(String message) {

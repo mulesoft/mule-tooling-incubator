@@ -18,12 +18,9 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -31,7 +28,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageOne;
+import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageTwo;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -46,8 +44,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.DevkitUIPlugin;
-import org.mule.tooling.devkit.builder.DevkitBuilder;
-import org.mule.tooling.devkit.builder.DevkitNature;
 import org.mule.tooling.devkit.builder.ProjectGenerator;
 import org.mule.tooling.devkit.builder.ProjectGeneratorFactory;
 import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
@@ -77,6 +73,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private NewDevkitProjectWizardPage page;
     private NewDevkitProjectWizardPageAdvance advancePage;
     private ConnectorMavenModel connectorModel;
+    private NewJavaProjectWizardPageOne javaPageOne;
+    private NewJavaProjectWizardPageTwo javaPageTwo;
 
     public NewDevkitProjectWizard() {
         super();
@@ -88,10 +86,14 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
     @Override
     public void addPages() {
-        page = new NewDevkitProjectWizardPage(connectorModel);
+        javaPageOne = new NewJavaProjectWizardPageOne();
+        javaPageTwo = new NewJavaProjectWizardPageTwo(javaPageOne);
+        page = new NewDevkitProjectWizardPage(connectorModel,javaPageOne);
         advancePage = new NewDevkitProjectWizardPageAdvance(connectorModel);
         addPage(page);
         addPage(advancePage);
+        addPage(javaPageOne);
+        addPage(javaPageTwo);
     }
 
     @Override
@@ -100,13 +102,20 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
             advancePage.refresh();
             return advancePage;
         }
+        if (advancePage == currentPage) {
+            return javaPageOne;
+        }
+        if (javaPageOne == currentPage) {
+            return javaPageTwo;
+        }
         return null;
     }
 
     @Override
     public boolean performFinish() {
-        final ConnectorMavenModel mavenModel = getPopulatedModel();
 
+        final ConnectorMavenModel mavenModel = getPopulatedModel();
+        final NewJavaProjectWizardPageTwo javaPage = javaPageTwo;
         if (mavenModel.isSoapWithCXF()) {
             if (!isValidWsdl(getWsdlPath())) {
                 return false;
@@ -117,8 +126,10 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
-
-                    final IJavaProject javaProject = doFinish(mavenModel, monitor);
+                    
+                    javaPage.performFinish(monitor);
+                    final IJavaProject javaProject = javaPage.getJavaProject();
+                    doFinish(mavenModel, monitor, javaProject);
 
                     downloadJavadocForAnnotations(javaProject, monitor);
                     boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
@@ -138,12 +149,15 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                         javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
                     }
                     if (mavenModel.isSoapWithCXF()) {
-                        MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("clean").withArg("compile").withArg("-Pconnector-generator").withTaskName("Generating connector from WSDL...").build().run(monitor);
+                        MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("clean").withArg("compile").withArg("-Pconnector-generator")
+                                .withTaskName("Generating connector from WSDL...").build().run(monitor);
                         javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
                     }
 
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 } finally {
                     monitor.done();
                 }
@@ -152,7 +166,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         if (!runInContainer(op)) {
             return false;
         } else {
-            openConnectorClass(mavenModel);
+            openConnectorClass(mavenModel, javaPage.getJavaProject().getProject());
         }
         return true;
     }
@@ -198,6 +212,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     /**
      * The worker method. It will find the container, create the file if missing or just replace its contents, and open the editor on the newly created file.
      * 
+     * @param javaProject
+     * 
      * @param hasQuery
      * @param isOauth
      * @param isMetaDataEnabled
@@ -206,18 +222,18 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
      * @return
      */
 
-    private IJavaProject doFinish(ConnectorMavenModel mavenModel, IProgressMonitor monitor) throws CoreException {
+    private IJavaProject doFinish(ConnectorMavenModel mavenModel, IProgressMonitor monitor, IJavaProject javaProject) throws CoreException {
         String artifactId = mavenModel.getArtifactId();
 
         String wsdlFileName = "Dummy";
         monitor.beginTask("Creating project" + artifactId, 20);
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        
+        DevkitUtils.addDevkitNature(javaProject.getProject());
+        IProject project = javaProject.getProject();
 
-        IProject project = createProject(artifactId, monitor, root);
-        IJavaProject javaProject = JavaCore.create(root.getProject(artifactId));
         ProjectGenerator generator = ProjectGeneratorFactory.newInstance();
 
-        NullProgressMonitor nullMonitor = new NullProgressMonitor(); 
+        NullProgressMonitor nullMonitor = new NullProgressMonitor();
         List<IClasspathEntry> entries = generator.generateProjectEntries(nullMonitor, project);
         if (mavenModel.isSoapWithCXF()) {
             entries.add(generator.createEntry(project.getFolder(DevkitUtils.CXF_GENERATED_SOURCES_FOLDER), nullMonitor));
@@ -299,29 +315,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
         fileWriter.apply("/templates/example.tmpl", getExampleFileName(uncammelName), classReplacer);
 
-    }
-
-    private IProject createProject(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root) throws CoreException {
-
-        IProjectDescription projectDescription = getProjectDescription(root, artifactId);
-
-        return getProjectWithDescription(artifactId, monitor, root, projectDescription);
-    }
-
-    private IProjectDescription getProjectDescription(IWorkspaceRoot root, String artifactId) throws CoreException {
-        IProjectDescription projectDescription = root.getWorkspace().newProjectDescription(artifactId);
-        projectDescription.setNatureIds(new String[] { JavaCore.NATURE_ID, DevkitNature.NATURE_ID });
-        ICommand[] commands = projectDescription.getBuildSpec();
-
-        ICommand[] newCommands = new ICommand[commands.length + 1];
-        System.arraycopy(commands, 0, newCommands, 0, commands.length);
-
-        ICommand command = projectDescription.newCommand();
-        command.setBuilderName(DevkitBuilder.BUILDER_ID);
-        newCommands[newCommands.length - 1] = command;
-
-        projectDescription.setBuildSpec(newCommands);
-        return projectDescription;
     }
 
     /**
@@ -411,12 +404,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         return mavenModel;
     }
 
-    private void openConnectorClass(final ConnectorMavenModel mavenModel) {
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-
-        IProject project;
+    private void openConnectorClass(final ConnectorMavenModel mavenModel, IProject project) {
         try {
-            project = root.getProject(advancePage.getArtifactId());
             IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
             IFile connectorFile = project.getFile(buildMainTargetFilePath(mavenModel.getPackage(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName())));
             if (connectorFile.exists()) {
