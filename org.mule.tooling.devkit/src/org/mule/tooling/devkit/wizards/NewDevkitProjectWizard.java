@@ -132,6 +132,15 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                     doFinish(mavenModel, monitor, javaProject);
 
                     downloadJavadocForAnnotations(javaProject, monitor);
+                    if (mavenModel.isSoapWithCXF()) {
+                        MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("clean").withArg("compile").withArg("-Pconnector-generator")
+                        .withTaskName("Generating connector from WSDL...").build().run(monitor);
+                        
+                        MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("license:format").withTaskName("Adding headers...").build().run(monitor);
+                        
+                        javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+                    }
+
                     boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
                     UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject);
                     monitor.subTask("Downloading dependencies");
@@ -146,11 +155,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                             }
                         }, IncrementalProjectBuilder.CLEAN_BUILD, new IProject[] { javaProject.getProject() });
                         projectBuild.run();
-                        javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                    }
-                    if (mavenModel.isSoapWithCXF()) {
-                        MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("clean").withArg("compile").withArg("-Pconnector-generator")
-                                .withTaskName("Generating connector from WSDL...").build().run(monitor);
                         javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
                     }
 
