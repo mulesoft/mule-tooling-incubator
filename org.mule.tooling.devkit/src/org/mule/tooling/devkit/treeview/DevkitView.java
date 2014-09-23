@@ -157,11 +157,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
 
     private void handleNewJavaElementSelected(Object selected) {
         final IProject selectedProject = ((IJavaElement) selected).getJavaProject().getProject();
-        try {
-            analyseMethods(selectedProject);
-        } catch (JavaModelException e) {
-            e.printStackTrace();
-        }
+        handleNewProjectSelectedChange(selectedProject);
     }
 
     private void handleNewProjectSelectedChange(Object selected) {
@@ -198,12 +194,8 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
 
             try {
                 IJavaElement element = SelectionConverter.resolveEnclosingElement((JavaEditor) part, (ITextSelection) selection);
-                try {
-                    final IProject selectedProject = element.getJavaProject().getProject();
-                    analyseMethods(selectedProject);
-                } catch (JavaModelException e) {
-                    e.printStackTrace();
-                }
+                final IProject selectedProject = element.getJavaProject().getProject();
+                handleNewProjectSelectedChange(selectedProject);
             } catch (JavaModelException e1) {
                 e1.printStackTrace();
             }
@@ -243,7 +235,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
             }
         } else {
             // PRE CLOSE OR DELETE
-            if (event.getResource()!=null) {
+            if (event.getResource() != null) {
                 IResource resource = event.getResource();
 
                 if (resource.getProject() != null && resource.getProject().isOpen()) {
