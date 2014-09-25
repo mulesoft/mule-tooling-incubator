@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.popup.actions.DevkitCallback;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Model;

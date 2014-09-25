@@ -163,7 +163,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
     private void handleNewProjectSelectedChange(Object selected) {
         try {
             final IProject selectedProject = (IProject) selected;
-            if (current.equals(selectedProject)) {
+            if (current!=null && current.equals(selectedProject)) {
                 return;
             }
             if (selectedProject.isOpen() && selectedProject.hasNature(DevkitNature.NATURE_ID)) {
