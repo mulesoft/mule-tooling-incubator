@@ -82,11 +82,11 @@
 <unit id="com.sun.jersey" version="0.0.0"/>
 <unit id="javax.ws.rs" version="0.0.0"/>
 <unit id="org.mule.tooling.templatesrepo" version="0.0.0"/>
-<repository location="http://studio-nightly-update.s3.amazonaws.com"/>
+<repository location="http://studio-nightly-update-gasher.s3.amazonaws.com"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.mule.tooling.extension.server.3.5.0.ee.feature.group" version="0.0.0"/>
-<repository location="http://tooling-runtimes.s3.amazonaws.com/dependencies/"/>
+<repository location="http://tooling-runtimes.s3.amazonaws.com/gasher/dependencies/"/>
 </location>
 </locations>
 </target>
