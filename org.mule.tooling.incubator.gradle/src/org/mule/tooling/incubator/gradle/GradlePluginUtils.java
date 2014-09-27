@@ -59,6 +59,23 @@ public class GradlePluginUtils {
         javaProj.setRawClasspath(entries, monitor);    	
     }
     
+	public static void removeZipLibrariesFromProject(IJavaProject javaProject, IProgressMonitor monitor) throws JavaModelException {
+		
+		javaProject = JavaCore.create(javaProject.getProject());
+		
+		IClasspathEntry[] entries = javaProject.getRawClasspath();
+		
+		for(IClasspathEntry entry : javaProject.getRawClasspath()) {
+			if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+				if ("zip".equals(entry.getPath().getFileExtension())) {
+					entries = (IClasspathEntry[]) ArrayUtils.removeElement(entries, entry);
+				}
+			}
+		}
+		
+		javaProject.setRawClasspath(entries, monitor);
+	}
+    
     public static boolean hasValidGradleHome() {
     	File gradleHome = new File(Activator.getDefault().getPreferenceStore().getString(WorkbenchPreferencePage.GRADLE_HOME_ID));
         return isFileValidGradleInstallation(gradleHome);

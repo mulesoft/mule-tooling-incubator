@@ -23,9 +23,9 @@ import org.gradle.tooling.ProjectConnection;
  */
 public abstract class GradleBuildJob extends WorkspaceJob {
 	
-	IProject project;
-	String[] tasks;
-	String[] arguments;
+	protected IProject project;
+	private String[] tasks;
+	private String[] arguments;
 	
 	public GradleBuildJob(String name, IProject project, String... tasks) {
 		super(name);

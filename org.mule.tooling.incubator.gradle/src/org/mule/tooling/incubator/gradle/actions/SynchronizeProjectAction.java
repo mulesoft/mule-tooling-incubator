@@ -12,13 +12,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.incubator.gradle.GradleBuildJob;
+import org.mule.tooling.incubator.gradle.jobs.SynchronizeProjectGradleBuildJob;
 
 public class SynchronizeProjectAction implements IObjectActionDelegate {
 	
 	private IWorkbench workbench;
 	private Shell shell;
 	
-	private static final String TASK_DESCRIPTION = "Refreshing gradle project...";
 	
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
@@ -36,7 +36,7 @@ public class SynchronizeProjectAction implements IObjectActionDelegate {
 			IMuleProject muleProject = CoreUtils.getMuleProjectForSelection(selection);
 			IProject project = muleProject.getJavaProject().getProject();
 			
-			GradleBuildJob buildJob = new GradleBuildJob(TASK_DESCRIPTION, project, "studio") {
+			SynchronizeProjectGradleBuildJob buildJob = new SynchronizeProjectGradleBuildJob(project) {
 				
 				@Override
 				protected void handleException(Exception ex) {
