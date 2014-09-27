@@ -4,6 +4,7 @@ package org.mule.tooling.incubator.gradle.editors;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
@@ -64,10 +65,11 @@ public class GradleRuleBasedScanner extends RuleBasedScanner {
 		}
 		
 		setRules(new IRule[]{
+				new MultiLineRule("/*", "*/", comment, '\\'),
+				new SingleLineRule("//", "\n", comment),
 				wordRule,
 				new SingleLineRule("\"", "\"", string, '\\'),
-				new SingleLineRule("'", "'", string, '\\'),
-				new SingleLineRule("//", "\n", comment)
+				new SingleLineRule("'", "'", string, '\\')
 		});
 	}
 }
