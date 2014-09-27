@@ -8,5 +8,9 @@ import org.eclipse.ui.editors.text.TextEditor;
  * @author juancavallotti
  */
 public class GradleBuildFileContentsEditor extends TextEditor {
+	
+	public GradleBuildFileContentsEditor() {
+		setSourceViewerConfiguration(new GradleProjectHighlightConfiguration());
+	}
 
 }
