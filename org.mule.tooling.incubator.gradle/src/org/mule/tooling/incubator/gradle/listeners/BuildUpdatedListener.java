@@ -7,8 +7,8 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.mule.tooling.core.utils.CoreUtils;
-import org.mule.tooling.incubator.gradle.GradleBuildJob;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
+import org.mule.tooling.incubator.gradle.jobs.SynchronizeProjectGradleBuildJob;
 
 public class BuildUpdatedListener implements IResourceChangeListener {
 
@@ -48,7 +48,7 @@ public class BuildUpdatedListener implements IResourceChangeListener {
 			return;
 		}
 		
-		GradleBuildJob refreshProjectJob = new GradleBuildJob("Refreshing project after change...", proj, "studio") {
+		SynchronizeProjectGradleBuildJob refreshProjectJob = new SynchronizeProjectGradleBuildJob(proj) {
 			
 			@Override
 			protected void handleException(Exception ex) {

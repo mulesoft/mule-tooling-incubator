@@ -21,7 +21,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.mule.tooling.incubator.gradle.GradleBuildJob;
+import org.mule.tooling.incubator.gradle.jobs.SynchronizeProjectGradleBuildJob;
 import org.mule.tooling.ui.MuleImages;
 
 
@@ -153,7 +153,7 @@ public class MuleGradleDependenciesEditor extends FormPage {
 
 	
 	private void doSynchronize() {
-		GradleBuildJob job = new GradleBuildJob("removeDependency", project, "studio") {
+		SynchronizeProjectGradleBuildJob job = new SynchronizeProjectGradleBuildJob(project) {
 			
 			@Override
 			protected void handleException(Exception ex) {
