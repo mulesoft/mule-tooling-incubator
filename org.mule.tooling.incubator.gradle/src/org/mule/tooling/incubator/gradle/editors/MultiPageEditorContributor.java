@@ -26,7 +26,6 @@ public class MultiPageEditorContributor extends MultiPageEditorActionBarContribu
 	 */
 	public MultiPageEditorContributor() {
 		super();
-		createActions();
 	}
 	/**
 	 * Returns the action registed with the given text editor.
@@ -80,24 +79,5 @@ public class MultiPageEditorContributor extends MultiPageEditorActionBarContribu
 			actionBars.updateActionBars();
 		}
 	}
-	private void createActions() {
-		sampleAction = new Action() {
-			public void run() {
-				MessageDialog.openInformation(null, "org.mule.tooling.incubator.gradle", "Sample Action Executed");
-			}
-		};
-		sampleAction.setText("Sample Action");
-		sampleAction.setToolTipText("Sample Action tool tip");
-		sampleAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(IDE.SharedImages.IMG_OBJS_TASK_TSK));
-	}
-	public void contributeToMenu(IMenuManager manager) {
-		IMenuManager menu = new MenuManager("Editor &Menu");
-		manager.prependToGroup(IWorkbenchActionConstants.MB_ADDITIONS, menu);
-		menu.add(sampleAction);
-	}
-	public void contributeToToolBar(IToolBarManager manager) {
-		manager.add(new Separator());
-		manager.add(sampleAction);
-	}
+
 }

@@ -46,7 +46,7 @@ public class GradleRuleBasedScanner extends RuleBasedScanner {
 			public boolean isWordPart(char c) {
 				return Character.isJavaIdentifierPart(c);
 			}
-		});
+		}, Token.WHITESPACE);
 		
 		
 		
@@ -54,7 +54,6 @@ public class GradleRuleBasedScanner extends RuleBasedScanner {
 		Token string = new Token(new TextAttribute(STRING));
 		Token languageKeyword = new Token(new TextAttribute(KEYWORD, null, SWT.BOLD));
 		Token dslKeyword = new Token(new TextAttribute(DSL_KEYWORD, null, SWT.BOLD));
-		
 		
 		for(String groovyKeyword: GROOVY_KEYWORDS) {
 			wordRule.addWord(groovyKeyword, languageKeyword);

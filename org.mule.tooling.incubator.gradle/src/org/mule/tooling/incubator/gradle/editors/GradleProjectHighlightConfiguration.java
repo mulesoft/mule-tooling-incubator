@@ -1,6 +1,10 @@
 package org.mule.tooling.incubator.gradle.editors;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
@@ -8,6 +12,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 public class GradleProjectHighlightConfiguration extends SourceViewerConfiguration {
+	
 	
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
@@ -21,4 +26,24 @@ public class GradleProjectHighlightConfiguration extends SourceViewerConfigurati
 		return reconciler;
 	}
 	
+	@Override
+	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+		
+		ContentAssistant assistant = new ContentAssistant();
+		assistant.setContentAssistProcessor(new GradleScriptCompletionProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
+		assistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
+		assistant.enableAutoActivation(true);
+		
+		return assistant;
+	}
+	
+	@Override
+	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
+		
+		IAutoEditStrategy[] ret = {
+				new SimpleIndentBracesOnEnterStrategy(),
+				new SimpleCharBalancingAutoEditStrategy()
+		};
+		return ret; 
+	}
 }
