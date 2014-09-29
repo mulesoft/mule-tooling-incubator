@@ -1,6 +1,5 @@
 package org.mule.tooling.incubator.gradle.editors;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -22,6 +21,20 @@ public class GradleProjectHighlightConfiguration extends SourceViewerConfigurati
 		
 		reconciler.setDamager(repairer, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(repairer, IDocument.DEFAULT_CONTENT_TYPE);
+		
+		
+		
+		//multi line comments repairer
+		repairer = new DefaultDamagerRepairer(new SingleTokenTextColorScanner(GradleRuleBasedScanner.COMMENT));
+		
+		reconciler.setDamager(repairer, GradleRuleBasedScanner.MULTILINE_COMMENT_CONTENT_TYPE);
+		reconciler.setRepairer(repairer, GradleRuleBasedScanner.MULTILINE_COMMENT_CONTENT_TYPE);
+		
+		//multi line strings repairer
+		repairer = new DefaultDamagerRepairer(new SingleTokenTextColorScanner(GradleRuleBasedScanner.STRING));
+		
+		reconciler.setDamager(repairer, GradleRuleBasedScanner.MULTILINE_STRING_CONTENT_TYPE);
+		reconciler.setRepairer(repairer, GradleRuleBasedScanner.MULTILINE_STRING_CONTENT_TYPE);
 		
 		return reconciler;
 	}
@@ -46,4 +59,6 @@ public class GradleProjectHighlightConfiguration extends SourceViewerConfigurati
 		};
 		return ret; 
 	}
+	
+	
 }

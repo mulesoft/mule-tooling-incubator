@@ -2,6 +2,7 @@ package org.mule.tooling.incubator.gradle.editors;
 
 
 import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.MultiLineRule;
@@ -15,10 +16,14 @@ import org.eclipse.swt.widgets.Display;
 
 public class GradleRuleBasedScanner extends RuleBasedScanner {
 	
-	private static final Color COMMENT = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);
-	private static final Color KEYWORD = Display.getDefault().getSystemColor(SWT.COLOR_DARK_MAGENTA); 
-	private static final Color STRING = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);
-	private static final Color DSL_KEYWORD = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN); 
+	public static final Color COMMENT = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN);
+	public static final Color KEYWORD = Display.getDefault().getSystemColor(SWT.COLOR_DARK_MAGENTA); 
+	public static final Color STRING = Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);
+	public static final Color DSL_KEYWORD = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN); 
+	
+	
+	public static final String MULTILINE_COMMENT_CONTENT_TYPE = "gradle_editor_java_mlc";
+	public static final String MULTILINE_STRING_CONTENT_TYPE = "gradle_editor_java_mls";
 	
 	//general groovy keywords
 	private static final String[] GROOVY_KEYWORDS = {"boolean", "break", "byte", "case", "catch", "char",
@@ -64,8 +69,9 @@ public class GradleRuleBasedScanner extends RuleBasedScanner {
 		}
 		
 		setRules(new IRule[]{
-				new MultiLineRule("/*", "*/", comment, '\\'),
-				new SingleLineRule("//", "\n", comment),
+				new EndOfLineRule("//", comment),
+				new MultiLineRule("/*", "*/", comment, (char) 0, true),
+				new MultiLineRule("\"\"\"", "\"\"\"", string, (char) 0, true),
 				wordRule,
 				new SingleLineRule("\"", "\"", string, '\\'),
 				new SingleLineRule("'", "'", string, '\\')
