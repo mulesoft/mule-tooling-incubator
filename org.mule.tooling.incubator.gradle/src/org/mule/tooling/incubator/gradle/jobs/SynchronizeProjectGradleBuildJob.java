@@ -5,7 +5,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
@@ -36,6 +38,8 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 	
 	
 	private static final String TASK_DESCRIPTION = "Refreshing gradle project...";
+	
+	private Set<String> orphanPlugins;
 	
 	public SynchronizeProjectGradleBuildJob(IProject project, String... additionalTasks) {
 		super(TASK_DESCRIPTION, project, (String[]) ArrayUtils.addAll(new String[] {"studio"}, additionalTasks));
@@ -88,9 +92,36 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 			
 			if (zips.contains(module.getContributionLibs())) {
 				muleProject.addMuleExtension(module);
+				zips.remove(module.getContributionLibs());
 			}
 		}
+		
+		if (!zips.isEmpty()) {
+			orphanPlugins = zips;
+		} else {
+			orphanPlugins = null;
+		}
+		
+	}
+
+	private void addBuildScriptMarkers(Set<String> zips, IResource location) throws CoreException {
+		
+		location.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+		
+		for (String zip: zips) {
+			IMarker marker = location.createMarker(IMarker.PROBLEM);
 			
+			if (marker.exists()) {
+				try {
+					marker.setAttribute(IMarker.MESSAGE, "Connector or module "+ zip + " not currently installed.");
+					marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+					marker.setAttribute(IMarker.LINE_NUMBER, 1);
+				} catch (CoreException ex) {
+					throw ex;
+				}
+			}
+		}				
 	}
 
 	private Set<String> findExternalContributionsInProject(IMuleProject muleProject) {
@@ -132,6 +163,11 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 			public IStatus runInWorkspace(IProgressMonitor monitor)
 					throws CoreException {
 				GradlePluginUtils.removeZipLibrariesFromProject(javaProject, new NullProgressMonitor());
+				
+				if (orphanPlugins != null) {
+					addBuildScriptMarkers(orphanPlugins, javaProject.getProject().getFile("build.gradle"));
+				}
+				
 				return Status.OK_STATUS;
 			}
 		};

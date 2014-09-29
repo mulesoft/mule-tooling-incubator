@@ -31,7 +31,7 @@ public class GradleRuleBasedScanner extends RuleBasedScanner {
 		"if", "implements", "int", "interface", "long", "new", "null", "private", "public", "protected",
 		"return", "short", "static", "switch", "throw", "throws" , "true", "try", "volatile", "while" };
 	
-	private static final String[] DSL_KEYWORDS = {"apply", "buildscript", "dependencies", "classpath", 
+	private static final String[] DSL_KEYWORDS = {"apply", "connector", "buildscript", "dependencies", "classpath", 
 		"cloudhub", "ivy", "maven", "mmc", "module", "modules", "mule", "project", "repositories", 
 		"transports", "url"};
 	

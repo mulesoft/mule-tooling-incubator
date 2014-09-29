@@ -28,8 +28,12 @@ public class BuildUpdatedListener implements IResourceChangeListener {
 					String fileName = delta.getResource().getName();
 					if ("build.gradle".equals(fileName) || GradlePluginUtils.STUDIO_DEPS_FILE.equals(fileName)) {
 						IProject proj = delta.getResource().getProject();
-						//trigger the refresh of the project.
-						doRefreshProject(proj);
+						//trigger the refresh of the project.						
+						if ((delta.getFlags() & IResourceDelta.CONTENT) != 0) {
+							doRefreshProject(proj);
+						}
+						//skip if the content has not been modified
+						return true;
 					}
 					return true;
 				}
