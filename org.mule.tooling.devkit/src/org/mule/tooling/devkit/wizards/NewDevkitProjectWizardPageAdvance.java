@@ -85,11 +85,11 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
         owner = initializeTextField(gitHubGroupBox, "GitHub Owner", DEFAULT_USER, "Owner of the repository", new ModifyListener() {
 
             public void modifyText(ModifyEvent e) {
-                if (!ownerName.matcher(owner.getText()).find())
-                    refresh();
-                else {
+
+                if (!ownerName.matcher(owner.getText()).find()) {
                     updateStatus();
                 }
+                refresh();
             }
         });
 

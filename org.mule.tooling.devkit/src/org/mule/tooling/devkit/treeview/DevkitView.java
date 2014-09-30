@@ -169,6 +169,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
             if (selectedProject.isOpen() && selectedProject.hasNature(DevkitNature.NATURE_ID)) {
                 analyseMethods(selectedProject);
             } else {
+                current=null;
                 Display.getDefault().asyncExec(new Runnable() {
 
                     public void run() {
