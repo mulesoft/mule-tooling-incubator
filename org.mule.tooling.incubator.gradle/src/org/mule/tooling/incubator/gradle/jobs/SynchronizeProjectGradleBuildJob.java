@@ -56,12 +56,10 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 		}
 		
 		try {
-			translatePlugins();
+			scheduleRemoveZipFiles(JavaCore.create(project));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return Status.CANCEL_STATUS;
-		} finally {
-			scheduleRemoveZipFiles(JavaCore.create(project));
 		}
 		return ret;
 		
@@ -162,8 +160,8 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor)
 					throws CoreException {
+				translatePlugins();
 				GradlePluginUtils.removeZipLibrariesFromProject(javaProject, new NullProgressMonitor());
-				
 				if (orphanPlugins != null) {
 					addBuildScriptMarkers(orphanPlugins, javaProject.getProject().getFile("build.gradle"));
 				}
