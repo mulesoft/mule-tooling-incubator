@@ -122,7 +122,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             public void modifyText(ModifyEvent e) {
                 if (!name.getText().isEmpty()) {
                     char character = name.getText().charAt(0);
-                    if (!Character.isUpperCase(character)) {
+                    if (!Character.isUpperCase(character) && !Character.isDigit(character)) {
                         name.setText(org.apache.commons.lang.StringUtils.capitalize(name.getText()));
                         javaPageOne.setProjectName(getProjectName());
                         name.setSelection(1, 1);
