@@ -327,15 +327,15 @@ public class DevkitUtils {
     }
 
     public static String getDevkitVersionForServerDefinition(ServerDefinition selectedServerDefinition) {
-        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_2))
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_4_2))
             return DevkitUtils.DEVKIT_3_4_2;
-        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_1))
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_4_1))
             return DevkitUtils.DEVKIT_3_4_1;
-        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_0))
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_4_0))
             return DevkitUtils.DEVKIT_3_4_0;
-        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_5_0))
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_5_0))
             return DevkitUtils.DEVKIT_3_5_0;
-        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_5_1))
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_5_1))
             return DevkitUtils.DEVKIT_3_5_1;
         return DevkitUtils.DEVKIT_CURRENT;
     }

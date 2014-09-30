@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.IMessage;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.devkit.DevkitImages;
@@ -359,6 +360,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             public void notifyUpdate(WizardPagePartExtension part, String key, Object value) {
                 if (ServerChooserComponent.KEY_SERVER_DEFINITION.equals(key)) {
                     selectedServerDefinition = (ServerDefinition) value;
+                    dialogChanged();
                 }
             }
 
@@ -416,6 +418,12 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         if (this.getApiType().equals(ApiType.SOAP) && this.getWsdlFileOrDirectory().isEmpty()) {
             updateStatus("Specify a wsdl location.");
             return;
+        }
+        if (!getDevkitVersion().startsWith("3.5")) {
+            setMessage("DevKit Studio plugin only supports Mule runtimes 3.5.0 and above.\nSome features may not work as expected with lower versions of Mule.", IMessage.WARNING);
+            return;
+        } else {
+            setMessage(null);
         }
         updateStatus(null);
     }
@@ -556,7 +564,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         mavenFailure = false;
         MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
         final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
-        // Using a callback doesn't work. Set null callback and just handle the result.
+        // Using a callback doesn't work. Set null callback and just handle the
+        // result.
         int result = mavenInstallationTester.test(null);
         onTestFinished(result);
     }
