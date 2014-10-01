@@ -80,6 +80,48 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
                   </plugin>
               </plugins>
           </build>
+          <activation>
+              <property>
+                  <name>production</name>
+              </property>
+          </activation>
+      </profile>
+      <profile>
+          <id>reproducible-timestamps</id>
+          <build>
+              <pluginManagement>
+                  <plugins>
+                      <!-- Configuration for Reproducible Version Qualifiers -->
+                      <plugin>
+                          <groupId>${tycho.groupid}</groupId>
+                          <artifactId>tycho-packaging-plugin</artifactId>
+                          <version>${tycho-version}</version>
+                          <dependencies>
+                              <dependency>
+                                  <groupId>${tycho-extras.groupid}</groupId>
+                                  <artifactId>tycho-buildtimestamp-jgit</artifactId>
+                                  <version>${tycho-extras.version}</version>
+                              </dependency>
+                          </dependencies>
+                          <configuration>
+                              <timestampProvider>jgit</timestampProvider>
+                              <jgit.ignore>
+                                  pomTooling.xml,
+                                  MANIFEST.MF,
+                                  plugin.xml,
+                                  .classpath,
+                                  .project
+                              </jgit.ignore>
+                          </configuration>
+                      </plugin>
+                  </plugins>
+              </pluginManagement>
+          </build>
+          <activation>
+              <property>
+                  <name>production</name>
+              </property>
+          </activation>
       </profile>
   </profiles>
   <build>

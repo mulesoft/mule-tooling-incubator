@@ -3,12 +3,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-<parent>
-     <groupId>org.mule.tooling.incubator</groupId>
-     <artifactId>org.mule.tooling.incubator.parent</artifactId>     
-     <version>1.0.2-SNAPSHOT</version>
-</parent>
-
+    <parent>
+        <groupId>org.mule.tooling.incubator</groupId>
+        <artifactId>org.mule.tooling.incubator.parent</artifactId>
+        <version>1.0.2-SNAPSHOT</version>
+    </parent>
+    <version>1.0.1-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tooling.munit</groupId>
     <artifactId>org.mule.tooling.incubator.munit.extension</artifactId>
