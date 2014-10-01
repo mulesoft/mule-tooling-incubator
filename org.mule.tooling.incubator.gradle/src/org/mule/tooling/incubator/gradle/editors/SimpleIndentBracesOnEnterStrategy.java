@@ -25,6 +25,7 @@ public class SimpleIndentBracesOnEnterStrategy extends DefaultIndentLineAutoEdit
 				c.text = c.text + "\t\n";
 				c.shiftsCaret = false;
 				c.caretOffset = c.offset + c.text.length() - 1;
+				super.customizeDocumentCommand(d, c);
 			}
 		} catch (Exception ex) {
 			//do nothing
