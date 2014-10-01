@@ -73,9 +73,9 @@
       <extension
          point="org.mule.tooling.core.contribution">
       <externalContribution
-            contributionJar="lib/munit-assert-3.4-M6-SNAPSHOT.jar"
+            contributionJar="lib/munit-assert-3.4-M5.jar"
             contributionLibPathInMule="/lib"
-            contributionLibs="lib/munit-assert-3.4-M6-SNAPSHOT.jar"
+            contributionLibs="lib/munit-assert-3.4-M5.jar"
             contributionNamespace="http://www.mulesoft.org/schema/mule/munit"
             contributionNamespaceFile="http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd"
             contributionNamespacePrefix="munit"
@@ -87,9 +87,9 @@
             version="1.0">
       </externalContribution>
       <externalContribution
-            contributionJar="lib/munit-mock-3.4-M6-SNAPSHOT.jar"
+            contributionJar="lib/munit-mock-3.4-M5.jar"
             contributionLibPathInMule="/lib"
-            contributionLibs="lib/munit-mock-3.4-M6-SNAPSHOT.jar"
+            contributionLibs="lib/munit-mock-3.4-M5.jar"
             contributionNamespace="http://www.mulesoft.org/schema/mule/mock"
             contributionNamespaceFile="http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd"
             contributionNamespacePrefix="mock"
