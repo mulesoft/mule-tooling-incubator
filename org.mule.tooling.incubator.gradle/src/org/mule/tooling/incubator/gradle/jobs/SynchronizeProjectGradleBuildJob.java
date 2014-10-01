@@ -20,12 +20,18 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.MuleRuntime;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.module.ExternalContributionMuleModule;
 import org.mule.tooling.incubator.gradle.GradleBuildJob;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
+import org.mule.tooling.incubator.gradle.parser.CollectDependenciesVisitor;
+import org.mule.tooling.incubator.gradle.parser.Dependency;
+import org.mule.tooling.incubator.gradle.parser.GradleScriptDescriptor;
+import org.mule.tooling.incubator.gradle.parser.GradleScriptParser;
 import org.mule.tooling.model.project.MuleExtension;
 
 /**
@@ -106,6 +112,28 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 		
 		location.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 		
+		
+		TextFileDocumentProvider docProvider = new TextFileDocumentProvider();
+        docProvider.connect(location);
+        IDocument document = docProvider.getDocument(location);
+        
+        GradleScriptParser parser = new GradleScriptParser(document);
+        
+        CollectDependenciesVisitor visitor = null;
+        try {
+            GradleScriptDescriptor descriptor = parser.parse();
+            //walk the descriptor searching for dependencies.
+            visitor = new CollectDependenciesVisitor();
+            descriptor.visit(visitor);
+            
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        docProvider.disconnect(location);
+        
+		
 		for (String zip: zips) {
 			IMarker marker = location.createMarker(IMarker.PROBLEM);
 			
@@ -115,6 +143,17 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 					marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 					marker.setAttribute(IMarker.LINE_NUMBER, 1);
+					for (Dependency dep: visitor.getDependencies()) {
+					    
+					    //studio dependencies do not have classifier
+					    dep.setClassifier(null);
+					    
+					    if (dep.matchesFilename(zip)) {
+					        marker.setAttribute(IMarker.LINE_NUMBER, dep.getScriptLine().getPosition() + 1);
+					    }
+					}
+					
+					
 				} catch (CoreException ex) {
 					throw ex;
 				}
