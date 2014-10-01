@@ -6,18 +6,18 @@
     <feature id="org.mule.tooling.incubator.devkit.extension">
       <category name="org.mule.tooling.incubator.category.devkit"/>
     </feature>
-    <feature id="org.mule.tooling.incubator.installer.extension">
+    <!--<feature id="org.mule.tooling.incubator.installer.extension">
       <category name="org.mule.tooling.incubator.category"/>
-    </feature>
+    </feature>-->
     <feature id="org.mule.tooling.incubator.maven.extension">
         <category name="org.mule.tooling.incubator.category.maven"/>
     </feature>
     <feature id="org.mule.tooling.incubator.munit.extension">
       <category name="org.mule.tooling.incubator.category.munit"/>
     </feature>
-    <feature id="org.mule.tooling.incubator.aop.extension">
+    <!--<feature id="org.mule.tooling.incubator.aop.extension">
         <category name="org.mule.tooling.incubator.category"/>
-    </feature>
+    </feature>-->
     <feature id="org.mule.tooling.ui.extension.munit-mclient-module">
       <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
     </feature>
