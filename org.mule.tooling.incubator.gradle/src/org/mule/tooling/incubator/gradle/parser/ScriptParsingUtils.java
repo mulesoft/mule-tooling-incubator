@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
@@ -94,10 +95,10 @@ public class ScriptParsingUtils {
 				if (read == COMMENT_START) {
 					char next = document.getChar(i + 1);
 					if (next == COMMENT_START) {
-						//in this case we need to read from offset to i - 1
+						//in this case we need to read from offset - 1 to i - 1
 						ScriptLine line = buildScriptLine(document, lineNumber, offset, i - 1 - offset);
 						ret.add(line);
-						offset = i + 1;
+						offset = i;
 						//continue to the next line
 						break;
 					}
@@ -133,7 +134,9 @@ public class ScriptParsingUtils {
 			
 			//we are in good shape to read what is remaining of the line.
 			ScriptLine line = buildScriptLine(document, lineNumber, offset, currentLine.getOffset() + currentLine.getLength() - offset);
-			ret.add(line);
+			if (line != null) {			    
+			    ret.add(line);
+			}
 			offset = currentLine.getOffset() + currentLine.getLength() + 1;
 			
 		}
@@ -145,10 +148,16 @@ public class ScriptParsingUtils {
 		
 		String fragment = document.get(offset, length);
 		
+		fragment = fragment.trim();
+		
+		if (StringUtils.isEmpty(fragment)) {
+		    return null;
+		}
+		
 		ScriptLine line = new ScriptLine();
 		
 		//set the contents, but removing any leading or trailing spaces.
-		line.setContent(fragment.trim());
+		line.setContent(fragment);
 		line.setPosition(lineNumber);
 		
 		return line;

@@ -19,6 +19,8 @@ public class CollectDependenciesVisitor extends DefaultGradleScriptDescriptorVis
     private static final String NOEXT = "noExt";
     private static final String NOCLASSIFIER = "noClassifier";
     
+    private static final String TOKEN_DELIMITERS = "():, []";
+    
     private List<Dependency> dependencies;
     
     
@@ -31,7 +33,7 @@ public class CollectDependenciesVisitor extends DefaultGradleScriptDescriptorVis
         
         String lineContent = line.getContent();
         
-        StringTokenizer tokenizer = new StringTokenizer(lineContent, "():, []", false);
+        StringTokenizer tokenizer = new StringTokenizer(lineContent, TOKEN_DELIMITERS, false);
         
         
         String dslMethodName = tokenizer.nextToken();

@@ -1,5 +1,6 @@
 package org.mule.tooling.incubator.gradle.jobs;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -112,19 +113,24 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 		
 		location.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 		
+		HashMap<String, Dependency> scriptZips = new HashMap<String, Dependency>();
 		
 		TextFileDocumentProvider docProvider = new TextFileDocumentProvider();
         docProvider.connect(location);
         IDocument document = docProvider.getDocument(location);
         
         GradleScriptParser parser = new GradleScriptParser(document);
-        
         CollectDependenciesVisitor visitor = null;
         try {
             GradleScriptDescriptor descriptor = parser.parse();
             //walk the descriptor searching for dependencies.
             visitor = new CollectDependenciesVisitor();
             descriptor.visit(visitor);
+            
+            for(Dependency dep: visitor.getDependencies()) {
+                dep.setClassifier(null);
+                scriptZips.put(dep.generateFilename(), dep);
+            }
             
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -142,18 +148,12 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 					marker.setAttribute(IMarker.MESSAGE, "Connector or module "+ zip + " not currently installed.");
 					marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-					marker.setAttribute(IMarker.LINE_NUMBER, 1);
-					for (Dependency dep: visitor.getDependencies()) {
-					    
-					    //studio dependencies do not have classifier
-					    dep.setClassifier(null);
-					    
-					    if (dep.matchesFilename(zip)) {
-					        marker.setAttribute(IMarker.LINE_NUMBER, dep.getScriptLine().getPosition() + 1);
-					    }
+					
+					if (scriptZips.containsKey(zip)) {
+					    marker.setAttribute(IMarker.LINE_NUMBER, scriptZips.get(zip).getScriptLine().getPosition() + 1);
+					} else {
+					    marker.setAttribute(IMarker.LINE_NUMBER, 1);
 					}
-					
-					
 				} catch (CoreException ex) {
 					throw ex;
 				}
