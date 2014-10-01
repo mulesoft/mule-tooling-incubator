@@ -1,7 +1,5 @@
 package org.mule.tooling.incubator.gradle.parser;
 
-import java.util.StringTokenizer;
-
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -77,27 +75,35 @@ public class Dependency {
 	 * @return
 	 */
 	public boolean matchesFilename(String fileName) {
-	    
+	    return StringUtils.equals(generateFilename(), fileName);
+	}
+	
+	/**
+	 * Generate the file name of this dependency in a maven-style fashion.
+	 * @return
+	 */
+	public String generateFilename() {
+        
 	    StringBuilder builder = new StringBuilder();
-	    
-	    builder.append(artifact);
-	    
-	    if (version != null) {
-	        builder.append("-");
-	        builder.append(version);
-	    }
-	    
-	    if (classifier != null) {
-	        builder.append("-");
-	        builder.append(classifier);
-	    }
-	    
-	    if (extension != null) {
-	        builder.append(".");
-	        builder.append(extension);
-	    }
-	    
-	    return StringUtils.equals(builder.toString(), fileName);
+        
+        builder.append(artifact);
+        
+        if (version != null) {
+            builder.append("-");
+            builder.append(version);
+        }
+        
+        if (classifier != null) {
+            builder.append("-");
+            builder.append(classifier);
+        }
+        
+        if (extension != null) {
+            builder.append(".");
+            builder.append(extension);
+        }
+        
+        return builder.toString();
 	}
 	
 }
