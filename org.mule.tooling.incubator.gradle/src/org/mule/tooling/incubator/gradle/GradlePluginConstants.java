@@ -11,7 +11,7 @@ public class GradlePluginConstants {
 	/**
 	 * This is the version of gradle that will get downloaded in case of no installation is provided.
 	 */
-	public static final String RECOMMENDED_GRADLE_VERSION = "1.12";
+	public static final String RECOMMENDED_GRADLE_VERSION = "2.1";
 	
 	
 	/**
