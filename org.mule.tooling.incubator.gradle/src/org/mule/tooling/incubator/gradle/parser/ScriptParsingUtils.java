@@ -97,7 +97,11 @@ public class ScriptParsingUtils {
 					if (next == COMMENT_START) {
 						//in this case we need to read from offset - 1 to i - 1
 						ScriptLine line = buildScriptLine(document, lineNumber, offset, i - 1 - offset);
-						ret.add(line);
+						
+						if (line != null) {
+						    ret.add(line);
+						}
+						
 						offset = i;
 						//continue to the next line
 						break;
@@ -109,7 +113,7 @@ public class ScriptParsingUtils {
 						if (newRegion == null) {
 							throw new IllegalStateException("Multiline comment not closed");
 						}
-						offset = newRegion.getOffset();
+						offset = newRegion.getOffset() + MULTILINE_COMMENT_END.length();
 						break;
 					}
 				}
