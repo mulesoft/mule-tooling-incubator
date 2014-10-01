@@ -31,20 +31,10 @@ public class CollectDependenciesVisitor extends DefaultGradleScriptDescriptorVis
         
         String lineContent = line.getContent();
         
-        //get and remove the first word.
-        int methodDelimiter = lineContent.indexOf(' ');
+        StringTokenizer tokenizer = new StringTokenizer(lineContent, "():, []", false);
         
-        if (methodDelimiter <= 0) {
-            //it could be an open parenthesis as well.
-            methodDelimiter = lineContent.indexOf('(');
-        }
         
-        //the line fails to meet our expectations.
-        if (methodDelimiter <= 0) {
-            return;
-        }
-        
-        String dslMethodName = lineContent.substring(0, methodDelimiter);
+        String dslMethodName = tokenizer.nextToken();
         
         //this should be one of 
         if (!ArrayUtils.contains(DSL_MODULES_METHOD_NAMES, dslMethodName)) {
@@ -52,25 +42,17 @@ public class CollectDependenciesVisitor extends DefaultGradleScriptDescriptorVis
             return;
         }
         
-        //get the hash map part
-        lineContent = lineContent.substring(methodDelimiter + 1);
-        
-        StringTokenizer tokenizer = new StringTokenizer(lineContent);
-        
         HashMap<String, String> depProperties = new HashMap<String, String>();
         
-        while(true) {
+        for (int i = 0; i < tokenizer.countTokens(); i++) {
             try {
                 //we should be able to read the first key.
-                String key = tokenizer.nextToken(":");
-                String value = tokenizer.nextToken(",");
+                String key = tokenizer.nextToken();
+                String value = tokenizer.nextToken();
                 
-                //remove any junk
-                key = key.replace(",", "");
+                //remove any junk that may be part of the tokens.
                 key = key.trim();
                 
-                value = value.replace(":", "");
-                value = value.replace(")", "");
                 value = value.replace("'", "");
                 value = value.replace("\"", "");
                 value = value.trim();
