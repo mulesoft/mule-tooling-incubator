@@ -2,6 +2,17 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            describer="org.mule.tooling.incubator.gradle.content.StudioGradleEnabledContentDescriber"
+            file-extensions="gradle"
+            file-names="build"
+            id="org.mule.tooling.gradle.muleStudioGradleFile"
+            name="Sudio-enabled Gradle Build"
+            priority="high">
+      </content-type>
+   </extension>
+   <extension
          point="org.eclipse.ui.newWizards">
       <wizard
       		category="org.mule.tooling.ui.muleWizards"
@@ -112,10 +123,13 @@
       <editor
             class="org.mule.tooling.incubator.gradle.editors.GradleBuildEditor"
             contributorClass="org.mule.tooling.incubator.gradle.editors.MultiPageEditorContributor"
-            extensions="gradle"
+            default="false"
             icon="icons/gradle16x16.png"
             id="org.mule.tooling.incubator.gradle.editors.GradleBuildEditor"
             name="Mule Gradle Build Editor">
+         <contentTypeBinding
+               contentTypeId="org.mule.tooling.gradle.muleStudioGradleFile">
+         </contentTypeBinding>
       </editor>
    </extension>
 
