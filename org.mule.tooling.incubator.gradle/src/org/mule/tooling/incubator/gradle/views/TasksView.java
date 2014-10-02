@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -247,6 +248,15 @@ public class TasksView extends ViewPart implements ISelectionListener {
 
     @Override
     public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+        
+        if (this.viewer.isBusy()) {
+            return;
+        }
+        
+        if (!(selection instanceof TreeSelection)) {
+            return;
+        }
+        
         if (selection.isEmpty())
             return;
         if (!isMuleProject(selection)) {
