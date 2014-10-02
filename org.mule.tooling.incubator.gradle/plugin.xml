@@ -73,7 +73,7 @@
          <menu
                icon="icons/gradle16x16.png"
                id="org.mule.tooling.incubator.gradle.menu"
-               label="Gradle support in Studio"
+               label="Gradle Support in Studio"
                path="additions">
             <separator
                   name="group">
@@ -98,7 +98,7 @@
          <menu
                icon="icons/gradle16x16.png"
                id="org.mule.tooling.incubator.gradle.menu"
-               label="Gradle support in Studio"
+               label="Gradle Support in Studio"
                path="additions">
             <separator
                   name="group">
@@ -116,6 +116,13 @@
                label="Run Tasks..."
                menubarPath="org.mule.tooling.incubator.gradle.menu/group">
          </action>
+         <action
+               class="org.mule.tooling.incubator.gradle.actions.InstallGradleWrapperAction"
+               id="org.mule.tooling.incubator.gradle.installGradleWrapper"
+               label="Install or Update Gradle Wrapper"
+               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
+         </action>
+         
       </objectContribution>
    </extension>
    <extension

@@ -32,5 +32,8 @@ public class GradlePluginConstants {
 	public static final String ENABLE_STACKTRACE_FLAG = "--stacktrace";
 	
 	
-	
+	/**
+	 * Name of the main build file.
+	 */
+	public static final String MAIN_BUILD_FILE = "build.gradle";
 }

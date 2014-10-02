@@ -166,6 +166,11 @@ public class GradlePluginUtils {
 	}
 	
 	
+	/**
+	 * Get the gradle project model for a given project.
+	 * @param project
+	 * @return
+	 */
 	public static GradleProject getProjectModelForProject(IProject project) {
 		ProjectConnection connection = null;
 		try {
@@ -236,5 +241,53 @@ public class GradlePluginUtils {
 		}
 		
 	}
+
+	/**
+	 * Checks if this project is a gradle project.
+	 * @param project
+	 * @return
+	 */
+    public static boolean isGradleProject(IProject project) {
+        
+        GradleProject proj = getProjectModelForProject(project);
+        
+        //no build script and no parent project.
+        //this is really not a gradle project!
+        if (proj.getBuildScript().getSourceFile() == null && proj.getParent() == null) {
+            return false;
+        }
+        
+        
+        return true;
+    }
 	
+    /**
+     * Check shallowly if the directory or their parents up to the root filesystem are gradle projects.
+     * @param project
+     * @return
+     */
+    public static boolean shallowCheckIsGradleproject(IProject project) {
+        
+        IFile file = project.getFile(GradlePluginConstants.MAIN_BUILD_FILE);
+        
+        if (file.exists()) {
+            return true;
+        }
+        IPath filePath = file.getLocation();
+        IPath worskpacePath = project.getWorkspace().getRoot().getRawLocation();
+        //if not, iterate over the parents.
+        for(int i = filePath.segmentCount(); i > 0 ; i--) {
+            IPath segment = filePath.uptoSegment(i);
+            if (segment.equals(worskpacePath)) {
+                //this project is on the workspace and we have reached to the root of it.
+                //we dont have to continue looking.
+                return false;
+            }
+            segment = segment.append(GradlePluginConstants.MAIN_BUILD_FILE);
+            if (segment.toFile().exists()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
