@@ -13,7 +13,7 @@ import org.mule.tooling.incubator.gradle.editors.completion.GradleScriptAutocomp
 
 public class GradleScriptCompletionProcessor implements IContentAssistProcessor {
 	
-	private static final char[] ACTIVATION_CHARS = {'.'};
+	private static final char[] ACTIVATION_CHARS = {'.', ','};
 	private final IContextInformation[] NO_CONTEXTS = { };
 	private ICompletionProposal[] NO_COMPLETIONS = { };
 
