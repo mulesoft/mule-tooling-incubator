@@ -7,11 +7,9 @@ import java.net.URL;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageOne;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -80,13 +78,11 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private Button datasense;
     private Button query;
     private boolean mavenFailure = false;
-    private NewJavaProjectWizardPageOne javaPageOne;
 
-    public NewDevkitProjectWizardPage(ConnectorMavenModel model, NewJavaProjectWizardPageOne javaPageOne) {
+    public NewDevkitProjectWizardPage(ConnectorMavenModel model) {
         super("wizardPage");
         setTitle(NewDevkitProjectWizard.WIZZARD_PAGE_TITTLE);
         setDescription("Create an Anypoint Connector project.");
-        this.javaPageOne = javaPageOne;
         if (!MuleCorePlugin.getServerManager().getServerDefinitions().isEmpty()) {
             selectedServerDefinition = new MuleStudioPreference().getDefaultRuntimeSelection();
         } else {
@@ -124,13 +120,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                     char character = name.getText().charAt(0);
                     if (!Character.isUpperCase(character) && !Character.isDigit(character)) {
                         name.setText(org.apache.commons.lang.StringUtils.capitalize(name.getText()));
-                        javaPageOne.setProjectName(getProjectName());
                         name.setSelection(1, 1);
                         return;
                     }
                 }
-                if (!StringUtils.isEmpty(name.getText()))
-                    javaPageOne.setProjectName(getProjectName());
                 model.setConnectorName(name.getText());
                 dialogChanged();
             }
@@ -406,7 +399,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             updateStatus("The selected wsdl location is not valid.");
             return;
         }
-        final String projectName = this.javaPageOne.getProjectName();
+        final String projectName = getProjectName();
 
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
