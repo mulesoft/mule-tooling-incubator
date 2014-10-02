@@ -1,5 +1,8 @@
 package org.mule.tooling.incubator.gradle.editors.completion;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * IMPORTANT NOTE:
  * This class contains the 'metadata' for a best effort on suggesting completions for a gradle script
@@ -10,18 +13,32 @@ package org.mule.tooling.incubator.gradle.editors.completion;
  * @author juancavallotti
  *
  */
-public class MuleGradleProjectCompletionHelper {
+public class MuleGradleProjectCompletionMetadata {
 	
 	
+    /**
+     * Constant to define how the mule plugin extension is defined in the build script.
+     */
 	public static final String MULE_PLUGIN_EXTENSION_NAME = "mule";
 	
 	/**
 	 * The properties that the extension has
 	 */
-	public static final String[] MULE_PLUGIN_EXTENSION_PROPERTIES = {
+	public static final List<String> MULE_PLUGIN_EXTENSION_PROPERTIES = Arrays.asList(
 		"version", "installPath", "muleEnterprise", "disableJunit", "disableDataMapper", "junitVersion",
 		"enterpriseRepoUsername", "enterpriseRepoPassword", "components"
-	};
+	);
 	
+	/**
+	 * How the mule components in the DSL are configured.
+	 */
+	public static final String COMPONENTS_CLOSURE_SCOPE = "mule.components";
+	
+	
+	/**
+	 * The allowed words inside the components DSL scope.
+	 */
+	public static final List<String> COMPONENTS_SCOPE_DSL_WORDS = Arrays.asList(
+	        "connector", "module", "modules", "plugin", "transports");
 	
 }

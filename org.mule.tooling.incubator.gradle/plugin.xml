@@ -123,7 +123,6 @@
       <editor
             class="org.mule.tooling.incubator.gradle.editors.GradleBuildEditor"
             contributorClass="org.mule.tooling.incubator.gradle.editors.MultiPageEditorContributor"
-            default="false"
             icon="icons/gradle16x16.png"
             id="org.mule.tooling.incubator.gradle.editors.GradleBuildEditor"
             name="Mule Gradle Build Editor">
