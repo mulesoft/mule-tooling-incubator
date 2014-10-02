@@ -1,8 +1,10 @@
 package org.mule.tooling.incubator.gradle.parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.BadLocationException;
@@ -19,6 +21,7 @@ public class ScriptParsingUtils {
 	private static final char MULTILINE_COMMENT_START = '*';
 	private static final String MULTILINE_COMMENT_END = "*/";
 	
+	private static final String ARG_MAP_DELIMITER_TOKENS = "[]:,";
 	
 	/**
 	 * Parse the lines inside a given closure starting from the open brace or SPACES before.
@@ -166,4 +169,156 @@ public class ScriptParsingUtils {
 		
 		return line;
 	}
+	
+	
+	/**
+	 * Do a best effort to parse a DSL method call with a hash map. This presents several
+	 * challenges, and the implementation will be evolving or completely change in the future.
+	 * @param document
+	 * @param offset
+	 * @return the method call or null if we're unable to parse.
+	 */
+	public static DSLMethodAndMap parseDSLLine(IDocument document, int offset) throws BadLocationException {
+	    
+	    //first, get the line
+	    IRegion region = document.getLineInformationOfOffset(offset);
+	    
+	    String entireLine = document.get(region.getOffset(), region.getLength());
+	    
+	    //we want to make sure we're not parsing a comment.
+	    entireLine = removeLineCommentFromLine(entireLine);
+	    
+	    //remove any leading or trailing spaces.
+	    entireLine = entireLine.trim();
+	    
+	    
+	    int argumentStarting = locateMethodArgumentStarting(entireLine);
+	    
+	    //we need to get the first one
+	    String methodName = entireLine.substring(0, argumentStarting);
+	    
+	    HashMap<String, String> arguments = parseGroovyMap(entireLine.substring(argumentStarting));
+	    
+	    return new DSLMethodAndMap(methodName, arguments);
+	}
+	
+	
+	/**
+	 * Parse from a string a groovy map.
+	 * @param argumentsLine
+	 * @return
+	 */
+	public static HashMap<String, String> parseGroovyMap(String argumentsLine) {
+        
+	    argumentsLine = argumentsLine.trim();
+	    
+	    StringTokenizer tokenizer = new StringTokenizer(argumentsLine, ARG_MAP_DELIMITER_TOKENS, false);
+	    
+	    //the map is in the form of [key1: 'value1', key2: value2, ...]
+	    //the square braces are optional.
+	    
+	    HashMap<String, String> ret = new HashMap<String, String>();
+	    //we do a best effort apprach on parsing.
+	    for(int i = 0; i < tokenizer.countTokens(); i++) {
+	        String key = tokenizer.nextToken().trim();
+	        String value = tokenizer.nextToken().trim();
+	        ret.put(key, value);
+	    }
+	    return ret;
+    }
+
+    /**
+	 * Remove the comments from a line.
+	 * @param line
+	 * @return
+	 */
+	public static String removeLineCommentFromLine(String line) {
+	    
+	    int oneLineComment = line.indexOf("//");
+	    
+	    if (oneLineComment >= 0) {
+	        line = line.substring(0, oneLineComment);
+	    }
+	    
+	    return line;
+	}
+	
+	/**
+	 * If we don't locate the starting of the method, then we return the length of the line
+	 * this makes easier further processing since the caller will always get a value that it
+	 * can use to substring.
+	 * 
+	 * IMPORTANT NOTE: GROOVY allows method names as strings, this implementation will surely
+	 * not detect these in most cases, this needs to be improved.
+	 * 
+	 * @param line
+	 * @return
+	 */
+	public static int locateMethodArgumentStarting(String line) {
+	    
+	    //the method name should be up to the first space or opening (.
+        int methodParenthesisPos = line.indexOf('(');
+        int methodSpacePos = line.indexOf(' ');
+        
+        if (methodParenthesisPos == -1) {
+            methodParenthesisPos = line.length();
+        }
+        
+        if (methodSpacePos == -1) {
+            methodSpacePos = line.length();
+        }
+        
+        return methodSpacePos < methodParenthesisPos ? methodSpacePos : methodParenthesisPos; 
+        
+	}
+	
+	/**
+	 * Check if the given position is in the context of the given closure. This is done by checking
+	 * the braces balance, basically the number of braces when { means + 1 and } means -1 should not
+	 * become 0 before reaching the position.
+	 * 
+	 * @param document
+	 * @param closureName
+	 * @param position
+	 * @return
+	 * @throws BadLocationException
+	 */
+	public static boolean isPositionInClosureContext(IDocument document, String closureName, int position) throws BadLocationException {
+	    
+	    FindReplaceDocumentAdapter searchAdapter = new FindReplaceDocumentAdapter(document);
+	    
+	    //we need the first occurrence searching backwards from the position.
+	    IRegion region = searchAdapter.find(position, closureName, false, true, true, false);
+	    
+	    //fail fast
+	    if (region == null) {
+	        return false;
+	    }
+	    
+	    //start looking at the contents.
+	    int currentPosition = region.getOffset() + region.getLength();
+	    
+	    int balance = 0;
+	    
+	    
+	    while(currentPosition < position) {
+	        
+	        //get and increase the counter.
+	        char currentCharacter = searchAdapter.charAt(currentPosition++);
+	        
+	        if (currentCharacter == SCOPE_OPEN.charValue()) {
+	            balance++;
+	        }
+	        
+	        if (currentCharacter == SCOPE_CLOSE) {
+	            balance--;
+	            if (balance == 0) {
+	                //scope has ended or the script is not correctly formed.
+	                return false;
+	            }
+	        }
+	    }
+	    return true;
+	}
+	
 }

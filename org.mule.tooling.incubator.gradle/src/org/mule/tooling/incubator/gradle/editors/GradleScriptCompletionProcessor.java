@@ -2,7 +2,6 @@ package org.mule.tooling.incubator.gradle.editors;
 
 import java.util.List;
 
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -10,7 +9,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.mule.tooling.incubator.gradle.editors.completion.GradleScriptModel;
+import org.mule.tooling.incubator.gradle.editors.completion.GradleScriptAutocompleteAnalyzer;
 
 public class GradleScriptCompletionProcessor implements IContentAssistProcessor {
 	
@@ -27,14 +26,13 @@ public class GradleScriptCompletionProcessor implements IContentAssistProcessor 
 			IDocument doc = viewer.getDocument();
 			String activeWord = lastWord(doc, offset);
 		
-			GradleScriptModel model = new GradleScriptModel(doc.get(0, offset), activeWord);
+			GradleScriptAutocompleteAnalyzer model = new GradleScriptAutocompleteAnalyzer(doc, activeWord, offset);
 			
 			List<String> completions = model.buildSuggestions();
 			
 			return transformCompletions(completions, offset);
 			
-		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return NO_COMPLETIONS;
