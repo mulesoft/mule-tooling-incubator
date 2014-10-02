@@ -32,7 +32,7 @@ public class GradleRuleBasedScanner extends RuleBasedScanner {
 		"return", "short", "static", "switch", "throw", "throws" , "true", "try", "volatile", "while" };
 	
 	private static final String[] DSL_KEYWORDS = {"apply", "connector", "buildscript", "dependencies", "classpath", 
-		"cloudhub", "ivy", "maven", "mmc", "module", "modules", "mule", "project", "repositories", 
+		"cloudhub", "ivy", "maven", "mmc", "module", "modules", "mule", "plugin", "project", "repositories", 
 		"transports", "url"};
 	
 	
