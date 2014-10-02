@@ -52,6 +52,9 @@ public class GradleScriptAutocompleteAnalyzer {
 	
 	private List<String> doBuildSuggestions() throws Exception {
 	    
+	    boolean isInComponentsContext = ScriptParsingUtils.isPositionInClosureContext(gradleScript, MuleGradleProjectCompletionMetadata.COMPONENTS_CLOSURE_SCOPE, insertPosition);
+	    
+	    
 	    //this is horrible but at the moment might work.
         if (docSearch.find(insertPosition, "apply plugin: 'mule", false, true, false, false) == null) {
             return Collections.emptyList();
@@ -66,14 +69,26 @@ public class GradleScriptAutocompleteAnalyzer {
             
             ret.add(MuleGradleProjectCompletionMetadata.MULE_PLUGIN_EXTENSION_NAME);
             
-            if (ScriptParsingUtils.isPositionInClosureContext(gradleScript, MuleGradleProjectCompletionMetadata.COMPONENTS_CLOSURE_SCOPE, insertPosition)) {
-                ret.addAll(MuleGradleProjectCompletionMetadata.COMPONENTS_SCOPE_DSL_WORDS);
+            if (isInComponentsContext) {
+                ret.addAll(MuleGradleProjectCompletionMetadata.COMPONENTS_SCOPE_DSL_METHODS);
+                ret.addAll(MuleGradleProjectCompletionMetadata.COMPONENTS_SCOPE_DSL_COLLECTIONS);
             }
             
             //we don't bother in analyzing other things
             return ret;
         }
         
+        //if we are in the components context we might want to check
+        //if we can auto complete a map
+        if (isInComponentsContext && lineIsDslMethodCall(line, MuleGradleProjectCompletionMetadata.COMPONENTS_SCOPE_DSL_METHODS)) {
+            ret.addAll(MuleGradleProjectCompletionMetadata.COMPONENTS_BASIC_DSL);
+            
+            if (line.startsWith(MuleGradleProjectCompletionMetadata.COMPONENT_PLUGIN_DSL_METHOD)) {
+                ret.add(MuleGradleProjectCompletionMetadata.DEPENDENCY_GROUP);
+            }
+            
+            return ret;
+        }
         
         String lastWord = completionWord;
         
@@ -93,7 +108,19 @@ public class GradleScriptAutocompleteAnalyzer {
         return Collections.emptyList();
 	}
 
-	private String parseLeftSide() throws Exception {
+	private boolean lineIsDslMethodCall(String line, List<String> dslWords) {
+        
+	    for(String word : dslWords) {
+	        if (line.startsWith(word)) {
+	            return true;
+	        }
+	    }
+	    
+	    return false;
+    }
+
+
+    private String parseLeftSide() throws Exception {
 		
 		if (gradleScript.getChar(insertPosition- 1) != PROPERTY_OPERATOR) {
 			return "";
@@ -113,13 +140,18 @@ public class GradleScriptAutocompleteAnalyzer {
 		return "";
 	}
 	
+	/**
+	 * The line will be returned without leading or trailing whitespaces.
+	 * @return
+	 * @throws BadLocationException
+	 */
 	private String getLineOfPosition() throws BadLocationException  {
 	    IRegion lineRegion = gradleScript.getLineInformationOfOffset(insertPosition);
         String line = gradleScript.get(lineRegion.getOffset(), lineRegion.getLength());
         
         //comments are annoying.
         line = ScriptParsingUtils.removeLineCommentFromLine(line);
-        return line;
+        return line.trim();
 	}
 	
 }

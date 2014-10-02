@@ -36,9 +36,28 @@ public class MuleGradleProjectCompletionMetadata {
 	
 	
 	/**
-	 * The allowed words inside the components DSL scope.
+	 * The allowed collections inside the components DSL scope.
 	 */
-	public static final List<String> COMPONENTS_SCOPE_DSL_WORDS = Arrays.asList(
-	        "connector", "module", "modules", "plugin", "transports");
+	public static final List<String> COMPONENTS_SCOPE_DSL_COLLECTIONS = Arrays.asList(
+	        "modules", "transports");
 	
+	public static final String COMPONENT_PLUGIN_DSL_METHOD = "plugin";
+	
+	/**
+     * The allowed collections inside the components DSL scope.
+     */
+    public static final List<String> COMPONENTS_SCOPE_DSL_METHODS = Arrays.asList(
+            "connector", "module", COMPONENT_PLUGIN_DSL_METHOD);
+    
+    /**
+     * The words on modules and connector dsl.
+     */
+    public static final List<String> COMPONENTS_BASIC_DSL = Arrays.asList(
+            "name:", "version:", "noExt:", "noClassifier:");
+    
+    /**
+     * String that represents the group when adding a dependency.
+     */
+    public static final String DEPENDENCY_GROUP = "group: ";
+    
 }
