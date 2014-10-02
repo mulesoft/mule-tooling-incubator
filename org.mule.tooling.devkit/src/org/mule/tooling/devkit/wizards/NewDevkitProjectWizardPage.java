@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.IMessage;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.devkit.DevkitImages;
@@ -49,7 +50,7 @@ import org.mule.tooling.ui.wizards.extensible.WizardPagePartExtension;
 
 public class NewDevkitProjectWizardPage extends WizardPage {
 
-    private static final String DEFAULT_NAME = "Hello";
+    private static final String DEFAULT_NAME = "";
     private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
     private static final String GROUP_TITLE_CONNECTOR = "";
     private static final String GROUP_TITLE_API = "API";
@@ -82,7 +83,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         super("wizardPage");
         setTitle(NewDevkitProjectWizard.WIZZARD_PAGE_TITTLE);
         setDescription("Create an Anypoint Connector project.");
-
         if (!MuleCorePlugin.getServerManager().getServerDefinitions().isEmpty()) {
             selectedServerDefinition = new MuleStudioPreference().getDefaultRuntimeSelection();
         } else {
@@ -118,7 +118,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             public void modifyText(ModifyEvent e) {
                 if (!name.getText().isEmpty()) {
                     char character = name.getText().charAt(0);
-                    if (!Character.isUpperCase(character)) {
+                    if (!Character.isUpperCase(character) && !Character.isDigit(character)) {
                         name.setText(org.apache.commons.lang.StringUtils.capitalize(name.getText()));
                         name.setSelection(1, 1);
                         return;
@@ -353,6 +353,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             public void notifyUpdate(WizardPagePartExtension part, String key, Object value) {
                 if (ServerChooserComponent.KEY_SERVER_DEFINITION.equals(key)) {
                     selectedServerDefinition = (ServerDefinition) value;
+                    dialogChanged();
                 }
             }
 
@@ -380,10 +381,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             return;
         }
         if (this.getName().length() == 0) {
-            updateStatus("The Name must be specified.");
+            updateStatus("The Connector Name must be specified.");
             return;
         } else if (this.getName().equals("Test")) {
-            updateStatus("The Name cannot be Test.");
+            updateStatus("The Connector Name cannot be Test.");
             return;
         } else if (this.getName().endsWith("Connector")) {
             updateStatus("There is no need for you to add the Connector word at the end.");
@@ -398,7 +399,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             updateStatus("The selected wsdl location is not valid.");
             return;
         }
-        final String projectName = DevkitUtils.toConnectorName(getName()) + "-connector";
+        final String projectName = getProjectName();
 
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
@@ -411,7 +412,17 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             updateStatus("Specify a wsdl location.");
             return;
         }
+        if (!getDevkitVersion().startsWith("3.5")) {
+            setMessage("DevKit Studio plugin only supports Mule runtimes 3.5.0 and above.\nSome features may not work as expected with lower versions of Mule.", IMessage.WARNING);
+            return;
+        } else {
+            setMessage(null);
+        }
         updateStatus(null);
+    }
+
+    private String getProjectName() {
+        return DevkitUtils.toConnectorName(getName()) + "-connector";
     }
 
     private void updateStatus(String message) {
@@ -546,7 +557,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         mavenFailure = false;
         MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
         final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
-        // Using a callback doesn't work. Set null callback and just handle the result.
+        // Using a callback doesn't work. Set null callback and just handle the
+        // result.
         int result = mavenInstallationTester.test(null);
         onTestFinished(result);
     }

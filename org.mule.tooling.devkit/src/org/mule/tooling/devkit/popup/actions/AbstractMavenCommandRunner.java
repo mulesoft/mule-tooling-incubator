@@ -7,6 +7,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,7 +28,7 @@ public abstract class AbstractMavenCommandRunner extends AbstractHandler {
             if (selected instanceof IJavaElement) {
                 final IProject selectedProject = ((IJavaElement) selected).getJavaProject().getProject();
                 if (selectedProject != null && !DevkitUtils.existsUnsavedChanges(selectedProject.getProject())) {
-                    if (!ignoreErrorsInProject(countErrors(selectedProject))){
+                    if (!ignoreErrorsInProject(countErrors(selectedProject))) {
                         return null;
                     }
 
@@ -35,7 +36,7 @@ public abstract class AbstractMavenCommandRunner extends AbstractHandler {
                 }
             }
         }
-        return null;
+        return Status.OK_STATUS;
     }
 
     protected abstract void doCommandJobOnProject(final IProject selectedProject);
@@ -43,7 +44,7 @@ public abstract class AbstractMavenCommandRunner extends AbstractHandler {
     protected boolean ignoreErrorsInProject(int errorCount) {
         if (errorCount == 0)
             return true;
-        
+
         String errorText = "Your project has (" + errorCount + ") " + ((errorCount > 1) ? "errors" : "error" + ".");
         boolean result = MessageDialog.openConfirm(null, "Warning", errorText + "\n\nDo you want to continue with this operation?.");
         return result;

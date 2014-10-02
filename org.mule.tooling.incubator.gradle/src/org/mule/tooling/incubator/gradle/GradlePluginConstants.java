@@ -11,7 +11,7 @@ public class GradlePluginConstants {
 	/**
 	 * This is the version of gradle that will get downloaded in case of no installation is provided.
 	 */
-	public static final String RECOMMENDED_GRADLE_VERSION = "1.12";
+	public static final String RECOMMENDED_GRADLE_VERSION = "2.1";
 	
 	
 	/**
@@ -32,5 +32,8 @@ public class GradlePluginConstants {
 	public static final String ENABLE_STACKTRACE_FLAG = "--stacktrace";
 	
 	
-	
+	/**
+	 * Name of the main build file.
+	 */
+	public static final String MAIN_BUILD_FILE = "build.gradle";
 }

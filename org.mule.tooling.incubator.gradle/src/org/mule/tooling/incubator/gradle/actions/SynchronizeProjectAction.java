@@ -3,22 +3,19 @@ package org.mule.tooling.incubator.gradle.actions;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.CoreUtils;
-import org.mule.tooling.incubator.gradle.GradleBuildJob;
+import org.mule.tooling.incubator.gradle.jobs.SynchronizeProjectGradleBuildJob;
 
-public class SynchronizeProjectAction implements IObjectActionDelegate {
+public class SynchronizeProjectAction extends AbstractGradleAwareActionDelegate {
 	
 	private IWorkbench workbench;
 	private Shell shell;
 	
-	private static final String TASK_DESCRIPTION = "Refreshing gradle project...";
 	
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
@@ -36,7 +33,7 @@ public class SynchronizeProjectAction implements IObjectActionDelegate {
 			IMuleProject muleProject = CoreUtils.getMuleProjectForSelection(selection);
 			IProject project = muleProject.getJavaProject().getProject();
 			
-			GradleBuildJob buildJob = new GradleBuildJob(TASK_DESCRIPTION, project, "studio") {
+			SynchronizeProjectGradleBuildJob buildJob = new SynchronizeProjectGradleBuildJob(project) {
 				
 				@Override
 				protected void handleException(Exception ex) {
@@ -48,13 +45,6 @@ public class SynchronizeProjectAction implements IObjectActionDelegate {
 		} catch (Exception e) {
 			MessageDialog.openError(shell, "Synchonization Error", "Error while synchronizing the project: " + e.getMessage());
 		}
-	}
-
-
-	@Override
-	public void selectionChanged(IAction action, ISelection selection) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 }

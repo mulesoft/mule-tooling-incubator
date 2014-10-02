@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -44,6 +45,7 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.GradleTask;
+import org.mule.tooling.core.builder.MuleNature;
 import org.mule.tooling.incubator.gradle.GradleBuildJob;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 
@@ -110,13 +112,13 @@ public class TasksView extends ViewPart implements ISelectionListener {
         public String getText(Object obj) {
             if (obj instanceof GradleTask) {
                 GradleTask task = (GradleTask) obj;
-                
+
                 String text = task.getName();
-                
+
                 if (task.getDescription() != null) {
-                	text = text + " - " +task.getDescription();
+                    text = text + " - " + task.getDescription();
                 }
-                
+
                 return text;
             }
             return obj.toString();
@@ -187,28 +189,29 @@ public class TasksView extends ViewPart implements ISelectionListener {
         drillDownAdapter.addNavigationActions(manager);
         // Other plug-ins can contribute there actions here
         manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-        
+
         Action runAction = new Action("Run with arguments...") {
-        	@Override
-        	public void runWithEvent(Event event) {
-        		InputDialog dialog = new InputDialog(getSite().getShell(), "Task Arguments", "Enter task run arguments", "", null);
-        		dialog.open();
-        		
-        		if (dialog.getReturnCode() == InputDialog.CANCEL) {
-        			return;
-        		}
-        		
-        		String args = dialog.getValue();
-        		
-        		String[] argsArr = args.split(" ");
-        		
-        		runSelectedTask(argsArr);
-        	}
-		};
-        
-        runAction.setEnabled(((IStructuredSelection)viewer.getSelection()).getFirstElement() != null);
-        
-        //add the actions.
+
+            @Override
+            public void runWithEvent(Event event) {
+                InputDialog dialog = new InputDialog(getSite().getShell(), "Task Arguments", "Enter task run arguments", "", null);
+                dialog.open();
+
+                if (dialog.getReturnCode() == InputDialog.CANCEL) {
+                    return;
+                }
+
+                String args = dialog.getValue();
+
+                String[] argsArr = args.split(" ");
+
+                runSelectedTask(argsArr);
+            }
+        };
+
+        runAction.setEnabled(((IStructuredSelection) viewer.getSelection()).getFirstElement() != null);
+
+        // add the actions.
         manager.add(runAction);
     }
 
@@ -222,7 +225,7 @@ public class TasksView extends ViewPart implements ISelectionListener {
         doubleClickAction = new Action() {
 
             public void run() {
-            	runSelectedTask(null);
+                runSelectedTask(null);
             }
         };
     }
@@ -245,8 +248,20 @@ public class TasksView extends ViewPart implements ISelectionListener {
 
     @Override
     public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+        
+        if (this.viewer.isBusy()) {
+            return;
+        }
+        
+        if (!(selection instanceof TreeSelection)) {
+            return;
+        }
+        
         if (selection.isEmpty())
             return;
+        if (!isMuleProject(selection)) {
+            return;
+        }
         final ISelection currentSelection = selection;
         final String convertingMsg = "Listing gradle tasks...";
         final WorkspaceJob refreshDevkitViewJob = new WorkspaceJob(convertingMsg) {
@@ -255,13 +270,13 @@ public class TasksView extends ViewPart implements ISelectionListener {
             public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
                 if (currentSelection instanceof IStructuredSelection) {
                     Object selected = ((IStructuredSelection) currentSelection).getFirstElement();
-                    
-                    //sometimes project might be a simple project.
+
+                    // sometimes project might be a simple project.
                     if (selected instanceof IJavaProject) {
-                    	//convert into a java project
-                    	selected = ((IJavaProject) selected).getProject();
+                        // convert into a java project
+                        selected = ((IJavaProject) selected).getProject();
                     }
-                    
+
                     if (selected instanceof IProject) {
                         project = (IProject) selected;
 
@@ -285,29 +300,54 @@ public class TasksView extends ViewPart implements ISelectionListener {
         refreshDevkitViewJob.setPriority(Job.SHORT);
         refreshDevkitViewJob.schedule();
     }
-    
+
     private void runSelectedTask(String[] arguments) {
         ISelection selection = viewer.getSelection();
         Object obj = ((IStructuredSelection) selection).getFirstElement();
-        
+
         if (obj == null) {
-        	return;
+            return;
         }
-        
+
         final GradleTask task = (GradleTask) obj;
         GradleBuildJob buildJob = new GradleBuildJob("Running task " + task.getName(), project, task.getName()) {
-			@Override
-			protected void handleException(Exception ex) {
-				MessageDialog.openError(getSite().getShell(), "Task run Error", "Could not run task "+ task.getName() +" : " + ex.getMessage());
-			}
-		};
-        
-		buildJob.setArguments(arguments);
-		buildJob.doSchedule();
+
+            @Override
+            protected void handleException(Exception ex) {
+                MessageDialog.openError(getSite().getShell(), "Task run Error", "Could not run task " + task.getName() + " : " + ex.getMessage());
+            }
+        };
+
+        buildJob.setArguments(arguments);
+        buildJob.doSchedule();
     }
-    
-    
+
     public void dispose() {
         getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+    }
+
+    private boolean isMuleProject(ISelection selection) {
+        if (selection instanceof IStructuredSelection) {
+            Object selected = ((IStructuredSelection) selection).getFirstElement();
+
+            // sometimes project might be a simple project.
+            if (selected instanceof IJavaProject) {
+                // convert into a java project
+                selected = ((IJavaProject) selected).getProject();
+            }
+
+            if (selected instanceof IProject) {
+                try {
+                    if (((IProject) selected).isAccessible()) {
+                        if (((IProject) selected).hasNature(MuleNature.NATURE_ID)) {
+                            return true;
+                        }
+                    }
+                } catch (CoreException e) {
+                    // Ignore all errors
+                }
+            }
+        }
+        return false;
     }
 }

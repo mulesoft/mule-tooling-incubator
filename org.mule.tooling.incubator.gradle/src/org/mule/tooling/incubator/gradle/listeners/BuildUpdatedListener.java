@@ -7,8 +7,8 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.mule.tooling.core.utils.CoreUtils;
-import org.mule.tooling.incubator.gradle.GradleBuildJob;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
+import org.mule.tooling.incubator.gradle.jobs.SynchronizeProjectGradleBuildJob;
 
 public class BuildUpdatedListener implements IResourceChangeListener {
 
@@ -28,8 +28,12 @@ public class BuildUpdatedListener implements IResourceChangeListener {
 					String fileName = delta.getResource().getName();
 					if ("build.gradle".equals(fileName) || GradlePluginUtils.STUDIO_DEPS_FILE.equals(fileName)) {
 						IProject proj = delta.getResource().getProject();
-						//trigger the refresh of the project.
-						doRefreshProject(proj);
+						//trigger the refresh of the project.						
+						if ((delta.getFlags() & IResourceDelta.CONTENT) != 0) {
+							doRefreshProject(proj);
+						}
+						//skip if the content has not been modified
+						return true;
 					}
 					return true;
 				}
@@ -48,7 +52,7 @@ public class BuildUpdatedListener implements IResourceChangeListener {
 			return;
 		}
 		
-		GradleBuildJob refreshProjectJob = new GradleBuildJob("Refreshing project after change...", proj, "studio") {
+		SynchronizeProjectGradleBuildJob refreshProjectJob = new SynchronizeProjectGradleBuildJob(proj) {
 			
 			@Override
 			protected void handleException(Exception ex) {

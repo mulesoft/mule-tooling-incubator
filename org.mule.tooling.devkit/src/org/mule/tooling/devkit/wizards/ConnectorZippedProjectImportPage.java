@@ -1,33 +1,24 @@
 package org.mule.tooling.devkit.wizards;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -48,6 +39,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
+import org.mule.tooling.devkit.builder.ProjectGenerator;
+import org.mule.tooling.devkit.builder.ProjectGeneratorFactory;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
@@ -198,7 +191,6 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
      * @return
      */
     public boolean performFinish(IWorkbenchWindow windowShellProvider) {
-        final IWorkbenchWindow window = windowShellProvider;
         final String zipFileName = zipChooser.getFilePath();
         final File zipFile = new File(zipFileName);
         if (!zipFile.exists()) {
@@ -250,8 +242,9 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
                         IProject project = createProject(projectName, monitor, root, new File(root.getLocation().toFile(), projectName));
 
                         IJavaProject javaProject = JavaCore.create(root.getProject(projectName));
+                        ProjectGenerator generator = ProjectGeneratorFactory.newInstance();
 
-                        List<IClasspathEntry> classpathEntries = generateProjectEntries(monitor, project);
+                        List<IClasspathEntry> classpathEntries = generator.generateProjectEntries(monitor, project);
                         javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[] {}), monitor);
 
                         try {
@@ -262,8 +255,8 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
                         }
                         DevkitUtils.configureDevkitAPT(javaProject);
 
-                        UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject, new String[] { "clean","compile", "eclipse:eclipse" });
-                        job.run(monitor);
+                        UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject, new String[] { "clean", "compile", "eclipse:eclipse" });
+                        job.runInWorkspace(monitor);
                         project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
                     } catch (CoreException e) {
                         e.printStackTrace();
@@ -274,24 +267,8 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
                 monitor.done();
             }
         };
-        Job job = new WorkspaceJob("Importing connector") {
 
-            @Override
-            public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-                try {
-                    op.run(monitor);
-                } catch (InterruptedException e) {
-                    return Status.OK_STATUS;
-                } catch (InvocationTargetException e) {
-                    Throwable realException = e.getTargetException();
-                    MessageDialog.openError(getShell(), "Error", realException.getMessage());
-                    return Status.CANCEL_STATUS;
-                }
-                return Status.OK_STATUS;
-            }
-        };
-        job.schedule();
-        return true;
+        return runInContainer(op);
     }
 
     private boolean hasExpectedProjectStructure(File tempExpandedZipFile) {
@@ -355,39 +332,6 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
         return projectDescription;
     }
 
-    protected List<IClasspathEntry> generateProjectEntries(IProgressMonitor monitor, IProject project) throws CoreException {
-        List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
-        entries.add(createEntry(project.getFolder(DevkitUtils.MAIN_JAVA_FOLDER), monitor));
-        entries.add(createEntry(project.getFolder(DevkitUtils.MAIN_RESOURCES_FOLDER), monitor));
-        entries.add(createEntry(project.getFolder(DevkitUtils.TEST_RESOURCES_FOLDER), monitor));
-        entries.add(createEntry(project.getFolder(DevkitUtils.TEST_JAVA_FOLDER), monitor));
-        entries.add(createEntry(project.getFolder(DevkitUtils.GENERATED_SOURCES_FOLDER), monitor));
-        entries.add(JavaRuntime.getDefaultJREContainerEntry());
-        return entries;
-    }
-
-    protected IClasspathEntry createEntry(final IResource resource, IProgressMonitor monitor) throws CoreException {
-        create(resource, monitor);
-        return JavaCore.newSourceEntry(resource.getFullPath());
-    }
-
-    protected void create(final IResource resource, IProgressMonitor monitor) throws CoreException {
-        if (resource == null || resource.exists())
-            return;
-        if (!resource.getParent().exists())
-            create(resource.getParent(), monitor);
-        switch (resource.getType()) {
-        case IResource.FILE:
-            ((IFile) resource).create(new ByteArrayInputStream(new byte[0]), true, monitor);
-            break;
-        case IResource.FOLDER:
-            ((IFolder) resource).create(IResource.NONE, true, monitor);
-            break;
-        case IResource.PROJECT:
-            break;
-        }
-    }
-
     protected void testMaven() {
         mavenFailure = false;
         MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
@@ -400,5 +344,19 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
     void onTestFinished(final int result) {
         mavenFailure = result != 0;
         updatePageComplete();
+    }
+
+    private boolean runInContainer(final IRunnableWithProgress work) {
+        try {
+            getContainer().run(true, true, work);
+        } catch (InterruptedException e) {
+            return false;
+        } catch (InvocationTargetException e) {
+            Throwable realException = e.getTargetException();
+            MessageDialog.openError(getShell(), "Error", realException.getMessage());
+            return false;
+        }
+
+        return true;
     }
 }

@@ -98,7 +98,7 @@
             class="org.mule.tooling.devkit.export.UpdateSiteExportWizard"
             icon="icons/icon.png"
             id="org.mule.tooling.devkit.export.updateSiteExportWizard"
-            name="Anypoint Connector Update  Site">
+            name="Anypoint Connector Update Site">
       </wizard>
    </extension>
    <extension

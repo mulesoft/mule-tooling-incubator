@@ -85,8 +85,9 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
         owner = initializeTextField(gitHubGroupBox, "GitHub Owner", DEFAULT_USER, "Owner of the repository", new ModifyListener() {
 
             public void modifyText(ModifyEvent e) {
-                if (owner.getText().isEmpty()) {
-                    owner.setText(DEFAULT_USER);
+
+                if (!ownerName.matcher(owner.getText()).find()) {
+                    updateStatus();
                 }
                 refresh();
             }
@@ -142,6 +143,7 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
         connection.setEnabled(shouldAddInfo);
         devConnection.setEnabled(shouldAddInfo);
         url.setEnabled(shouldAddInfo);
+        updateStatus();
     }
 
     private void updateComponentsEnablement() {
@@ -160,10 +162,6 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
     }
 
     public boolean getAddGitHubInfo() {
-        return this.addGitHubInfo.getSelection();
-    }
-
-    public boolean addGitHubInfo() {
         return this.addGitHubInfo.getSelection();
     }
 
@@ -268,10 +266,18 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
             setPageComplete(false);
             return;
         }
-        if (!ownerName.matcher(owner.getText()).find()) {
-            setErrorMessage("You are using characters that are not allowed.");
-            setPageComplete(false);
-            return;
+        if (this.getAddGitHubInfo()) {
+            if (owner.getText().isEmpty()) {
+                setErrorMessage("GitHub Owner cannot be empty.");
+                setPageComplete(false);
+                return;
+            }
+
+            if (!ownerName.matcher(owner.getText()).find()) {
+                setErrorMessage("You are using characters that are not allowed for the GitHub Owner.");
+                setPageComplete(false);
+                return;
+            }
         }
         setErrorMessage(null);
         setPageComplete(true);

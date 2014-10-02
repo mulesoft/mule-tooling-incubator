@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -44,6 +45,8 @@ import org.eclipse.ui.IEditorPart;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
+import org.mule.tooling.devkit.builder.DevkitNature;
+import org.mule.tooling.devkit.maven.MavenDevkitProjectDecorator;
 import org.mule.tooling.devkit.popup.actions.DevkitCallback;
 import org.mule.tooling.devkit.quickfix.LocateModuleNameVisitor;
 import org.mule.tooling.ui.utils.SaveModifiedResourcesDialog;
@@ -322,26 +325,62 @@ public class DevkitUtils {
     public static boolean isReserved(String word) {
         return ArrayUtils.contains(RESERVED_NAMES, word);
     }
-    
+
     public static String getDevkitVersionForServerDefinition(ServerDefinition selectedServerDefinition) {
-        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_2))
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_4_2))
             return DevkitUtils.DEVKIT_3_4_2;
-        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_1))
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_4_1))
             return DevkitUtils.DEVKIT_3_4_1;
-        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_4_0))
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_4_0))
             return DevkitUtils.DEVKIT_3_4_0;
-        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_5_0))
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_5_0))
             return DevkitUtils.DEVKIT_3_5_0;
-        if (selectedServerDefinition.getId().contains(DevkitUtils.DEVKIT_3_5_1))
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_5_1))
             return DevkitUtils.DEVKIT_3_5_1;
         return DevkitUtils.DEVKIT_CURRENT;
     }
-    
+
     public static void configureDevkitAPT(IJavaProject javaProject) throws CoreException {
         AptConfig.setEnabled(javaProject, true);
         IFactoryPath path = AptConfig.getFactoryPath(javaProject);
         path.enablePlugin(org.mule.tooling.devkit.apt.Activator.PLUGIN_ID);
         AptConfig.setFactoryPath(javaProject, path);
         AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "false");
+    }
+
+    /**
+     * Get a label from the project with the following structure. { groupId } : { artifactId } : { version } or { project name } if the result was empty.
+     * 
+     * @param selectedProject
+     *            maven project with a valid pom.xml file
+     * @return the label.
+     */
+    public static String getProjectLabel(final IJavaProject selectedProject) {
+        MavenDevkitProjectDecorator maven = MavenDevkitProjectDecorator.decorate(selectedProject);
+        String label = ((maven.getGroupId() != null) ? maven.getGroupId() + ":" : "") + ((maven.getArtifactId() != null) ? maven.getArtifactId() + ":" : "")
+                + ((maven.getVersion() != null) ? maven.getVersion() : "");
+        if (label.isEmpty()) {
+            label = selectedProject.getProject().getName();
+        }
+        return label;
+    }
+
+    /**
+     * Add the Devkit nature to a given project.
+     * 
+     * @param project
+     * @throws CoreException
+     */
+    public static void addDevkitNature(IProject project) throws CoreException {
+        if (project.hasNature(DevkitNature.NATURE_ID)) {
+            return;
+        }
+        final IProjectDescription description = project.getDescription();
+        final String[] ids = description.getNatureIds();
+        final String[] newIds = new String[ids.length + 1];
+        System.arraycopy(ids, 0, newIds, 1, ids.length);
+        newIds[0] = DevkitNature.NATURE_ID;
+        description.setNatureIds(newIds);
+        project.setDescription(description, null);
     }
 }

@@ -175,23 +175,9 @@ public class GradleBuildEditor extends FormEditor implements IResourceChangeList
 	
 	private boolean chekStudioPluginPresent(IProject project) {
 		
-		GradleProject projModel = GradlePluginUtils.getProjectModelForProject(project);
-		
-		DomainObjectSet<? extends GradleTask> tasks = projModel.getTasks();
-		
-		for (GradleTask task : tasks) {
-			//should contain at least the studio task or the addDependency
-			//probably this should be an 'and' so we make really sure we can do this.
-			if (task.getName().equals("addDependency")) {
-				return true;
-			}
-			
-			if (task.getName().equals("studio")) {
-				return true;
-			}
-		}
-		
-		return false;
+	    //this step is no longer required since we have already a content-type check.
+	    //and the editor is associated with this content type.
+	    return true;	    
 	}
 
 }

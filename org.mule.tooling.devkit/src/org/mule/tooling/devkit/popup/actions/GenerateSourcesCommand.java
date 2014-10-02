@@ -50,8 +50,13 @@ public class GenerateSourcesCommand extends AbstractHandler {
                         public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
                             monitor.beginTask(convertingMsg, 100);
                             IJavaProject javaProject = JavaCore.create(selectedProject);
-                            MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArgs(new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=true", "-Ddevkit.javadoc.check.skip=true",
-                                    "-Dmaven.javadoc.skip=true" }).build().run(monitor);
+                            MavenRunBuilder
+                                    .newMavenRunBuilder()
+                                    .withProject(javaProject)
+                                    .withArgs(
+                                            new String[] { "clean", "package", "-DskipTests", "-Ddevkit.studio.package.skip=true", "-Ddevkit.javadoc.check.skip=true",
+                                                    "-Dmaven.javadoc.skip=true" }).withTaskName("Generating sources for " + DevkitUtils.getProjectLabel(javaProject)).build()
+                                    .run(monitor);
                             DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.GENERATED_SOURCES_FOLDER), monitor).execute(Status.OK);
                             monitor.done();
                             return Status.OK_STATUS;
@@ -65,7 +70,7 @@ public class GenerateSourcesCommand extends AbstractHandler {
                 }
             }
         }
-        return null;
+        return Status.OK_STATUS;
     }
 
     private int getErrorsCount(final IProject selectedProject) {

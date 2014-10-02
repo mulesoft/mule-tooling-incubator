@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Munit
 Bundle-SymbolicName: org.mule.tooling.ui.contribution.munit;singleton:=true
-Bundle-Version: 1.0.2.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-ClassPath: .,
  lib/munit-runner.jar,
  lib/gson.jar
@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  org.eclipse.ui.editors,
  org.eclipse.ui.ide,
- org.mule.tooling.messageflow;bundle-version="[4.0.0,4.2.0)",
+ org.mule.tooling.messageflow;bundle-version="[4.0.0,5.0.0)",
  org.eclipse.gef,
  org.mule.tooling.core,
  org.mule.tooling.model,
@@ -23,12 +23,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.expressions,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
- org.mule.tooling.ui;bundle-version="[4.0.0,4.2.0)",
- org.mule.tooling.ui.modules.core;bundle-version="[4.0.0,4.2.0)",
- org.mule.tooling.ui.widgets;bundle-version="[4.0.0,4.2.0)",
+ org.mule.tooling.ui;bundle-version="[4.0.0,5.0.0)",
+ org.mule.tooling.ui.modules.core;bundle-version="[4.0.0,5.0.0)",
+ org.mule.tooling.ui.widgets;bundle-version="[4.0.0,5.0.0)",
  org.eclipse.ui.console,
- org.mule.tooling.maven;bundle-version="[4.0.0,4.2.0)",
- org.mule.tooling.ui.contribution.debugger;bundle-version="[4.0.0,4.2.0)",
+ org.mule.tooling.maven;bundle-version="[4.0.0,5.0.0)",
+ org.mule.tooling.ui.contribution.debugger;bundle-version="[4.0.0,5.0.0)",
  org.apache.velocity;bundle-version="1.5.0",
  org.dom4j;bundle-version="1.6.1",
  org.eclipse.debug.core,
@@ -36,7 +36,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.junit,
  org.eclipse.jdt.launching,
  org.apache.commons.lang;bundle-version="2.3.0",
- org.mule.tooling.utils;bundle-version="[4.0.0,4.2.0)"
+ org.mule.tooling.utils;bundle-version="[4.0.0,5.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir

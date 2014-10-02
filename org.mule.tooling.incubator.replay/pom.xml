@@ -6,12 +6,12 @@
   <artifactId>org.mule.tooling.incubator.replay</artifactId>
   <packaging>eclipse-plugin</packaging>
   
-  <parent>
-  		<groupId>org.mule.tooling.incubator</groupId>
+    <parent>
+        <groupId>org.mule.tooling.incubator</groupId>
   		<artifactId>org.mule.tooling.incubator.parent</artifactId>
 		<version>1.0.2-SNAPSHOT</version>
-  </parent>
-
+    </parent>
+    <version>1.0.1-SNAPSHOT</version>
   	<properties>
 		<lib-dir>lib</lib-dir>
 		<maven.clean.plugin.version>2.4.1</maven.clean.plugin.version>

@@ -26,12 +26,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -51,6 +48,8 @@ import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
+import org.mule.tooling.devkit.builder.ProjectGenerator;
+import org.mule.tooling.devkit.builder.ProjectGeneratorFactory;
 import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
 import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
@@ -106,8 +105,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
     @Override
     public boolean performFinish() {
-        final ConnectorMavenModel mavenModel = getPopulatedModel();
 
+        final ConnectorMavenModel mavenModel = getPopulatedModel();
         if (mavenModel.isSoapWithCXF()) {
             if (!isValidWsdl(getWsdlPath())) {
                 return false;
@@ -121,35 +120,35 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
                     final IJavaProject javaProject = doFinish(mavenModel, monitor);
 
-                    Job job = new WorkspaceJob("Compiling connector") {
+                    downloadJavadocForAnnotations(javaProject, monitor);
+                    if (mavenModel.isSoapWithCXF()) {
+                        MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("clean").withArg("compile").withArg("-Pconnector-generator")
+                                .withTaskName("Generating connector from WSDL...").build().run(monitor);
 
-                        @Override
-                        public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-                            downloadJavadocForAnnotations(javaProject, monitor);
-                            boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
-                            UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject);
-                            job.run(monitor);
-                            if (!autoBuilding) {
+                        MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("license:format").withTaskName("Adding headers...").build().run(monitor);
 
-                                ProjectSubsetBuildAction projectBuild = new ProjectSubsetBuildAction(new IShellProvider() {
+                        javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+                    }
 
-                                    @Override
-                                    public Shell getShell() {
-                                        return page.getShell();
-                                    }
-                                }, IncrementalProjectBuilder.CLEAN_BUILD, new IProject[] { javaProject.getProject() });
-                                projectBuild.run();
-                                javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+                    boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
+                    UpdateProjectClasspathWorkspaceJob job = new UpdateProjectClasspathWorkspaceJob(javaProject);
+                    monitor.subTask("Downloading dependencies");
+                    job.runInWorkspace(monitor);
+                    if (!autoBuilding) {
+
+                        ProjectSubsetBuildAction projectBuild = new ProjectSubsetBuildAction(new IShellProvider() {
+
+                            @Override
+                            public Shell getShell() {
+                                return page.getShell();
                             }
-                            if (mavenModel.isSoapWithCXF()) {
-                                MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("clean").withArg("compile").withArg("-Pconnector-generator").build()
-                                        .run(monitor);
-                                javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-                            }
-                            return Status.OK_STATUS;
-                        }
-                    };
-                    job.schedule();
+                        }, IncrementalProjectBuilder.CLEAN_BUILD, new IProject[] { javaProject.getProject() });
+                        projectBuild.run();
+                        javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+
+                        openConnectorClass(mavenModel, javaProject.getProject());
+                    }
+
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
                 } finally {
@@ -159,8 +158,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         };
         if (!runInContainer(op)) {
             return false;
-        } else {
-            openConnectorClass(mavenModel);
         }
         return true;
     }
@@ -206,6 +203,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     /**
      * The worker method. It will find the container, create the file if missing or just replace its contents, and open the editor on the newly created file.
      * 
+     * @param javaProject
+     * 
      * @param hasQuery
      * @param isOauth
      * @param isMetaDataEnabled
@@ -218,40 +217,43 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         String artifactId = mavenModel.getArtifactId();
 
         String wsdlFileName = "Dummy";
-        monitor.beginTask("Creating project" + artifactId, 2);
+        monitor.beginTask("Creating project" + artifactId, 20);
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
         IProject project = createProject(artifactId, monitor, root);
         IJavaProject javaProject = JavaCore.create(root.getProject(artifactId));
 
-        List<IClasspathEntry> entries = generateProjectEntries(monitor, project);
-        if (mavenModel.isSoapWithCXF()) {
-            entries.add(createEntry(project.getFolder(DevkitUtils.CXF_GENERATED_SOURCES_FOLDER), monitor));
-        }
-        create(project.getFolder(DOCS_FOLDER), monitor);
-        create(project.getFolder(ICONS_FOLDER), monitor);
-        create(project.getFolder(DEMO_FOLDER), monitor);
-        create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")), monitor);
-        create(project.getFolder(TEST_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")), monitor);
+        ProjectGenerator generator = ProjectGeneratorFactory.newInstance();
 
-        javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[] {}), monitor);
+        NullProgressMonitor nullMonitor = new NullProgressMonitor();
+        List<IClasspathEntry> entries = generator.generateProjectEntries(nullMonitor, project);
+        if (mavenModel.isSoapWithCXF()) {
+            entries.add(generator.createEntry(project.getFolder(DevkitUtils.CXF_GENERATED_SOURCES_FOLDER), nullMonitor));
+        }
+        generator.create(project.getFolder(DOCS_FOLDER), nullMonitor);
+        generator.create(project.getFolder(ICONS_FOLDER), nullMonitor);
+        generator.create(project.getFolder(DEMO_FOLDER), nullMonitor);
+        generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")), nullMonitor);
+        generator.create(project.getFolder(TEST_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")), nullMonitor);
+
+        javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[] {}), nullMonitor);
 
         ClassReplacer classReplacer = new ConnectorClassReplacer(mavenModel.getPackage(), mavenModel.getConnectorName(), DevkitUtils.createConnectorNameFrom(mavenModel
                 .getConnectorName()), mavenModel.getDevkitVersion(), mavenModel.isMetaDataEnabled(), mavenModel.isOAuthEnabled(), mavenModel.isHasQuery(),
                 mavenModel.getCategory(), mavenModel.getGitUrl(), mavenModel.isSoapWithCXF(), mavenModel.getAuthenticationType());
 
-        TemplateFileWriter templateFileWriter = new TemplateFileWriter(project, monitor);
+        TemplateFileWriter templateFileWriter = new TemplateFileWriter(project, nullMonitor);
         templateFileWriter.apply("/templates/README.tmpl", "README.md", classReplacer);
         templateFileWriter.apply("/templates/CHANGELOG.tmpl", "CHANGELOG.md", classReplacer);
         templateFileWriter.apply("/templates/LICENSE_HEADER.txt.tmpl", "LICENSE_HEADER.txt", classReplacer);
         templateFileWriter.apply("/templates/LICENSE.tmpl", "LICENSE.md", new NullReplacer());
         String uncammelName = DevkitUtils.toConnectorName(mavenModel.getConnectorName());
-        ImageWriter imageWriter = new ImageWriter(project, monitor);
+        ImageWriter imageWriter = new ImageWriter(project, nullMonitor);
         imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(uncammelName));
         imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
 
         if (mavenModel.isSoapWithCXF()) {
-            create(project.getFolder("src/main/resources/wsdl/"), monitor);
+            generator.create(project.getFolder("src/main/resources/wsdl/"), nullMonitor);
             templateFileWriter.apply("/templates/binding.xml.tmpl", "src/main/resources/wsdl/binding.xml", classReplacer);
             File wsdlFileOrDirectory = new File(mavenModel.getWsdlPath());
             try {
@@ -279,12 +281,12 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         String mainTemplatePath = mavenModel.getApiType().equals(ApiType.GENERIC) ? MAIN_NONE_ABSTRACT_TEMPLATE_PATH : MAIN_TEMPLATE_PATH;
         templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME,
                 new MavenParameterReplacer(mavenModel, mavenModel.getDevkitVersion(), mavenModel.getConnectorName(), mavenModel.isSoapWithCXF(), wsdlFileName));
-        create(mavenModel.getConnectorName(), monitor, mainTemplatePath, getTestResourcePath(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName()),
+        create(mavenModel.getConnectorName(), nullMonitor, mainTemplatePath, getTestResourcePath(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName()),
                 mavenModel.getPackage(), project, classReplacer, mavenModel.getAuthenticationType(), mavenModel.isSoapWithCXF(), mavenModel.getApiType(), mavenModel.isHasQuery());
 
         DevkitUtils.configureDevkitAPT(javaProject);
 
-        monitor.worked(1);
+        monitor.worked(20);
         return javaProject;
     }
 
@@ -305,29 +307,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
         fileWriter.apply("/templates/example.tmpl", getExampleFileName(uncammelName), classReplacer);
 
-    }
-
-    private IProject createProject(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root) throws CoreException {
-
-        IProjectDescription projectDescription = getProjectDescription(root, artifactId);
-
-        return getProjectWithDescription(artifactId, monitor, root, projectDescription);
-    }
-
-    private IProjectDescription getProjectDescription(IWorkspaceRoot root, String artifactId) throws CoreException {
-        IProjectDescription projectDescription = root.getWorkspace().newProjectDescription(artifactId);
-        projectDescription.setNatureIds(new String[] { JavaCore.NATURE_ID, DevkitNature.NATURE_ID });
-        ICommand[] commands = projectDescription.getBuildSpec();
-
-        ICommand[] newCommands = new ICommand[commands.length + 1];
-        System.arraycopy(commands, 0, newCommands, 0, commands.length);
-
-        ICommand command = projectDescription.newCommand();
-        command.setBuilderName(DevkitBuilder.BUILDER_ID);
-        newCommands[newCommands.length - 1] = command;
-
-        projectDescription.setBuildSpec(newCommands);
-        return projectDescription;
     }
 
     /**
@@ -363,7 +342,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                 .withProject(javaProject)
                 .withArgs(
                         new String[] { "dependency:resolve", "-Dclassifier=javadoc", "-DexcludeTransitive=false", "-DincludeGroupIds=org.mule.tools.devkit",
-                                "-DincludeArtifactIds=mule-devkit-annotations" }).build().run(monitor);
+                                "-DincludeArtifactIds=mule-devkit-annotations" }).withTaskName("Downloading annotations sources...").build().run(monitor);
     }
 
     protected boolean canParseWSDL(IProgressMonitor monitor, String wsdlLocation) {
@@ -417,12 +396,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         return mavenModel;
     }
 
-    private void openConnectorClass(final ConnectorMavenModel mavenModel) {
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-
-        IProject project;
+    private void openConnectorClass(final ConnectorMavenModel mavenModel, IProject project) {
         try {
-            project = root.getProject(advancePage.getArtifactId());
             IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
             IFile connectorFile = project.getFile(buildMainTargetFilePath(mavenModel.getPackage(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName())));
             if (connectorFile.exists()) {
@@ -433,5 +408,28 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         } catch (CoreException e) {
             e.printStackTrace();
         }
+    }
+
+    private IProject createProject(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root) throws CoreException {
+
+        IProjectDescription projectDescription = getProjectDescription(root, artifactId);
+
+        return getProjectWithDescription(artifactId, monitor, root, projectDescription);
+    }
+
+    private IProjectDescription getProjectDescription(IWorkspaceRoot root, String artifactId) throws CoreException {
+        IProjectDescription projectDescription = root.getWorkspace().newProjectDescription(artifactId);
+        projectDescription.setNatureIds(new String[] { JavaCore.NATURE_ID, DevkitNature.NATURE_ID });
+        ICommand[] commands = projectDescription.getBuildSpec();
+
+        ICommand[] newCommands = new ICommand[commands.length + 1];
+        System.arraycopy(commands, 0, newCommands, 0, commands.length);
+
+        ICommand command = projectDescription.newCommand();
+        command.setBuilderName(DevkitBuilder.BUILDER_ID);
+        newCommands[newCommands.length - 1] = command;
+
+        projectDescription.setBuildSpec(newCommands);
+        return projectDescription;
     }
 }
