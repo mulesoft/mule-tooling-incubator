@@ -31,10 +31,6 @@ public class InstallerStudioUrl extends BaseStudioUrl {
 			service.install(featureId, version);
 		else if (InstallationStatus.NEEDS_UPDATE.equals(status))
 			service.update(featureId, version);
-		else if (InstallationStatus.INSTALLED.equals(status))
-			TemplatesRepository.getInstance().openDialogOn(TemplatesRepository.getInstance().getRepositoryUrl() + "&objectStatus=INSTALLED");
-		
-
 	}
 	
 	
