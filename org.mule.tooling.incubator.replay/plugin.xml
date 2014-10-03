@@ -9,7 +9,7 @@
             name="Mulesoft">
       </category>
       <view
-            name="Mule Snaphosts View"
+            name="Mule Replay View"
             icon="icons/snapshot-16x16.png"
             category="org.mule.tooling.ui.views"
             class="org.mule.tooling.ui.contribution.debugger.view.impl.SnapshotsView"
