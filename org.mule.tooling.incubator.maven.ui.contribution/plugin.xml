@@ -4,12 +4,14 @@
    
     <extension point="org.eclipse.ui.views">
  	<view
+            category="org.mule.tooling.ui.views"
             name="Maven Support"
             icon="icons/maven-16x16.png"
             class="org.mule.tooling.incubator.maven.ui.view.LaunchView"
             id="org.mule.tooling.incubator.maven.ui.view.LaunchView">
       </view>
       <view
+            category="org.mule.tooling.ui.views"
             name="Dependencies Maven"
             icon="icons/dependencies.gif"
             class="org.mule.tooling.incubator.maven.ui.view.DependencyTreeView"
