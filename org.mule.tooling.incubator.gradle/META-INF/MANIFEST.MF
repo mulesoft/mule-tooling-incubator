@@ -17,7 +17,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.console,
  org.apache.commons.lang,
  org.eclipse.ui.editors,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ org.codehaus.groovy
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
