@@ -43,14 +43,16 @@ public class GradleProjectHighlightConfiguration extends SourceViewerConfigurati
 	
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-		
+	    GradleScriptCompletionProcessor completionProcessor = new GradleScriptCompletionProcessor();
 		ContentAssistant assistant = new ContentAssistant();
-		assistant.setContentAssistProcessor(new GradleScriptCompletionProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
+		assistant.setContentAssistProcessor(completionProcessor, IDocument.DEFAULT_CONTENT_TYPE);
 		assistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 		assistant.enableAutoActivation(true);
-		
+		assistant.addCompletionListener(completionProcessor);
 		return assistant;
 	}
+	
+	
 	
 	@Override
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {

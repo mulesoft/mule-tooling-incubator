@@ -2,21 +2,28 @@ package org.mule.tooling.incubator.gradle.editors;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.jface.text.contentassist.ContentAssistEvent;
+import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.gradle.api.specs.Spec;
+import org.gradle.util.CollectionUtils;
 import org.mule.tooling.incubator.gradle.editors.completion.GradleScriptAutocompleteAnalyzer;
 
-public class GradleScriptCompletionProcessor implements IContentAssistProcessor {
+public class GradleScriptCompletionProcessor implements IContentAssistProcessor, ICompletionListener{
 	
 	private static final char[] ACTIVATION_CHARS = {'.', ','};
 	private final IContextInformation[] NO_CONTEXTS = { };
 	private ICompletionProposal[] NO_COMPLETIONS = { };
-
+	
+	private List<String> currentProposals;
+	
 	
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
@@ -28,9 +35,18 @@ public class GradleScriptCompletionProcessor implements IContentAssistProcessor 
 		
 			GradleScriptAutocompleteAnalyzer model = new GradleScriptAutocompleteAnalyzer(doc, activeWord, offset);
 			
-			List<String> completions = model.buildSuggestions();
 			
-			return transformCompletions(completions, offset);
+			List<String> proposals = null;
+			if (StringUtils.isEmpty(activeWord) || currentProposals == null) {
+			    currentProposals = model.buildSuggestions();
+			    proposals = currentProposals;
+			} else {
+			    proposals = filterProposals(activeWord);
+			}
+			
+			
+			
+			return transformCompletions(proposals, offset, StringUtils.length(activeWord));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -39,7 +55,20 @@ public class GradleScriptCompletionProcessor implements IContentAssistProcessor 
 	}
 
 
-	/**
+	private List<String> filterProposals(final String activeWord) {
+        
+	    return CollectionUtils.filter(currentProposals, new Spec<String>() {
+
+            @Override
+            public boolean isSatisfiedBy(String word) {
+                return word.startsWith(activeWord);
+            }
+	        
+	    });
+    }
+
+
+    /**
 	 * Get the last typed word.
 	 * @param doc
 	 * @param offset
@@ -60,13 +89,13 @@ public class GradleScriptCompletionProcessor implements IContentAssistProcessor 
      }
 
 	
-	private ICompletionProposal[] transformCompletions(List<String> completions, int offset) {
+	private ICompletionProposal[] transformCompletions(List<String> completions, int offset, int currentWordLength) {
 		
 		ICompletionProposal[] ret = new ICompletionProposal[completions.size()];
 		
 		int i = 0;
 		for(String completion : completions) {			
-			ret[i++] = new CompletionProposal(completion, offset, 0, completion.length());
+			ret[i++] = new CompletionProposal(completion, offset - currentWordLength, currentWordLength, completion.length());
 		}
 		
 		return ret;
@@ -86,7 +115,7 @@ public class GradleScriptCompletionProcessor implements IContentAssistProcessor 
     //optional methods
 	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
-		return ACTIVATION_CHARS;
+		return null;
 	}
 
 	@Override
@@ -98,5 +127,24 @@ public class GradleScriptCompletionProcessor implements IContentAssistProcessor 
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}
+
+
+    @Override
+    public void assistSessionStarted(ContentAssistEvent event) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+    @Override
+    public void assistSessionEnded(ContentAssistEvent event) {
+        currentProposals = null;
+    }
+
+
+    @Override
+    public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
+        
+    }
 
 }

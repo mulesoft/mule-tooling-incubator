@@ -35,10 +35,10 @@ public class InstallerService implements IAdaptable {
         }
     }
 
-    public void install(final String featureId) {
+    public void install(final String featureId, final String version) {
     	
 		final IProvisioningAgent provisioningAgent = Activator.getDefault().getProvisioningAgent();
-		IQueryResult<IInstallableUnit> matches = getInstallableUnits(provisioningAgent, featureId);
+		IQueryResult<IInstallableUnit> matches = getInstallableUnits(provisioningAgent, featureId, version);
 
 		if (!matches.isEmpty()) {
 			IInstallableUnit myIU = matches.iterator().next();
@@ -51,9 +51,9 @@ public class InstallerService implements IAdaptable {
 		}
     }
     
-	public void update(final String featureId) {
+	public void update(final String featureId, final String version) {
 		final IProvisioningAgent provisioningAgent = Activator.getDefault().getProvisioningAgent();
-		IQueryResult<IInstallableUnit> matches = getInstallableUnits(provisioningAgent, featureId);
+		IQueryResult<IInstallableUnit> matches = getInstallableUnits(provisioningAgent, featureId, version);
 
 		if (!matches.isEmpty()) {
 			IInstallableUnit myIU = matches.iterator().next();
@@ -92,15 +92,17 @@ public class InstallerService implements IAdaptable {
         return null;
     }
 
-	private IQueryResult<IInstallableUnit> getInstallableUnits(IProvisioningAgent provisioningAgent, String featureId) {
+	private IQueryResult<IInstallableUnit> getInstallableUnits(IProvisioningAgent provisioningAgent, String featureId, String version) {
 		IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) provisioningAgent.getService(IMetadataRepositoryManager.SERVICE_NAME);
 
 		metadataManager.addRepository(uri);
 
 		try {
 			metadataManager.loadRepository(uri, new NullProgressMonitor());
-			return metadataManager.query(QueryUtil.createIUQuery(featureId),new NullProgressMonitor());
-
+			
+			return metadataManager.query(QueryUtil.createIUQuery(featureId, org.eclipse.equinox.p2.metadata.Version.parseVersion(version)),new NullProgressMonitor());
+//			return metadataManager.query(QueryUtil.createIUQuery(featureId),new NullProgressMonitor());
+			
 		} catch (ProvisionException e) {
 			e.printStackTrace();
 		} catch (OperationCanceledException e) {
