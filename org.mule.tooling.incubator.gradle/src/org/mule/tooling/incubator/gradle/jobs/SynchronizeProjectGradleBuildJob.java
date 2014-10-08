@@ -111,7 +111,7 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 
 	private void addBuildScriptMarkers(Set<String> zips, IResource location) throws CoreException {
 		
-		HashMap<String, ScriptDependency> scriptZips = new HashMap<String, ScriptDependency>();
+		HashMap<String, Dependency> scriptZips = new HashMap<String, Dependency>();
 		
 		TextFileDocumentProvider docProvider = new TextFileDocumentProvider();
         docProvider.connect(location);
