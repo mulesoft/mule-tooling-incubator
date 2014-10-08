@@ -111,9 +111,7 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 
 	private void addBuildScriptMarkers(Set<String> zips, IResource location) throws CoreException {
 		
-		location.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-		
-		HashMap<String, Dependency> scriptZips = new HashMap<String, Dependency>();
+		HashMap<String, ScriptDependency> scriptZips = new HashMap<String, ScriptDependency>();
 		
 		TextFileDocumentProvider docProvider = new TextFileDocumentProvider();
         docProvider.connect(location);
@@ -201,8 +199,14 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 					throws CoreException {
 				translatePlugins();
 				GradlePluginUtils.removeZipLibrariesFromProject(javaProject, new NullProgressMonitor());
+				
+				IResource buildFile = javaProject.getProject().getFile("build.gradle");
+				
+				//markers should be removed regardless there are orphan nodes or not.
+				removeMarkers(buildFile);
+				
 				if (orphanPlugins != null) {
-					addBuildScriptMarkers(orphanPlugins, javaProject.getProject().getFile("build.gradle"));
+					addBuildScriptMarkers(orphanPlugins, buildFile);
 				}
 				
 				return Status.OK_STATUS;
@@ -213,5 +217,9 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 		removeZipsJob.setPriority(Job.SHORT);
 		removeZipsJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		removeZipsJob.schedule();
+	}
+	
+	private void removeMarkers(IResource location) throws CoreException {
+	    location.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 	}
 }

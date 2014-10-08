@@ -39,7 +39,7 @@ public class StudioGradleEnabledContentDescriber implements ITextContentDescribe
 
     @Override
     public int describe(Reader contents, IContentDescription description) throws IOException {
-        return 0;
+        return IContentDescriber.INDETERMINATE;
     }
 
 
