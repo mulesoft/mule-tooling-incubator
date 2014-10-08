@@ -3,8 +3,6 @@ package org.mule.tooling.incubator.gradle.content;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.Properties;
-
 import org.codehaus.groovy.ast.CodeVisitorSupport;
 import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MapExpression;
@@ -15,6 +13,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescriber;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.ITextContentDescriber;
+import org.mule.tooling.incubator.gradle.parser.GradleMulePlugin;
 import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTParser;
 
 
@@ -22,27 +21,13 @@ public class StudioGradleEnabledContentDescriber implements ITextContentDescribe
     
     private static class ContentDescriberVisitor extends CodeVisitorSupport {
         
-        private static final String PLUGIN_NAME = "mulestudio";
-        
         private static final String APPLY_METHOD_NAME = "apply";
         
         private static final String PROJECT_CONTEXT_NAME = "project";
         
         private static final String PLUGIN_KEY_NAME = "plugin";
         
-        private static String IMPLEMENTATION_CLASS = "";
-        
-        static {
-            
-            try {
-                Properties props = new Properties();
-                props.load(StudioGradleEnabledContentDescriber.class.getResourceAsStream("/META-INF/gradle-plugins/"+PLUGIN_NAME+".properties"));
-                IMPLEMENTATION_CLASS = props.getProperty("implementation-class");
-            } catch (IOException ex) {
-                IMPLEMENTATION_CLASS = "";
-            }
-        }
-        
+        private static final GradleMulePlugin STUDIO = GradleMulePlugin.STUDIO;
         
         private String lastPropertyAccess;
         private boolean isApplyContext;
@@ -89,7 +74,7 @@ public class StudioGradleEnabledContentDescriber implements ITextContentDescribe
             if (PLUGIN_KEY_NAME.equals(expression.getKeyExpression().getText())) {
                 String value = expression.getValueExpression().getText();
                 
-                foundplugin = PLUGIN_NAME.equals(value) || IMPLEMENTATION_CLASS.equals(value);                
+                foundplugin = STUDIO.getPluginAlias().equals(value) || STUDIO.getPluginClassName().equals(value);                
             }
         }
         
