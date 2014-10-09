@@ -11,6 +11,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.mule.tooling.incubator.gradle.editors.completion.model.SimplifiedGradleProject;
+import org.mule.tooling.incubator.gradle.parser.DSLMethodAndMap;
 import org.mule.tooling.incubator.gradle.parser.GradleMuleBuildModelProvider;
 import org.mule.tooling.incubator.gradle.parser.GradleMulePlugin;
 import org.mule.tooling.incubator.gradle.parser.ScriptParsingUtils;
@@ -48,83 +50,98 @@ public class GradleScriptAutocompleteAnalyzer {
 	public List<GroovyCompletionSuggestion> buildSuggestions() {
 		
 	    try {
-		    return doBuildSuggestions();
+		    return buildCompletionSuggestions();
 		} catch (Exception ex) {
 		    ex.printStackTrace();
 		}
 		return Collections.emptyList();
 	}
 	
-	
-	private List<GroovyCompletionSuggestion> doBuildSuggestions() throws Exception {
+	private List<GroovyCompletionSuggestion> buildCompletionSuggestions() throws Exception {
 	    
-	    //collect all necessary information.
+	    
+	    //get the current context of auto completion.
+	    Class<?> currentContext = buildContextClass(); 
+	    DSLMethodAndMap dslMethod = ScriptParsingUtils.parseDSLLine(gradleScript, insertPosition);
         
-	    //if we dont have access to at least one instance of the model
-	    //then we simply don't have enough info
-	    if (modelProvider == null) {
-	        return Collections.emptyList();
+	    if (lineIsDslMethodCall(dslMethod, currentContext)) {
+	        DSLCompletionStrategy strategy = buildDslCompletionStrategy(currentContext);
+	        
+	        if (strategy == null) {
+	            return Collections.emptyList();
+	        } else {
+	            return strategy.buildSuggestions(dslMethod, currentContext, false);
+	        }
 	    }
 	    
-	    //first of all, we need to make sure we have the mule plugin applied and we are
-        //not before its declaration, otherwise it is simply not worth it.
-        //for this we can take advantage of the ast node
+	    if (currentContext != null) {
+	        List<GroovyCompletionSuggestion> ret = new LinkedList<GroovyCompletionSuggestion>();
+	        ret.addAll(ObjectMetadataCache.buildAndCacheSuggestions(currentContext));
+	        
+	        if (!currentContext.equals(SimplifiedGradleProject.class)) {
+	            return ret;
+	        }
+	        
+	        for (GradleMulePlugin p : GradleMulePlugin.values()) {
+	            if (isPluginVisible(p)) {
+	                ret.add(new GroovyCompletionSuggestion(GroovyCompletionSuggestionType.PROPERTY, p.getExtensionVariableName(), p.getExtensionClass().getName()));
+	            }
+	        }
+	        return ret;
+	    }
+	    
+	    return Collections.emptyList();
+	}
+	
+	private DSLCompletionStrategy buildDslCompletionStrategy(Class<?> currentContext) {
+        
+	    if (GradleMulePlugin.STUDIO.getExtensionClass().equals(currentContext)) {
+	        return new MuleComponentsDSLCompletionStrategy();
+	    }
+	    
+	    if (GradleMulePlugin.CLOUDHUB.getExtensionClass().equals(currentContext)) {
+	        return new CloudhubDSLCompletionStrategy();
+	    }
+	    
+	    if (GradleMulePlugin.MMC.getExtensionClass().equals(currentContext)) {
+	        return new MMCDSLCompletionStrategy();
+	    }
+	    
+	    return null;
+    }
+
+
+    private Class<?> buildContextClass() throws Exception {
+	    
 	    boolean isStudioPluginVisible = isPluginVisible(GradleMulePlugin.STUDIO);
-	    
-	    //if this plugin is not visible as well we can quit right away
-	    if (!isStudioPluginVisible) {
-	        return Collections.emptyList();
-	    }
-	    
-	    
-	    //the list that we will return.
-        List<GroovyCompletionSuggestion> ret = new ArrayList<GroovyCompletionSuggestion>();
-       
-	    
 	    boolean isInComponentsContext = ScriptParsingUtils.isPositionInClosureContext(gradleScript, MuleGradleProjectCompletionMetadata.COMPONENTS_CLOSURE_SCOPE, insertPosition);
 	    
+	    GradleMulePlugin extensionPropertyAccess = getExtensionPropertyAccess();
 	    
-	    String line = getLineOfPosition();
-        
-        //if we are on a blank line (or with only comments)
-        if (StringUtils.isBlank(line)) {
-            //we can suggest dsl options.
-            ret.add(MuleGradleProjectCompletionMetadata.MULE_PLUGIN_EXTENSION_NAME);
-            
-            if (isInComponentsContext) {
-                ret.addAll(MuleGradleProjectCompletionMetadata.COMPONENTS_SCOPE_DSL_METHODS);
-                ret.addAll(MuleGradleProjectCompletionMetadata.COMPONENTS_SCOPE_DSL_COLLECTIONS);
-            }
-            
-            //we don't bother in analyzing other things
-            return ret;
-        }
-        
-        //if we are in the components context we might want to check
-        //if we can auto complete a map
-        if (isInComponentsContext && lineIsDslMethodCall(line, MuleGradleProjectCompletionMetadata.COMPONENTS_SCOPE_DSL_METHODS)) {
-            ret.addAll(MuleGradleProjectCompletionMetadata.COMPONENTS_BASIC_DSL);
-            
-            if (line.startsWith(MuleGradleProjectCompletionMetadata.COMPONENT_PLUGIN_DSL_METHOD.getSuggestion())) {
-                ret.add(MuleGradleProjectCompletionMetadata.DEPENDENCY_GROUP);
-            }
-            
-            return ret;
-        }
-        
-        String lastWord = completionWord;
-        
-        if (completionWord.trim().length() == 0) {
-            //this might be a proprty accessor
-            lastWord = parseLeftSide();
-        }
-        
-        if (lastWord.equals(MuleGradleProjectCompletionMetadata.MULE_PLUGIN_EXTENSION_NAME.getSuggestion())) {
-            return ObjectMetadataCache.buildAndCacheSuggestions(GradleMulePlugin.STUDIO.getExtensionClass());
-        }
-        
-        return ret;
+	    if (!isStudioPluginVisible && extensionPropertyAccess == null) {
+	        return SimplifiedGradleProject.class;
+	    }
+	    
+	    //we're accessing a property of an extension, we're not on a dsl call
+	    if (extensionPropertyAccess != null) {
+	        
+	        if (isPluginVisible(extensionPropertyAccess)) {
+	            return extensionPropertyAccess.getExtensionClass();
+	        } else {
+	            return null;
+	        }
+	    }
+	    
+	    
+	    if (isInComponentsContext) {
+	        return GradleMulePlugin.STUDIO.getExtensionClass();
+	    }
+	    
+	    
+	    
+	    return SimplifiedGradleProject.class;
 	}
+	
 
 	/**
 	 * Assumes the model is not null
@@ -147,19 +164,42 @@ public class GradleScriptAutocompleteAnalyzer {
         
 	    return pluginLine < currentLine;
     }
-
-
-    private boolean lineIsDslMethodCall(String line, List<GroovyCompletionSuggestion> dslWords) {
-        
-	    for(GroovyCompletionSuggestion word : dslWords) {
-	        if (line.startsWith(word.getSuggestion())) {
-	            return true;
+	
+	
+	private GradleMulePlugin getExtensionPropertyAccess() throws Exception {
+	    String propertyName = parseLeftSide();
+	    
+	    if (StringUtils.isEmpty(propertyName)) {
+	        return null;
+	    }
+	    
+	    for(GradleMulePlugin p : GradleMulePlugin.values()) {
+	        if (StringUtils.equals(propertyName, p.getExtensionVariableName())) {
+	            return p;
 	        }
 	    }
 	    
-	    return false;
+	    return null;
+	}
+    
+    private boolean lineIsDslMethodCall(DSLMethodAndMap method, Class<?> context) throws BadLocationException {
+        
+        if (method == null) {
+            return false;
+        }
+        
+        if (context == null) {
+            return false;
+        }
+        
+        if (DslReflectionUtils.contextContainsDSLMethod(method.getMethodName(), context)) {
+            return true;
+        }
+        
+        return false;
     }
-
+    
+    
 
     private String parseLeftSide() throws Exception {
 		

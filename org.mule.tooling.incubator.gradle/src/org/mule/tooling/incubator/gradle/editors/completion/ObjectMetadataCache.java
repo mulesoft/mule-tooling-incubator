@@ -1,6 +1,7 @@
 package org.mule.tooling.incubator.gradle.editors.completion;
 
 import groovy.lang.GroovyObject;
+import groovy.lang.GroovyObjectSupport;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,6 +42,9 @@ public class ObjectMetadataCache {
                 continue;
             }
             
+            if (m.getDeclaringClass().equals(GroovyObjectSupport.class)) {
+                continue;
+            }
             
             //we will not care about mutators
             String propName = getAccessorPropertyName(m);
