@@ -1,5 +1,6 @@
 package org.mule.tooling.incubator.gradle.parser.ast;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,13 +9,19 @@ import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MapExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.PropertyExpression;
+import org.mule.tooling.incubator.gradle.parser.GradleMulePlugin;
 
 public class GradleScriptASTVisitor extends CodeVisitorSupport {
 
     private List<ScriptMap> appliedPlugins = new LinkedList<ScriptMap>();
-
+    
+    private HashMap<GradleMulePlugin, ScriptMap> appliedMulePlugins = new HashMap<GradleMulePlugin, ScriptMap>();
+    
     private List<ScriptDependency> dependencies = new LinkedList<ScriptDependency>();
-
+    
+    private HashMap<String, String> mulePluginProperties = new HashMap<String, String>();
+    
+    
     /**
      * Since values are get in sucessive invocations of methods in this visitor we need to track state. 
      * This, of course relies on single threading to parse the script. For
@@ -26,31 +33,40 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport {
     public static enum STATE {
         apply, mule, components, connector, module, plugin,
     }
-
-    private static STATE currentContext;
+    
+    public static enum KNOWN_OBJECT {
+        mule, mmc, cloudhub
+    }
+    
+    private static LinkedList<STATE> currentContextStack = new LinkedList<STATE>();
 
     @Override
     public void visitMethodCallExpression(MethodCallExpression call) {
-        System.out.println(call.getMethodAsString());
-        applyCurrentContext(call.getMethodAsString());
+        boolean contextApplied = applyCurrentContext(call.getMethodAsString()); 
         super.visitMethodCallExpression(call);
+        currentContextEnded(contextApplied);
     }
 
     @Override
     public void visitPropertyExpression(PropertyExpression expression) {
-        System.out.println(expression.getPropertyAsString());
-        applyCurrentContext(expression.getPropertyAsString());
-        super.visitPropertyExpression(expression);
+        String objectName = expression.getObjectExpression().getText();
+        
+        if (isKnownObject(objectName)) {
+            String value = expression.getProperty().getText();
+            mulePluginProperties.put(objectName, value);
+        }
+        
     }
 
     @Override
     public void visitMapExpression(MapExpression expression) {
 
-        if (currentContext == null) {
+        if (currentContextStack.isEmpty()) {
             // nothig we care of
             return;
         }
 
+        //we build the script map.
         ScriptMap map = new ScriptMap();
         map.setSourceNode(expression);
         for (MapEntryExpression meexp : expression.getMapEntryExpressions()) {
@@ -58,10 +74,12 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport {
             String value = meexp.getValueExpression().getText();
             map.put(key, value);
         }
-
+        
+        STATE currentContext = currentContextStack.peek();
+        
         switch (currentContext) {
         case apply:
-            appliedPlugins.add(map);
+            applyPluginLogic(map);
             currentContext = null;
             break;
         case plugin:
@@ -78,19 +96,44 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport {
 
     // utility methods
 
-    private void applyCurrentContext(String contextName) {
-        currentContext = null;
-
+    private boolean applyCurrentContext(String contextName) {
         try {
-            currentContext = STATE.valueOf(contextName);
+            currentContextStack.push(STATE.valueOf(contextName));
+            return true;
         } catch (IllegalArgumentException ex) {
             System.out.println("Ignoring irrelevant context call: " + contextName);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
-
+        return false;
     }
-
+    
+    
+    private boolean isKnownObject(String objectName) {
+        try {
+            return KNOWN_OBJECT.valueOf(objectName) != null;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+    
+    private void currentContextEnded(boolean contextApplied) {
+        if (contextApplied) {
+            currentContextStack.pop();
+        }
+    }
+    
+    
+    private void applyPluginLogic(ScriptMap map) {
+        appliedPlugins.add(map);
+        GradleMulePlugin plugin = GradleScriptASTUtils.decodePluginFromMap(map);
+        
+        if (plugin != null) {
+            appliedMulePlugins.put(plugin, map);
+        }
+    }
+    
+    
     // accessors for the information
 
     public List<ScriptMap> getAppliedPlugins() {
@@ -102,4 +145,18 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport {
         return dependencies;
     }
 
+    
+    public HashMap<GradleMulePlugin, ScriptMap> getAppliedMulePlugins() {
+        return appliedMulePlugins;
+    }
+    
+    
+    public HashMap<String, String> getMulePluginProperties() {
+        return mulePluginProperties;
+    }
+
+    public boolean hasGradleMulePlugin(GradleMulePlugin plugin) {
+        return appliedMulePlugins.containsKey(plugin);
+    }
+    
 }
