@@ -19,11 +19,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
-import org.gradle.tooling.model.DomainObjectSet;
-import org.gradle.tooling.model.GradleProject;
-import org.gradle.tooling.model.GradleTask;
 import org.mule.tooling.core.utils.CoreUtils;
-import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 
 /**
  * An example showing how to create a multi-page editor.
@@ -91,8 +87,8 @@ public class GradleBuildEditor extends FormEditor implements IResourceChangeList
 
 	@Override
 	protected void addPages() {
-		// TODO Auto-generated method stub
-		try {
+		
+	    try {
 			
 		//two pages
 		createBuildScriptEditor();

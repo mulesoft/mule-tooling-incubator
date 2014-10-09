@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -29,10 +30,9 @@ import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.module.ExternalContributionMuleModule;
 import org.mule.tooling.incubator.gradle.GradleBuildJob;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
-import org.mule.tooling.incubator.gradle.parser.CollectDependenciesVisitor;
-import org.mule.tooling.incubator.gradle.parser.Dependency;
-import org.mule.tooling.incubator.gradle.parser.GradleScriptDescriptor;
-import org.mule.tooling.incubator.gradle.parser.GradleScriptParser;
+import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTParser;
+import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTVisitor;
+import org.mule.tooling.incubator.gradle.parser.ast.ScriptDependency;
 import org.mule.tooling.model.project.MuleExtension;
 
 /**
@@ -111,33 +111,30 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 
 	private void addBuildScriptMarkers(Set<String> zips, IResource location) throws CoreException {
 		
-		HashMap<String, Dependency> scriptZips = new HashMap<String, Dependency>();
+		HashMap<String, ScriptDependency> scriptZips = new HashMap<String, ScriptDependency>();
 		
 		TextFileDocumentProvider docProvider = new TextFileDocumentProvider();
         docProvider.connect(location);
         IDocument document = docProvider.getDocument(location);
+        docProvider.disconnect(location);
         
-        GradleScriptParser parser = new GradleScriptParser(document);
-        CollectDependenciesVisitor visitor = null;
         try {
-            GradleScriptDescriptor descriptor = parser.parse();
-            //walk the descriptor searching for dependencies.
-            visitor = new CollectDependenciesVisitor();
-            descriptor.visit(visitor);
+            GradleScriptASTParser parser = new GradleScriptASTParser(document);
+            GradleScriptASTVisitor visitor = parser.walkScript();
             
-            for(Dependency dep: visitor.getDependencies()) {
+            for(ScriptDependency dep : visitor.getDependencies()) {
+                //fix classifier
                 dep.setClassifier(null);
                 scriptZips.put(dep.generateFilename(), dep);
             }
             
+        } catch (MultipleCompilationErrorsException ex) {
+            //we can mark the script with this if necessary
+            
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
-        docProvider.disconnect(location);
-        
-		
 		for (String zip: zips) {
 			IMarker marker = location.createMarker(IMarker.PROBLEM);
 			
@@ -148,7 +145,10 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 					
 					if (scriptZips.containsKey(zip)) {
-					    marker.setAttribute(IMarker.LINE_NUMBER, scriptZips.get(zip).getScriptLine().getPosition() + 1);
+					    ScriptDependency sd = scriptZips.get(zip);
+					    marker.setAttribute(IMarker.LINE_NUMBER, sd.getSourceNode().getLineNumber() + 1);
+					    marker.setAttribute(IMarker.CHAR_START, sd.getSourceNode().getStart());
+					    marker.setAttribute(IMarker.CHAR_END, sd.getSourceNode().getEnd());
 					} else {
 					    marker.setAttribute(IMarker.LINE_NUMBER, 1);
 					}

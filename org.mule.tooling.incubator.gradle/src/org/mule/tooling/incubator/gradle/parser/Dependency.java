@@ -16,8 +16,6 @@ public class Dependency {
 	private String classifier;
 	private String extension;
 	
-	private ScriptLine scriptLine;
-	
 	public String getGroup() {
 		return group;
 	}
@@ -58,13 +56,6 @@ public class Dependency {
         this.extension = extension;
     }
 
-    public ScriptLine getScriptLine() {
-		return scriptLine;
-	}
-	
-	public void setScriptLine(ScriptLine scriptLine) {
-		this.scriptLine = scriptLine;
-	}
 	
 	/**
 	 * Compares the file in a maven-style fashion, with the fields we have available.

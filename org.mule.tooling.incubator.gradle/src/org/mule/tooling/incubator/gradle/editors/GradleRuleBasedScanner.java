@@ -22,6 +22,7 @@ public class GradleRuleBasedScanner extends RuleBasedScanner {
 	public static final Color DSL_KEYWORD = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN); 
 	
 	
+	public static final String GRADLE_SCRIPT_CONTENT_TYPE = "org.mule.tooling.gradle.muleStudioGradleFile";
 	public static final String MULTILINE_COMMENT_CONTENT_TYPE = "gradle_editor_java_mlc";
 	public static final String MULTILINE_STRING_CONTENT_TYPE = "gradle_editor_java_mls";
 	

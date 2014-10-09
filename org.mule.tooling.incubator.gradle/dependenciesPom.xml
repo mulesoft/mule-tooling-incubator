@@ -24,6 +24,11 @@
 			<artifactId>gradle-tooling-api</artifactId>
 			<version>1.12</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mulesoft.build</groupId>
+			<artifactId>mule-gradle-plugin</artifactId>
+			<version>1.1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
