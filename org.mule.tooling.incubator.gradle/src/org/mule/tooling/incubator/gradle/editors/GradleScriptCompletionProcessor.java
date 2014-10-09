@@ -47,9 +47,10 @@ public class GradleScriptCompletionProcessor implements IContentAssistProcessor,
 			if (StringUtils.isEmpty(activeWord) || currentProposals == null) {
 			    currentProposals = model.buildSuggestions();
 			    proposals = currentProposals;
-			} else {
-			    proposals = filterProposals(activeWord);
 			}
+			
+			proposals = filterProposals(activeWord);
+			
 			
 			
 			

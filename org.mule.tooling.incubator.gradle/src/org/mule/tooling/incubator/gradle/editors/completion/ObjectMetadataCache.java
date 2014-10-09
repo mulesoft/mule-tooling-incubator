@@ -3,14 +3,13 @@ package org.mule.tooling.incubator.gradle.editors.completion;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyObjectSupport;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.lang.reflect.Method;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.core.internal.resources.AliasManager.AddToCollectionDoit;
 
 
 public class ObjectMetadataCache {
@@ -43,6 +42,10 @@ public class ObjectMetadataCache {
             }
             
             if (m.getDeclaringClass().equals(GroovyObjectSupport.class)) {
+                continue;
+            }
+            
+            if (m.getDeclaringClass().getName().startsWith("groovy.lang")) {
                 continue;
             }
             

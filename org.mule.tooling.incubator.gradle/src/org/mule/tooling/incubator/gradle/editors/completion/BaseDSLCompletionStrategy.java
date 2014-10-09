@@ -21,4 +21,18 @@ public abstract class BaseDSLCompletionStrategy implements DSLCompletionStrategy
         return ret;
     }
     
+    protected List<GroovyCompletionSuggestion> createGroovyConstructorMapSuggestionsForClass(Class<?> cls) {
+        List<GroovyCompletionSuggestion> suggestions = ObjectMetadataCache.buildAndCacheSuggestions(cls);
+        
+        List<GroovyCompletionSuggestion> ret = new LinkedList<GroovyCompletionSuggestion>();
+        
+        for(GroovyCompletionSuggestion currentSuggestion : suggestions) {
+            if (currentSuggestion.getType() == GroovyCompletionSuggestionType.PROPERTY) {
+                ret.add(new GroovyCompletionSuggestion(GroovyCompletionSuggestionType.MAP_ARGUMENT, currentSuggestion.getSuggestion(), currentSuggestion.getSuggestionDescription()));
+            }
+        }
+        
+        return ret;   
+    }
+    
 }

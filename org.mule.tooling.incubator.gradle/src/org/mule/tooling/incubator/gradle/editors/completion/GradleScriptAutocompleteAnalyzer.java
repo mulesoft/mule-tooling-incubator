@@ -1,7 +1,5 @@
 package org.mule.tooling.incubator.gradle.editors.completion;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,7 +62,9 @@ public class GradleScriptAutocompleteAnalyzer {
 	    Class<?> currentContext = buildContextClass(); 
 	    DSLMethodAndMap dslMethod = ScriptParsingUtils.parseDSLLine(gradleScript, insertPosition);
         
-	    if (lineIsDslMethodCall(dslMethod, currentContext)) {
+	    boolean lineIsPropertyAccess = !StringUtils.isEmpty(parseLeftSide());
+	    
+	    if (lineIsDslMethodCall(dslMethod, currentContext) && !lineIsPropertyAccess) {
 	        DSLCompletionStrategy strategy = buildDslCompletionStrategy(currentContext);
 	        
 	        if (strategy == null) {
@@ -115,6 +115,9 @@ public class GradleScriptAutocompleteAnalyzer {
 	    
 	    boolean isStudioPluginVisible = isPluginVisible(GradleMulePlugin.STUDIO);
 	    boolean isInComponentsContext = ScriptParsingUtils.isPositionInClosureContext(gradleScript, MuleGradleProjectCompletionMetadata.COMPONENTS_CLOSURE_SCOPE, insertPosition);
+	    boolean isCloudhubContext = ScriptParsingUtils.isPositionInClosureContext(gradleScript, MuleGradleProjectCompletionMetadata.CLOUDHUB_DOMAINS_CLOSURE_SCOPE, insertPosition);
+	    boolean isMMCContext = ScriptParsingUtils.isPositionInClosureContext(gradleScript, MuleGradleProjectCompletionMetadata.MMC_ENVIRONMENTS_CLOSURE_SCOPE, insertPosition);
+        
 	    
 	    GradleMulePlugin extensionPropertyAccess = getExtensionPropertyAccess();
 	    
@@ -137,7 +140,13 @@ public class GradleScriptAutocompleteAnalyzer {
 	        return GradleMulePlugin.STUDIO.getExtensionClass();
 	    }
 	    
+	    if (isCloudhubContext) {
+	        return GradleMulePlugin.CLOUDHUB.getExtensionClass();
+	    }
 	    
+	    if (isMMCContext) {
+	        return GradleMulePlugin.MMC.getExtensionClass();
+	    }
 	    
 	    return SimplifiedGradleProject.class;
 	}

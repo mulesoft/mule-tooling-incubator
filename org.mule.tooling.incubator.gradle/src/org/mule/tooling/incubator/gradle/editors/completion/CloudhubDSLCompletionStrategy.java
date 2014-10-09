@@ -4,13 +4,15 @@ import java.util.List;
 
 import org.mule.tooling.incubator.gradle.parser.DSLMethodAndMap;
 
+import com.mulesoft.build.cloudhub.CloudhubEnvironment;
 
-public class CloudhubDSLCompletionStrategy implements DSLCompletionStrategy {
+
+public class CloudhubDSLCompletionStrategy extends BaseDSLCompletionStrategy {
 
     @Override
     public List<GroovyCompletionSuggestion> buildSuggestions(DSLMethodAndMap map, Class<?> contextClass, boolean expectsInput) {
-        // TODO Auto-generated method stub
-        return null;
+        List<GroovyCompletionSuggestion> ret = super.createGroovyConstructorMapSuggestionsForClass(CloudhubEnvironment.class);
+        return super.filterDslCompletionSuggestions(map, ret);
     }
 
 }

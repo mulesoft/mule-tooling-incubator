@@ -41,5 +41,5 @@ public class MuleGradleProjectCompletionMetadata {
             new GroovyCompletionSuggestion(GroovyCompletionSuggestionType.MAP_ARGUMENT, "version", "Version of the dependency."),
             new GroovyCompletionSuggestion(GroovyCompletionSuggestionType.MAP_ARGUMENT, "noExt", "Do not use the dependency extension."),
             new GroovyCompletionSuggestion(GroovyCompletionSuggestionType.MAP_ARGUMENT, "noClassifier", "Do not use the dependency classifier.")
-            );    
+            );
 }

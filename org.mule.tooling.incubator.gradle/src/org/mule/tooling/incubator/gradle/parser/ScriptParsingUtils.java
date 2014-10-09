@@ -3,6 +3,7 @@ package org.mule.tooling.incubator.gradle.parser;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
@@ -40,6 +41,10 @@ public class ScriptParsingUtils {
 	    
 	    //we need to get the first one
 	    String methodName = entireLine.substring(0, argumentStarting);
+	    
+	    if (StringUtils.isEmpty(methodName)) {
+	        return null;
+	    }
 	    
 	    HashMap<String, String> arguments = parseGroovyMap(entireLine.substring(argumentStarting));
 	    
