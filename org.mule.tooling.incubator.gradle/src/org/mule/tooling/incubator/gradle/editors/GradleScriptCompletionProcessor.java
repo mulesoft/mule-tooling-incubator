@@ -3,6 +3,7 @@ package org.mule.tooling.incubator.gradle.editors;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -15,6 +16,10 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.gradle.api.specs.Spec;
 import org.gradle.util.CollectionUtils;
 import org.mule.tooling.incubator.gradle.editors.completion.GradleScriptAutocompleteAnalyzer;
+import org.mule.tooling.incubator.gradle.editors.completion.GroovyCompletionProposalBuilder;
+import org.mule.tooling.incubator.gradle.editors.completion.GroovyCompletionSuggestion;
+import org.mule.tooling.incubator.gradle.parser.GradleMuleBuildModelProvider;
+import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTParser;
 
 public class GradleScriptCompletionProcessor implements IContentAssistProcessor, ICompletionListener{
 	
@@ -22,21 +27,24 @@ public class GradleScriptCompletionProcessor implements IContentAssistProcessor,
 	private final IContextInformation[] NO_CONTEXTS = { };
 	private ICompletionProposal[] NO_COMPLETIONS = { };
 	
-	private List<String> currentProposals;
+	private List<GroovyCompletionSuggestion> currentProposals;
 	
+	private GradleMuleBuildModelProvider modelProvider;
 	
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
 			int offset) {
 		try {
 			
-			IDocument doc = viewer.getDocument();
+		    IDocument doc = viewer.getDocument();
 			String activeWord = lastWord(doc, offset);
-		
-			GradleScriptAutocompleteAnalyzer model = new GradleScriptAutocompleteAnalyzer(doc, activeWord, offset);
+			
+			tryParseDocument(doc.get());
+			
+			GradleScriptAutocompleteAnalyzer model = new GradleScriptAutocompleteAnalyzer(doc, activeWord, offset, modelProvider);
 			
 			
-			List<String> proposals = null;
+			List<GroovyCompletionSuggestion> proposals = null;
 			if (StringUtils.isEmpty(activeWord) || currentProposals == null) {
 			    currentProposals = model.buildSuggestions();
 			    proposals = currentProposals;
@@ -55,13 +63,26 @@ public class GradleScriptCompletionProcessor implements IContentAssistProcessor,
 	}
 
 
-	private List<String> filterProposals(final String activeWord) {
+	private void tryParseDocument(String script) {
         
-	    return CollectionUtils.filter(currentProposals, new Spec<String>() {
+	    try {
+	        GradleScriptASTParser parser = new GradleScriptASTParser(script);
+	        modelProvider = parser.walkScript();
+	    } catch (MultipleCompilationErrorsException ex) {
+	        //bad luck
+	        
+	    }
+	    
+    }
+
+
+    private List<GroovyCompletionSuggestion> filterProposals(final String activeWord) {
+        
+	    return CollectionUtils.filter(currentProposals, new Spec<GroovyCompletionSuggestion>() {
 
             @Override
-            public boolean isSatisfiedBy(String word) {
-                return word.startsWith(activeWord);
+            public boolean isSatisfiedBy(GroovyCompletionSuggestion word) {
+                return word.getSuggestion().startsWith(activeWord);
             }
 	        
 	    });
@@ -89,13 +110,13 @@ public class GradleScriptCompletionProcessor implements IContentAssistProcessor,
      }
 
 	
-	private ICompletionProposal[] transformCompletions(List<String> completions, int offset, int currentWordLength) {
+	private ICompletionProposal[] transformCompletions(List<GroovyCompletionSuggestion> completions, int offset, int currentWordLength) {
 		
 		ICompletionProposal[] ret = new ICompletionProposal[completions.size()];
 		
 		int i = 0;
-		for(String completion : completions) {			
-			ret[i++] = new CompletionProposal(completion, offset - currentWordLength, currentWordLength, completion.length());
+		for(GroovyCompletionSuggestion completion : completions) {			
+			ret[i++] = GroovyCompletionProposalBuilder.build(completion, offset, currentWordLength);
 		}
 		
 		return ret;

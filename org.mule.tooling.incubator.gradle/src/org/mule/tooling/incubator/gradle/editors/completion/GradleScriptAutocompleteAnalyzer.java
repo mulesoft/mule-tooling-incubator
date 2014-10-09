@@ -1,5 +1,6 @@
 package org.mule.tooling.incubator.gradle.editors.completion;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -10,6 +11,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.mule.tooling.incubator.gradle.parser.GradleMuleBuildModelProvider;
+import org.mule.tooling.incubator.gradle.parser.GradleMulePlugin;
 import org.mule.tooling.incubator.gradle.parser.ScriptParsingUtils;
 
 /**
@@ -26,12 +29,14 @@ public class GradleScriptAutocompleteAnalyzer {
 	private final int insertPosition;
 	private final String completionWord;
 	private final FindReplaceDocumentAdapter docSearch;
+	private final GradleMuleBuildModelProvider modelProvider;
 	
 	
-	public GradleScriptAutocompleteAnalyzer(IDocument gradleScript, String completionWord, int position) {
+	public GradleScriptAutocompleteAnalyzer(IDocument gradleScript, String completionWord, int position, GradleMuleBuildModelProvider modelProvider) {
 		this.gradleScript = gradleScript;
 		this.insertPosition = position;
 		this.completionWord = completionWord;
+		this.modelProvider = modelProvider;
 		this.docSearch = new FindReplaceDocumentAdapter(gradleScript);
 	}
 	
@@ -40,8 +45,9 @@ public class GradleScriptAutocompleteAnalyzer {
 	 * TODO - this method is currently very dummy, we would need to improve this.
 	 * @return
 	 */
-	public List<String> buildSuggestions() {
-		try {
+	public List<GroovyCompletionSuggestion> buildSuggestions() {
+		
+	    try {
 		    return doBuildSuggestions();
 		} catch (Exception ex) {
 		    ex.printStackTrace();
@@ -50,23 +56,39 @@ public class GradleScriptAutocompleteAnalyzer {
 	}
 	
 	
-	private List<String> doBuildSuggestions() throws Exception {
+	private List<GroovyCompletionSuggestion> doBuildSuggestions() throws Exception {
+	    
+	    //collect all necessary information.
+        
+	    //if we dont have access to at least one instance of the model
+	    //then we simply don't have enough info
+	    if (modelProvider == null) {
+	        return Collections.emptyList();
+	    }
+	    
+	    //first of all, we need to make sure we have the mule plugin applied and we are
+        //not before its declaration, otherwise it is simply not worth it.
+        //for this we can take advantage of the ast node
+	    boolean isStudioPluginVisible = isPluginVisible(GradleMulePlugin.STUDIO);
+	    
+	    //if this plugin is not visible as well we can quit right away
+	    if (!isStudioPluginVisible) {
+	        return Collections.emptyList();
+	    }
+	    
+	    
+	    //the list that we will return.
+        List<GroovyCompletionSuggestion> ret = new ArrayList<GroovyCompletionSuggestion>();
+       
 	    
 	    boolean isInComponentsContext = ScriptParsingUtils.isPositionInClosureContext(gradleScript, MuleGradleProjectCompletionMetadata.COMPONENTS_CLOSURE_SCOPE, insertPosition);
 	    
 	    
-	    //this is horrible but at the moment might work.
-        if (docSearch.find(insertPosition, "apply plugin: 'mule", false, true, false, false) == null) {
-            return Collections.emptyList();
-        }
-        
-        LinkedList<String> ret = new LinkedList<String>();
-        String line = getLineOfPosition();
+	    String line = getLineOfPosition();
         
         //if we are on a blank line (or with only comments)
         if (StringUtils.isBlank(line)) {
             //we can suggest dsl options.
-            
             ret.add(MuleGradleProjectCompletionMetadata.MULE_PLUGIN_EXTENSION_NAME);
             
             if (isInComponentsContext) {
@@ -83,7 +105,7 @@ public class GradleScriptAutocompleteAnalyzer {
         if (isInComponentsContext && lineIsDslMethodCall(line, MuleGradleProjectCompletionMetadata.COMPONENTS_SCOPE_DSL_METHODS)) {
             ret.addAll(MuleGradleProjectCompletionMetadata.COMPONENTS_BASIC_DSL);
             
-            if (line.startsWith(MuleGradleProjectCompletionMetadata.COMPONENT_PLUGIN_DSL_METHOD)) {
+            if (line.startsWith(MuleGradleProjectCompletionMetadata.COMPONENT_PLUGIN_DSL_METHOD.getSuggestion())) {
                 ret.add(MuleGradleProjectCompletionMetadata.DEPENDENCY_GROUP);
             }
             
@@ -97,21 +119,40 @@ public class GradleScriptAutocompleteAnalyzer {
             lastWord = parseLeftSide();
         }
         
-        if (lastWord.equals(MuleGradleProjectCompletionMetadata.MULE_PLUGIN_EXTENSION_NAME)) {
-            return MuleGradleProjectCompletionMetadata.MULE_PLUGIN_EXTENSION_PROPERTIES;
+        if (lastWord.equals(MuleGradleProjectCompletionMetadata.MULE_PLUGIN_EXTENSION_NAME.getSuggestion())) {
+            return ObjectMetadataCache.buildAndCacheSuggestions(GradleMulePlugin.STUDIO.getExtensionClass());
         }
         
-        if (MuleGradleProjectCompletionMetadata.MULE_PLUGIN_EXTENSION_NAME.startsWith(lastWord)) {
-            return Arrays.asList(MuleGradleProjectCompletionMetadata.MULE_PLUGIN_EXTENSION_NAME);
-        }
-        
-        return Collections.emptyList();
+        return ret;
 	}
 
-	private boolean lineIsDslMethodCall(String line, List<String> dslWords) {
+	/**
+	 * Assumes the model is not null
+	 * @param plugin
+	 * @return
+	 */
+	private boolean isPluginVisible(GradleMulePlugin plugin) throws BadLocationException {
         
-	    for(String word : dslWords) {
-	        if (line.startsWith(word)) {
+	    if (modelProvider == null) {
+	        return false;
+	    }
+	    
+	    if (!modelProvider.hasGradleMulePlugin(plugin)) {
+	        return false;
+	    }
+	    
+	    int pluginLine = modelProvider.getAppliedMulePlugins().get(plugin).getSourceNode().getLineNumber();
+	    
+	    int currentLine = gradleScript.getLineOfOffset(insertPosition);
+        
+	    return pluginLine < currentLine;
+    }
+
+
+    private boolean lineIsDslMethodCall(String line, List<GroovyCompletionSuggestion> dslWords) {
+        
+	    for(GroovyCompletionSuggestion word : dslWords) {
+	        if (line.startsWith(word.getSuggestion())) {
 	            return true;
 	        }
 	    }
@@ -147,7 +188,16 @@ public class GradleScriptAutocompleteAnalyzer {
 	 */
 	private String getLineOfPosition() throws BadLocationException  {
 	    IRegion lineRegion = gradleScript.getLineInformationOfOffset(insertPosition);
-        String line = gradleScript.get(lineRegion.getOffset(), lineRegion.getLength());
+        
+	    int length = insertPosition - completionWord.length() - lineRegion.getOffset();
+	    
+	    //do not go through the trouble.
+	    if (length <= 0) {
+	        return "";
+	    }
+	    
+	    //we are actually interested until the cursor position without the last typed word
+	    String line = gradleScript.get(lineRegion.getOffset(), length);
         
         //comments are annoying.
         line = ScriptParsingUtils.removeLineCommentFromLine(line);

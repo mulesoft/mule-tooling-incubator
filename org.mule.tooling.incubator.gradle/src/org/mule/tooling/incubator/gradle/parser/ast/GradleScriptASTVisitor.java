@@ -9,9 +9,10 @@ import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MapExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.PropertyExpression;
+import org.mule.tooling.incubator.gradle.parser.GradleMuleBuildModelProvider;
 import org.mule.tooling.incubator.gradle.parser.GradleMulePlugin;
 
-public class GradleScriptASTVisitor extends CodeVisitorSupport {
+public class GradleScriptASTVisitor extends CodeVisitorSupport implements GradleMuleBuildModelProvider {
 
     private List<ScriptMap> appliedPlugins = new LinkedList<ScriptMap>();
     
