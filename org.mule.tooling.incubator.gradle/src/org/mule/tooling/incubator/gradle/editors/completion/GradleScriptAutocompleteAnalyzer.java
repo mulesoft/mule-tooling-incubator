@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -21,8 +22,12 @@ import org.mule.tooling.incubator.gradle.parser.ScriptParsingUtils;
  * @author juancavallotti
  */
 public class GradleScriptAutocompleteAnalyzer {
-	private static final char PROPERTY_OPERATOR = '.'; 
 	
+    //TODO - Move to script parsing utils package and to a constants class.
+    private static final char PROPERTY_OPERATOR = '.'; 
+    
+    //TODO - Move to script parsing utils package and to a constants class.
+	private static final char[] ASSIGNMENT_OPERATOTS = {':', '='};
 	
 	private final IDocument gradleScript;
 	private final int insertPosition;
@@ -39,7 +44,7 @@ public class GradleScriptAutocompleteAnalyzer {
 	
 	
 	/**
-	 * TODO - this method is currently very dummy, we would need to improve this.
+	 * 
 	 * @return
 	 */
 	public List<GroovyCompletionSuggestion> buildSuggestions() {
@@ -63,7 +68,7 @@ public class GradleScriptAutocompleteAnalyzer {
 	    
 	    if (lineIsDslMethodCall(dslMethod, currentContext) && !lineIsPropertyAccess) {
 	        DSLCompletionStrategy strategy = buildDslCompletionStrategy(currentContext);
-	        String expectedInputKey = dslMethod.getLastIncompleteKey();
+	        String expectedInputKey = currentAssignmentVariableName();
 	        
 	        if (strategy == null) {
 	            return Collections.emptyList();
@@ -249,6 +254,58 @@ public class GradleScriptAutocompleteAnalyzer {
         //comments are annoying.
         line = ScriptParsingUtils.removeLineCommentFromLine(line);
         return line.trim();
+	}
+	
+	/**
+	 * Checks the position to verify if we're in the presence of an assignment statement.
+	 * If it is, it will return the name of the variable.
+	 * @return
+	 */
+	private String currentAssignmentVariableName() throws BadLocationException {
+	    
+	    //we start with the previous character
+	    int i = insertPosition - 1;
+	    int operatorPosition = -1;
+	    boolean previousWasIdentifier = false;
+	    
+	    while(i > 0) {
+	        char chr = gradleScript.getChar(i--);
+	        
+	        //we might be in the middle of a word, but we're interested on the 
+	        //left side of it.
+	        if (Character.isWhitespace(chr) && !previousWasIdentifier) {
+	            continue;
+	        }
+	        
+	        if (previousWasIdentifier) {
+                
+	            if (Character.isWhitespace(chr) || chr == PROPERTY_OPERATOR) {
+	                return gradleScript.get(i + 2, operatorPosition - i - 1);
+	            }
+            }
+            
+	        
+	        if (ArrayUtils.contains(ASSIGNMENT_OPERATOTS, chr)) {
+	            operatorPosition = i;
+	            continue;
+	        } else {
+	            //we found something else.
+	            if (operatorPosition == -1){
+	                return null;
+	            }
+	        }
+	        
+	        //we're reading a variable name
+	        if (operatorPosition > 0 && Character.isJavaIdentifierPart(chr)) {
+	            previousWasIdentifier = true;
+	            continue;
+	        }
+	        
+	        //found something else
+	        return null;
+	    }
+	    
+	    return null;
 	}
 	
 }
