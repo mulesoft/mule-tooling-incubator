@@ -1,6 +1,7 @@
 package org.mule.tooling.incubator.gradle.parser;
 
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,6 +16,9 @@ public class ScriptParsingUtils {
 	private static final char SCOPE_CLOSE = '}';
 	
 	private static final String ARG_MAP_DELIMITER_TOKENS = "[]:,";
+	
+	
+	public static final String MISSING_VALUE_KEY = "___$$$MISSING_VALUE_FOR_KEY$$$___";
 	
 	/**
 	 * Do a best effort to parse a DSL method call with a hash map. This presents several
@@ -70,7 +74,15 @@ public class ScriptParsingUtils {
 	    //we do a best effort apprach on parsing.
 	    for(int i = 0; i < tokenizer.countTokens(); i++) {
 	        String key = tokenizer.nextToken().trim();
-	        String value = tokenizer.nextToken().trim();
+	        String value = null;
+	        try {
+	            value = tokenizer.nextToken().trim();
+	            i++;
+	            //increase the current toke so we don't eventually run out of tokens.
+	        } catch (NoSuchElementException ex) {
+	            //means the declaration is incomplete.
+	            ret.put(MISSING_VALUE_KEY, key);
+	        }
 	        ret.put(key, value);
 	    }
 	    return ret;

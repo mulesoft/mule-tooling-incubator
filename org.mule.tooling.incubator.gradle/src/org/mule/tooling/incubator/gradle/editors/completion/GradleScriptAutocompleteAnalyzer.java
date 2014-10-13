@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.mule.tooling.incubator.gradle.editors.completion.model.SimplifiedGradleProject;
@@ -28,7 +27,6 @@ public class GradleScriptAutocompleteAnalyzer {
 	private final IDocument gradleScript;
 	private final int insertPosition;
 	private final String completionWord;
-	private final FindReplaceDocumentAdapter docSearch;
 	private final GradleMuleBuildModelProvider modelProvider;
 	
 	
@@ -37,7 +35,6 @@ public class GradleScriptAutocompleteAnalyzer {
 		this.insertPosition = position;
 		this.completionWord = completionWord;
 		this.modelProvider = modelProvider;
-		this.docSearch = new FindReplaceDocumentAdapter(gradleScript);
 	}
 	
 	
@@ -66,11 +63,12 @@ public class GradleScriptAutocompleteAnalyzer {
 	    
 	    if (lineIsDslMethodCall(dslMethod, currentContext) && !lineIsPropertyAccess) {
 	        DSLCompletionStrategy strategy = buildDslCompletionStrategy(currentContext);
+	        String expectedInputKey = dslMethod.getLastIncompleteKey();
 	        
 	        if (strategy == null) {
 	            return Collections.emptyList();
 	        } else {
-	            return strategy.buildSuggestions(dslMethod, currentContext, false);
+	            return strategy.buildSuggestions(dslMethod, currentContext, expectedInputKey);
 	        }
 	    }
 	    
@@ -235,7 +233,7 @@ public class GradleScriptAutocompleteAnalyzer {
 	 * @return
 	 * @throws BadLocationException
 	 */
-	private String getLineOfPosition() throws BadLocationException  {
+	protected String getLineOfPosition() throws BadLocationException  {
 	    IRegion lineRegion = gradleScript.getLineInformationOfOffset(insertPosition);
         
 	    int length = insertPosition - completionWord.length() - lineRegion.getOffset();

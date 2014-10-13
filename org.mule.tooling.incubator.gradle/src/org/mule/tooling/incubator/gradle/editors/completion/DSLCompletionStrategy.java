@@ -6,5 +6,5 @@ import org.mule.tooling.incubator.gradle.parser.DSLMethodAndMap;
 
 
 public interface DSLCompletionStrategy {
-    public List<GroovyCompletionSuggestion> buildSuggestions(DSLMethodAndMap map, Class<?> contextClass, boolean expectsInput);
+    public List<GroovyCompletionSuggestion> buildSuggestions(DSLMethodAndMap map, Class<?> contextClass, String expectedInputKey);
 }

@@ -2,6 +2,8 @@ package org.mule.tooling.incubator.gradle.parser;
 
 import java.util.HashMap;
 
+import org.apache.commons.lang.StringUtils;
+
 
 public class DSLMethodAndMap {
     
@@ -36,5 +38,12 @@ public class DSLMethodAndMap {
     public void setArguments(HashMap<String, String> arguments) {
         this.arguments = arguments;
     }
-    
+
+    public String getLastIncompleteKey() {
+        String incompleteKey = arguments.get(ScriptParsingUtils.MISSING_VALUE_KEY);
+        if (StringUtils.isEmpty(incompleteKey)) {
+            return null;
+        }
+        return incompleteKey;
+    }
 }

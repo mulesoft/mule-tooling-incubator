@@ -12,9 +12,9 @@ public class MuleComponentsDSLCompletionStrategy extends BaseDSLCompletionStrate
     private static final String[] COMPONENTS_DSL_METHODS = {"plugin", "component", "module"};
     
     @Override
-    public List<GroovyCompletionSuggestion> buildSuggestions(DSLMethodAndMap method, Class<?> contextClass, boolean expectsInput) {
+    public List<GroovyCompletionSuggestion> buildSuggestions(DSLMethodAndMap method, Class<?> contextClass, String expectedInputKey) {
         
-        if (!ArrayUtils.contains(COMPONENTS_DSL_METHODS, method)) {
+        if (!ArrayUtils.contains(COMPONENTS_DSL_METHODS, method.getMethodName())) {
             return Collections.emptyList();
         }
         

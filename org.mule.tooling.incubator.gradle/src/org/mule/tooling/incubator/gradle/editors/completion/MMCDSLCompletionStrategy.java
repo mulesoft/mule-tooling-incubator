@@ -10,7 +10,7 @@ import com.mulesoft.build.mmc.MMCEnvironment;
 public class MMCDSLCompletionStrategy extends BaseDSLCompletionStrategy {
 
     @Override
-    public List<GroovyCompletionSuggestion> buildSuggestions(DSLMethodAndMap map, Class<?> contextClass, boolean expectsInput) {
+    public List<GroovyCompletionSuggestion> buildSuggestions(DSLMethodAndMap map, Class<?> contextClass, String expectedInputKey) {
         List<GroovyCompletionSuggestion> ret = super.createGroovyConstructorMapSuggestionsForClass(MMCEnvironment.class);
         return super.filterDslCompletionSuggestions(map, ret);
     }
