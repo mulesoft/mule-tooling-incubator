@@ -16,7 +16,7 @@ public class SimpleCharBalancingAutoEditStrategy implements IAutoEditStrategy {
 	@Override
 	public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
 		
-	    if (StringUtils.isEmpty(command.text)) {
+	    if (StringUtils.isEmpty(command.text) || StringUtils.length(command.text) > 1) {
 			//do nothing
 			return;
 		}
@@ -28,7 +28,6 @@ public class SimpleCharBalancingAutoEditStrategy implements IAutoEditStrategy {
 				command.shiftsCaret = false;
 				command.caretOffset = command.offset + 1;
 			}
-			
 		}
 		
 	}
