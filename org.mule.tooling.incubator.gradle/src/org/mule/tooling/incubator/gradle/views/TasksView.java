@@ -15,7 +15,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -46,8 +45,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.GradleTask;
 import org.mule.tooling.core.builder.MuleNature;
-import org.mule.tooling.incubator.gradle.GradleBuildJob;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
+import org.mule.tooling.incubator.gradle.jobs.GradleBuildJob;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view shows data obtained from the model. The sample creates a dummy model on the fly, but a real
@@ -311,10 +310,11 @@ public class TasksView extends ViewPart implements ISelectionListener {
 
         final GradleTask task = (GradleTask) obj;
         GradleBuildJob buildJob = new GradleBuildJob("Running task " + task.getName(), project, task.getName()) {
-
+            
+            
             @Override
-            protected void handleException(Exception ex) {
-                MessageDialog.openError(getSite().getShell(), "Task run Error", "Could not run task " + task.getName() + " : " + ex.getMessage());
+            protected void handleException(final Exception ex) {
+                displayErrorInProperThread(getSite().getShell(), "Task run Error", "Could not run task " + task.getName() + " : " + ex.getCause().getMessage());
             }
         };
 

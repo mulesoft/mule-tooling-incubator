@@ -9,7 +9,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.CoreUtils;
-import org.mule.tooling.incubator.gradle.GradleBuildJob;
+import org.mule.tooling.incubator.gradle.jobs.GradleBuildJob;
 
 
 public class InstallGradleWrapperAction extends AbstractGradleAwareActionDelegate {
@@ -37,7 +37,7 @@ public class InstallGradleWrapperAction extends AbstractGradleAwareActionDelegat
 
                 @Override
                 protected void handleException(Exception ex) {
-                    MessageDialog.openError(shell, "Build Error", "Could not install wrapper: " + ex.getMessage());
+                    displayErrorInProperThread(shell, "Build Error", "Could not install wrapper: " + ex.getCause().getMessage());
                 }
             };
             

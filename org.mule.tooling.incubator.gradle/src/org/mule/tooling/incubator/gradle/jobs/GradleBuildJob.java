@@ -1,4 +1,4 @@
-package org.mule.tooling.incubator.gradle;
+package org.mule.tooling.incubator.gradle.jobs;
 
 import java.io.File;
 
@@ -11,8 +11,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.ProjectConnection;
+import org.mule.tooling.incubator.gradle.GradlePluginUtils;
+import org.mule.tooling.incubator.gradle.GradleRunner;
 
 /**
  * Generic implementation of a gradle build as a background workspace task.
@@ -86,7 +91,17 @@ public abstract class GradleBuildJob extends WorkspaceJob {
 		this.tasks = tasks;
 	}
 
-
+	protected void displayErrorInProperThread(final Shell shell, final String title, final String message) {
+        Display.getDefault().asyncExec(new Runnable() {
+            
+            @Override
+            public void run() {
+                MessageDialog.openError(shell, title, message);
+            }
+        });
+	}
+	
+	
 	protected abstract void handleException(Exception ex);
 	
 }

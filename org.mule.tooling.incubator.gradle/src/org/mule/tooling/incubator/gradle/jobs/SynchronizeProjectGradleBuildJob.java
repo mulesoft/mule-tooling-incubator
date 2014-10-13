@@ -28,7 +28,6 @@ import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.MuleRuntime;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.module.ExternalContributionMuleModule;
-import org.mule.tooling.incubator.gradle.GradleBuildJob;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTParser;
 import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTVisitor;

@@ -37,7 +37,7 @@ public class SynchronizeProjectAction extends AbstractGradleAwareActionDelegate 
 				
 				@Override
 				protected void handleException(Exception ex) {
-					MessageDialog.openError(shell, "Synchronization Error", "Could not run synchronization task: " + ex.getMessage());
+				    displayErrorInProperThread(shell, "Synchronization Error", "Could not run synchronization task: " + ex.getCause().getMessage());
 				}
 			};
 			
