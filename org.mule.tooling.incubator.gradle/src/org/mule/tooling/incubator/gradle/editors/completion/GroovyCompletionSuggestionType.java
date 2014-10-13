@@ -5,6 +5,8 @@ public enum GroovyCompletionSuggestionType {
     
     PROPERTY,
     METHOD,
-    MAP_ARGUMENT
+    MAP_ARGUMENT,
+    RAW_VALUE,
+    STRING_VALUE,
     
 }

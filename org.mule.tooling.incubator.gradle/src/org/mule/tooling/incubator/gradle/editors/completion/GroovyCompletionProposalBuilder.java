@@ -40,6 +40,9 @@ public class GroovyCompletionProposalBuilder {
         case PROPERTY:
             imgCode = AutocompleteImages.IMG_ATTRIBUTE;
             break;
+        case STRING_VALUE:
+        case RAW_VALUE:
+            imgCode = AutocompleteImages.IMG_TEMPLATE;
         default:
             return null;
         }
@@ -63,6 +66,10 @@ public class GroovyCompletionProposalBuilder {
         case PROPERTY:
             ret = suggestion.getSuggestion() + ": " + suggestion.getSuggestionDescription();
             break;
+        case STRING_VALUE:
+        case RAW_VALUE:
+            ret = suggestion.getSuggestion() + " - " + suggestion.getSuggestionDescription();
+            break;
         default:
             return null;
         }
@@ -79,8 +86,12 @@ public class GroovyCompletionProposalBuilder {
         case MAP_ARGUMENT:
             ret = suggestion.getSuggestion() + ": ";
             break;
+        case STRING_VALUE:
+            ret = "'" + suggestion.getSuggestion() + "'";
+            break;
         case METHOD:
         case PROPERTY:
+        case RAW_VALUE:
             ret = suggestion.getSuggestion();
             break;
         default:

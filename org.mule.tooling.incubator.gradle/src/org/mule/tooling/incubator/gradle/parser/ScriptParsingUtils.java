@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
@@ -17,6 +18,7 @@ public class ScriptParsingUtils {
 	
 	private static final String ARG_MAP_DELIMITER_TOKENS = "[]:,";
 	
+	private static final char[] QUOTE_CHARS = {'"', '\''};
 	
 	public static final String MISSING_VALUE_KEY = "___$$$MISSING_VALUE_FOR_KEY$$$___";
 	
@@ -72,7 +74,9 @@ public class ScriptParsingUtils {
 	    
 	    HashMap<String, String> ret = new HashMap<String, String>();
 	    //we do a best effort apprach on parsing.
-	    for(int i = 0; i < tokenizer.countTokens(); i++) {
+	    int numTokens = tokenizer.countTokens();
+	    
+	    for(int i = 0; i < numTokens; i++) {
 	        String key = tokenizer.nextToken().trim();
 	        String value = null;
 	        try {
@@ -180,6 +184,26 @@ public class ScriptParsingUtils {
 	        }
 	    }
 	    return true;
+	}
+	
+	
+	public static String removeQuotesIfNecessary(String input) {
+	    
+	    if (StringUtils.isEmpty(input)) {
+	        return input;
+	    }
+	    
+	    
+	    int length = input.length();
+	    
+	    char startChar = input.charAt(0);
+	    char lastChar = input.charAt(length - 1);
+	    
+	    if (startChar == lastChar && ArrayUtils.contains(QUOTE_CHARS, startChar)) {
+	        return input.substring(1, length - 1);
+	    }
+	    
+	    return input;
 	}
 	
 }
