@@ -138,5 +138,12 @@
          </contentTypeBinding>
       </editor>
    </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.mule.tooling.incubator.gradle.editors.GradleDocumentSetupParticipant"
+            contentTypeId="org.mule.tooling.gradle.muleStudioGradleFile">
+      </participant>
+   </extension>
 
 </plugin>

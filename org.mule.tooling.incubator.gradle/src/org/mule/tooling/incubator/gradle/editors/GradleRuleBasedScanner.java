@@ -5,7 +5,6 @@ import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IWordDetector;
-import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
@@ -25,6 +24,13 @@ public class GradleRuleBasedScanner extends RuleBasedScanner {
 	public static final String GRADLE_SCRIPT_CONTENT_TYPE = "org.mule.tooling.gradle.muleStudioGradleFile";
 	public static final String MULTILINE_COMMENT_CONTENT_TYPE = "gradle_editor_java_mlc";
 	public static final String MULTILINE_STRING_CONTENT_TYPE = "gradle_editor_java_mls";
+	
+	public static final String[] VALID_CONTENT_TYPES = {
+	    GRADLE_SCRIPT_CONTENT_TYPE,
+	    MULTILINE_COMMENT_CONTENT_TYPE,
+	    MULTILINE_STRING_CONTENT_TYPE
+	};
+	
 	
 	//general groovy keywords
 	private static final String[] GROOVY_KEYWORDS = {"boolean", "break", "byte", "case", "catch", "char",
@@ -71,8 +77,6 @@ public class GradleRuleBasedScanner extends RuleBasedScanner {
 		
 		setRules(new IRule[]{
 				new EndOfLineRule("//", comment),
-				new MultiLineRule("/*", "*/", comment, (char) 0, true),
-				new MultiLineRule("\"\"\"", "\"\"\"", string, (char) 0, true),
 				wordRule,
 				new SingleLineRule("\"", "\"", string, '\\'),
 				new SingleLineRule("'", "'", string, '\\')
