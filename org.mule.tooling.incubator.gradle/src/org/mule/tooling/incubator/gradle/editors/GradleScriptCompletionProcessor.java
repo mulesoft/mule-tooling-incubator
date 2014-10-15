@@ -82,7 +82,7 @@ public class GradleScriptCompletionProcessor implements IContentAssistProcessor,
 
             @Override
             public boolean isSatisfiedBy(GroovyCompletionSuggestion word) {
-                return word.getSuggestion().startsWith(activeWord);
+                return word.getSuggestion().contains(activeWord);
             }
 	        
 	    });
