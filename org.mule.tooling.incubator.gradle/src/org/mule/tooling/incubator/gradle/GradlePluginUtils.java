@@ -1,9 +1,12 @@
 package org.mule.tooling.incubator.gradle;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -289,5 +292,27 @@ public class GradlePluginUtils {
             }
         }
         return false;
+    }
+    
+    
+    /**
+     * Return the properties defined in the file located in <user home>/.gradle/gradle.properties
+     * which defines properties common to each build.
+     * @return the properties file or an empty properties object.
+     */
+    public static Properties locateGradleGlobalProperties() {
+        
+        Properties ret = new Properties();
+        String userHome = System.getProperty("user.home");
+        File f = new File(userHome + File.separator + ".gradle" + File.separator + "gradle.properties");
+        if (!f.exists()) {
+            return ret;
+        }
+        try {
+            ret.load(new FileReader(f));
+        } catch (IOException ex) {
+            Activator.logError("Got error while trying to read default gradle props", ex);
+        }
+        return ret;
     }
 }

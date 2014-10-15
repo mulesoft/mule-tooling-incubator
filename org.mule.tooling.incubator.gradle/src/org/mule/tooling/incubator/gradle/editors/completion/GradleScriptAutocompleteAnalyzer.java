@@ -3,12 +3,14 @@ package org.mule.tooling.incubator.gradle.editors.completion;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.editors.completion.model.SimplifiedGradleProject;
 import org.mule.tooling.incubator.gradle.parser.DSLMethodAndMap;
 import org.mule.tooling.incubator.gradle.parser.GradleMuleBuildModelProvider;
@@ -76,9 +78,20 @@ public class GradleScriptAutocompleteAnalyzer {
 	            return strategy.buildSuggestions(dslMethod, currentContext, expectedInputKey);
 	        }
 	    }
+	    List<GroovyCompletionSuggestion> ret = new LinkedList<GroovyCompletionSuggestion>();
+
+       String assignmentProperty = currentAssignmentVariableName();
+        
+        if (!StringUtils.isEmpty(assignmentProperty)) {
+            
+            Properties props = GradlePluginUtils.locateGradleGlobalProperties();
+            
+            for(Object key : props.keySet()) {
+                ret.add(new GroovyCompletionSuggestion(GroovyCompletionSuggestionType.RAW_VALUE, key.toString(), "Global build properties"));
+            }
+        }
 	    
 	    if (currentContext != null) {
-	        List<GroovyCompletionSuggestion> ret = new LinkedList<GroovyCompletionSuggestion>();
 	        ret.addAll(ObjectMetadataCache.buildAndCacheSuggestions(currentContext));
 	        
 	        if (!currentContext.equals(SimplifiedGradleProject.class)) {
@@ -90,10 +103,10 @@ public class GradleScriptAutocompleteAnalyzer {
 	                ret.add(new GroovyCompletionSuggestion(GroovyCompletionSuggestionType.PROPERTY, p.getExtensionVariableName(), p.getExtensionClass().getName()));
 	            }
 	        }
-	        return ret;
+	        
 	    }
 	    
-	    return Collections.emptyList();
+	    return ret;
 	}
 	
 	private DSLCompletionStrategy buildDslCompletionStrategy(Class<?> currentContext) {

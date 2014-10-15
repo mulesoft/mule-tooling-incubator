@@ -1,6 +1,9 @@
 package org.mule.tooling.incubator.gradle;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.mule.tooling.incubator.gradle.listeners.BuildUpdatedListener;
@@ -76,5 +79,8 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 	
-	
+	public static void logError(String message, Throwable error) {
+	    ILog log = getDefault().getLog();
+	    log.log(new Status(IStatus.ERROR, PLUGIN_ID, message, error));
+	}
 }

@@ -7,7 +7,6 @@ import org.mule.tooling.ui.modules.core.autocomplete.AutocompleteImages;
 
 public class GroovyCompletionProposalBuilder {
     
-    
     public static CompletionProposal build(GroovyCompletionSuggestion suggestion, int offset, int currentWordLength) {
         
         String completion = buildCompletion(suggestion);
@@ -43,6 +42,7 @@ public class GroovyCompletionProposalBuilder {
         case STRING_VALUE:
         case RAW_VALUE:
             imgCode = AutocompleteImages.IMG_TEMPLATE;
+            break;
         default:
             return null;
         }
