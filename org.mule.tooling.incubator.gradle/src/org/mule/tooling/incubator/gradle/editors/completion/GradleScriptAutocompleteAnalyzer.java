@@ -69,7 +69,7 @@ public class GradleScriptAutocompleteAnalyzer {
 	    boolean lineIsPropertyAccess = !StringUtils.isEmpty(parseLeftSide());
 	    
 	    if (lineIsDslMethodCall(dslMethod, currentContext) && !lineIsPropertyAccess) {
-	        DSLCompletionStrategy strategy = buildDslCompletionStrategy(currentContext);
+	        DSLCompletionStrategy strategy = buildDslCompletionStrategy(currentContext, dslMethod);
 	        String expectedInputKey = currentAssignmentVariableName();
 	        
 	        if (strategy == null) {
@@ -109,7 +109,7 @@ public class GradleScriptAutocompleteAnalyzer {
 	    return ret;
 	}
 	
-	private DSLCompletionStrategy buildDslCompletionStrategy(Class<?> currentContext) {
+	private DSLCompletionStrategy buildDslCompletionStrategy(Class<?> currentContext, DSLMethodAndMap dslMethod) {
         
 	    if (GradleMulePlugin.STUDIO.getExtensionClass().equals(currentContext)) {
 	        return new MuleComponentsDSLCompletionStrategy();
@@ -121,6 +121,12 @@ public class GradleScriptAutocompleteAnalyzer {
 	    
 	    if (GradleMulePlugin.MMC.getExtensionClass().equals(currentContext)) {
 	        return new MMCDSLCompletionStrategy();
+	    }
+	    
+	    if (SimplifiedGradleProject.class.equals(currentContext)) {
+	        if ("apply".equals(dslMethod.getMethodName())) {
+	            return new ApplyPluginsCompletionStrategy();
+	        }
 	    }
 	    
 	    return null;
