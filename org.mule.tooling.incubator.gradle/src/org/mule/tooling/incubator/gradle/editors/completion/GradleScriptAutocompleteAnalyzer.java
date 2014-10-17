@@ -193,7 +193,7 @@ public class GradleScriptAutocompleteAnalyzer {
 	    
 	    int currentLine = gradleScript.getLineOfOffset(insertPosition);
         
-	    return pluginLine < currentLine;
+	    return pluginLine <= currentLine;
     }
 	
 	
