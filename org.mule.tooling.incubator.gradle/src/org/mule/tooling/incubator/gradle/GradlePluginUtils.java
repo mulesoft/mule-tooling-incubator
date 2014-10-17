@@ -14,6 +14,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -31,7 +32,10 @@ import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.GradleTask;
 import org.mule.tooling.incubator.gradle.model.StudioDependencies;
 import org.mule.tooling.incubator.gradle.model.StudioDependency;
+import org.mule.tooling.incubator.gradle.parser.GradleMuleBuildModelProvider;
+import org.mule.tooling.incubator.gradle.parser.ast.ScriptDependency;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
+import org.mule.tooling.maven.dependency.MavenDependency;
 
 /**
  * Utility methods with common boilerplate.
@@ -314,5 +318,34 @@ public class GradlePluginUtils {
             Activator.logError("Got error while trying to read default gradle props", ex);
         }
         return ret;
+    }
+
+    public static boolean modelContainsDependency(GradleMuleBuildModelProvider modelProvider, MavenDependency dep) {
+        
+        for(ScriptDependency sd : modelProvider.getDependencies()) {
+            
+            if (!isSameDependency(sd, dep)) {
+                continue;
+            }
+            
+            //partial match, we're missing classifier and extension.
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public static boolean isSameDependency(ScriptDependency sd, MavenDependency md) {
+        if (!StringUtils.equals(sd.getGroup(), md.getGroupId())) {
+            return false;
+        }
+        if (!StringUtils.equals(sd.getArtifact(), md.getArtifactId())) {
+            return false;
+        }
+        if (!StringUtils.equals(sd.getVersion(), md.getVersion())) {
+            return false;
+        }
+        //partial match, we're missing classifier and extension.
+        return true;        
     }
 }

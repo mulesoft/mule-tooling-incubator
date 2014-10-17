@@ -7,6 +7,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.mule.tooling.core.utils.CoreUtils;
+import org.mule.tooling.incubator.gradle.GradlePluginConstants;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.jobs.SynchronizeProjectGradleBuildJob;
 
@@ -26,7 +27,7 @@ public class BuildUpdatedListener implements IResourceChangeListener {
 				@Override
 				public boolean visit(IResourceDelta delta) throws CoreException {
 					String fileName = delta.getResource().getName();
-					if ("build.gradle".equals(fileName) || GradlePluginUtils.STUDIO_DEPS_FILE.equals(fileName)) {
+					if (GradlePluginConstants.MAIN_BUILD_FILE.equals(fileName) || GradlePluginUtils.STUDIO_DEPS_FILE.equals(fileName)) {
 						IProject proj = delta.getResource().getProject();
 						//trigger the refresh of the project.						
 						if ((delta.getFlags() & IResourceDelta.CONTENT) != 0) {

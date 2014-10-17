@@ -1,9 +1,11 @@
 package org.mule.tooling.incubator.gradle.parser.ast;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.CodeVisitorSupport;
 import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MapExpression;
@@ -22,6 +24,9 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
     
     private HashMap<String, String> mulePluginProperties = new HashMap<String, String>();
     
+    private ASTNode muleComponentsNode;
+    
+    private ASTNode dependenciesNode;
     
     /**
      * Since values are get in sucessive invocations of methods in this visitor we need to track state. 
@@ -32,7 +37,7 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
      * 
      */
     public static enum STATE {
-        apply, mule, components, connector, module, plugin,
+        apply, mule, components, connector, module, plugin, dependencies, buildscript
     }
     
     public static enum KNOWN_OBJECT {
@@ -43,7 +48,7 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
 
     @Override
     public void visitMethodCallExpression(MethodCallExpression call) {
-        boolean contextApplied = applyCurrentContext(call.getMethodAsString()); 
+        boolean contextApplied = applyCurrentContext(call.getMethodAsString(), call); 
         super.visitMethodCallExpression(call);
         currentContextEnded(contextApplied);
     }
@@ -97,9 +102,10 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
 
     // utility methods
 
-    private boolean applyCurrentContext(String contextName) {
+    private boolean applyCurrentContext(String contextName, ASTNode node) {
         try {
             currentContextStack.push(STATE.valueOf(contextName));
+            trackContext(node);
             return true;
         } catch (IllegalArgumentException ex) {
             System.out.println("Ignoring irrelevant context call: " + contextName);
@@ -134,6 +140,29 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
         }
     }
     
+    //track the current context and save the ast node.
+    private void trackContext(ASTNode node) {
+        
+        Iterator<STATE> stateReverseIterator = currentContextStack.descendingIterator();
+        
+        STATE lastState = stateReverseIterator.next();
+        
+        switch (lastState) {
+        case components: 
+            muleComponentsNode = node;
+            break;
+        case dependencies:
+            if (stateReverseIterator.hasNext()) {
+                if (stateReverseIterator.next() == STATE.buildscript) {
+                    break;
+                }
+            }
+            dependenciesNode = node;
+            break;
+        default:
+            break;
+        }
+    }
     
     // accessors for the information
 
@@ -158,6 +187,16 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
 
     public boolean hasGradleMulePlugin(GradleMulePlugin plugin) {
         return appliedMulePlugins.containsKey(plugin);
+    }
+
+    @Override
+    public ASTNode getMuleComponentsNode() {
+        return muleComponentsNode;
+    }
+
+    @Override
+    public ASTNode getDependenciesNode() {
+        return dependenciesNode;
     }
     
 }

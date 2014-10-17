@@ -28,6 +28,7 @@ import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.MuleRuntime;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.module.ExternalContributionMuleModule;
+import org.mule.tooling.incubator.gradle.GradlePluginConstants;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTParser;
 import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTVisitor;
@@ -199,7 +200,7 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 				translatePlugins();
 				GradlePluginUtils.removeZipLibrariesFromProject(javaProject, new NullProgressMonitor());
 				
-				IResource buildFile = javaProject.getProject().getFile("build.gradle");
+				IResource buildFile = javaProject.getProject().getFile(GradlePluginConstants.MAIN_BUILD_FILE);
 				
 				//markers should be removed regardless there are orphan nodes or not.
 				removeMarkers(buildFile);

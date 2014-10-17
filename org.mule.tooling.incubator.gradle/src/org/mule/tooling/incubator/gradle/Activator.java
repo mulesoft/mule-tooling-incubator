@@ -44,7 +44,8 @@ public class Activator extends AbstractUIPlugin {
 		//so if the user modifies the build.gradle before activating the plugin, the refresh will not get triggered.
 		//we'll have to live with that for now.
 		buildRefreshListener = new BuildUpdatedListener();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(buildRefreshListener);		
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(buildRefreshListener);	
+		
 	}
 
 	private void applyDefaultValues() {

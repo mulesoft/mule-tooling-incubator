@@ -16,6 +16,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.gradle.tooling.ProjectConnection;
+import org.mule.tooling.incubator.gradle.GradlePluginConstants;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.GradleRunner;
 import org.mule.tooling.incubator.gradle.model.GradleProject;
@@ -67,7 +68,7 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
                         project.open(monitor);
                     }
                     TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
-                    fileWriter.apply("/templates/build.gradle.tmpl", "build.gradle", new VelocityReplacer(gradleProject));
+                    fileWriter.apply("/templates/build.gradle.tmpl", GradlePluginConstants.MAIN_BUILD_FILE, new VelocityReplacer(gradleProject));
 
                     ProjectConnection connection = GradlePluginUtils.buildConnectionForProject(project.getLocation().toFile().getAbsoluteFile()).connect();
 
