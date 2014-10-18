@@ -1,5 +1,6 @@
 package org.mule.tooling.incubator.gradle.parser;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -21,6 +22,8 @@ public class ScriptParsingUtils {
 	private static final char[] QUOTE_CHARS = {'"', '\''};
 	
 	public static final String MISSING_VALUE_KEY = "___$$$MISSING_VALUE_FOR_KEY$$$___";
+	
+	public static final char QUOTE_ESCAPE = '\\';
 	
 	/**
 	 * Do a best effort to parse a DSL method call with a hash map. This presents several
@@ -46,22 +49,32 @@ public class ScriptParsingUtils {
 	       //remove any leading or trailing spaces.
         entireLine = entireLine.trim();
         
-        
         int argumentStarting = locateMethodArgumentStarting(entireLine);
         
-        //we need to get the first one
-        String methodName = entireLine.substring(0, argumentStarting);
+        if (argumentStarting == -2) {
+            return null;
+        }
+        
+        String methodName = entireLine;
+        
+        if (argumentStarting > 0) {
+            methodName = entireLine.substring(0, argumentStarting);
+        } else {
+            argumentStarting = methodName.length();
+        }
+        
+        methodName = removeQuotesIfNecessary(methodName);
         
         if (StringUtils.isEmpty(methodName)) {
             return null;
         }
         
-        if (methodName.contains(" ")) {
-            String[] parts = methodName.split(" ");
-            methodName = parts[parts.length - 1];
+        HashMap<String, String> arguments = null;
+        if (argumentStarting < entireLine.length()) {
+            arguments = parseGroovyMap(entireLine.substring(argumentStarting));
+        } else {
+            arguments = new HashMap<String, String>();
         }
-        
-        HashMap<String, String> arguments = parseGroovyMap(entireLine.substring(argumentStarting));
         
         return new DSLMethodAndMap(methodName, arguments);
 	}
@@ -120,32 +133,54 @@ public class ScriptParsingUtils {
 	 * If we don't locate the starting of the method, then we return the length of the line
 	 * this makes easier further processing since the caller will always get a value that it
 	 * can use to substring.
-	 * 
-	 * IMPORTANT NOTE: GROOVY allows method names as strings, this implementation will surely
-	 * not detect these in most cases, this needs to be improved.
-	 * 
 	 * @param line
 	 * @return
 	 */
 	public static int locateMethodArgumentStarting(String line) {
 	    
-	    //the method name should be up to the first space or opening (.
-        int methodParenthesisPos = line.indexOf('(');
-        int methodSpacePos = line.indexOf(' ');
-        
-        if (methodParenthesisPos == -1) {
-            methodParenthesisPos = line.length();
-        } else {
-          //if found parenthesis, then give priority
-          methodSpacePos = line.length();
-        }
-        
-        if (methodSpacePos == -1) {
-            methodSpacePos = line.length();
-        }
-        
-        return methodSpacePos < methodParenthesisPos ? methodSpacePos : methodParenthesisPos; 
-        
+	    boolean isQuote = false;
+	    boolean previousIsQuoteEscape = false;
+	    
+	    for(int i = 0; i < line.length(); i++) {
+	        
+	        char c = line.charAt(i);
+	        
+            if (ArrayUtils.contains(QUOTE_CHARS, c)) {
+                if (!previousIsQuoteEscape) {
+                    isQuote = !isQuote;
+                    continue;
+                }
+            }
+	        
+	        if (isQuote) {
+	            
+	            if (c == QUOTE_ESCAPE) {
+	                previousIsQuoteEscape = true;
+	                continue;
+	            }
+	        } else {
+	            
+	            if (Character.isJavaIdentifierPart(c)) {
+	                continue;
+	            }
+	            
+	            if (c == ' ' || c == '(') {
+	                return i;
+	            }
+	            
+	            //at this point is not a java identifier
+	            //and it is not a space or a ( and we're not 
+	            //inside a string, this is not valid!
+	            return -2;
+	        }
+	        
+	        if (previousIsQuoteEscape) {
+	            previousIsQuoteEscape = false;
+	        }
+	        
+	    }
+	    
+	    return -1;
 	}
 	
 	/**
