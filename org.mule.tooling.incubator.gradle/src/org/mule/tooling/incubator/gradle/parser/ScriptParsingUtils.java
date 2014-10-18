@@ -1,6 +1,5 @@
 package org.mule.tooling.incubator.gradle.parser;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -37,7 +36,8 @@ public class ScriptParsingUtils {
 	    //first, get the line
 	    IRegion region = document.getLineInformationOfOffset(offset);
 	    
-	    String entireLine = document.get(region.getOffset(), region.getLength());
+	    //of the line we want only up to where the cursor is located.
+        String entireLine = document.get(region.getOffset(), offset - region.getOffset());
 	    
 	    //we want to make sure we're not parsing a comment.
 	    entireLine = removeLineCommentFromLine(entireLine);
