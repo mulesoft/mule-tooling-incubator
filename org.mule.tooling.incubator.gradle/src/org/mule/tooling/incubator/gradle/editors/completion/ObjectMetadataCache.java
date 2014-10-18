@@ -130,5 +130,20 @@ public class ObjectMetadataCache {
         
         return false;
     }
+
+    public static Class<?> getArgumentTypeForMethod(String methodName, Class<?> type) {
+        
+        Method[] methods = type.getMethods();
+        
+        for(Method m : methods) {
+            if (m.getName().equals(methodName)) {
+                if (m.getParameterTypes().length != 1) {
+                    return null;
+                }
+                return m.getParameterTypes()[0];
+            }
+        }
+        return null;
+    }
     
 }

@@ -32,6 +32,12 @@ public class MuleGradleProjectCompletionMetadata {
 	 */
 	public static final String CLOUDHUB_DOMAINS_CLOSURE_SCOPE = "cloudhub.domains";
 	
+	
+	/**
+	 * Gradle dependencies.
+	 */
+	public static final String DEPENDENCIES_CLOSURE_SCOPE = "dependencies";
+	
 	/**
      * The words on modules and connector dsl.
      */

@@ -39,24 +39,32 @@ public class ScriptParsingUtils {
 	    //we want to make sure we're not parsing a comment.
 	    entireLine = removeLineCommentFromLine(entireLine);
 	    
-	    //remove any leading or trailing spaces.
-	    entireLine = entireLine.trim();
-	    
-	    
-	    int argumentStarting = locateMethodArgumentStarting(entireLine);
-	    
-	    //we need to get the first one
-	    String methodName = entireLine.substring(0, argumentStarting);
-	    
-	    if (StringUtils.isEmpty(methodName)) {
-	        return null;
-	    }
-	    
-	    HashMap<String, String> arguments = parseGroovyMap(entireLine.substring(argumentStarting));
-	    
-	    return new DSLMethodAndMap(methodName, arguments);
+	    return parseDSLLine(entireLine);
 	}
 	
+	public static DSLMethodAndMap parseDSLLine(String entireLine) {
+	       //remove any leading or trailing spaces.
+        entireLine = entireLine.trim();
+        
+        
+        int argumentStarting = locateMethodArgumentStarting(entireLine);
+        
+        //we need to get the first one
+        String methodName = entireLine.substring(0, argumentStarting);
+        
+        if (StringUtils.isEmpty(methodName)) {
+            return null;
+        }
+        
+        if (methodName.contains(" ")) {
+            String[] parts = methodName.split(" ");
+            methodName = parts[parts.length - 1];
+        }
+        
+        HashMap<String, String> arguments = parseGroovyMap(entireLine.substring(argumentStarting));
+        
+        return new DSLMethodAndMap(methodName, arguments);
+	}
 	
 	/**
 	 * Parse from a string a groovy map.
@@ -127,6 +135,9 @@ public class ScriptParsingUtils {
         
         if (methodParenthesisPos == -1) {
             methodParenthesisPos = line.length();
+        } else {
+          //if found parenthesis, then give priority
+          methodSpacePos = line.length();
         }
         
         if (methodSpacePos == -1) {

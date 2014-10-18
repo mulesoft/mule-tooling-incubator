@@ -1,17 +1,13 @@
 package org.mule.tooling.incubator.gradle.editors.completion;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.mule.tooling.incubator.gradle.parser.DSLMethodAndMap;
 import org.mule.tooling.model.Activator;
-
-import com.mulesoft.build.MulePlugin;
 
 
 public class ApplyPluginsCompletionStrategy implements DSLCompletionStrategy {

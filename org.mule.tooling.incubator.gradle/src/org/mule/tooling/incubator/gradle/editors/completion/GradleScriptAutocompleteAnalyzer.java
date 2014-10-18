@@ -11,6 +11,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
+import org.mule.tooling.incubator.gradle.editors.completion.model.SimplifiedDependencyManager;
 import org.mule.tooling.incubator.gradle.editors.completion.model.SimplifiedGradleProject;
 import org.mule.tooling.incubator.gradle.parser.DSLMethodAndMap;
 import org.mule.tooling.incubator.gradle.parser.GradleMuleBuildModelProvider;
@@ -115,18 +116,22 @@ public class GradleScriptAutocompleteAnalyzer {
 	        return new MuleComponentsDSLCompletionStrategy();
 	    }
 	    
-	    if (GradleMulePlugin.CLOUDHUB.getExtensionClass().equals(currentContext)) {
+	    else if (GradleMulePlugin.CLOUDHUB.getExtensionClass().equals(currentContext)) {
 	        return new CloudhubDSLCompletionStrategy();
 	    }
 	    
-	    if (GradleMulePlugin.MMC.getExtensionClass().equals(currentContext)) {
+	    else if (GradleMulePlugin.MMC.getExtensionClass().equals(currentContext)) {
 	        return new MMCDSLCompletionStrategy();
 	    }
 	    
-	    if (SimplifiedGradleProject.class.equals(currentContext)) {
+	    else if (SimplifiedGradleProject.class.equals(currentContext)) {
 	        if ("apply".equals(dslMethod.getMethodName())) {
 	            return new ApplyPluginsCompletionStrategy();
 	        }
+	    }
+	    
+	    else if (SimplifiedDependencyManager.class.equals(currentContext)) {
+	        return new DependenciesCompletionStrategy();
 	    }
 	    
 	    return null;
@@ -139,7 +144,8 @@ public class GradleScriptAutocompleteAnalyzer {
 	    boolean isInComponentsContext = ScriptParsingUtils.isPositionInClosureContext(gradleScript, MuleGradleProjectCompletionMetadata.COMPONENTS_CLOSURE_SCOPE, insertPosition);
 	    boolean isCloudhubContext = ScriptParsingUtils.isPositionInClosureContext(gradleScript, MuleGradleProjectCompletionMetadata.CLOUDHUB_DOMAINS_CLOSURE_SCOPE, insertPosition);
 	    boolean isMMCContext = ScriptParsingUtils.isPositionInClosureContext(gradleScript, MuleGradleProjectCompletionMetadata.MMC_ENVIRONMENTS_CLOSURE_SCOPE, insertPosition);
-        
+        boolean isDependenciesContext = ScriptParsingUtils.isPositionInClosureContext(gradleScript, MuleGradleProjectCompletionMetadata.DEPENDENCIES_CLOSURE_SCOPE, insertPosition);
+	    
 	    
 	    GradleMulePlugin extensionPropertyAccess = getExtensionPropertyAccess();
 	    
@@ -162,12 +168,16 @@ public class GradleScriptAutocompleteAnalyzer {
 	        return GradleMulePlugin.STUDIO.getExtensionClass();
 	    }
 	    
-	    if (isCloudhubContext) {
+	    else if (isCloudhubContext) {
 	        return GradleMulePlugin.CLOUDHUB.getExtensionClass();
 	    }
 	    
-	    if (isMMCContext) {
+	    else if (isMMCContext) {
 	        return GradleMulePlugin.MMC.getExtensionClass();
+	    }
+	    
+	    else if (isDependenciesContext) {
+	        return SimplifiedDependencyManager.class;
 	    }
 	    
 	    return SimplifiedGradleProject.class;
