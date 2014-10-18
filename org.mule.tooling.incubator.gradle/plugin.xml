@@ -111,12 +111,12 @@
                   name="group">
             </separator>
          </menu>
-         <action
+<!--         <action
                class="org.mule.tooling.incubator.gradle.actions.TestAction"
                id="org.mule.tooling.incubator.gradle.testAction"
                label="Test Action"
                menubarPath="org.mule.tooling.incubator.gradle.menu/group">
-         </action>
+         </action> -->
          <action
                class="org.mule.tooling.incubator.gradle.actions.SynchronizeProjectAction"
                id="org.mule.tooling.incubator.gradle.updateDeps"
