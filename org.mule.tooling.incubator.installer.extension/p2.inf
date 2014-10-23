@@ -1,6 +1,0 @@
-properties.0.name=image.url
-properties.0.value=https://cdn3.iconfinder.com/data/icons/tango-icon-library/48/system-installer-128.png
-properties.1.name=doc.url
-properties.1.value=https://github.com/mulesoft/mule-tooling-incubator#mule-tooling-incubator
-properties.2.name=tutorial.url
-properties.2.value=http://www.youtube.com/watch?v=X6176iSszGM

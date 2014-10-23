@@ -23,8 +23,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <module>org.mule.tooling.devkit.templates</module>
     <module>org.mule.tooling.devkit.apt</module>
     <module>org.mule.tooling.devkit</module>
-    <module>org.mule.tooling.incubator.installer</module>
-    <module>org.mule.tooling.incubator.installer.extension</module>
     <module>org.mule.tooling.incubator.devkit.extension</module>
     <module>org.mule.tooling.incubator.gradle</module>
     <module>org.mule.tooling.incubator.gradle.extension</module>
