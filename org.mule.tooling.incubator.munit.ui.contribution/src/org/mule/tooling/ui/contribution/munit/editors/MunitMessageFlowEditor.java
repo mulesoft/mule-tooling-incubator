@@ -18,8 +18,8 @@ import org.mule.tooling.core.cache.IXmlConfigurationProvider;
 import org.mule.tooling.messageflow.editor.IPaletteCategoryFilter;
 import org.mule.tooling.messageflow.editor.MessageFlowEditor;
 import org.mule.tooling.messageflow.editor.MessageFlowEditorPaletteCategoryFilter;
+import org.mule.tooling.messageflow.editpart.ContainerEditPart;
 import org.mule.tooling.messageflow.editpart.EntityEditPart;
-import org.mule.tooling.messageflow.editpart.FlowEditPart;
 import org.mule.tooling.messageflow.events.EditPartSelectedEvent;
 import org.mule.tooling.model.messageflow.MessageFlowEntity;
 import org.mule.tooling.model.messageflow.MuleConfiguration;
@@ -81,7 +81,7 @@ public class MunitMessageFlowEditor extends MessageFlowEditor {
     public void reloadTests() {
         EntityEditPart<?> editPart = ((EntityEditPart<?>) viewer.getContents());
         for (Object child : editPart.getChildren()) {
-            if (child instanceof FlowEditPart) {
+            if (child instanceof ContainerEditPart) {
                 IFigure figure = ((EntityEditPart<?>) child).getFigure();
                 figure.setVisible(!showTestsOnly);
 

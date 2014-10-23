@@ -52,7 +52,7 @@ import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.utils.Pair;
 import org.mule.tooling.messageflow.events.RefreshRequestedEvent;
 import org.mule.tooling.messageflow.handler.ShowFlowHandler;
-import org.mule.tooling.model.messageflow.Flow;
+import org.mule.tooling.model.messageflow.Container;
 import org.mule.tooling.model.messageflow.MuleConfiguration;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 import org.mule.tooling.ui.contribution.munit.coverage.CoverageReport;
@@ -324,7 +324,7 @@ public class MunitTestRunnerViewPart extends ViewPart {
                         muleProject = MuleRuntime.create(file.getProject());
                     }
 
-                    Pair<MuleConfiguration, Flow> flowPair = muleProject.getConfigurationsCache().searchMuleFlowByName(getCoveredFlow(event));
+                    Pair<MuleConfiguration, Container> flowPair = muleProject.getConfigurationsCache().searchMuleFlowByName(getCoveredFlow(event));
                     if (flowPair != null) {
                         ShowFlowHandler.openConfigWithConfigName(muleProject, flowPair.getLeft().getName());
                         ShowFlowHandler.selectFlow(flowPair.getRight().getName());

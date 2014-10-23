@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.mule.tooling.model.messageflow.Flow;
+import org.mule.tooling.model.messageflow.Container;
 import org.mule.tooling.model.messageflow.MuleConfiguration;
 import org.mule.tooling.model.messageflow.decorator.MuleConfigurationDecorator;
 import org.mule.tooling.ui.contribution.munit.common.Filter;
@@ -30,11 +30,11 @@ public class MunitConfigurationDecorator extends MuleConfigurationDecorator {
      *            The Name of the Munit test
      *            </p>
      */
-    public static Filter<Flow> munitTestFilter() {
-        return new Filter<Flow>() {
+    public static Filter<Container> munitTestFilter() {
+        return new Filter<Container>() {
 
             @Override
-            public boolean accept(Flow flow) {
+            public boolean accept(Container flow) {
                 return isMunitTest(flow);
             }
         };
@@ -45,11 +45,11 @@ public class MunitConfigurationDecorator extends MuleConfigurationDecorator {
      * Accepts all flows
      * </p>
      */
-    public static Filter<Flow> anyFilter() {
-        return new Filter<Flow>() {
+    public static Filter<Container> anyFilter() {
+        return new Filter<Container>() {
 
             @Override
-            public boolean accept(Flow flow) {
+            public boolean accept(Container flow) {
                 return true;
             }
         };
@@ -60,7 +60,7 @@ public class MunitConfigurationDecorator extends MuleConfigurationDecorator {
      * Validates if the mule flow is an Munit test
      * </p>
      */
-    public static boolean isMunitTest(Flow flow) {
+    public static boolean isMunitTest(Container flow) {
         return flow.getType().equals(MUNIT_TEST_TYPE);
     }
 
@@ -73,10 +73,10 @@ public class MunitConfigurationDecorator extends MuleConfigurationDecorator {
      *         All the flows from the Mule configuration that are Munit tests
      *         </p>
      */
-    public List<Flow> getMunitTests() {
-        List<Flow> tests = new ArrayList<Flow>();
-        List<Flow> flows = getFlows();
-        for (Flow flow : flows) {
+    public List<Container> getMunitTests() {
+        List<Container> tests = new ArrayList<Container>();
+        List<Container> flows = getFlows();
+        for (Container flow : flows) {
             if (isMunitTest(flow)) {
                 tests.add(flow);
             }
@@ -90,13 +90,13 @@ public class MunitConfigurationDecorator extends MuleConfigurationDecorator {
      *            {@link MuleConfiguration}
      * @return The filtered {@link MuleConfiguration}
      */
-    public MuleConfigurationDecorator getMunitSuiteConfiguration(Collection<Filter<Flow>> filters) {
+    public MuleConfigurationDecorator getMunitSuiteConfiguration(Collection<Filter<Container>> filters) {
         MuleConfiguration muleConfiguration = new MuleConfiguration();
         muleConfiguration.setName(getEntity().getName());
         muleConfiguration.setEntityId(getEntity().getEntityId());
 
-        for (Flow flow : getFlows()) {
-            for (Filter<Flow> filter : filters) {
+        for (Container flow : getFlows()) {
+            for (Filter<Container> filter : filters) {
                 if (filter.accept(flow)) {
                     muleConfiguration.getFlows().add(flow);
                 }
@@ -110,9 +110,9 @@ public class MunitConfigurationDecorator extends MuleConfigurationDecorator {
     private static class FlowMirrorObserver implements Observer {
 
         MunitConfigurationDecorator mirrorDecorator;
-        private List<Flow> originalFilteredFlows;
+        private List<Container> originalFilteredFlows;
 
-        public FlowMirrorObserver(MunitConfigurationDecorator mirrorDecorator, List<Flow> originalFilteredFlows) {
+        public FlowMirrorObserver(MunitConfigurationDecorator mirrorDecorator, List<Container> originalFilteredFlows) {
             this.mirrorDecorator = mirrorDecorator;
             this.originalFilteredFlows = originalFilteredFlows;
         }
@@ -122,13 +122,13 @@ public class MunitConfigurationDecorator extends MuleConfigurationDecorator {
             // TODO: It would be better to have Flows as an observable list
             if (arg1.equals(MuleConfigurationDecorator.PROP_FLOWS)) {
                 MuleConfigurationDecorator muleConfigurationDecorator = (MuleConfigurationDecorator) arg0;
-                List<Flow> mirroredFlows = mirrorDecorator.getFlows();
-                for (Flow flow : muleConfigurationDecorator.getFlows()) {
+                List<Container> mirroredFlows = mirrorDecorator.getFlows();
+                for (Container flow : muleConfigurationDecorator.getFlows()) {
                     if (!mirrorDecorator.getFlows().contains(flow)) {
                         mirroredFlows.add(flow);
                     }
                 }
-                for (Flow flow : originalFilteredFlows) {
+                for (Container flow : originalFilteredFlows) {
                     if (!muleConfigurationDecorator.getFlows().contains(flow)) {
                         mirroredFlows.remove(flow);
                     }
