@@ -6,8 +6,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.mule.tooling.incubator.gradle.Activator;
 import org.mule.tooling.incubator.gradle.parser.DSLMethodAndMap;
-import org.mule.tooling.model.Activator;
+
 
 
 public class ApplyPluginsCompletionStrategy implements DSLCompletionStrategy {

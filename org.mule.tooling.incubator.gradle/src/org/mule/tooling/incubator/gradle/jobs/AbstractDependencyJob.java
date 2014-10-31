@@ -9,8 +9,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.module.ExternalContributionMuleModule;
+import org.mule.tooling.incubator.gradle.Activator;
 import org.mule.tooling.incubator.gradle.GradlePluginConstants;
-import org.mule.tooling.model.Activator;
+
 
 
 public abstract class AbstractDependencyJob extends WorkspaceJob {
