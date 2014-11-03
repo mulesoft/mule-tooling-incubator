@@ -1,6 +1,6 @@
 package org.mule.tooling.devkit.treeview.model;
 
-import org.mule.devkit.generation.utils.NameUtils;
+import org.mule.devkit.utils.NameUtils;
 
 public class ModuleUtils {
 

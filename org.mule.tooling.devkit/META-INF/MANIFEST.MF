@@ -57,4 +57,5 @@ Bundle-ClassPath: .,
  lib/JavaEWAH.jar,
  lib/jsch.jar,
  lib/org.eclipse.jgit.jar,
- lib/mule-devkit-generation-api.jar
+ lib/mule-devkit-generation-api.jar,
+ lib/mule-devkit-code-utils.jar

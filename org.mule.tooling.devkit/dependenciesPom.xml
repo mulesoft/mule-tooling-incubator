@@ -10,7 +10,7 @@
 
 	<properties>
 		<lib-dir>lib</lib-dir>
-		<devkit-version>3.5.2-SNAPSHOT</devkit-version>
+		<devkit-version>3.6.0-M3-SNAPSHOT</devkit-version>
 	</properties>
 
 	<description>This pom exists because of the limitation on including dependencies when building with Tycho.
@@ -65,6 +65,11 @@
 			<artifactId>org.eclipse.jgit</artifactId>
 			<version>3.4.1.201406201815-r</version>
 		</dependency>
+        <dependency>
+            <groupId>org.mule.tools.devkit</groupId>
+            <artifactId>mule-devkit-code-utils</artifactId>
+            <version>${devkit-version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.mule.tools.devkit</groupId>
 			<artifactId>mule-devkit-generation-api</artifactId>

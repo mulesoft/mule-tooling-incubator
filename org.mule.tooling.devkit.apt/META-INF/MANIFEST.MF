@@ -84,7 +84,8 @@ Bundle-ClassPath: .,
  lib/junit.jar,
  lib/devkit-module.jar,
  lib/grabbag.jar,
- lib/guava.jar
+ lib/guava.jar,
+ lib/mule-devkit-code-utils.jar
 Export-Package: org.mule.api.annotations,
  org.mule.devkit.generation.api.gatherer,
  org.mule.tooling.devkit.apt;
