@@ -37,6 +37,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
@@ -77,6 +78,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private NewDevkitProjectWizardPage page;
     private NewDevkitProjectWizardPageAdvance advancePage;
     private ConnectorMavenModel connectorModel;
+    private IWorkbenchPage workbenchPage;
 
     public NewDevkitProjectWizard() {
         super();
@@ -146,8 +148,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                         projectBuild.run();
                         javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
-                        openConnectorClass(mavenModel, javaProject.getProject());
                     }
+                    openConnectorClass(mavenModel, javaProject.getProject());
 
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
@@ -316,7 +318,9 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
      */
     @Override
     public void init(IWorkbench workbench, IStructuredSelection selection) {
-
+        if (workbench != null && workbench.getActiveWorkbenchWindow() != null) {
+            workbenchPage = workbench.getActiveWorkbenchWindow().getActivePage();
+        }
     }
 
     protected String getTestResourcePath() {
@@ -396,17 +400,24 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         return mavenModel;
     }
 
-    private void openConnectorClass(final ConnectorMavenModel mavenModel, IProject project) {
-        try {
-            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-            IFile connectorFile = project.getFile(buildMainTargetFilePath(mavenModel.getPackage(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName())));
-            if (connectorFile.exists()) {
-                IDE.openEditor(page, connectorFile);
-            } else {
-                // Inform severe error
-            }
-        } catch (CoreException e) {
-            e.printStackTrace();
+    private void openConnectorClass(final ConnectorMavenModel mavenModel, final IProject project) {
+        if (workbenchPage != null) {
+            final IWorkbenchPage page = workbenchPage;
+            Display.getDefault().syncExec(new Runnable() {
+
+                public void run() {
+                    try {
+                        IFile connectorFile = project.getFile(buildMainTargetFilePath(mavenModel.getPackage(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName())));
+                        if (connectorFile.exists()) {
+                            IDE.openEditor(page, connectorFile);
+                        } else {
+                            // Inform severe error
+                        }
+                    } catch (CoreException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
 
