@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -65,7 +64,7 @@ public class MunitResourceUtils {
         IFolder munitFolder = muleProject.getFolder(MunitPlugin.MUNIT_FOLDER_PATH);
         if (!munitFolder.exists()) {
             munitFolder.create(true, true, new NullProgressMonitor());
-            ProjectClasspathUtils.ensureFolderIsASourceFolder(muleProject, munitFolder, new Path(MunitPlugin.MUNIT_FOLDER_PATH));
+            ProjectClasspathUtils.ensureFolderIsASourceFolder(muleProject, munitFolder);
             return munitFolder;
         }
         return munitFolder;
