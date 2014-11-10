@@ -27,7 +27,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jgrapht-jdk1.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgrapht.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/joda-time.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jsr250-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mule-common.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mule-core.jar"/>
@@ -50,7 +49,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/qdox.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/signpost-core.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/slf4j-log4j12.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spring-aop.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spring-asm.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spring-beans.jar"/>
