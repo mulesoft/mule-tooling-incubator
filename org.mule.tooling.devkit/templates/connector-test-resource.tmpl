@@ -20,4 +20,9 @@
         <${moduleName}:query-processor query="My Query"/>
     </flow>
 #end
+#if($metadataEnabled == true )
+    <flow name="testAddEntiy">
+        <${moduleName}:add-entity content="My Query"/>
+    </flow>
+#end
 </mule>

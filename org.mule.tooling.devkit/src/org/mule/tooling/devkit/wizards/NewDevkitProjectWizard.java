@@ -43,7 +43,6 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.DevkitUIPlugin;
@@ -242,7 +241,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
         ClassReplacer classReplacer = new ConnectorClassReplacer(mavenModel.getPackage(), mavenModel.getConnectorName(), DevkitUtils.createConnectorNameFrom(mavenModel
                 .getConnectorName()), mavenModel.getDevkitVersion(), mavenModel.isMetaDataEnabled(), mavenModel.isOAuthEnabled(), mavenModel.isHasQuery(),
-                mavenModel.getCategory(), mavenModel.getGitUrl(), mavenModel.isSoapWithCXF(), mavenModel.getAuthenticationType());
+                mavenModel.getCategory(), mavenModel.getGitUrl(), mavenModel.isSoapWithCXF(), mavenModel.getAuthenticationType(),"ConnectorConnectionStrategy");
 
         TemplateFileWriter templateFileWriter = new TemplateFileWriter(project, nullMonitor);
         templateFileWriter.apply("/templates/README.tmpl", "README.md", classReplacer);
@@ -254,6 +253,23 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(uncammelName));
         imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
 
+        
+        generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")+ "/" + "strategy"), nullMonitor);
+
+        if(mavenModel.getAuthenticationType().equals(AuthenticationType.NONE)){
+            templateFileWriter.apply("/templates/connector_basic.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+        }else if(mavenModel.getAuthenticationType().equals(AuthenticationType.BASIC)){
+            templateFileWriter.apply("/templates/connector_basic_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+        }else
+        if(mavenModel.getAuthenticationType().equals(AuthenticationType.OAUTH_V2)){
+            templateFileWriter.apply("/templates/connector_oauth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+        }else
+            if(mavenModel.getAuthenticationType().equals(AuthenticationType.BASIC)){
+                templateFileWriter.apply("/templates/connector_oauth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+            }
+        if(mavenModel.isMetaDataEnabled()){
+            templateFileWriter.apply("/templates/connector_metadata_category.tmpl", MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")+ "/" + "DataSenseResolver.java", classReplacer);
+        }
         if (mavenModel.isSoapWithCXF()) {
             generator.create(project.getFolder("src/main/resources/wsdl/"), nullMonitor);
             templateFileWriter.apply("/templates/binding.xml.tmpl", "src/main/resources/wsdl/binding.xml", classReplacer);
@@ -290,6 +306,10 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
         monitor.worked(20);
         return javaProject;
+    }
+
+    private String getConnectionStrategyFileName(ConnectorMavenModel mavenModel) {
+        return MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")+ "/" + "strategy/ConnectorConnectionStrategy.java";
     }
 
     protected void create(String moduleName, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className, String packageName,

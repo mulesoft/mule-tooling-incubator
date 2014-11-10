@@ -80,7 +80,7 @@ public class DevkitUtils {
     public static final String DEVKIT_3_5_0 = "3.5.0";
     public static final String DEVKIT_3_5_1 = "3.5.1";
     public static final String DEVKIT_3_5_2 = "3.5.2";
-    public static final String DEVKIT_CURRENT = "3.5.2-SNAPSHOT";
+    public static final String DEVKIT_CURRENT = "3.6.0-M3-SNAPSHOT";
 
     public static final String devkitVersions[] = { DEVKIT_3_4_0, DEVKIT_3_4_1, DEVKIT_3_4_2, DEVKIT_3_5_0, DEVKIT_3_5_1, DEVKIT_3_5_2 };
     public static final String CATEGORY_COMMUNITY = "Community";
@@ -337,6 +337,8 @@ public class DevkitUtils {
             return DevkitUtils.DEVKIT_3_5_0;
         if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_5_1))
             return DevkitUtils.DEVKIT_3_5_1;
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_5_2))
+            return DevkitUtils.DEVKIT_3_5_2;
         return DevkitUtils.DEVKIT_CURRENT;
     }
 

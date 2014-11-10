@@ -11,9 +11,9 @@ public class ConnectorClassReplacer extends ClassReplacer {
     private String category;
     private String gitUrl;
     private AuthenticationType type;
-
+    private String strategyName;
     public ConnectorClassReplacer(String packageName, String moduleName, String className, String runtimeId, boolean metadataEnabled, boolean oauthEnabled, boolean hasQuery,
-            String category, String gitUrl, boolean isSoapWithCXF, AuthenticationType type) {
+            String category, String gitUrl, boolean isSoapWithCXF, AuthenticationType type,String strategyName) {
         super(packageName, moduleName, className, runtimeId, metadataEnabled);
         this.oauthEnabled = oauthEnabled;
         this.hasQuery = hasQuery;
@@ -21,6 +21,7 @@ public class ConnectorClassReplacer extends ClassReplacer {
         this.gitUrl = gitUrl;
         this.isSoapWithCXF = isSoapWithCXF;
         this.type = type;
+        this.strategyName = strategyName;
 
     }
 
@@ -33,5 +34,6 @@ public class ConnectorClassReplacer extends ClassReplacer {
         context.put("gitUrl", gitUrl);
         context.put("isSoapWithCXF", isSoapWithCXF);
         context.put("authenticationType", type);
+        context.put("StrategyClassName", strategyName);
     }
 }

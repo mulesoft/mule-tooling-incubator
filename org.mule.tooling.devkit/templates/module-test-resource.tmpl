@@ -9,10 +9,10 @@
         http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/${moduleName} http://www.mulesoft.org/schema/mule/${moduleName}/1.0/mule-${moduleName}.xsd">
 
-    <${moduleName}:config myProperty="Some string"/>
+    <${moduleName}:config-type name="config"  myProperty="Some string"/>
 
     <flow name="testFlow">
-        <${moduleName}:my-processor content="Another string"/>
+        <${moduleName}:my-processor config-ref="config" content="Another string"/>
     </flow>
 
 </mule>

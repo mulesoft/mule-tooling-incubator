@@ -6,3 +6,8 @@
     <${moduleName}:query-processor query="SELECT fieldName FROM MY_TABLE" />
 <!-- END_INCLUDE(${moduleName}:query-processor) -->
 #end
+#if($metadataEnabled == true )
+<!-- BEGIN_INCLUDE(${moduleName}:add-entity) -->
+    <${moduleName}:add-entity key="id1"/>
+<!-- END_INCLUDE(${moduleName}:add-entity) -->
+#end
