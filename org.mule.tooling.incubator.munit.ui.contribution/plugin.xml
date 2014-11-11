@@ -269,13 +269,7 @@
 			behaviorId="munit_behavior" />
 	</extension>
 	
-          <extension
-             point="org.mule.tooling.messageflow.editPartFactory">
-          <factory
-          type="http://www.mulesoft.org/schema/mule/munit/setup"
-                class="org.mule.tooling.ui.contribution.munit.MunitEditPartFactory">
-          </factory>
-       </extension>
+          
          <extension
             point="org.eclipse.debug.ui.launchShortcuts">
         <shortcut
