@@ -6,7 +6,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.mule.tooling.incubator</groupId>
   <artifactId>org.mule.tooling.incubator.parent</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   
  <properties>
@@ -16,7 +16,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <tycho-extras.version>0.20.0</tycho-extras.version>
     <maven.clean.plugin.version>2.4.1</maven.clean.plugin.version>
     <target-platform>studio-3.8</target-platform>
-    <target-platform.version>1.0.2-SNAPSHOT</target-platform.version>
+    <target-platform.version>1.0.3-SNAPSHOT</target-platform.version>
   </properties>
   <modules>
     <module>org.mule.tooling.incubator.targets</module>
