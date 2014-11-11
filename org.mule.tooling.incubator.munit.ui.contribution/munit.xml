@@ -44,7 +44,7 @@
 		</attribute-category>
 		
 		<graphical-container localId="setup" childrenCreatorId="noConnections" caption="Setup" description=""  prompt="Add mocks and spys here."  acceptsElements="http://www.mulesoft.org/schema/mule/mock/when||http://www.mulesoft.org/schema/mule/mock/spy||http://www.mulesoft.org/schema/mule/mock/outbound-endpoint"/>
-		<graphical-container rowNumber="1" localId="assertions" collapsable="true" caption="Test" prompt="Run flows, verify calls, run assertions in here" description=""  abstract="true" />
+		<graphical-container rowNumber="1" localId="assertions" caption="Test" prompt="Run flows, verify calls, run assertions in here" description=""  abstract="true" />
 		
 	</container>
 
