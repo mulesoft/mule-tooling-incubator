@@ -2,6 +2,7 @@ package org.mule.tooling.devkit.template.replacer;
 
 import org.apache.velocity.VelocityContext;
 import org.mule.tooling.devkit.common.AuthenticationType;
+import org.mule.tooling.devkit.common.ConnectorMavenModel;
 
 public class ConnectorClassReplacer extends ClassReplacer {
 
@@ -13,8 +14,8 @@ public class ConnectorClassReplacer extends ClassReplacer {
     private AuthenticationType type;
     private String strategyName;
     public ConnectorClassReplacer(String packageName, String moduleName, String className, String runtimeId, boolean metadataEnabled, boolean oauthEnabled, boolean hasQuery,
-            String category, String gitUrl, boolean isSoapWithCXF, AuthenticationType type,String strategyName) {
-        super(packageName, moduleName, className, runtimeId, metadataEnabled);
+            String category, String gitUrl, boolean isSoapWithCXF, AuthenticationType type,String strategyName,ConnectorMavenModel model) {
+        super(packageName, moduleName, className, runtimeId, metadataEnabled,model);
         this.oauthEnabled = oauthEnabled;
         this.hasQuery = hasQuery;
         this.category = category;

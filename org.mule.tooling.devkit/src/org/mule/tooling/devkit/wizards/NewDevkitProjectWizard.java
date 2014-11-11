@@ -70,9 +70,9 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private static final String MAIN_TEMPLATE_PATH = "/templates/connector_main.tmpl";
     private static final String MAIN_NONE_ABSTRACT_TEMPLATE_PATH = "/templates/connector_none_abstract_main.tmpl";
     private static final String TEST_TEMPLATE_PATH = "/templates/connector_test.tmpl";
-    private static final String TEST_QUERY_TEMPLATE_PATH = "/templates/connector_query_test.tmpl";
+    private static final String TEST_QUERY_TEMPLATE_PATH = "/templates/connector-query-test.tmpl";
+    private static final String TEST_DATASENSE_TEMPLATE_PATH = "/templates/connector-test-datasense.tmpl";
     private static final String TEST_RESOURCE_PATH = "/templates/connector-test-resource.tmpl";
-
     public static final String WIZZARD_PAGE_TITTLE = "Create an Anypoint Connector";
     private NewDevkitProjectWizardPage page;
     private NewDevkitProjectWizardPageAdvance advancePage;
@@ -145,10 +145,10 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                             }
                         }, IncrementalProjectBuilder.CLEAN_BUILD, new IProject[] { javaProject.getProject() });
                         projectBuild.run();
-                        javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
                     }
                     openConnectorClass(mavenModel, javaProject.getProject());
+                    javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
@@ -241,7 +241,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
         ClassReplacer classReplacer = new ConnectorClassReplacer(mavenModel.getPackage(), mavenModel.getConnectorName(), DevkitUtils.createConnectorNameFrom(mavenModel
                 .getConnectorName()), mavenModel.getDevkitVersion(), mavenModel.isMetaDataEnabled(), mavenModel.isOAuthEnabled(), mavenModel.isHasQuery(),
-                mavenModel.getCategory(), mavenModel.getGitUrl(), mavenModel.isSoapWithCXF(), mavenModel.getAuthenticationType(),"ConnectorConnectionStrategy");
+                mavenModel.getCategory(), mavenModel.getGitUrl(), mavenModel.isSoapWithCXF(), mavenModel.getAuthenticationType(), "ConnectorConnectionStrategy", mavenModel);
 
         TemplateFileWriter templateFileWriter = new TemplateFileWriter(project, nullMonitor);
         templateFileWriter.apply("/templates/README.tmpl", "README.md", classReplacer);
@@ -253,22 +253,20 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(uncammelName));
         imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
 
-        
-        generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")+ "/" + "strategy"), nullMonitor);
+        generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
 
-        if(mavenModel.getAuthenticationType().equals(AuthenticationType.NONE)){
+        if (mavenModel.getAuthenticationType().equals(AuthenticationType.NONE)) {
             templateFileWriter.apply("/templates/connector_basic.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-        }else if(mavenModel.getAuthenticationType().equals(AuthenticationType.BASIC)){
+        } else if (mavenModel.getAuthenticationType().equals(AuthenticationType.BASIC)) {
             templateFileWriter.apply("/templates/connector_basic_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-        }else
-        if(mavenModel.getAuthenticationType().equals(AuthenticationType.OAUTH_V2)){
+        } else if (mavenModel.getAuthenticationType().equals(AuthenticationType.OAUTH_V2)) {
             templateFileWriter.apply("/templates/connector_oauth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-        }else
-            if(mavenModel.getAuthenticationType().equals(AuthenticationType.BASIC)){
-                templateFileWriter.apply("/templates/connector_oauth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-            }
-        if(mavenModel.isMetaDataEnabled()){
-            templateFileWriter.apply("/templates/connector_metadata_category.tmpl", MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")+ "/" + "DataSenseResolver.java", classReplacer);
+        } else if (mavenModel.getAuthenticationType().equals(AuthenticationType.HTTP_BASIC)) {
+            templateFileWriter.apply("/templates/connector_basic_http_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+        }
+        if (mavenModel.isMetaDataEnabled()) {
+            templateFileWriter.apply("/templates/connector_metadata_category.tmpl", MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/"
+                    + "DataSenseResolver.java", classReplacer);
         }
         if (mavenModel.isSoapWithCXF()) {
             generator.create(project.getFolder("src/main/resources/wsdl/"), nullMonitor);
@@ -300,7 +298,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME,
                 new MavenParameterReplacer(mavenModel, mavenModel.getDevkitVersion(), mavenModel.getConnectorName(), mavenModel.isSoapWithCXF(), wsdlFileName));
         create(mavenModel.getConnectorName(), nullMonitor, mainTemplatePath, getTestResourcePath(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName()),
-                mavenModel.getPackage(), project, classReplacer, mavenModel.getAuthenticationType(), mavenModel.isSoapWithCXF(), mavenModel.getApiType(), mavenModel.isHasQuery());
+                mavenModel.getPackage(), project, classReplacer, mavenModel.getAuthenticationType(), mavenModel.isSoapWithCXF(), mavenModel.getApiType(), mavenModel.isHasQuery(),
+                mavenModel.isMetaDataEnabled());
 
         DevkitUtils.configureDevkitAPT(javaProject);
 
@@ -309,11 +308,12 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     }
 
     private String getConnectionStrategyFileName(ConnectorMavenModel mavenModel) {
-        return MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")+ "/" + "strategy/ConnectorConnectionStrategy.java";
+        return MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy/ConnectorConnectionStrategy.java";
     }
 
     protected void create(String moduleName, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className, String packageName,
-            IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, boolean isSoapCxf, Object apiType, boolean hasQuery) throws CoreException {
+            IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, boolean isSoapCxf, Object apiType, boolean hasQuery, boolean hasDatasense)
+            throws CoreException {
         String uncammelName = DevkitUtils.toConnectorName(moduleName);
         TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
         if (!isSoapCxf) {
@@ -322,6 +322,9 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         if (!(apiType.equals(ApiType.REST) || apiType.equals(ApiType.SOAP))) {
             fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(uncammelName), classReplacer);
             fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);
+            if (hasDatasense) {
+                fileWriter.apply(TEST_DATASENSE_TEMPLATE_PATH, buildDataSenseTestTargetFilePath(packageName, className), classReplacer);
+            }
             if (hasQuery) {
                 fileWriter.apply(TEST_QUERY_TEMPLATE_PATH, buildQueryTestTargetFilePath(packageName, className), classReplacer);
             }

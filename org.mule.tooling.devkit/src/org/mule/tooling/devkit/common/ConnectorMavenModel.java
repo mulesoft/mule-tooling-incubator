@@ -8,7 +8,7 @@ public class ConnectorMavenModel {
     private String category;
     private String connectorName = "Hello";
     private boolean oAuthEnabled;
-    private AuthenticationType authenticationType;
+    private AuthenticationType authenticationType = AuthenticationType.NONE;
     private boolean addGitInformation;
     private String gitConnection;
     private String gitDevConnection;

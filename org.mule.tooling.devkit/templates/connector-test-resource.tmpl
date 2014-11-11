@@ -9,20 +9,29 @@
         http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/${moduleName} http://www.mulesoft.org/schema/mule/${moduleName}/1.0/mule-${moduleName}.xsd">
 
-    <${moduleName}:config myProperty="Some string"
-            username="xxx" password="yyy"/>
-
+#if($project.authenticationType == 'NONE' )
+    <${moduleName}:config-type name="config" myProperty="Some string"/>
+#end
+#if($project.authenticationType == 'BASIC' )
+    <${moduleName}:config-type name="config" myProperty="Some string" username="foo" password="foo"/>
+#end
+    
     <flow name="testFlow">
-        <${moduleName}:my-processor content="Another string"/>
+        <${moduleName}:my-processor config-ref="config" content="Another string"/>
     </flow>
 #if($hasQuery == true )
     <flow name="testQueryFlow">
-        <${moduleName}:query-processor query="My Query"/>
+        <${moduleName}:query-processor config-ref="config" query="My Query"/>
     </flow>
 #end
 #if($metadataEnabled == true )
     <flow name="testAddEntiy">
-        <${moduleName}:add-entity content="My Query"/>
+        <${moduleName}:add-entity config-ref="config" key="id1">
+            <${moduleName}:entity>
+                <${moduleName}:entity key="Tittle">My Foo</${moduleName}:entity>
+                <${moduleName}:entity key="Author">Foo</${moduleName}:entity>
+            </${moduleName}:entity>
+        </${moduleName}:add-entity>
     </flow>
 #end
 </mule>

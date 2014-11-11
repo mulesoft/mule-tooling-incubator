@@ -54,13 +54,14 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
     private static final String GROUP_TITLE_CONNECTOR = "";
     private static final String GROUP_TITLE_API = "API";
+    private static final String NO_AUTHENTICATION = "No Authentication";
     private static final String NONE = "none";
     private static final String OAUTH_V2 = "OAuth V2";
     private static final String BASIC = "Basic";
     private static final String HTTP_BASIC = "HTTP Basic";
     private static final String[] SUPPORTED_AUTHENTICATION_SOAP_OPTIONS = new String[] { NONE };
-    private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { NONE, HTTP_BASIC,BASIC, OAUTH_V2 };
-    private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { NONE, BASIC, OAUTH_V2 };
+    private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { NO_AUTHENTICATION, HTTP_BASIC, BASIC, OAUTH_V2 };
+    private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { NO_AUTHENTICATION, BASIC, OAUTH_V2 };
     private static final String[] SUPPORTED_API_OPTIONS = new String[] { ApiType.GENERIC.label(), ApiType.SOAP.label(), ApiType.REST.label() };
     private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.";
     private static final String OTHER_COMMENT = "This will generate the scaffolding for the connector.\nIf you want to create a connector for a java client this will help you get started.";
@@ -282,7 +283,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS[0]);
                     tooltipApi.setToolTipText(SOAP_COMMENT);
                 } else {
-                    
                     if (ApiType.REST.label().equals(apiType.getText())) {
                         comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_REST_OPTIONS);
                         comboAuthentication.setText(SUPPORTED_AUTHENTICATION_REST_OPTIONS[0]);
@@ -481,7 +481,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private boolean isBasic() {
-        return !(comboAuthentication.getText().equals(OAUTH_V2));
+        return comboAuthentication.getText().equals(BASIC);
     }
 
     public boolean hasQuery() {
@@ -493,7 +493,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     public boolean isOAuth() {
-        return !isBasic();
+        return AuthenticationType.OAUTH_V2.equals(getAuthenticationType());
     }
 
     public String getWsdlFileOrDirectory() {

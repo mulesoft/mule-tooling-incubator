@@ -5,17 +5,14 @@
 
 package ${package};
 
-import org.mule.api.annotations.Connector;
-#if($OAuthEnaled == false)
-import org.mule.api.annotations.Connect;
-import org.mule.api.annotations.ValidateConnection;
-import org.mule.api.annotations.ConnectionIdentifier;
-import org.mule.api.annotations.Disconnect;
-import org.mule.api.annotations.param.ConnectionKey;
-import org.mule.api.ConnectionException;
-import org.mule.api.annotations.display.Password;
+#if($OAuthEnaled == true)  
+import org.mule.api.annotations.oauth.OAuthProtected;
+
 #end
+import org.mule.api.annotations.ConnectionStrategy;
+import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Configurable;
+import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.Processor;
 
 import java.io.IOException;
@@ -23,18 +20,11 @@ import org.mule.api.annotations.ReconnectOn;
 import org.mule.api.annotations.rest.HttpMethod;
 import org.mule.api.annotations.rest.RestCall;
 import org.mule.api.annotations.rest.RestUriParam;
-#if($OAuthEnaled == true)
-import org.mule.api.annotations.oauth.OAuthAccessToken;
-import org.mule.api.annotations.oauth.OAuthConsumerKey;
-import org.mule.api.annotations.oauth.OAuthConsumerSecret;
-import org.mule.api.annotations.oauth.OAuthAccessTokenSecret;
-import org.mule.api.annotations.oauth.OAuthProtected;
-#end
-
 #if($hasQuery == true)
 import org.mule.api.annotations.Query;
 #end
-import org.mule.api.annotations.param.Default;
+
+import ${package}.strategy.${StrategyClassName};
 
 /**
  * Anypoint Connector
@@ -51,35 +41,8 @@ public abstract class ${className}
     @Default("value")
     private String myProperty;
 
-#if($OAuthEnaled == true )  
-    /**
-     * The OAuth consumer key
-     */
-    @Configurable
-    @OAuthConsumerKey
-    private String consumerKey;
-
-    /**
-     * The OAuth consumer secret
-     */
-    @Configurable
-    @OAuthConsumerSecret
-    private String consumerSecret;
-
-    /**
-     * The OAuth access token
-     */
-    @OAuthAccessToken
-    private String accessToken;
-
-    /**
-     * The OAuth access token secret
-     */
-    @Configurable
-    @OAuthAccessTokenSecret
-    private String accessTokenSecret;
-
-#end    
+    @ConnectionStrategy
+    ${StrategyClassName} connectionStrategy;   
 
     /**
      * Set property
@@ -133,113 +96,13 @@ public abstract class ${className}
         return new ArrayList<Object>();
     }
 #end
-#if($OAuthEnaled == false )
 
-    /**
-     * Connect
-     *
-     * @param username A username
-     * @param password A password
-     * @throws ConnectionException
-     */
-    @Connect
-    public void connect(@ConnectionKey String username, @Password String password)
-        throws ConnectionException {
-        /*
-         * CODE FOR ESTABLISHING A CONNECTION GOES IN HERE
-         */
+    public ${StrategyClassName} getConnectionStrategy() {
+        return connectionStrategy;
     }
 
-    /**
-     * Disconnect
-     */
-    @Disconnect
-    public void disconnect() {
-        /*
-         * CODE FOR CLOSING A CONNECTION GOES IN HERE
-         */
+    public void setConnectionStrategy(${StrategyClassName} connectionStrategy) {
+        this.connectionStrategy = connectionStrategy;
     }
 
-    /**
-     * Are we connected
-     */
-    @ValidateConnection
-    public boolean isConnected() {
-        //TODO: Change it to reflect that we are connected.
-        return false;
-    }
-
-    /**
-     * Are we connected
-     */
-    @ConnectionIdentifier
-    public String connectionId() {
-        return "001";
-    }
-#end
-#if($OAuthEnaled == true )  
-    /**
-     * Set accessToken
-     *
-     * @param accessToken The accessToken
-     */
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    /**
-     * Get accessToken
-     */
-    public String getAccessToken() {
-        return this.accessToken;
-    }
-
-    /**
-     * Set consumerKey
-     *
-     * @param consumerKey The consumerKey
-     */
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
-    }
-
-    /**
-     * Get consumerKey
-     */
-    public String getConsumerKey() {
-        return this.consumerKey;
-    }
-
-    /**
-     * Set consumerSecret
-     *
-     * @param consumerSecret The consumerSecret
-     */
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
-    }
-
-    /**
-     * Get consumerSecret
-     */
-    public String getConsumerSecret() {
-        return this.consumerSecret;
-    }
-
-    /**
-     * Get accessTokenSecret
-     */
-    public String getAccessTokenSecret() {
-        return this.accessTokenSecret;
-    }
-
-    /**
-     * Set accessTokenSecret
-     *
-     * @param accessTokenSecret The accessTokenSecret
-     */
-    public void setAccessTokenSecret(String accessTokenSecret) {
-        this.accessTokenSecret = accessTokenSecret;
-    }
-#end
 }

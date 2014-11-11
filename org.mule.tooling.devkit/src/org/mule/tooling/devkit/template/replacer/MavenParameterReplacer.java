@@ -44,6 +44,7 @@ public class MavenParameterReplacer implements Replacer {
         context.put("wsdlFileName", wsdlFileName);
         context.put("authenticationType", mavenModel.getAuthenticationType());
         context.put("moduleName", DevkitUtils.toConnectorName(connectorName));
+        context.put("project",mavenModel);
         boolean evaluate = Velocity.evaluate(context, writer, "velocity pom.xml rendering", reader);
 
         if (evaluate == false) {
