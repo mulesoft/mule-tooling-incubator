@@ -196,6 +196,7 @@ public class QuickFixer implements IMarkerResolutionGenerator {
         notifications.add(Message.SAMPLE_PROCESSOR_XML_DOES_NOT_EXIST);
         notifications.add(Message.SAMPLE_FILE_CONTAINING_EXAMPLES_DOES_NOT_EXIST);
         notifications.add(Message.METHDO_MISSING_EXAMPLE);
+        notifications.add(Message.FIELD_MISSING_DESCRIPTION);
 		fixes.add(new DisableJavadocQuickFix(new MessageMatches(notifications)));
 	}
 }
