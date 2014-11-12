@@ -3,7 +3,7 @@
  * a copy of which has been included with this distribution in the LICENSE.md file.
  */
 
-package ${package}.strategy;
+package ${project.package}.strategy;
 
 import org.mule.api.ConnectionException;
 import org.mule.api.annotations.Configurable;
@@ -31,7 +31,7 @@ accessTokenUrl = "https://api.myconnector.com/uas/oauth/accessToken",
 accessTokenRegex = "FOO-EXPRESSION-ACCESS-TOKEN",
 expirationRegex = "FOO-EXPRESSION-EXPIRATION", 
 refreshTokenRegex = "FOO-EXPRESSION-REFRESH-TOKEN" )
-public class ConnectorConnectionStrategy
+public class ${project.strategyClassName}
 {
     /**
      * Configurable

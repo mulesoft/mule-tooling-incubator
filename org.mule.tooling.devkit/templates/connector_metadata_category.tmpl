@@ -3,7 +3,7 @@
  * a copy of which has been included with this distribution in the LICENSE.md file.
  */
 
-package ${package};
+package ${project.package};
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class DataSenseResolver {
      * initializing it.
      */
     @Inject
-    private ${className} connector;
+    private ${project.connectorClassName} connector;
 
     /**
      * Retrieves the list of keys
@@ -80,11 +80,11 @@ public class DataSenseResolver {
         return metaData;
     }
 
-    public ${className} getConnector() {
+    public ${project.connectorClassName} getConnector() {
         return connector;
     }
 
-    public void setConnector(${className} connector) {
+    public void setConnector(${project.connectorClassName} connector) {
         this.connector = connector;
     }
 }

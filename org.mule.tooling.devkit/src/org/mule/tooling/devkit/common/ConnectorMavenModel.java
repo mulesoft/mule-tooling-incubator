@@ -2,32 +2,48 @@ package org.mule.tooling.devkit.common;
 
 public class ConnectorMavenModel {
 
+    private ApiType apiType;
+    private AuthenticationType authenticationType = AuthenticationType.NONE;
     private String version;
     private String groupId;
     private String artifactId;
     private String category;
     private String connectorName = "Hello";
-    private boolean oAuthEnabled;
-    private AuthenticationType authenticationType = AuthenticationType.NONE;
     private boolean addGitInformation;
     private String gitConnection;
     private String gitDevConnection;
     private String gitUrl;
     private String packageName;
     private String devkitVersion;
-    private boolean isOAuth;
-    private boolean isMetaDataEnabled;
+    private boolean dataSenseEnabled;
     private boolean hasQuery;
-    private boolean isSoapWithCXF;
     private String wsdlPath;
-    private ApiType apiType;
+    private String moduleName;
+    private String connectorClassName;
+    private String strategyClassName;
 
-    public boolean isoAuthEnabled() {
-        return oAuthEnabled;
+    public String getPackageName() {
+        return packageName;
     }
 
-    public void setoAuthEnabled(boolean oAuthEnabled) {
-        this.oAuthEnabled = oAuthEnabled;
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public String getConnectorClassName() {
+        return connectorClassName;
+    }
+
+    public void setConnectorClassName(String connectorClassName) {
+        this.connectorClassName = connectorClassName;
+    }
+
+    public String getStrategyClassName() {
+        return strategyClassName;
+    }
+
+    public void setStrategyClassName(String strategyClassName) {
+        this.strategyClassName = strategyClassName;
     }
 
     public String getDevkitVersion() {
@@ -38,44 +54,12 @@ public class ConnectorMavenModel {
         this.devkitVersion = devkitVersion;
     }
 
-    public boolean isOAuth() {
-        return isOAuth;
-    }
-
-    public void setOAuth(boolean isOAuth) {
-        this.isOAuth = isOAuth;
-    }
-
-    public boolean isMetaDataEnabled() {
-        return isMetaDataEnabled;
-    }
-
-    public void setMetaDataEnabled(boolean isMetaDataEnabled) {
-        this.isMetaDataEnabled = isMetaDataEnabled;
-    }
-
-    public boolean isHasQuery() {
+    public boolean getHasQuery() {
         return hasQuery;
     }
 
     public void setHasQuery(boolean hasQuery) {
         this.hasQuery = hasQuery;
-    }
-
-    public boolean isSoapWithCXF() {
-        return isSoapWithCXF;
-    }
-
-    public void setSoapWithCXF(boolean isSoapWithCXF) {
-        this.isSoapWithCXF = isSoapWithCXF;
-    }
-
-    public String getWsdlPath() {
-        return wsdlPath;
-    }
-
-    public void setWsdlPath(String wsdlPath) {
-        this.wsdlPath = wsdlPath;
     }
 
     public ApiType getApiType() {
@@ -130,14 +114,6 @@ public class ConnectorMavenModel {
         return category;
     }
 
-    public boolean isOAuthEnabled() {
-        return oAuthEnabled;
-    }
-
-    public void setOAuthEnabled(boolean oAuthEnabled) {
-        this.oAuthEnabled = oAuthEnabled;
-    }
-
     public String getConnectorName() {
         return connectorName;
     }
@@ -146,7 +122,7 @@ public class ConnectorMavenModel {
         this.connectorName = connectorName;
     }
 
-    public boolean isAddGitInformation() {
+    public boolean getAddGitInformation() {
         return addGitInformation;
     }
 
@@ -192,6 +168,30 @@ public class ConnectorMavenModel {
 
     public void setPackage(String packageName) {
         this.packageName = packageName;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public boolean getDataSenseEnabled() {
+        return dataSenseEnabled;
+    }
+
+    public void setDataSenseEnabled(boolean dataSenseEnabled) {
+        this.dataSenseEnabled = dataSenseEnabled;
+    }
+
+    public String getWsdlPath() {
+        return wsdlPath;
+    }
+
+    public void setWsdlPath(String wsdlPath) {
+        this.wsdlPath = wsdlPath;
     }
 
 }

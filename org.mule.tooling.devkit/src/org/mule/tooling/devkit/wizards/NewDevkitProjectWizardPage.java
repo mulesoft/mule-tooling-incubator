@@ -475,7 +475,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         datasense.setEnabled(enabled);
         query.setEnabled(enabled);
         if (enabled) {
-            model.setMetaDataEnabled(datasense.getSelection());
+            model.setDataSenseEnabled(datasense.getSelection());
         }
         query.setEnabled(datasense.getSelection() && enabled);
     }
@@ -490,10 +490,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
     public boolean isMetadaEnabled() {
         return datasense.isEnabled() && datasense.getSelection();
-    }
-
-    public boolean isOAuth() {
-        return AuthenticationType.OAUTH_V2.equals(getAuthenticationType());
     }
 
     public String getWsdlFileOrDirectory() {

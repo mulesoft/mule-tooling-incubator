@@ -1,13 +1,13 @@
-<!-- BEGIN_INCLUDE(${moduleName}:my-processor) -->
-    <${moduleName}:my-processor content="#[map-payload:content]" />
-<!-- END_INCLUDE(${moduleName}:my-processor) -->
-#if($hasQuery == true )
-<!-- BEGIN_INCLUDE(${moduleName}:query-processor) -->
-    <${moduleName}:query-processor query="SELECT fieldName FROM MY_TABLE" />
-<!-- END_INCLUDE(${moduleName}:query-processor) -->
+<!-- BEGIN_INCLUDE(${project.moduleName}:my-processor) -->
+    <${project.moduleName}:my-processor content="#[map-payload:content]" />
+<!-- END_INCLUDE(${project.moduleName}:my-processor) -->
+#if(${project.hasQuery} == true )
+<!-- BEGIN_INCLUDE(${project.moduleName}:query-processor) -->
+    <${project.moduleName}:query-processor query="SELECT fieldName FROM MY_TABLE" />
+<!-- END_INCLUDE(${project.moduleName}:query-processor) -->
 #end
-#if($metadataEnabled == true )
-<!-- BEGIN_INCLUDE(${moduleName}:add-entity) -->
-    <${moduleName}:add-entity key="id1"/>
-<!-- END_INCLUDE(${moduleName}:add-entity) -->
+#if(${project.dataSenseEnabled} == true )
+<!-- BEGIN_INCLUDE(${project.moduleName}:add-entity) -->
+    <${project.moduleName}:add-entity key="id1"/>
+<!-- END_INCLUDE(${project.moduleName}:add-entity) -->
 #end

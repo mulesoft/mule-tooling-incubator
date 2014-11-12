@@ -3,12 +3,12 @@
  * a copy of which has been included with this distribution in the LICENSE.md file.
  */
 
-package ${package};
+package ${project.package};
 
 import org.mule.api.annotations.ConnectionStrategy;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Configurable;
-#if($metadataEnabled == true )
+#if(${project.dataSenseEnabled} == true )
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,28 +18,28 @@ import org.mule.api.annotations.MetaDataScope;
 #end
 
 import org.mule.api.annotations.Processor;
-#if($OAuthEnaled == true)
+#if($project.authenticationType == 'OAUTH_V2')
 import org.mule.api.annotations.oauth.OAuthProtected;
 import org.mule.api.annotations.ReconnectOn;
 #end
 
-#if($hasQuery == true)
+#if(${project.hasQuery} == true)
 import org.mule.api.annotations.Query;
 #end
 import org.mule.api.annotations.param.Default;
 
-import ${package}.strategy.${StrategyClassName};
+import ${project.package}.strategy.${project.strategyClassName};
 
 /**
  * Anypoint Connector
  *
  * @author MuleSoft, Inc.
  */
-@Connector(name="${moduleName}", schemaVersion="1.0", friendlyName="${connectorName}")
-#if($metadataEnabled == true )
+@Connector(name="${project.moduleName}", schemaVersion="1.0", friendlyName="${project.connectorName}")
+#if(${project.dataSenseEnabled} == true )
 @MetaDataScope( DataSenseResolver.class )
 #end
-public class ${className}
+public class ${project.connectorClassName}
 {
     /**
      * Configurable
@@ -49,21 +49,21 @@ public class ${className}
     private String myProperty;
 
     @ConnectionStrategy
-    ${StrategyClassName} connectionStrategy;
+    ${project.strategyClassName} connectionStrategy;
 
     /**
      * Custom processor
      *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:my-processor}
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:my-processor}
      *
      * @param content Content to be processed
      * @return Some string
-#if($OAuthEnaled == true )
+#if($project.authenticationType == 'OAUTH_V2' )
      * @throws Exception Comment for Exception     
 #end
      */
     @Processor
-#if($OAuthEnaled == true )
+#if($project.authenticationType == 'OAUTH_V2' )
     @OAuthProtected
     @ReconnectOn(exceptions = { Exception.class })
     public String myProcessor(@Default("content") String content) throws Exception {
@@ -76,12 +76,12 @@ public class ${className}
         return content;
     }
 
-#if($hasQuery == true )
+#if(${project.hasQuery} == true )
     
     /**
      * Description for query
      *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query-processor}
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:query-processor}
      *
      *  @param query The dsql query
      *  @return List of elements that match the criteria
@@ -96,11 +96,11 @@ public class ${className}
     }
 
 #end
-#if($metadataEnabled == true )
+#if(${project.dataSenseEnabled} == true )
     /**
      * DataSense processor
      *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:add-entity}
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:add-entity}
 
      * @param key Key to be used to populate the entity
      * @param entity Map that represents the entity
@@ -131,11 +131,11 @@ public class ${className}
         return this.myProperty;
     }
 
-    public ${StrategyClassName} getConnectionStrategy() {
+    public ${project.strategyClassName} getConnectionStrategy() {
         return connectionStrategy;
     }
 
-    public void setConnectionStrategy(${StrategyClassName} connectionStrategy) {
+    public void setConnectionStrategy(${project.strategyClassName} connectionStrategy) {
         this.connectionStrategy = connectionStrategy;
     }
 

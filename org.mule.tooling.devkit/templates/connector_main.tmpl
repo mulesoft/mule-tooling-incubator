@@ -3,9 +3,9 @@
  * a copy of which has been included with this distribution in the LICENSE.md file.
  */
 
-package ${package};
+package ${project.package};
 
-#if($OAuthEnaled == true)  
+#if($project.authenticationType == 'OAUTH_V2')  
 import org.mule.api.annotations.oauth.OAuthProtected;
 
 #end
@@ -20,19 +20,19 @@ import org.mule.api.annotations.ReconnectOn;
 import org.mule.api.annotations.rest.HttpMethod;
 import org.mule.api.annotations.rest.RestCall;
 import org.mule.api.annotations.rest.RestUriParam;
-#if($hasQuery == true)
+#if(${project.hasQuery} == true)
 import org.mule.api.annotations.Query;
 #end
 
-import ${package}.strategy.${StrategyClassName};
+import ${project.package}.strategy.${project.strategyClassName};
 
 /**
  * Anypoint Connector
  *
  * @author MuleSoft, Inc.
  */
-@Connector(name="${moduleName}", schemaVersion="1.0", friendlyName="${connectorName}")
-public abstract class ${className}
+@Connector(name="${project.moduleName}", schemaVersion="1.0", friendlyName="${project.connectorName}")
+public abstract class ${project.connectorClassName}
 {
     /**
      * Configurable
@@ -42,7 +42,7 @@ public abstract class ${className}
     private String myProperty;
 
     @ConnectionStrategy
-    ${StrategyClassName} connectionStrategy;   
+    ${project.strategyClassName} connectionStrategy;   
 
     /**
      * Set property
@@ -63,26 +63,26 @@ public abstract class ${className}
     /**
      * Custom processor
      *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:my-processor}
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:my-processor}
      *
      * @param content Content to be processed
      * @return Some string
      * @throws IOException Comment for Exception
      */
     @Processor
-#if($OAuthEnaled == true)    
+#if($project.authenticationType == 'OAUTH_V2')    
     @OAuthProtected
 #end
     @ReconnectOn(exceptions = { Exception.class })
     @RestCall(uri="https://myapiurl/{content}", method=HttpMethod.GET)
     public abstract void myProcessor(@RestUriParam("content") String content) throws IOException;  
 
-#if($hasQuery == true )
+#if(${project.hasQuery} == true )
 
     /**
      * Description for query
      *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query-processor}
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:query-processor}
      *
      *  @param query The dsql query
      *  @return List of elements that match the criteria
@@ -97,11 +97,11 @@ public abstract class ${className}
     }
 #end
 
-    public ${StrategyClassName} getConnectionStrategy() {
+    public ${project.strategyClassName} getConnectionStrategy() {
         return connectionStrategy;
     }
 
-    public void setConnectionStrategy(${StrategyClassName} connectionStrategy) {
+    public void setConnectionStrategy(${project.strategyClassName} connectionStrategy) {
         this.connectionStrategy = connectionStrategy;
     }
 
