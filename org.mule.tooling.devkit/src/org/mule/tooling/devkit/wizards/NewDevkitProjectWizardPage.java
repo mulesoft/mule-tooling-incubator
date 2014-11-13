@@ -54,13 +54,14 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
     private static final String GROUP_TITLE_CONNECTOR = "";
     private static final String GROUP_TITLE_API = "API";
+    private static final String NO_AUTHENTICATION = "No Authentication";
     private static final String NONE = "none";
-    private static final String OAUTH_V1 = "OAuth V1";
     private static final String OAUTH_V2 = "OAuth V2";
     private static final String BASIC = "Basic";
+    private static final String HTTP_BASIC = "HTTP Basic";
     private static final String[] SUPPORTED_AUTHENTICATION_SOAP_OPTIONS = new String[] { NONE };
-    private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { BASIC, OAUTH_V1, OAUTH_V2 };
-    private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { BASIC, OAUTH_V1, OAUTH_V2 };
+    private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { NO_AUTHENTICATION, HTTP_BASIC, BASIC, OAUTH_V2 };
+    private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { NO_AUTHENTICATION, BASIC, OAUTH_V2 };
     private static final String[] SUPPORTED_API_OPTIONS = new String[] { ApiType.GENERIC.label(), ApiType.SOAP.label(), ApiType.REST.label() };
     private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.";
     private static final String OTHER_COMMENT = "This will generate the scaffolding for the connector.\nIf you want to create a connector for a java client this will help you get started.";
@@ -281,16 +282,17 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                     comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS);
                     comboAuthentication.setText(SUPPORTED_AUTHENTICATION_SOAP_OPTIONS[0]);
                     tooltipApi.setToolTipText(SOAP_COMMENT);
-                }
-                if (ApiType.REST.label().equals(apiType.getText())) {
-                    comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_REST_OPTIONS);
-                    comboAuthentication.setText(SUPPORTED_AUTHENTICATION_REST_OPTIONS[0]);
-                    tooltipApi.setToolTipText(REST_COMMENT);
-                }
-                if (ApiType.GENERIC.label().equals(apiType.getText())) {
-                    comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS);
-                    comboAuthentication.setText(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS[0]);
-                    tooltipApi.setToolTipText(OTHER_COMMENT);
+                } else {
+                    if (ApiType.REST.label().equals(apiType.getText())) {
+                        comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_REST_OPTIONS);
+                        comboAuthentication.setText(SUPPORTED_AUTHENTICATION_REST_OPTIONS[0]);
+                        tooltipApi.setToolTipText(REST_COMMENT);
+                    }
+                    if (ApiType.GENERIC.label().equals(apiType.getText())) {
+                        comboAuthentication.setItems(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS);
+                        comboAuthentication.setText(SUPPORTED_AUTHENTICATION_OTHER_OPTIONS[0]);
+                        tooltipApi.setToolTipText(OTHER_COMMENT);
+                    }
                 }
             }
         };
@@ -473,13 +475,13 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         datasense.setEnabled(enabled);
         query.setEnabled(enabled);
         if (enabled) {
-            model.setMetaDataEnabled(datasense.getSelection());
+            model.setDataSenseEnabled(datasense.getSelection());
         }
         query.setEnabled(datasense.getSelection() && enabled);
     }
 
     private boolean isBasic() {
-        return !(comboAuthentication.getText().equals(OAUTH_V1) || comboAuthentication.getText().equals(OAUTH_V2));
+        return comboAuthentication.getText().equals(BASIC);
     }
 
     public boolean hasQuery() {
@@ -490,17 +492,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         return datasense.isEnabled() && datasense.getSelection();
     }
 
-    public boolean isOAuth() {
-        return !isBasic();
-    }
-
     public String getWsdlFileOrDirectory() {
         return this.wsdlLocation.getText();
     }
 
-    public boolean isCxfSoap() {
-        return apiType.getText().equals(ApiType.SOAP.label());
-    }
 
     public AuthenticationType getAuthenticationType() {
         return AuthenticationType.fromLabel(comboAuthentication.getText());
@@ -546,8 +541,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private String getAuthenticationDescription() {
         if (comboAuthentication.getText().equals(BASIC))
             return "Basic authentication provides username and password when making each request.";
-        if (comboAuthentication.getText().equals(OAUTH_V1))
-            return "OAuth V1 provides a method for Mule applications to access server resources on behalf of a resource owner without sharing their credentials.";
         if (comboAuthentication.getText().equals(OAUTH_V2))
             return "OAuth V2, the next evolution of the OAuth protocol, provides a method for Mule applications to access server resources on behalf of a resource owner without sharing their credentials.";
         return "No tip";

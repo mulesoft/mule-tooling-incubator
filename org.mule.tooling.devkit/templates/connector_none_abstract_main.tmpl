@@ -3,72 +3,43 @@
  * a copy of which has been included with this distribution in the LICENSE.md file.
  */
 
-package ${package};
+package ${project.package};
 
+import org.mule.api.annotations.ConnectionStrategy;
 import org.mule.api.annotations.Connector;
-#if($OAuthEnaled == false )
-import org.mule.api.annotations.Connect;
-import org.mule.api.annotations.ValidateConnection;
-import org.mule.api.annotations.ConnectionIdentifier;
-import org.mule.api.annotations.Disconnect;
-import org.mule.api.annotations.param.ConnectionKey;
-import org.mule.api.ConnectionException;
-import org.mule.api.annotations.display.Password;
-#end
 import org.mule.api.annotations.Configurable;
-import org.mule.api.annotations.Processor;
-#if($OAuthEnaled == true)
-import org.mule.api.annotations.ReconnectOn;
-#if( $authenticationType=='OAUTH_V1')
-import org.mule.api.annotations.oauth.OAuth;
-#end
-#if( $authenticationType=='OAUTH_V2')
-import org.mule.api.annotations.oauth.OAuth2;
-#end
-import org.mule.api.annotations.oauth.OAuthAccessToken;
-import org.mule.api.annotations.oauth.OAuthConsumerKey;
-import org.mule.api.annotations.oauth.OAuthConsumerSecret;
-import org.mule.api.annotations.oauth.OAuthPostAuthorization;
-import org.mule.api.annotations.oauth.OAuthAccessTokenSecret;
-import org.mule.api.annotations.oauth.OAuthProtected;
-#end
+#if(${project.dataSenseEnabled} == true )
 
-#if($metadataEnabled == true )
 import java.util.ArrayList;
 import java.util.List;
-import org.mule.common.metadata.*;
-import org.mule.common.metadata.builder.DefaultMetaDataBuilder;
-import org.mule.common.metadata.builder.DynamicObjectBuilder;
-import org.mule.common.metadata.datatype.DataType;
-import org.mule.api.annotations.MetaDataKeyRetriever;
-import org.mule.api.annotations.MetaDataRetriever;
+import java.util.Map;
+import org.mule.api.annotations.param.MetaDataKeyParam;
+import org.mule.api.annotations.MetaDataScope;
 #end
-#if($hasQuery == true)
+
+import org.mule.api.annotations.Processor;
+#if($project.authenticationType == 'OAUTH_V2')
+import org.mule.api.annotations.oauth.OAuthProtected;
+import org.mule.api.annotations.ReconnectOn;
+#end
+
+#if(${project.hasQuery} == true)
 import org.mule.api.annotations.Query;
 #end
 import org.mule.api.annotations.param.Default;
+
+import ${project.package}.strategy.${project.strategyClassName};
 
 /**
  * Anypoint Connector
  *
  * @author MuleSoft, Inc.
  */
-@Connector(name="${moduleName}", schemaVersion="1.0", friendlyName="${connectorName}")
-#if($OAuthEnaled == true )
-#if( $authenticationType=='OAUTH_V2')
-@OAuth2(authorizationUrl = "https://api.myconnector.com/uas/oauth/authorize", 
-accessTokenUrl = "https://api.myconnector.com/uas/oauth/accessToken", 
-accessTokenRegex = "FOO-EXPRESSION-ACCESS-TOKEN",
-expirationRegex = "FOO-EXPRESSION-EXPIRATION", 
-refreshTokenRegex = "FOO-EXPRESSION-REFRESH-TOKEN")
+@Connector(name="${project.moduleName}", schemaVersion="1.0", friendlyName="${project.connectorName}")
+#if(${project.dataSenseEnabled} == true )
+@MetaDataScope( DataSenseResolver.class )
 #end
-#if( $authenticationType=='OAUTH_V1')
-@OAuth(requestTokenUrl = "https://api.mycommector.com/uas/oauth/requestToken", 
-accessTokenUrl = "https://api.mycommector.com/uas/oauth/accessToken", 
-authorizationUrl = "https://api.mycommector.com/uas/oauth/authorize")
-#end
-#end
-public class ${className}
+public class ${project.connectorClassName}
 {
     /**
      * Configurable
@@ -77,139 +48,22 @@ public class ${className}
     @Default("value")
     private String myProperty;
 
-#if($OAuthEnaled == true ) 
+    @ConnectionStrategy
+    ${project.strategyClassName} connectionStrategy;
 
-    /**
-     * The OAuth consumer key
-     */
-    @Configurable
-    @OAuthConsumerKey
-    private String consumerKey;
-
-    /**
-     * The OAuth consumer secret
-     */
-    @Configurable
-    @OAuthConsumerSecret
-    private String consumerSecret;
-
-    /**
-     * The OAuth access token
-     */
-    @OAuthAccessToken
-    private String accessToken;
-    
-    /**
-     * The OAuth access token secret
-     */
-    @Configurable
-    @OAuthAccessTokenSecret
-    private String accessTokenSecret;
-
-#end
-    
-#if($metadataEnabled == true )    
-    /**
-     * Retrieves the list of keys
-     */
-    @MetaDataKeyRetriever
-    public List<MetaDataKey> getMetaDataKeys() throws Exception {
-        List<MetaDataKey> keys = new ArrayList<MetaDataKey>();
-
-        //Generate the keys
-        keys.add(new DefaultMetaDataKey("id1", "User"));
-        keys.add(new DefaultMetaDataKey("id2", "Book"));
-
-        return keys;
-    }
-
-    /**
-     * Get MetaData given the Key the user selects
-     * 
-     * @param key The key selected from the list of valid keys
-     * @return The MetaData model of that corresponds to the key
-     * @throws Exception If anything fails
-     */
-    @MetaDataRetriever
-    public MetaData getMetaData(MetaDataKey key) throws Exception {
-        DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
-        //If you have a Pojo class
-        //PojoMetaDataBuilder<?>  pojoObject=builder.createPojo(Pojo.class);
-
-        //If you use maps as input of your processors that work with DataSense
-        DynamicObjectBuilder<?> dynamicObject = builder.createDynamicObject(key
-                .getId());
-
-        if (key.getId().equals("id1")) {
-            dynamicObject.addSimpleField("Username", DataType.STRING);
-            dynamicObject.addSimpleField("age", DataType.INTEGER);
-        } else {
-            dynamicObject.addSimpleField("Author", DataType.STRING);
-            dynamicObject.addSimpleField("Tittle", DataType.STRING);
-        }
-        MetaDataModel model = builder.build();
-        MetaData metaData = new DefaultMetaData(model);
-
-        return metaData;
-    }
-#end
-#if($OAuthEnaled == false )
-
-    /**
-     * Connect
-     *
-     * @param username A username
-     * @param password A password
-     * @throws ConnectionException
-     */
-    @Connect
-    public void connect(@ConnectionKey String username, @Password String password)
-        throws ConnectionException {
-        /*
-         * CODE FOR ESTABLISHING A CONNECTION GOES IN HERE
-         */
-    }
-
-    /**
-     * Disconnect
-     */
-    @Disconnect
-    public void disconnect() {
-        /*
-         * CODE FOR CLOSING A CONNECTION GOES IN HERE
-         */
-    }
-
-    /**
-     * Are we connected
-     */
-    @ValidateConnection
-    public boolean isConnected() {
-        //TODO: Change it to reflect that we are connected.
-        return false;
-    }
-
-    /**
-     * Are we connected
-     */
-    @ConnectionIdentifier
-    public String connectionId() {
-        return "001";
-    }
-#end
     /**
      * Custom processor
      *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:my-processor}
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:my-processor}
      *
      * @param content Content to be processed
      * @return Some string
-#if($OAuthEnaled == true )
+#if($project.authenticationType == 'OAUTH_V2' )
      * @throws Exception Comment for Exception     
 #end
      */
     @Processor
-#if($OAuthEnaled == true )
+#if($project.authenticationType == 'OAUTH_V2' )
     @OAuthProtected
     @ReconnectOn(exceptions = { Exception.class })
     public String myProcessor(@Default("content") String content) throws Exception {
@@ -222,12 +76,12 @@ public class ${className}
         return content;
     }
 
-#if($hasQuery == true )
-
+#if(${project.hasQuery} == true )
+    
     /**
      * Description for query
      *
-     * {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query-processor}
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:query-processor}
      *
      *  @param query The dsql query
      *  @return List of elements that match the criteria
@@ -240,72 +94,26 @@ public class ${className}
          */
         return new ArrayList<Object>();
     }
+
 #end
-#if($OAuthEnaled == true ) 
-
+#if(${project.dataSenseEnabled} == true )
     /**
-     * Set accessToken
+     * DataSense processor
      *
-     * @param accessToken The accessToken
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:add-entity}
+
+     * @param key Key to be used to populate the entity
+     * @param entity Map that represents the entity
+     * @return Some string
      */
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    @Processor
+    public Map<String,Object> addEntity( @MetaDataKeyParam String key, @Default("#[payload]") Map<String,Object> entity) {
+        /*
+         * USE THE KEY AND THE MAP TO DO SOMETHING
+         */
+        return entity;
     }
 
-    /**
-     * Get accessToken
-     */
-    public String getAccessToken() {
-        return this.accessToken;
-    }
-
-    /**
-     * Set consumer key
-     *
-     * @param consumerKey The consumerKey
-     */
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
-    }
-
-    /**
-     * Get consumer key
-     */
-    public String getConsumerKey() {
-        return this.consumerKey;
-    }
-
-    /**
-     * Set consumer secret
-     *
-     * @param consumerSecret The consumerSecret
-     */
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
-    }
-
-    /**
-     * Get consumer secret
-     */
-    public String getConsumerSecret() {
-        return this.consumerSecret;
-    }
-
-    /**
-     * Get accessTokenSecret
-     */
-    public String getAccessTokenSecret() {
-        return this.accessTokenSecret;
-    }
-
-    /**
-     * Set accessTokenSecret
-     *
-     * @param accessTokenSecret The accessTokenSecret
-     */
-    public void setAccessTokenSecret(String accessTokenSecret) {
-        this.accessTokenSecret = accessTokenSecret;
-    }
 #end
     /**
      * Set property
@@ -322,4 +130,13 @@ public class ${className}
     public String getMyProperty() {
         return this.myProperty;
     }
+
+    public ${project.strategyClassName} getConnectionStrategy() {
+        return connectionStrategy;
+    }
+
+    public void setConnectionStrategy(${project.strategyClassName} connectionStrategy) {
+        this.connectionStrategy = connectionStrategy;
+    }
+
 }

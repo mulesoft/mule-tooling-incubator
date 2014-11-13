@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -80,7 +81,7 @@ public class DevkitUtils {
     public static final String DEVKIT_3_5_0 = "3.5.0";
     public static final String DEVKIT_3_5_1 = "3.5.1";
     public static final String DEVKIT_3_5_2 = "3.5.2";
-    public static final String DEVKIT_CURRENT = "3.5.2-SNAPSHOT";
+    public static final String DEVKIT_CURRENT = "3.6.0-M3-SNAPSHOT";
 
     public static final String devkitVersions[] = { DEVKIT_3_4_0, DEVKIT_3_4_1, DEVKIT_3_4_2, DEVKIT_3_5_0, DEVKIT_3_5_1, DEVKIT_3_5_2 };
     public static final String CATEGORY_COMMUNITY = "Community";
@@ -136,6 +137,8 @@ public class DevkitUtils {
                                     file.getParent().refreshLocal(IResource.DEPTH_ONE, null);
                                     if (file.exists()) {
                                         DefaultHelpUI.showInWorkbenchBrowser(file.getLocationURI().toURL().toString(), true);
+                                    } else {
+                                        MessageDialog.openError(null, "Error while generating javadoc", "Unable to generate the documentation. Check the console for errors.");
                                     }
                                 } catch (MalformedURLException e) {
                                     throw new RuntimeException(e);
@@ -337,6 +340,8 @@ public class DevkitUtils {
             return DevkitUtils.DEVKIT_3_5_0;
         if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_5_1))
             return DevkitUtils.DEVKIT_3_5_1;
+        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_5_2))
+            return DevkitUtils.DEVKIT_3_5_2;
         return DevkitUtils.DEVKIT_CURRENT;
     }
 

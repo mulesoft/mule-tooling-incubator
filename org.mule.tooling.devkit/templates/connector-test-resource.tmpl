@@ -3,21 +3,35 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:spring="http://www.springframework.org/schema/beans"
-      xmlns:${moduleName}="http://www.mulesoft.org/schema/mule/${moduleName}"
+      xmlns:${project.moduleName}="http://www.mulesoft.org/schema/mule/${project.moduleName}"
       xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-        http://www.mulesoft.org/schema/mule/${moduleName} http://www.mulesoft.org/schema/mule/${moduleName}/1.0/mule-${moduleName}.xsd">
+        http://www.mulesoft.org/schema/mule/${project.moduleName} http://www.mulesoft.org/schema/mule/${project.moduleName}/1.0/mule-${project.moduleName}.xsd">
 
-    <${moduleName}:config myProperty="Some string"
-            username="xxx" password="yyy"/>
-
+#if($project.authenticationType == 'NONE' )
+    <${project.moduleName}:config-type name="config" myProperty="Some string"/>
+#end
+#if($project.authenticationType == 'BASIC' )
+    <${project.moduleName}:config-type name="config" myProperty="Some string" username="foo" password="foo"/>
+#end
+    
     <flow name="testFlow">
-        <${moduleName}:my-processor content="Another string"/>
+        <${project.moduleName}:my-processor config-ref="config" content="Another string"/>
     </flow>
-#if($hasQuery == true )
+#if(${project.hasQuery} == true )
     <flow name="testQueryFlow">
-        <${moduleName}:query-processor query="My Query"/>
+        <${project.moduleName}:query-processor config-ref="config" query="My Query"/>
+    </flow>
+#end
+#if(${project.dataSenseEnabled} == true )
+    <flow name="testAddEntiy">
+        <${project.moduleName}:add-entity config-ref="config" key="id1">
+            <${project.moduleName}:entity>
+                <${project.moduleName}:entity key="Tittle">My Foo</${project.moduleName}:entity>
+                <${project.moduleName}:entity key="Author">Foo</${project.moduleName}:entity>
+            </${project.moduleName}:entity>
+        </${project.moduleName}:add-entity>
     </flow>
 #end
 </mule>

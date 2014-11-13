@@ -5,11 +5,13 @@
 
 package ${project.package};
 
+import static org.junit.Assert.assertNotNull;
+
 import org.mule.modules.tests.ConnectorTestCase;
 
 import org.junit.Test;
 
-public class ${project.connectorClassName}Test extends ConnectorTestCase {
+public class ${project.connectorClassName}AddEntityTest extends ConnectorTestCase {
     
     @Override
     protected String getConfigResources() {
@@ -18,6 +20,6 @@ public class ${project.connectorClassName}Test extends ConnectorTestCase {
 
     @Test
     public void testFlow() throws Exception {
-        runFlowAndExpect("testFlow", "Another string");
+        assertNotNull(runFlow("testAddEntiy"));
     }
 }

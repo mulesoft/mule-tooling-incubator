@@ -47,4 +47,8 @@ public abstract class AbstractDevkitProjectWizzard extends Wizard {
     protected String buildQueryTestTargetFilePath(String packageName, String className) {
         return DevkitUtils.TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + className + "QueryTest.java";
     }
+    
+    protected String buildDataSenseTestTargetFilePath(String packageName, String className) {
+        return DevkitUtils.TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + className + "AddEntityTest.java";
+    }
 }

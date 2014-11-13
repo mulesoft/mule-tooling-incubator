@@ -163,13 +163,13 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
     private void handleNewProjectSelectedChange(Object selected) {
         try {
             final IProject selectedProject = (IProject) selected;
-            if (current!=null && current.equals(selectedProject)) {
+            if (current != null && current.equals(selectedProject)) {
                 return;
             }
             if (selectedProject.isOpen() && selectedProject.hasNature(DevkitNature.NATURE_ID)) {
                 analyseMethods(selectedProject);
             } else {
-                current=null;
+                current = null;
                 Display.getDefault().asyncExec(new Runnable() {
 
                     public void run() {
@@ -263,15 +263,25 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
         current = project;
         IPackageFragment[] packages = JavaCore.create(project).getPackageFragments();
         boolean hasConnector = false;
+        ModuleVisitor visitor = new ModuleVisitor();
         for (IPackageFragment mypackage : packages) {
             if (mypackage.getKind() == IPackageFragmentRoot.K_SOURCE && mypackage.exists()) {
                 if (!mypackage.getPath().toString().contains(DevkitUtils.MAIN_JAVA_FOLDER)) {
                     continue;
                 }
-                hasConnector |= createAST(mypackage);
+                hasConnector |= createAST(mypackage, visitor);
             }
         }
-        if (!hasConnector) {
+        if (hasConnector) {
+            final ProjectRoot root = visitor.getRoot();
+            // Update the user interface asynchronously
+            Display.getDefault().asyncExec(new Runnable() {
+
+                public void run() {
+                    viewer.setInput(root);
+                }
+            });
+        } else {
             Display.getDefault().asyncExec(new Runnable() {
 
                 public void run() {
@@ -281,25 +291,14 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
         }
     }
 
-    private boolean createAST(IPackageFragment mypackage) throws JavaModelException {
+    private boolean createAST(IPackageFragment mypackage, ModuleVisitor visitor) throws JavaModelException {
 
-        ModuleVisitor visitor = new ModuleVisitor();
         for (ICompilationUnit unit : mypackage.getCompilationUnits()) {
             // now create the AST for the ICompilationUnits
             CompilationUnit parse = ASTUtils.parse(unit);
-
             parse.accept(visitor);
-
         }
         if (visitor.getRoot().getModules() != null && !visitor.getRoot().getModules().isEmpty()) {
-            final ProjectRoot root = visitor.getRoot();
-            // Update the user interface asynchronously
-            Display.getDefault().asyncExec(new Runnable() {
-
-                public void run() {
-                    viewer.setInput(root);
-                }
-            });
             return true;
         }
         return false;
