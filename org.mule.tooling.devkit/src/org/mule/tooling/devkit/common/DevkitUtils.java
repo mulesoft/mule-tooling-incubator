@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -136,6 +137,8 @@ public class DevkitUtils {
                                     file.getParent().refreshLocal(IResource.DEPTH_ONE, null);
                                     if (file.exists()) {
                                         DefaultHelpUI.showInWorkbenchBrowser(file.getLocationURI().toURL().toString(), true);
+                                    } else {
+                                        MessageDialog.openError(null, "Error while generating javadoc", "Unable to generate the documentation. Check the console for errors.");
                                     }
                                 } catch (MalformedURLException e) {
                                     throw new RuntimeException(e);
