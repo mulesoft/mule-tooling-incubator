@@ -29,8 +29,8 @@ public class ProjectRoot extends DefaultNodeItem {
             public int compare(Module o1, Module o2) {
                 if (o1.getType().equals(o2))
                     return o1.getName().compareTo(o2.getName());
-                if (o1.getType().equals("@Connector") || o1.getType().equals("@Module")) {
-                    if (o2.getType().equals("@Connector") || o2.getType().equals("@Module")) {
+                if (o1.getType().equals(ModelUtils.CONNECTOR_ANNOTATION.getName().toString()) || o1.getType().equals(ModelUtils.MODULE_ANNOTATION.getName().toString())) {
+                    if (o2.getType().equals(ModelUtils.CONNECTOR_ANNOTATION.getName().toString()) || o2.getType().equals(ModelUtils.MODULE_ANNOTATION.getName().toString())) {
                         return o1.getName().compareTo(o2.getName());
                     }
                     return -1;

@@ -248,7 +248,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
 
         generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
-        
+
         if (mavenModel.getDataSenseEnabled()) {
             templateFileWriter.apply("/templates/connector_metadata_category.tmpl", MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/"
                     + "DataSenseResolver.java", classReplacer);
@@ -279,9 +279,9 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                 throw new RuntimeException("Could not copy wsdl file to local directory");
             }
         }
-        
+
         mavenModel.setWsdlPath(wsdlFileName);
-        
+
         String mainTemplatePath = mavenModel.getApiType().equals(ApiType.GENERIC) ? MAIN_NONE_ABSTRACT_TEMPLATE_PATH : MAIN_TEMPLATE_PATH;
         templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, classReplacer);
         create(mavenModel.getConnectorName(), nullMonitor, mainTemplatePath, getTestResourcePath(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName()),
@@ -291,7 +291,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         DevkitUtils.configureDevkitAPT(javaProject);
 
         monitor.worked(20);
-        
+
         return javaProject;
     }
 
@@ -448,23 +448,32 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         projectDescription.setBuildSpec(newCommands);
         return projectDescription;
     }
-    
+
     /**
      * Generates the Strategy Component.
+     * 
      * @param mavenModel
      * @param classReplacer
      * @param templateFileWriter
      * @throws CoreException
      */
     private void generateStrategyComponent(ConnectorMavenModel mavenModel, ClassReplacer classReplacer, TemplateFileWriter templateFileWriter) throws CoreException {
-        if (mavenModel.getAuthenticationType().equals(AuthenticationType.NONE)) {
-            templateFileWriter.apply("/templates/connector_basic.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-        } else if (mavenModel.getAuthenticationType().equals(AuthenticationType.BASIC)) {
+        switch (mavenModel.getAuthenticationType()) {
+        case BASIC:
             templateFileWriter.apply("/templates/connector_basic_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-        } else if (mavenModel.getAuthenticationType().equals(AuthenticationType.OAUTH_V2)) {
-            templateFileWriter.apply("/templates/connector_oauth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-        } else if (mavenModel.getAuthenticationType().equals(AuthenticationType.HTTP_BASIC)) {
+            break;
+        case HTTP_BASIC:
             templateFileWriter.apply("/templates/connector_basic_http_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+            break;
+        case NONE:
+            templateFileWriter.apply("/templates/connector_basic.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+            break;
+        case OAUTH_V2:
+            templateFileWriter.apply("/templates/connector_oauth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+        default:
+            break;
+
         }
+        throw new RuntimeException("Unssuported AuthenticationType");
     }
 }

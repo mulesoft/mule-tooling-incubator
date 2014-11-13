@@ -496,9 +496,6 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         return this.wsdlLocation.getText();
     }
 
-    public boolean isCxfSoap() {
-        return apiType.getText().equals(ApiType.SOAP.label());
-    }
 
     public AuthenticationType getAuthenticationType() {
         return AuthenticationType.fromLabel(comboAuthentication.getText());
