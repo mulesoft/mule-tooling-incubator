@@ -461,15 +461,16 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         switch (mavenModel.getAuthenticationType()) {
         case BASIC:
             templateFileWriter.apply("/templates/connector_basic_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-            break;
+            return;
         case HTTP_BASIC:
             templateFileWriter.apply("/templates/connector_basic_http_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-            break;
+            return;
         case NONE:
             templateFileWriter.apply("/templates/connector_basic.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-            break;
+            return;
         case OAUTH_V2:
             templateFileWriter.apply("/templates/connector_oauth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+            return;
         default:
             break;
 
