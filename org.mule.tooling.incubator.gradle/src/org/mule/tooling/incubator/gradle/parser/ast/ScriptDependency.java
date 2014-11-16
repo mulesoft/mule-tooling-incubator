@@ -11,7 +11,8 @@ public class ScriptDependency extends Dependency {
     private static final String VERSION = "version";
     private static final String NOEXT = "noExt";
     private static final String NOCLASSIFIER = "noClassifier";
-    
+    private static final String CLASSIFIER = "classifier";
+    private static final String EXT = "ext";
     
     private ASTNode sourceNode;
     
@@ -28,10 +29,21 @@ public class ScriptDependency extends Dependency {
         } else {
             setExtension("zip");
         }
+                
         if ("true".equals(dep.get(NOCLASSIFIER))) {
             setClassifier(null);
         } else {
             setClassifier("plugin");
+        }
+        
+        //it might have defined its own classifier
+        if (dep.containsKey(CLASSIFIER)) {
+            setClassifier(dep.get(CLASSIFIER));
+        }
+
+        //it might have defined its own classifier
+        if (dep.containsKey(EXT)) {
+            setExtension(dep.get(EXT));;
         }
         
         setSourceNode(dep.getSourceNode());

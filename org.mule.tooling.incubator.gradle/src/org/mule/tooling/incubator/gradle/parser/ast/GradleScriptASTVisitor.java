@@ -37,7 +37,9 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
      * 
      */
     public static enum STATE {
-        apply, mule, components, connector, module, plugin, dependencies, buildscript
+        apply, mule, components, connector, module, plugin, dependencies, buildscript,
+        compile, runtime, providedCompile, providedRuntime, testCompile, testRuntime,
+        providedTestCompile, providedTestRuntime
     }
     
     public static enum KNOWN_OBJECT {
@@ -91,6 +93,14 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
         case plugin:
         case connector:
         case module:
+        case compile:
+        case runtime:
+        case providedCompile:
+        case providedRuntime:
+        case testCompile:
+        case testRuntime:
+        case providedTestCompile:
+        case providedTestRuntime:
             dependencies.add(new ScriptDependency(map));
             break;
         case mule:
