@@ -1,7 +1,7 @@
 package org.mule.tooling.devkit.common;
 
 public enum ApiType {
-    GENERIC("GENERIC (Java)"), SOAP("SOAP"), REST("REST");
+    GENERIC("Java SDK"), SOAP("SOAP"), REST("REST");
 
     ApiType(String label) {
         this.label = label;

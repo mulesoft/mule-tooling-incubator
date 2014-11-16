@@ -7,7 +7,6 @@ import org.mule.tooling.model.messageflow.Compartment;
 import org.mule.tooling.model.messageflow.CompartmentLane;
 import org.mule.tooling.model.messageflow.Container;
 import org.mule.tooling.model.messageflow.EndpointNode;
-import org.mule.tooling.model.messageflow.Flow;
 import org.mule.tooling.model.messageflow.GlobalElement;
 import org.mule.tooling.model.messageflow.GlobalUnknown;
 import org.mule.tooling.model.messageflow.MuleConfiguration;
@@ -50,10 +49,6 @@ public class ImportedFilesVisitor implements MessageFlowEntityVisitor {
 
     @Override
     public void visitNestedContainer(NestedContainer nestedContainer) {
-    }
-
-    @Override
-    public void visitFlow(Flow flow) {
     }
 
     @Override

@@ -4,7 +4,7 @@
 	
 	<global versions="[3.4.0,10.0.0]" localId="config" caption="Munit configuration"
 	 icon="icons/small/MUnit-Palette.png" image="icons/small/MUnit-Palette.png"
-		visible="true" abstract="false" allowMulipleChildren="true"
+		allowMulipleChildren="true"
 		category="org.mule.tooling.category.munit" 
 		description="Defines the Munit condifiguration for the suite">
 		<attribute-category caption="General" description="">
@@ -43,8 +43,8 @@
 			</group>
 		</attribute-category>
 		
-		<graphical-container localId="setup" caption="Setup" description=""  prompt="Add mocks and spys here." abstract="true" acceptsElements="http://www.mulesoft.org/schema/mule/mock/when||http://www.mulesoft.org/schema/mule/mock/spy||http://www.mulesoft.org/schema/mule/mock/outbound-endpoint"/>
-		<graphical-container localId="assertions" collapsable="true" caption="Test" prompt="Run flows, verify calls, run assertions in here" description=""  abstract="true" />
+		<graphical-container localId="setup" childrenCreatorId="noConnections" caption="Setup" description=""  prompt="Add mocks and spys here."  acceptsElements="http://www.mulesoft.org/schema/mule/mock/when||http://www.mulesoft.org/schema/mule/mock/spy||http://www.mulesoft.org/schema/mule/mock/outbound-endpoint"/>
+		<graphical-container rowNumber="1" localId="assertions" caption="Test" prompt="Run flows, verify calls, run assertions in here" description=""  abstract="true" />
 		
 	</container>
 

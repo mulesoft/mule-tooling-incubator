@@ -9,7 +9,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.swt.graphics.Image;
-import org.mule.devkit.generation.utils.NameUtils;
+import org.mule.devkit.utils.NameUtils;
 
 @SuppressWarnings("restriction")
 public class AddJavadocSampleReferenceQuickFix extends QuickFix {

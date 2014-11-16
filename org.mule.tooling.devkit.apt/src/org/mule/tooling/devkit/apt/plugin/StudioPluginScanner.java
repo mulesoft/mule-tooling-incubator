@@ -10,7 +10,7 @@ import org.mule.devkit.generation.api.PluginScanner;
 import org.mule.devkit.generation.atgenerated.AtGeneratedPlugin;
 import org.mule.devkit.generation.expressionlanguage.ExpressionLanguagePlugin;
 import org.mule.devkit.generation.javadoc.JavaDocPlugin;
-import org.mule.devkit.generation.oauth.OAuthClientPlugin;
+import org.mule.devkit.oauth.plugin.OAuthClientPlugin;
 import org.mule.devkit.generation.rest.RestClientPlugin;
 import org.mule.devkit.generation.studio.MuleStudioPlugin;
 

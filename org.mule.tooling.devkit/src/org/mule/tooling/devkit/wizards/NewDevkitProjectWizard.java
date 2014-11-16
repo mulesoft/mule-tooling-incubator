@@ -37,12 +37,12 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.DevkitUIPlugin;
@@ -60,8 +60,6 @@ import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
 import org.mule.tooling.devkit.template.ImageWriter;
 import org.mule.tooling.devkit.template.TemplateFileWriter;
 import org.mule.tooling.devkit.template.replacer.ClassReplacer;
-import org.mule.tooling.devkit.template.replacer.ConnectorClassReplacer;
-import org.mule.tooling.devkit.template.replacer.MavenParameterReplacer;
 import org.mule.tooling.devkit.template.replacer.NullReplacer;
 
 public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard implements INewWizard {
@@ -70,13 +68,14 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private static final String MAIN_TEMPLATE_PATH = "/templates/connector_main.tmpl";
     private static final String MAIN_NONE_ABSTRACT_TEMPLATE_PATH = "/templates/connector_none_abstract_main.tmpl";
     private static final String TEST_TEMPLATE_PATH = "/templates/connector_test.tmpl";
-    private static final String TEST_QUERY_TEMPLATE_PATH = "/templates/connector_query_test.tmpl";
+    private static final String TEST_QUERY_TEMPLATE_PATH = "/templates/connector-query-test.tmpl";
+    private static final String TEST_DATASENSE_TEMPLATE_PATH = "/templates/connector-test-datasense.tmpl";
     private static final String TEST_RESOURCE_PATH = "/templates/connector-test-resource.tmpl";
-
     public static final String WIZZARD_PAGE_TITTLE = "Create an Anypoint Connector";
     private NewDevkitProjectWizardPage page;
     private NewDevkitProjectWizardPageAdvance advancePage;
     private ConnectorMavenModel connectorModel;
+    private IWorkbenchPage workbenchPage;
 
     public NewDevkitProjectWizard() {
         super();
@@ -107,7 +106,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     public boolean performFinish() {
 
         final ConnectorMavenModel mavenModel = getPopulatedModel();
-        if (mavenModel.isSoapWithCXF()) {
+        if (mavenModel.getApiType().equals(ApiType.SOAP)) {
             if (!isValidWsdl(getWsdlPath())) {
                 return false;
             }
@@ -121,7 +120,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                     final IJavaProject javaProject = doFinish(mavenModel, monitor);
 
                     downloadJavadocForAnnotations(javaProject, monitor);
-                    if (mavenModel.isSoapWithCXF()) {
+                    if (mavenModel.getApiType().equals(ApiType.SOAP)) {
                         MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("clean").withArg("compile").withArg("-Pconnector-generator")
                                 .withTaskName("Generating connector from WSDL...").build().run(monitor);
 
@@ -144,10 +143,10 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                             }
                         }, IncrementalProjectBuilder.CLEAN_BUILD, new IProject[] { javaProject.getProject() });
                         projectBuild.run();
-                        javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
-                        openConnectorClass(mavenModel, javaProject.getProject());
                     }
+                    openConnectorClass(mavenModel, javaProject.getProject());
+                    javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
@@ -203,20 +202,16 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     /**
      * The worker method. It will find the container, create the file if missing or just replace its contents, and open the editor on the newly created file.
      * 
-     * @param javaProject
-     * 
-     * @param hasQuery
-     * @param isOauth
-     * @param isMetaDataEnabled
-     * @param minMuleVersion
-     * @param apiType
+     * @param mavenModel
+     * @param monitor
      * @return
+     * @throws CoreException
      */
-
     private IJavaProject doFinish(ConnectorMavenModel mavenModel, IProgressMonitor monitor) throws CoreException {
         String artifactId = mavenModel.getArtifactId();
 
         String wsdlFileName = "Dummy";
+
         monitor.beginTask("Creating project" + artifactId, 20);
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
@@ -227,7 +222,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
         NullProgressMonitor nullMonitor = new NullProgressMonitor();
         List<IClasspathEntry> entries = generator.generateProjectEntries(nullMonitor, project);
-        if (mavenModel.isSoapWithCXF()) {
+        if (mavenModel.getApiType().equals(ApiType.SOAP)) {
             entries.add(generator.createEntry(project.getFolder(DevkitUtils.CXF_GENERATED_SOURCES_FOLDER), nullMonitor));
         }
         generator.create(project.getFolder(DOCS_FOLDER), nullMonitor);
@@ -238,9 +233,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
         javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[] {}), nullMonitor);
 
-        ClassReplacer classReplacer = new ConnectorClassReplacer(mavenModel.getPackage(), mavenModel.getConnectorName(), DevkitUtils.createConnectorNameFrom(mavenModel
-                .getConnectorName()), mavenModel.getDevkitVersion(), mavenModel.isMetaDataEnabled(), mavenModel.isOAuthEnabled(), mavenModel.isHasQuery(),
-                mavenModel.getCategory(), mavenModel.getGitUrl(), mavenModel.isSoapWithCXF(), mavenModel.getAuthenticationType());
+        ClassReplacer classReplacer = new ClassReplacer(mavenModel);
 
         TemplateFileWriter templateFileWriter = new TemplateFileWriter(project, nullMonitor);
         templateFileWriter.apply("/templates/README.tmpl", "README.md", classReplacer);
@@ -252,7 +245,15 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(uncammelName));
         imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
 
-        if (mavenModel.isSoapWithCXF()) {
+        generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
+
+        generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
+
+        if (mavenModel.getDataSenseEnabled()) {
+            templateFileWriter.apply("/templates/connector_metadata_category.tmpl", MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/"
+                    + "DataSenseResolver.java", classReplacer);
+        }
+        if (mavenModel.getApiType().equals(ApiType.SOAP)) {
             generator.create(project.getFolder("src/main/resources/wsdl/"), nullMonitor);
             templateFileWriter.apply("/templates/binding.xml.tmpl", "src/main/resources/wsdl/binding.xml", classReplacer);
             File wsdlFileOrDirectory = new File(mavenModel.getWsdlPath());
@@ -278,28 +279,39 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                 throw new RuntimeException("Could not copy wsdl file to local directory");
             }
         }
+
+        mavenModel.setWsdlPath(wsdlFileName);
+
         String mainTemplatePath = mavenModel.getApiType().equals(ApiType.GENERIC) ? MAIN_NONE_ABSTRACT_TEMPLATE_PATH : MAIN_TEMPLATE_PATH;
-        templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME,
-                new MavenParameterReplacer(mavenModel, mavenModel.getDevkitVersion(), mavenModel.getConnectorName(), mavenModel.isSoapWithCXF(), wsdlFileName));
+        templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, classReplacer);
         create(mavenModel.getConnectorName(), nullMonitor, mainTemplatePath, getTestResourcePath(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName()),
-                mavenModel.getPackage(), project, classReplacer, mavenModel.getAuthenticationType(), mavenModel.isSoapWithCXF(), mavenModel.getApiType(), mavenModel.isHasQuery());
+                mavenModel.getPackage(), project, classReplacer, mavenModel.getAuthenticationType(), mavenModel.getApiType(), mavenModel.getHasQuery(),
+                mavenModel.getDataSenseEnabled());
 
         DevkitUtils.configureDevkitAPT(javaProject);
 
         monitor.worked(20);
+
         return javaProject;
     }
 
+    private String getConnectionStrategyFileName(ConnectorMavenModel mavenModel) {
+        return MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy/ConnectorConnectionStrategy.java";
+    }
+
     protected void create(String moduleName, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className, String packageName,
-            IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, boolean isSoapCxf, Object apiType, boolean hasQuery) throws CoreException {
+            IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, ApiType apiType, boolean hasQuery, boolean hasDatasense) throws CoreException {
         String uncammelName = DevkitUtils.toConnectorName(moduleName);
         TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
-        if (!isSoapCxf) {
+        if (!apiType.equals(ApiType.SOAP)) {
             fileWriter.apply(mainTemplatePath, buildMainTargetFilePath(packageName, className), classReplacer);
         }
         if (!(apiType.equals(ApiType.REST) || apiType.equals(ApiType.SOAP))) {
             fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(uncammelName), classReplacer);
             fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);
+            if (hasDatasense) {
+                fileWriter.apply(TEST_DATASENSE_TEMPLATE_PATH, buildDataSenseTestTargetFilePath(packageName, className), classReplacer);
+            }
             if (hasQuery) {
                 fileWriter.apply(TEST_QUERY_TEMPLATE_PATH, buildQueryTestTargetFilePath(packageName, className), classReplacer);
             }
@@ -316,7 +328,9 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
      */
     @Override
     public void init(IWorkbench workbench, IStructuredSelection selection) {
-
+        if (workbench != null && workbench.getActiveWorkbenchWindow() != null) {
+            workbenchPage = workbench.getActiveWorkbenchWindow().getActivePage();
+        }
     }
 
     protected String getTestResourcePath() {
@@ -326,10 +340,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private String getWsdlPath() {
 
         return page.getWsdlFileOrDirectory();
-    }
-
-    private boolean isSoapWithCXF() {
-        return page.isCxfSoap();
     }
 
     private ApiType getApiType() {
@@ -381,32 +391,38 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         mavenModel.setGitConnection(advancePage.getConnection());
         mavenModel.setGitDevConnection(advancePage.getDevConnection());
         mavenModel.setGitUrl(advancePage.getUrl());
-
+        mavenModel.setConnectorClassName(DevkitUtils.createConnectorNameFrom(page.getName()));
+        mavenModel.setStrategyClassName("ConnectorConnectionStrategy");
         mavenModel.setDevkitVersion(page.getDevkitVersion());
         mavenModel.setPackage(advancePage.getPackage());
         mavenModel.setConnectorName(page.getName());
-        mavenModel.setOAuth(page.isOAuth());
-        mavenModel.setMetaDataEnabled(page.isMetadaEnabled() && !page.isOAuth());
-        mavenModel.setHasQuery(page.hasQuery() && mavenModel.isMetaDataEnabled());
-        mavenModel.setSoapWithCXF(isSoapWithCXF() && !getWsdlPath().isEmpty());
+        mavenModel.setDataSenseEnabled(page.isMetadaEnabled());
+        mavenModel.setHasQuery(page.hasQuery() && mavenModel.getDataSenseEnabled());
         mavenModel.setWsdlPath(getWsdlPath());
         mavenModel.setApiType(getApiType());
-        mavenModel.setOAuthEnabled(page.isOAuth());
         mavenModel.setAuthenticationType(getAuthenticationType());
+        mavenModel.setModuleName(DevkitUtils.toConnectorName(mavenModel.getConnectorName()));
         return mavenModel;
     }
 
-    private void openConnectorClass(final ConnectorMavenModel mavenModel, IProject project) {
-        try {
-            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-            IFile connectorFile = project.getFile(buildMainTargetFilePath(mavenModel.getPackage(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName())));
-            if (connectorFile.exists()) {
-                IDE.openEditor(page, connectorFile);
-            } else {
-                // Inform severe error
-            }
-        } catch (CoreException e) {
-            e.printStackTrace();
+    private void openConnectorClass(final ConnectorMavenModel mavenModel, final IProject project) {
+        if (workbenchPage != null) {
+            final IWorkbenchPage page = workbenchPage;
+            Display.getDefault().syncExec(new Runnable() {
+
+                public void run() {
+                    try {
+                        IFile connectorFile = project.getFile(buildMainTargetFilePath(mavenModel.getPackage(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName())));
+                        if (connectorFile.exists()) {
+                            IDE.openEditor(page, connectorFile);
+                        } else {
+                            // Inform severe error
+                        }
+                    } catch (CoreException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
 
@@ -431,5 +447,34 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
         projectDescription.setBuildSpec(newCommands);
         return projectDescription;
+    }
+
+    /**
+     * Generates the Strategy Component.
+     * 
+     * @param mavenModel
+     * @param classReplacer
+     * @param templateFileWriter
+     * @throws CoreException
+     */
+    private void generateStrategyComponent(ConnectorMavenModel mavenModel, ClassReplacer classReplacer, TemplateFileWriter templateFileWriter) throws CoreException {
+        switch (mavenModel.getAuthenticationType()) {
+        case BASIC:
+            templateFileWriter.apply("/templates/connector_basic_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+            return;
+        case HTTP_BASIC:
+            templateFileWriter.apply("/templates/connector_basic_http_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+            return;
+        case NONE:
+            templateFileWriter.apply("/templates/connector_basic.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+            return;
+        case OAUTH_V2:
+            templateFileWriter.apply("/templates/connector_oauth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+            return;
+        default:
+            break;
+
+        }
+        throw new RuntimeException("Unssuported AuthenticationType");
     }
 }

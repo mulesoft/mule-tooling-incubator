@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.mule.tooling.devkit
 Bundle-SymbolicName: org.mule.tooling.devkit;singleton:=true
-Bundle-Version: 1.0.2.qualifier
+Bundle-Version: 1.0.3.qualifier
 Bundle-Activator: org.mule.tooling.devkit.DevkitUIPlugin
 Require-Bundle: org.mule.tooling.runtime;bundle-version="[4.0.0,5.0.0)",
  org.eclipse.ui,
@@ -57,4 +57,5 @@ Bundle-ClassPath: .,
  lib/JavaEWAH.jar,
  lib/jsch.jar,
  lib/org.eclipse.jgit.jar,
- lib/mule-devkit-generation-api.jar
+ lib/mule-devkit-generation-api.jar,
+ lib/mule-devkit-code-utils.jar

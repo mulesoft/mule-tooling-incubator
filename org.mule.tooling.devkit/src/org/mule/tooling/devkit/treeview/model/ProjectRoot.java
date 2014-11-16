@@ -2,26 +2,43 @@ package org.mule.tooling.devkit.treeview.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class ProjectRoot  extends DefaultNodeItem{
-	public ProjectRoot() {
-		super(null,null,null);
-	}
+public class ProjectRoot extends DefaultNodeItem {
 
-	private List<Module> modules = new ArrayList<Module>();
+    public ProjectRoot() {
+        super(null, null, null);
+    }
 
-	public List<Module> getModules() {
-		return modules;
-	}
+    private List<Module> modules = new ArrayList<Module>();
 
-	public void setModules(List<Module> modules) {
-		this.modules = modules;
-	}
-	
-	@Override
-	public Object[] getChildren(){
-		Collections.sort(modules);
-		return modules.toArray();
-	}
+    public List<Module> getModules() {
+        return modules;
+    }
+
+    public void setModules(List<Module> modules) {
+        this.modules = modules;
+    }
+
+    @Override
+    public Object[] getChildren() {
+        Collections.sort(modules, new Comparator<Module>() {
+
+            @Override
+            public int compare(Module o1, Module o2) {
+                if (o1.getType().equals(o2))
+                    return o1.getName().compareTo(o2.getName());
+                if (o1.getType().equals(ModelUtils.CONNECTOR_ANNOTATION.getName().toString()) || o1.getType().equals(ModelUtils.MODULE_ANNOTATION.getName().toString())) {
+                    if (o2.getType().equals(ModelUtils.CONNECTOR_ANNOTATION.getName().toString()) || o2.getType().equals(ModelUtils.MODULE_ANNOTATION.getName().toString())) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                    return -1;
+                }
+                return 1;
+            }
+
+        });
+        return modules.toArray();
+    }
 }

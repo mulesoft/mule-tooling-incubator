@@ -3,19 +3,19 @@
  * a copy of which has been included with this distribution in the LICENSE.md file.
  */
 
-package ${package};
+package ${project.package};
 
 import static org.junit.Assert.assertNotNull;
 
-import org.mule.tck.junit4.FunctionalTestCase;
+import org.mule.modules.tests.ConnectorTestCase;
 
 import org.junit.Test;
 
-public class ${className}QueryTest extends FunctionalTestCase {
+public class ${project.connectorClassName}QueryTest extends ConnectorTestCase {
     
     @Override
     protected String getConfigResources() {
-        return "${moduleName}-config.xml";
+        return "${project.moduleName}-config.xml";
     }
 
     @Test

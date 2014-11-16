@@ -65,6 +65,7 @@
 <unit id="com.thoughtworks.qdox" version="0.0.0"/>
 <unit id="com.google.guava" version="0.0.0"/>
 <unit id="javax.wsdl" version="1.6.2.v201012040545"/>
+<unit id="com.google.gson" version="0.0.0"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20130827064939/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
@@ -82,7 +83,7 @@
 <unit id="com.sun.jersey" version="0.0.0"/>
 <unit id="javax.ws.rs" version="0.0.0"/>
 <unit id="org.mule.tooling.templatesrepo" version="0.0.0"/>
-<repository location="http://studio-nightly-update.s3.amazonaws.com"/>
+<repository location="http://studio-nightly-update.s3.amazonaws.com/himalaya"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.mule.tooling.extension.server.3.5.0.ee.feature.group" version="0.0.0"/>

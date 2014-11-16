@@ -17,13 +17,15 @@ import org.mule.devkit.generation.api.PluginScanner;
 import org.mule.devkit.model.module.Module;
 import org.mule.tooling.devkit.apt.plugin.StudioPluginScanner;
 
-@SupportedAnnotationTypes(value = { "org.mule.api.annotations.Connector",
-		"org.mule.api.annotations.ExpressionLanguage",
-		"org.mule.api.annotations.Module",
-		"org.mule.api.annotations.MetaDataCategory"})
-@SupportedSourceVersion(javax.lang.model.SourceVersion.RELEASE_6)
-@SupportedOptions(value = { "enabledStudioPluginPackage",
-		"enableJavaDocValidation", "mavenInformationFile" })
+@SupportedAnnotationTypes(value = {"org.mule.api.annotations.Connector",
+        "org.mule.api.annotations.ExpressionLanguage",
+        "org.mule.api.annotations.Module",
+        "org.mule.api.annotations.MetaDataCategory",
+        "org.mule.api.annotations.components.*",
+        "org.mule.api.annotations.oauth.OAuth2"})
+@SupportedSourceVersion(javax.lang.model.SourceVersion.RELEASE_7)
+@SupportedOptions(value = {"enabledStudioPluginPackage",
+        "enableJavaDocValidation", "mavenInformationFile", "enabledVerboseLogging"})
 public class StudioAnnotationProcessor extends AnnotationProcessor {
 	
 	@Override

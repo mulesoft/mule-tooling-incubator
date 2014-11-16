@@ -13,7 +13,7 @@ public abstract class VelocityReplacer implements Replacer {
     	Velocity.init();
         VelocityContext context = new VelocityContext();
 
-        doReplace(context);
+        populateContext(context);
 
         boolean evaluate = Velocity.evaluate(context, writer, "velocity class rendering", reader);
 
@@ -23,5 +23,5 @@ public abstract class VelocityReplacer implements Replacer {
 
     }
 
-    protected abstract void doReplace(VelocityContext context);
+    protected abstract void populateContext(VelocityContext context);
 }

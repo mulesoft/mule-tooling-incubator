@@ -6,9 +6,6 @@
     <feature id="org.mule.tooling.incubator.devkit.extension">
       <category name="org.mule.tooling.incubator.category.devkit"/>
     </feature>
-    <feature id="org.mule.tooling.incubator.installer.extension">
-      <category name="org.mule.tooling.incubator.category"/>
-    </feature>
     <feature id="org.mule.tooling.incubator.maven.extension">
         <category name="org.mule.tooling.incubator.category.maven"/>
     </feature>

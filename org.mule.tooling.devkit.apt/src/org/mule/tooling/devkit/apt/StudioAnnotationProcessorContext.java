@@ -97,6 +97,11 @@ public class StudioAnnotationProcessorContext implements Context {
             return dummy;
         }
 
+        @Override
+        public String getBuildDirectory() {
+            return "";
+        }
+
     }
 
     @Override

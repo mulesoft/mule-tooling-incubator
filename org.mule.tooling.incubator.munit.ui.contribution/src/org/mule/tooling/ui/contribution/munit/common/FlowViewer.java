@@ -1,6 +1,6 @@
 package org.mule.tooling.ui.contribution.munit.common;
 
-import org.mule.tooling.model.messageflow.Flow;
+import org.mule.tooling.model.messageflow.Container;
 
 /**
  * <p>
@@ -19,7 +19,7 @@ public interface FlowViewer {
      *            All the filters that must be satisfied by the shown flows
      *            </p>
      */
-    void show(Filter<Flow>... filters);
+    void show(Filter<Container>... filters);
 
     /**
      * <p>
