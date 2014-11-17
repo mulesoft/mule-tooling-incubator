@@ -219,11 +219,6 @@
                          icon="icons/coverage.gif"
                          style="push">
                 </command>
-                <command commandId="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand"
-                         label="Send to Palette"
-                         icon="icons/icon.png"
-                         style="push">
-                </command>
                 <separator name="javadoc" visible="true">
                 </separator>
                 <command commandId="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
