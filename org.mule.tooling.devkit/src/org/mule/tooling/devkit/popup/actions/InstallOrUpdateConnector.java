@@ -74,14 +74,16 @@ public class InstallOrUpdateConnector extends AbstractHandler {
 
                 private void getInstallablesFromRepo(final IProgressMonitor monitor, final List<IInstallableUnit> list, final URI uri) throws ProvisionException {
                     IMetadataRepository repo = ProvisioningUI.getDefaultUI().loadMetadataRepository(uri, false, null);
-                    repo.setProperty("name", selectedProject.getElementName() + " local Update Site");
-                    IQueryResult<IInstallableUnit> queryResult = repo.query(QueryUtil.createIUAnyQuery(), monitor);
+                    if (repo != null) {
+                        repo.setProperty("name", selectedProject.getElementName() + " local Update Site");
+                        IQueryResult<IInstallableUnit> queryResult = repo.query(QueryUtil.createIUAnyQuery(), monitor);
 
-                    for (Iterator<IInstallableUnit> iterator = queryResult.iterator(); iterator.hasNext();) {
-                        IInstallableUnit current = iterator.next();
-                        if (current.getId().endsWith("feature.group")) {
-                            list.add(current);
-                            break;
+                        for (Iterator<IInstallableUnit> iterator = queryResult.iterator(); iterator.hasNext();) {
+                            IInstallableUnit current = iterator.next();
+                            if (current.getId().endsWith("feature.group")) {
+                                list.add(current);
+                                break;
+                            }
                         }
                     }
                 }
