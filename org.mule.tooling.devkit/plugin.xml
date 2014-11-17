@@ -144,9 +144,6 @@
 			name="Generate Functional TestCases"
 			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand">
 		</command>
-		<command id="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
-			name="Test Coverage Report">
-		</command>
 		<command id="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
 			name="Create documentation">
 		</command>
@@ -212,11 +209,6 @@
                 <command commandId="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
                          label="Preview Documentation"
                          icon="icons/generate_doc.gif"
-                         style="push">
-                </command>
-                <command commandId="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
-                         label="Test Coverage Report"
-                         icon="icons/coverage.gif"
                          style="push">
                 </command>
                 <separator name="javadoc" visible="true">
@@ -381,12 +373,6 @@
 	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
          	</activeWhen>
          </handler>
-         <handler commandId="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
-         	class="org.mule.tooling.devkit.popup.actions.TestCoverageCommand">
-         	<activeWhen>
-	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
-         	</activeWhen>
-         </handler>
          <handler commandId="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
          	class="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand">
          	<activeWhen>
@@ -423,10 +409,6 @@
                 <command commandId="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
                          tooltip="Preview Documentation"
                          icon="icons/generate_doc.gif">
-                </command>
-                <command commandId="org.mule.tooling.devkit.popup.actions.TestCoverageCommand"
-                         tooltip="Test Coverage Report"
-                         icon="icons/coverage.gif">
                 </command>
                 <command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
                     tooltip="Run Interop Tests"
