@@ -28,6 +28,7 @@ import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.MuleRuntime;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.module.ExternalContributionMuleModule;
+import org.mule.tooling.core.module.ModuleContributionManager;
 import org.mule.tooling.incubator.gradle.GradlePluginConstants;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTParser;
@@ -83,7 +84,7 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 		
 		//get the available 
 		MuleCorePlugin.getDesignContext().updateMuleProject(muleProject);
-		Map<String, ExternalContributionMuleModule> modules = MuleCorePlugin.getModuleManager().getExternalContributionsMappedByBundleSymbolicName();		
+		Map<String, ExternalContributionMuleModule> modules = ModuleContributionManager.instance().getExternalContributionsMappedByBundleSymbolicName();		
 		
 		//iterate over the modules
 		for(String moduleKey : modules.keySet()) {
