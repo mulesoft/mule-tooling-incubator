@@ -28,9 +28,9 @@ import org.mule.api.annotations.param.Default;
  */
 @OAuth2( configElementName = "config-type", friendlyName="OAuth2 Configuration", authorizationUrl = "https://api.myconnector.com/uas/oauth/authorize", 
 accessTokenUrl = "https://api.myconnector.com/uas/oauth/accessToken", 
-accessTokenRegex = "FOO-EXPRESSION-ACCESS-TOKEN",
-expirationRegex = "FOO-EXPRESSION-EXPIRATION", 
-refreshTokenRegex = "FOO-EXPRESSION-REFRESH-TOKEN" )
+accessTokenRegex = "\"access_token\":\"([^&]+?)\"",
+expirationRegex = "\"expires_in\":([^&]+?),", 
+refreshTokenRegex = "\"refresh_token\":\"([^&]+?)\"" )
 public class ${project.strategyClassName}
 {
     /**
