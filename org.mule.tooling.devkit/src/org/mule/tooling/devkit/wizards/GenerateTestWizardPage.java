@@ -10,6 +10,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -61,6 +62,7 @@ public class GenerateTestWizardPage extends WizardPage {
     private static final String LABEL_FUNCTIONAL_NAME = "Generate Functional Test Data Files";
     private static final String LABEL_INTEROP_DATA_FILE = "Test Data File";
     private static final String EXTENSION_FILTER = "*.properties";
+    private static final String LABEL_PACKAGE_NAME = "Automation Package:";
 
     private final TestDataModelDto dataModel;
     private List<String> processors = new ArrayList<String>();
@@ -73,19 +75,21 @@ public class GenerateTestWizardPage extends WizardPage {
     private Boolean selectedFunctional = false;
     private CheckboxTableViewer viewer;
     private Button browserButton;
-    
+
     private Group functionalGroup;
     private Group interopGroup;
+
+    private Text txtAutomationPackage;
 
     public GenerateTestWizardPage(IProject selectedProject, TestDataModelDto dataModel) {
         super("Generation Options");
         setTitle("Test Scaffolding Generation");
         setDescription(GENERAL_MESSAGE);
-        
+
         this.dataModel = dataModel != null ? new TestDataModelDto(dataModel) : new TestDataModelDto();
         this.project = selectedProject;
         this.processors = getProjectProcessorsNames();
-        if (processors.isEmpty()){
+        if (processors.isEmpty()) {
             getWizard().performCancel();
         }
     }
@@ -96,7 +100,7 @@ public class GenerateTestWizardPage extends WizardPage {
         Composite container = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout(1, false);
         container.setLayout(layout);
-        
+
         GridData gdata = new GridData();
         gdata.horizontalAlignment = GridData.FILL;
         gdata.grabExcessHorizontalSpace = true;
@@ -107,31 +111,33 @@ public class GenerateTestWizardPage extends WizardPage {
         createFunctionalTestCasesGroup(container);
         createInteropPropertiesGroup(container);
         initializeFields();
-        
+
         setControl(container);
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 10, 0).margins(0, 0).spacing(0, 0).applyTo(container);
         GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(container, "org.mule.tooling.devkit.myId"); 
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(container, "org.mule.tooling.devkit.myId");
     }
 
     private void createFunctionalTestCasesGroup(Composite container) {
-        functionalGroup = UiUtils.createGroupWithTitle(container, GROUP_TITTLE_FUNCTIONAL_TESTCASES, 1);
+        functionalGroup = UiUtils.createGroupWithTitle(container, GROUP_TITTLE_FUNCTIONAL_TESTCASES, 2);
 
-        createGenerationTypeCheckboxInput(functionalGroup, FUNCTIONAL_FILES, 1, new SelectionAdapter() {
+        createGenerationTypeCheckboxInput(functionalGroup, FUNCTIONAL_FILES, 2, new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
                 selectedScafolding = ((Button) e.getSource()).getSelection();
             }
         });
-        
-        createGenerationTypeCheckboxInput(functionalGroup, LABEL_FUNCTIONAL_NAME, 1, new SelectionAdapter() {
+
+        createGenerationTypeCheckboxInput(functionalGroup, LABEL_FUNCTIONAL_NAME, 2, new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
                 selectedFunctional = ((Button) e.getSource()).getSelection();
             }
         });
+
+        createPackageInput(functionalGroup);
     }
 
     private void createInteropPropertiesGroup(Composite container) {
@@ -158,9 +164,10 @@ public class GenerateTestWizardPage extends WizardPage {
         DevkitUtils.setControlsEnable(false, interopGroup.getChildren());
         setPageComplete(false);
     }
-    
+
     private void createNameInput(Composite container) {
         ModifyListener interopFileListener = new ModifyListener() {
+
             @Override
             public void modifyText(ModifyEvent e) {
             }
@@ -168,6 +175,22 @@ public class GenerateTestWizardPage extends WizardPage {
 
         txtOutputFileName = initializeTextField(container, LABEL_INTEROP_DATA_FILE, TESTDATA_XML, 2, interopFileListener);
         txtOutputFileName.setText(TESTDATA_XML);
+    }
+
+    private void createPackageInput(Composite container) {
+        ModifyListener interopFileListener = new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+            }
+        };
+
+        CompilationUnit connectorClass = DevkitUtils.getConnectorClass(project);
+        if (connectorClass != null) {
+            dataModel.setAutomationPackage(connectorClass.getPackage().getName().toString() + ".automation");
+        }
+        txtAutomationPackage = initializeTextField(container, LABEL_PACKAGE_NAME, dataModel.getAutomationPackage(), 1, interopFileListener);
+        txtAutomationPackage.setText(dataModel.getAutomationPackage());
     }
 
     private void createFileInput(Composite container) {
@@ -218,7 +241,7 @@ public class GenerateTestWizardPage extends WizardPage {
                 fileDialog.setFilterNames(new String[] { "Properties(*.properties)" });
 
                 String selected = fileDialog.open();
-                
+
                 txtCredsFile.setText(selected);
             }
         });
@@ -272,8 +295,6 @@ public class GenerateTestWizardPage extends WizardPage {
         lbtCredentials.setText(text);
     }
 
-    
-    
     private void createProcessorsSelector(Composite parent) {
 
         Composite container = new Composite(parent, SWT.NULL);
@@ -299,7 +320,6 @@ public class GenerateTestWizardPage extends WizardPage {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(container, "org.mule.tooling.devkit.myId2");
     }
 
-
     private void createProcessorsTable(Composite container, Object input) {
 
         // define the TableViewer
@@ -317,11 +337,12 @@ public class GenerateTestWizardPage extends WizardPage {
 
         viewer.setContentProvider(ArrayContentProvider.getInstance());
         viewer.setComparator(new ViewerComparator() {
-          public int compare(Viewer viewer, Object e1, Object e2) {
-            return ((String) e1).compareTo((String) e2);
-          };
+
+            public int compare(Viewer viewer, Object e1, Object e2) {
+                return ((String) e1).compareTo((String) e2);
+            };
         });
-        
+
         viewer.setInput(input);
         viewer.setLabelProvider(new LabelProvider() {
 
@@ -329,22 +350,22 @@ public class GenerateTestWizardPage extends WizardPage {
                 return (String) element;
             }
         });
-        
-        viewer.getTable().addListener(SWT.Selection, new Listener() {
-        
-            public void handleEvent(Event event) {
-              if (event.detail == SWT.CHECK) {
-                if (viewer.getCheckedElements().length > 0){  
-                    enableGlobalFields();
 
-                }else{
-                    disableGlobalFields();
+        viewer.getTable().addListener(SWT.Selection, new Listener() {
+
+            public void handleEvent(Event event) {
+                if (event.detail == SWT.CHECK) {
+                    if (viewer.getCheckedElements().length > 0) {
+                        enableGlobalFields();
+
+                    } else {
+                        disableGlobalFields();
+                    }
                 }
-              }
             }
         });
     }
-    
+
     private void disableGlobalFields() {
         DevkitUtils.setControlsEnable(false, functionalGroup.getChildren());
         DevkitUtils.setControlsEnable(false, interopGroup.getChildren());
@@ -354,7 +375,7 @@ public class GenerateTestWizardPage extends WizardPage {
     private void enableGlobalFields() {
         DevkitUtils.setControlsEnable(true, functionalGroup.getChildren());
         DevkitUtils.setControlsEnable(true, interopGroup.getChildren());
-        
+
         setInteropInputEnable(false);
         setPageComplete(true);
     }
@@ -364,7 +385,7 @@ public class GenerateTestWizardPage extends WizardPage {
         txtOutputFileName.setEnabled(enabled);
         browserButton.setEnabled(enabled);
     }
-    
+
     public void createTableSelectionButton(Composite container, String text, final Boolean setChecked) {
 
         Button button = new Button(container, SWT.PUSH);
@@ -381,10 +402,10 @@ public class GenerateTestWizardPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 viewer.setAllChecked(setChecked);
-                if (viewer.getCheckedElements().length > 0){  
+                if (viewer.getCheckedElements().length > 0) {
                     enableGlobalFields();
 
-                }else{
+                } else {
                     disableGlobalFields();
                     setMessage(GENERAL_MESSAGE);
                 }
@@ -393,15 +414,16 @@ public class GenerateTestWizardPage extends WizardPage {
     }
 
     private List<String> getProjectProcessorsNames() {
-        
+
         List<String> names = new LinkedList<String>();
         List<MethodDeclaration> methods = new ArrayList<MethodDeclaration>();
-        
+
         try {
             methods = DevkitUtils.getProjectProcessors(project);
-            
-            if (methods.isEmpty()){
-                MessageDialog.openWarning(Display.getCurrent().getActiveShell(), "No processors found", "Unable to find any processor declaration, please select a connector with processors");
+
+            if (methods.isEmpty()) {
+                MessageDialog.openWarning(Display.getCurrent().getActiveShell(), "No processors found",
+                        "Unable to find any processor declaration, please select a connector with processors");
                 methods = getConnectorFromUserPrompt(methods);
             }
         } catch (FileNotFoundException e) {
@@ -409,7 +431,7 @@ public class GenerateTestWizardPage extends WizardPage {
             MessageDialog.openWarning(Display.getCurrent().getActiveShell(), "Connector not found", "Unable to find the connector class, please select one");
             methods = getConnectorFromUserPrompt(methods);
         }
-        
+
         for (MethodDeclaration proc : methods)
             names.add(proc.getName().toString());
 
@@ -420,33 +442,33 @@ public class GenerateTestWizardPage extends WizardPage {
         ResourceListSelectionDialog dialog = new ResourceListSelectionDialog(Display.getCurrent().getActiveShell(), project.getFolder(DevkitUtils.MAIN_JAVA_FOLDER), IResource.FILE);
         dialog.setTitle("Please select your connector's class");
 
-        while ((methods == null || methods.isEmpty()) && dialog.open() == 0){
-            
+        while ((methods == null || methods.isEmpty()) && dialog.open() == 0) {
+
             Object[] result = dialog.getResult();
-            
-            if (result != null){
+
+            if (result != null) {
                 IResource connectorResource = ((IResource) result[0]);
                 IJavaElement element = (IJavaElement) connectorResource.getAdapter(IJavaElement.class);
-                if (element.getElementType() == IJavaElement.COMPILATION_UNIT){ 
+                if (element.getElementType() == IJavaElement.COMPILATION_UNIT) {
                     try {
                         methods = DevkitUtils.getProjectProcessors(ASTUtils.parse((ICompilationUnit) element));
                     } catch (FileNotFoundException e1) {
                         e1.printStackTrace();
                     }
-                }    
+                }
             }
-            
-            if (methods == null || methods.isEmpty()){
+
+            if (methods == null || methods.isEmpty()) {
                 MessageDialog.openError(Display.getCurrent().getActiveShell(), "Invalid Connector", "No processors were found in the selected file");
             }
         }
         return methods;
     }
-    
-    private void saveInput(){
+
+    private void saveInput() {
 
         dataModel.setCredentialsFile(txtCredsFile.getText());
-            
+
         dataModel.setOutputFile(txtOutputFileName.getText());
 
         dataModel.setSelectedScafolding(selectedScafolding);
@@ -455,14 +477,15 @@ public class GenerateTestWizardPage extends WizardPage {
 
         dataModel.setExportInteropPolicy(ExportPolicy.UPDATE);
         dataModel.setExportFunctionalPolicy(ExportPolicy.UPDATE);
-        
+
+        dataModel.setAutomationPackage(txtAutomationPackage.getText());
         StringBuilder sb = new StringBuilder();
-        for(Object name: viewer.getCheckedElements()){
-            sb.append((String)name);
+        for (Object name : viewer.getCheckedElements()) {
+            sb.append((String) name);
             sb.append(",");
         }
-        
-       dataModel.setFilteredProcessors(sb.toString());
+
+        dataModel.setFilteredProcessors(sb.toString());
     }
 
     public TestDataModelDto getDataModel() {
