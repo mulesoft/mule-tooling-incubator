@@ -71,7 +71,7 @@ public class UpdateProjectClasspath {
     protected void scheduleWork(final IJavaProject project, IProgressMonitor monitor, WorkspaceJob updateJob) {
         updateJob.setUser(false);
         updateJob.setPriority(Job.DECORATE);
-        updateJob.setRule(project.getProject());
+        updateJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
         updateJob.schedule();
         updateJob.addJobChangeListener(new RefreshWhenDoneChangeListener(project));
         monitor.worked(20);
