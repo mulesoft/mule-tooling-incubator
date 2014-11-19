@@ -56,7 +56,8 @@ public class ModuleVisitor extends ASTVisitor {
     public boolean visit(CompilationUnit node) {
         compilationUnit = node;
         LocateAnnotationVisitor visitorConnector = new LocateAnnotationVisitor(0, ModelUtils.CONNECTOR_ANNOTATION).addAnnotation(ModelUtils.MODULE_ANNOTATION)
-                .addAnnotation(ModelUtils.BASIC_ANNOTATION).addAnnotation(ModelUtils.BASIC_AUTH_ANNOTATION).addAnnotation(ModelUtils.OAUTH_ANNOTATION).addAnnotation(ModelUtils.METADATA_CATEGORY_ANNOTATION);
+                .addAnnotation(ModelUtils.BASIC_ANNOTATION).addAnnotation(ModelUtils.BASIC_AUTH_ANNOTATION).addAnnotation(ModelUtils.OAUTH_ANNOTATION)
+                .addAnnotation(ModelUtils.METADATA_CATEGORY_ANNOTATION).addAnnotation(ModelUtils.HTTP_BASIC_AUTH_ANNOTATION);
 
         node.accept(visitorConnector);
         if (visitorConnector.getNode() != null || forceSearch) {
@@ -211,8 +212,8 @@ public class ModuleVisitor extends ASTVisitor {
                     if (superType != null && superType.isSimpleType()) {
                         try {
                             IJavaElement element = superType.resolveBinding().getJavaElement();
-                            if(element.getParent() instanceof IClassFile){
-                                //Class file, we have no source, so avoid parsing it
+                            if (element.getParent() instanceof IClassFile) {
+                                // Class file, we have no source, so avoid parsing it
                                 return true;
                             }
                             CompilationUnit parse = ASTUtils.parse((ICompilationUnit) element.getParent());
