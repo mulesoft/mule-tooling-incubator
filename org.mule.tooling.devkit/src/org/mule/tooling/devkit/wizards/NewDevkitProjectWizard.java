@@ -18,6 +18,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -27,8 +28,10 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -208,15 +211,15 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
      * @throws CoreException
      */
     private IJavaProject doFinish(ConnectorMavenModel mavenModel, IProgressMonitor monitor) throws CoreException {
-        String artifactId = mavenModel.getArtifactId();
 
         String wsdlFileName = "Dummy";
 
-        monitor.beginTask("Creating project" + artifactId, 20);
+        monitor.beginTask("Creating project" + mavenModel.getProjectName(), 20);
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
-        IProject project = createProject(artifactId, monitor, root);
-        IJavaProject javaProject = JavaCore.create(root.getProject(artifactId));
+        IPath path = StringUtils.isBlank(mavenModel.getProjectLocation()) ? null : Path.fromOSString(mavenModel.getProjectLocation());
+        IProject project = createProject(mavenModel.getProjectName(), path, monitor, root);
+        IJavaProject javaProject = JavaCore.create(root.getProject(mavenModel.getProjectName()));
 
         ProjectGenerator generator = ProjectGeneratorFactory.newInstance();
 
@@ -240,7 +243,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         templateFileWriter.apply("/templates/CHANGELOG.tmpl", "CHANGELOG.md", classReplacer);
         templateFileWriter.apply("/templates/LICENSE_HEADER.txt.tmpl", "LICENSE_HEADER.txt", classReplacer);
         templateFileWriter.apply("/templates/LICENSE.tmpl", "LICENSE.md", new NullReplacer());
-        String uncammelName = DevkitUtils.toConnectorName(mavenModel.getConnectorName());
+        String uncammelName = mavenModel.getModuleName();
         ImageWriter imageWriter = new ImageWriter(project, nullMonitor);
         imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(uncammelName));
         imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
@@ -284,9 +287,9 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
         String mainTemplatePath = mavenModel.getApiType().equals(ApiType.GENERIC) ? MAIN_NONE_ABSTRACT_TEMPLATE_PATH : MAIN_TEMPLATE_PATH;
         templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, classReplacer);
-        create(mavenModel.getConnectorName(), nullMonitor, mainTemplatePath, getTestResourcePath(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName()),
-                mavenModel.getPackage(), project, classReplacer, mavenModel.getAuthenticationType(), mavenModel.getApiType(), mavenModel.getHasQuery(),
-                mavenModel.getDataSenseEnabled());
+        create(mavenModel.getConnectorName(), mavenModel.getModuleName(), nullMonitor, mainTemplatePath, getTestResourcePath(),
+                DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName()), mavenModel.getPackage(), project, classReplacer, mavenModel.getAuthenticationType(),
+                mavenModel.getApiType(), mavenModel.getHasQuery(), mavenModel.getDataSenseEnabled());
 
         DevkitUtils.configureDevkitAPT(javaProject);
 
@@ -299,15 +302,15 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         return MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy/ConnectorConnectionStrategy.java";
     }
 
-    protected void create(String moduleName, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className, String packageName,
-            IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, ApiType apiType, boolean hasQuery, boolean hasDatasense) throws CoreException {
-        String uncammelName = DevkitUtils.toConnectorName(moduleName);
+    protected void create(String moduleName, String namespace, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className,
+            String packageName, IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, ApiType apiType, boolean hasQuery, boolean hasDatasense)
+            throws CoreException {
         TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
         if (!apiType.equals(ApiType.SOAP)) {
             fileWriter.apply(mainTemplatePath, buildMainTargetFilePath(packageName, className), classReplacer);
         }
         if (!(apiType.equals(ApiType.REST) || apiType.equals(ApiType.SOAP))) {
-            fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(uncammelName), classReplacer);
+            fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(namespace), classReplacer);
             fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);
             if (hasDatasense) {
                 fileWriter.apply(TEST_DATASENSE_TEMPLATE_PATH, buildDataSenseTestTargetFilePath(packageName, className), classReplacer);
@@ -317,7 +320,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
             }
         }
 
-        fileWriter.apply("/templates/example.tmpl", getExampleFileName(uncammelName), classReplacer);
+        fileWriter.apply("/templates/example.tmpl", getExampleFileName(namespace), classReplacer);
 
     }
 
@@ -387,6 +390,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private ConnectorMavenModel getPopulatedModel() {
         final ConnectorMavenModel mavenModel = new ConnectorMavenModel(advancePage.getVersion(), advancePage.getGroupId(), advancePage.getArtifactId(), page.getCategory(),
                 advancePage.getPackage());
+        mavenModel.setProjectLocation(page.getLocation());
         mavenModel.setAddGitInformation(advancePage.getAddGitHubInfo());
         mavenModel.setGitConnection(advancePage.getConnection());
         mavenModel.setGitDevConnection(advancePage.getDevConnection());
@@ -401,7 +405,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         mavenModel.setWsdlPath(getWsdlPath());
         mavenModel.setApiType(getApiType());
         mavenModel.setAuthenticationType(getAuthenticationType());
-        mavenModel.setModuleName(DevkitUtils.toConnectorName(mavenModel.getConnectorName()));
+        mavenModel.setModuleName(page.getConnectorNamespace());
+        mavenModel.setProjectName(page.getProjectName());
         return mavenModel;
     }
 
@@ -426,16 +431,19 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         }
     }
 
-    private IProject createProject(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root) throws CoreException {
+    private IProject createProject(String artifactId, IPath path, IProgressMonitor monitor, IWorkspaceRoot root) throws CoreException {
 
-        IProjectDescription projectDescription = getProjectDescription(root, artifactId);
+        IProjectDescription projectDescription = getProjectDescription(root, artifactId, path);
 
         return getProjectWithDescription(artifactId, monitor, root, projectDescription);
     }
 
-    private IProjectDescription getProjectDescription(IWorkspaceRoot root, String artifactId) throws CoreException {
+    private IProjectDescription getProjectDescription(IWorkspaceRoot root, String artifactId, IPath path) throws CoreException {
         IProjectDescription projectDescription = root.getWorkspace().newProjectDescription(artifactId);
         projectDescription.setNatureIds(new String[] { JavaCore.NATURE_ID, DevkitNature.NATURE_ID });
+        if (path != null) {
+            projectDescription.setLocationURI(path.toFile().toURI());
+        }
         ICommand[] commands = projectDescription.getBuildSpec();
 
         ICommand[] newCommands = new ICommand[commands.length + 1];

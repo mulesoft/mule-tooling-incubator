@@ -20,20 +20,20 @@ public abstract class AbstractDevkitProjectWizzard extends Wizard {
         return project;
     }
 
-    protected String getResourceExampleFileName(String connectorName) {
-        return DevkitUtils.TEST_RESOURCES_FOLDER + "/" + connectorName.toLowerCase() + "-config.xml";
+    protected String getResourceExampleFileName(String namespace) {
+        return DevkitUtils.TEST_RESOURCES_FOLDER + "/" + namespace + "-config.xml";
     }
 
-    protected String getIcon48FileName(String connectorName) {
-        return "icons/" + connectorName.toLowerCase() + "-connector-48x32.png";
+    protected String getIcon48FileName(String namespace) {
+        return "icons/" + namespace + "-connector-48x32.png";
     }
 
-    protected String getIcon24FileName(String connectorName) {
-        return "icons/" + connectorName.toLowerCase() + "-connector-24x16.png";
+    protected String getIcon24FileName(String namespace) {
+        return "icons/" + namespace + "-connector-24x16.png";
     }
 
-    protected String getExampleFileName(String connectorName) {
-        return "doc" + "/" + connectorName.toLowerCase() + "-connector.xml.sample";
+    protected String getExampleFileName(String namespace) {
+        return "doc" + "/" + namespace + "-connector.xml.sample";
     }
 
     protected String buildMainTargetFilePath(String packageName, String className) {
