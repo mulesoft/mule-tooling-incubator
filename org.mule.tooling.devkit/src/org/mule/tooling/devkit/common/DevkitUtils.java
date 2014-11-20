@@ -308,17 +308,34 @@ public class DevkitUtils {
 
     private static String splitWithSeparator(String camelCaseName, String separator) {
         StringBuilder result = new StringBuilder();
-        String[] parts = camelCaseName.split("(?<!^)(?=[A-Z])");
+        char[] characters = camelCaseName.toCharArray();
 
-        boolean wasSizeOne = false;
-        for (int i = 0; i < parts.length; i++) {
-            if (parts[i].length() == 1) {
-                result.append(parts[i]);
-                wasSizeOne = true;
+        boolean wasDigit = false;
+        boolean waslowerCase = false;
+        for (int i = 0; i < characters.length; i++) {
+            char current = characters[i];
+            if (current == '-') {
+                waslowerCase = false;
+                wasDigit = false;
+                result.append(current);
+            } else if (Character.isDigit(current)) {
+                result.append(current);
+                wasDigit = true;
+            } else if (Character.isLowerCase(current)) {
+                waslowerCase = true;
+                result.append(current);
             } else {
-
-                result.append(((wasSizeOne) ? separator : "") + parts[i] + (i < parts.length - 1 ? separator : ""));
-                wasSizeOne = false;
+                if (wasDigit || waslowerCase) {
+                    result.append("-");
+                } else if (i > 0 && i < characters.length-1) {
+                    // If this is not the first character,and  If the next caracter is a lowercase, this uppercase is actually from the next word
+                    if (Character.isLowerCase(characters[i + 1])) {
+                        result.append("-");
+                    }
+                }
+                result.append(current);
+                waslowerCase = false;
+                wasDigit = false;
             }
         }
 
