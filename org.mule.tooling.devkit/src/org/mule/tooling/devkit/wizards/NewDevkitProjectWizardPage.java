@@ -709,4 +709,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         }
         return file.canWrite();
     }
+    
+    public boolean usesDefaultValues(){
+        return useDefaultValuesCheckbox.getSelection();
+    }
 }

@@ -390,7 +390,9 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private ConnectorMavenModel getPopulatedModel() {
         final ConnectorMavenModel mavenModel = new ConnectorMavenModel(advancePage.getVersion(), advancePage.getGroupId(), advancePage.getArtifactId(), page.getCategory(),
                 advancePage.getPackage());
-        mavenModel.setProjectLocation(page.getLocation());
+        if (!page.usesDefaultValues()) {
+            mavenModel.setProjectLocation(page.getLocation());
+        }
         mavenModel.setAddGitInformation(advancePage.getAddGitHubInfo());
         mavenModel.setGitConnection(advancePage.getConnection());
         mavenModel.setGitDevConnection(advancePage.getDevConnection());

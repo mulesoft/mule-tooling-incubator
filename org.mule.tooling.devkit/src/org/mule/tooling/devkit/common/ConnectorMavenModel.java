@@ -1,7 +1,5 @@
 package org.mule.tooling.devkit.common;
 
-import org.eclipse.core.runtime.IPath;
-
 public class ConnectorMavenModel {
 
     private ApiType apiType;
