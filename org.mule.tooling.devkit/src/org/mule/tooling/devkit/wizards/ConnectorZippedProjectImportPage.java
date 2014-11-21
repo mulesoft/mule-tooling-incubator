@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
@@ -190,7 +189,7 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
      * 
      * @return
      */
-    public boolean performFinish(IWorkbenchWindow windowShellProvider) {
+    public boolean performFinish() {
         final String zipFileName = zipChooser.getFilePath();
         final File zipFile = new File(zipFileName);
         if (!zipFile.exists()) {

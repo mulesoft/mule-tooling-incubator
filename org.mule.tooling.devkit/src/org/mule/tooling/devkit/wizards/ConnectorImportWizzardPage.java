@@ -81,8 +81,6 @@ public class ConnectorImportWizzardPage extends WizardPage {
     /** Projects dropdown */
     protected ComboViewer projects;
 
-    private Composite composite;
-
     protected Text name;
 
     private Map<String, List<Combo>> fieldsWithHistory;
@@ -98,7 +96,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
 
     private boolean mavenFailure = false;
 
-    public ConnectorImportWizzardPage(IJavaProject selected) {
+    public ConnectorImportWizzardPage() {
         super(PAGE_ID);
         setTitle("Import Anypoint Connector Project");
         setDescription("Import an existing Anypoint Connector");
@@ -109,7 +107,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
     }
 
     public void createControl(Composite parent) {
-        composite = new Composite(parent, SWT.NULL);
+        Composite composite = new Composite(parent, SWT.NULL);
 
         GridLayout layout = new GridLayout(3, false);
         composite.setLayout(layout);
@@ -276,11 +274,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
         projectTreeViewer.refresh();
         projectTreeViewer.expandAll();
         testMaven();
-        setPageComplete();
-    }
-
-    public Composite getControl() {
-        return this.composite;
+        setPageComplete(false);
     }
 
     /**
@@ -292,7 +286,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
 
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
-                monitor.beginTask("Importing modules", items.length);
+                monitor.beginTask("Importing modules", 100);
                 for (int index = 0; index < items.length; index++) {
                     final MavenInfo mavenProject = (MavenInfo) items[index];
 
@@ -321,9 +315,10 @@ public class ConnectorImportWizzardPage extends WizardPage {
                             }
                         }
                     } finally {
-                        monitor.worked(1);
+
                     }
                 }
+                monitor.worked(100);
                 monitor.done();
             }
         };
@@ -488,6 +483,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
             projectTreeViewer.refresh();
             projectTreeViewer.expandAll();
             selectecAll();
+            validate();
         } catch (CoreException e1) {
             e1.printStackTrace();
         }
