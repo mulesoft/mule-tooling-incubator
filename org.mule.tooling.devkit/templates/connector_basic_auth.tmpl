@@ -5,7 +5,7 @@
 
 package ${project.package}.strategy;
 
-import org.mule.api.annotations.components.BasicAuth;
+import org.mule.api.annotations.components.ConnectionManagement;
 import org.mule.api.annotations.TestConnectivity;
 import org.mule.api.annotations.Connect;
 import org.mule.api.annotations.ValidateConnection;
@@ -22,7 +22,7 @@ import org.mule.api.annotations.param.Default;
  *
  * @author MuleSoft, Inc.
  */
-@BasicAuth(configElementName = "config-type", friendlyName = "Basic Auth type strategy")
+@ConnectionManagement(configElementName = "config-type", friendlyName = "Basic Auth type strategy")
 public class ${project.strategyClassName}
 {
     /**
