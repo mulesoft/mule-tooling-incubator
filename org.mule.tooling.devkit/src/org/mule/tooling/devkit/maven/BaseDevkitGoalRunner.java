@@ -7,6 +7,7 @@ import java.io.PipedOutputStream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.MessageConsole;
@@ -18,6 +19,7 @@ import org.mule.tooling.maven.runner.MavenRunnerBuilder;
 import org.mule.tooling.maven.runner.SyncGetResultCallback;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.preferences.MavenPreferences;
+import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.maven.MavenOutputToMonitorRedirectorThread;
 import org.mule.tooling.maven.utils.OutputRedirectorThread;
 import org.mule.tooling.maven.utils.RunnableUtils;
@@ -89,6 +91,11 @@ public class BaseDevkitGoalRunner {
         StringBuilder commandString = new StringBuilder();
         for (String command : commands) {
             commandString.append(command + " ");
+        }
+        IPreferenceStore pref = DevkitUIPlugin.getDefault().getPreferenceStore();
+        boolean debug = pref.getBoolean(org.mule.tooling.devkit.preferences.WorkbenchPreferencePage.DEVKIT_DEBUG_MODE);
+        if (debug) {
+            commandString.append(" -X ");
         }
         commandString.append("-f " + pomFile.getRawLocation().toFile().getAbsolutePath());
         mavenRunner.runBare(MavenCommandLine.fromString(commandString.toString()), callback, pipedOutputStream);

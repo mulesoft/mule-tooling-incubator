@@ -437,4 +437,13 @@
             </parameter>
       </key>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+      		category="org.mule.tooling.ui.messageflowpage"
+            class="org.mule.tooling.devkit.preferences.WorkbenchPreferencePage"
+            id="org.mule.tooling.devkit.preferences"
+            name="Devkit">
+      </page>
+   </extension>
 </plugin>
