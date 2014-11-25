@@ -286,7 +286,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
 
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
-                monitor.beginTask("Importing modules", 100);
+                monitor.beginTask("Importing modules", items.length);
                 for (int index = 0; index < items.length; index++) {
                     final MavenInfo mavenProject = (MavenInfo) items[index];
 
@@ -315,10 +315,9 @@ public class ConnectorImportWizzardPage extends WizardPage {
                             }
                         }
                     } finally {
-
+                        monitor.worked(1);
                     }
                 }
-                monitor.worked(100);
                 monitor.done();
             }
         };
