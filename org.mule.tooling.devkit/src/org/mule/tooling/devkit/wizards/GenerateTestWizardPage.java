@@ -62,7 +62,7 @@ public class GenerateTestWizardPage extends WizardPage {
     private static final String LABEL_FUNCTIONAL_NAME = "Generate Functional Test Data Files";
     private static final String LABEL_INTEROP_DATA_FILE = "Test Data File";
     private static final String EXTENSION_FILTER = "*.properties";
-    private static final String LABEL_PACKAGE_NAME = "Automation Package:";
+    private static final String LABEL_PACKAGE_NAME = "Package:";
 
     private final TestDataModelDto dataModel;
     private List<String> processors = new ArrayList<String>();

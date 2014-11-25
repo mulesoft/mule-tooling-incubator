@@ -21,7 +21,9 @@ public class ConnectorMavenModel {
     private String moduleName;
     private String connectorClassName;
     private String strategyClassName;
-
+    private String projectName;
+    private String projectLocation;
+    
     public String getPackageName() {
         return packageName;
     }
@@ -192,6 +194,22 @@ public class ConnectorMavenModel {
 
     public void setWsdlPath(String wsdlPath) {
         this.wsdlPath = wsdlPath;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getProjectLocation() {
+        return projectLocation;
+    }
+
+    public void setProjectLocation(String projectLocation) {
+        this.projectLocation = projectLocation;
     }
 
 }

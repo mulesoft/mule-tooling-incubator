@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
-import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.builder.DevkitNature;
@@ -75,15 +74,8 @@ public class DevkitUtils {
     public static final String POM_TEMPLATE_PATH = "/templates/devkit-pom.xml.tmpl";
     public static final String UPDATE_SITE_FOLDER = "/target/update-site/";
 
-    public static final String DEVKIT_3_4_0 = "3.4.0";
-    public static final String DEVKIT_3_4_1 = "3.4.1";
-    public static final String DEVKIT_3_4_2 = "3.4.2";
-    public static final String DEVKIT_3_5_0 = "3.5.0";
-    public static final String DEVKIT_3_5_1 = "3.5.1";
-    public static final String DEVKIT_3_5_2 = "3.5.2";
     public static final String DEVKIT_CURRENT = "3.6.0-M3-SNAPSHOT";
 
-    public static final String devkitVersions[] = { DEVKIT_3_4_0, DEVKIT_3_4_1, DEVKIT_3_4_2, DEVKIT_3_5_0, DEVKIT_3_5_1, DEVKIT_3_5_2 };
     public static final String CATEGORY_COMMUNITY = "Community";
     public static final String CATEGORY_STANDARD = "Standard";
     public static final String connectorCategories[] = { CATEGORY_COMMUNITY, CATEGORY_STANDARD };
@@ -344,22 +336,6 @@ public class DevkitUtils {
 
     public static boolean isReserved(String word) {
         return ArrayUtils.contains(RESERVED_NAMES, word);
-    }
-
-    public static String getDevkitVersionForServerDefinition(ServerDefinition selectedServerDefinition) {
-        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_4_2))
-            return DevkitUtils.DEVKIT_3_4_2;
-        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_4_1))
-            return DevkitUtils.DEVKIT_3_4_1;
-        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_4_0))
-            return DevkitUtils.DEVKIT_3_4_0;
-        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_5_0))
-            return DevkitUtils.DEVKIT_3_5_0;
-        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_5_1))
-            return DevkitUtils.DEVKIT_3_5_1;
-        if (selectedServerDefinition.getVersion().contains(DevkitUtils.DEVKIT_3_5_2))
-            return DevkitUtils.DEVKIT_3_5_2;
-        return DevkitUtils.DEVKIT_CURRENT;
     }
 
     public static void configureDevkitAPT(IJavaProject javaProject) throws CoreException {
