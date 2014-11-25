@@ -3,7 +3,6 @@ package org.mule.tooling.devkit.wizards;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Wizard for importing a Mule project into the workspace from a deployable zip file.
@@ -13,7 +12,6 @@ public class ConnectorZippedProjectImportWizard extends AbstractDevkitProjectWiz
 
     private ConnectorZippedProjectImportPage mainPage;
 
-    private IWorkbenchWindow window;
     public ConnectorZippedProjectImportWizard() {
         super();
         setNeedsProgressMonitor(true);
@@ -26,7 +24,6 @@ public class ConnectorZippedProjectImportWizard extends AbstractDevkitProjectWiz
 
     public void init(final IWorkbench workbench, final IStructuredSelection currentSelection) {
         setWindowTitle("Anypoint Connector Import from Zip Archive");
-        window = workbench.getActiveWorkbenchWindow();
     }
 
     public boolean performCancel() {
@@ -34,6 +31,6 @@ public class ConnectorZippedProjectImportWizard extends AbstractDevkitProjectWiz
     }
 
     public boolean performFinish() {
-        return mainPage.performFinish(window);
+        return mainPage.performFinish();
     }
 }
