@@ -34,7 +34,7 @@
 					<iterate>
 						<adapt type="org.eclipse.core.resources.IResource">
 							<and>
-								<test property="org.mule.tooling.maven.isMavenProject" forcePluginActivation="true"/>
+								<test property="org.mule.tooling.maven.isMavenBased" forcePluginActivation="true"/>
 							</and>
 						</adapt>
 					</iterate>
