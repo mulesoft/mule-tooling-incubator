@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -126,6 +127,7 @@ public class GenerateTestWizardPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 selectedScafolding = ((Button) e.getSource()).getSelection();
+                updateFinishAllowedStatus();
             }
         });
 
@@ -134,6 +136,7 @@ public class GenerateTestWizardPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 selectedFunctional = ((Button) e.getSource()).getSelection();
+                updateFinishAllowedStatus();
             }
         });
 
@@ -148,6 +151,7 @@ public class GenerateTestWizardPage extends WizardPage {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 selectedInterop = ((Button) e.getSource()).getSelection();
+                updateFinishAllowedStatus();
 
                 txtCredsFile.setEnabled(selectedInterop);
                 txtOutputFileName.setEnabled(selectedInterop);
@@ -157,6 +161,11 @@ public class GenerateTestWizardPage extends WizardPage {
         createNameInput(interopGroup);
         createFileInput(interopGroup);
         createBrowser(interopGroup);
+    }
+
+    private void updateFinishAllowedStatus(){
+        boolean completed = (selectedFunctional || selectedScafolding || selectedInterop);
+        setPageComplete(completed);
     }
 
     private void initializeFields() {
@@ -170,6 +179,7 @@ public class GenerateTestWizardPage extends WizardPage {
 
             @Override
             public void modifyText(ModifyEvent e) {
+                updateFinishAllowedStatus();
             }
         };
 
@@ -182,6 +192,7 @@ public class GenerateTestWizardPage extends WizardPage {
 
             @Override
             public void modifyText(ModifyEvent e) {
+                updateFinishAllowedStatus();
             }
         };
 
@@ -209,12 +220,12 @@ public class GenerateTestWizardPage extends WizardPage {
             public void modifyText(ModifyEvent e) {
                 String text = ((Text) e.widget).getText();
 
-                if (!text.isEmpty() && !new File(text).exists()) {
+                if (!StringUtils.isBlank(text) && !new File(text).exists()) {
                     setMessage("Invalid credentials file. File does not exist", IMessageProvider.ERROR);
                     setPageComplete(false);
                 } else {
                     setMessage(GENERAL_MESSAGE, IMessageProvider.INFORMATION);
-                    setPageComplete(true);
+                    updateFinishAllowedStatus();
                 }
             }
         });
@@ -377,7 +388,7 @@ public class GenerateTestWizardPage extends WizardPage {
         DevkitUtils.setControlsEnable(true, interopGroup.getChildren());
 
         setInteropInputEnable(false);
-        setPageComplete(true);
+        updateFinishAllowedStatus();
     }
 
     private void setInteropInputEnable(boolean enabled) {
@@ -479,13 +490,16 @@ public class GenerateTestWizardPage extends WizardPage {
         dataModel.setExportFunctionalPolicy(ExportPolicy.UPDATE);
 
         dataModel.setAutomationPackage(txtAutomationPackage.getText());
+        dataModel.setFilteredProcessors(getSelectedProcessorsAsCsv());
+    }
+
+    private String getSelectedProcessorsAsCsv() {
         StringBuilder sb = new StringBuilder();
         for (Object name : viewer.getCheckedElements()) {
             sb.append((String) name);
             sb.append(",");
         }
-
-        dataModel.setFilteredProcessors(sb.toString());
+        return sb.toString();
     }
 
     public TestDataModelDto getDataModel() {

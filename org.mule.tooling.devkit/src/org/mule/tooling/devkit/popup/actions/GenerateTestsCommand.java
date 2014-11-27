@@ -18,8 +18,10 @@ import org.mule.tooling.devkit.wizards.GenerateTestWizard;
 
 public class GenerateTestsCommand extends AbstractMavenCommandRunner {
 
-    private static final String TEST_FLOWS_XML = "src/test/resources/generated/automation-test-flows.xml";
-    private static final String SPRING_BEANS_XML = "src/test/resources/generated/AutomationSpringBeans.xml";
+    private static final String FUNCTIONAL_FILES_DIALOG_TITLE = "Functional files";
+    private static final String INTEROP_FILES_DIALOG_TITLE = "Interop files";
+    private static final String TEST_FLOWS_XML = "automation-test-flows.xml";
+    private static final String SPRING_BEANS_XML = "AutomationSpringBeans.xml";
     private final String generateAll = "all";
     private final String generateInterop = "interop";
     private final String generateFunctional = "functional";
@@ -103,10 +105,10 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
         boolean skip = false;
         ExportTypeSelectionDialog selectionDialog;
         if (testdataDto.selectedInterop()) {
-            if (selectedProject.getFile("src/test/resources/generated/" + testdataDto.getOutputFile()).exists()
-                    || selectedProject.getFile("src/test/resources/generated/" + testdataDto.getOutputFile().replace(".xml", ".-override.xml")).exists()) {
-
-                selectionDialog = new ExportTypeSelectionDialog(Display.getCurrent().getActiveShell(), "Interop files");
+            if (fileExistsInTestResources(selectedProject, testdataDto.getOutputFile()) ||
+                fileExistsInTestResources(selectedProject, testdataDto.getOutputFile().replace(".xml", ".-override.xml"))) 
+            {
+                selectionDialog = new ExportTypeSelectionDialog(Display.getCurrent().getActiveShell(), INTEROP_FILES_DIALOG_TITLE);
                 skip = (selectionDialog.open() == 1);
                 testdataDto.setExportInteropPolicy(selectionDialog.getSelectedPolicy());
             }
@@ -119,9 +121,9 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
         boolean skip = false;
         ExportTypeSelectionDialog selectionDialog;
         if (testdataDto.selectedFunctional()) {
-            if (selectedProject.getFile(SPRING_BEANS_XML).exists() || selectedProject.getFile(TEST_FLOWS_XML).exists()) {
+            if (fileExistsInTestResources(selectedProject, SPRING_BEANS_XML) || fileExistsInTestResources(selectedProject, TEST_FLOWS_XML)) {
 
-                selectionDialog = new ExportTypeSelectionDialog(Display.getCurrent().getActiveShell(), "Functional files");
+                selectionDialog = new ExportTypeSelectionDialog(Display.getCurrent().getActiveShell(), FUNCTIONAL_FILES_DIALOG_TITLE);
                 skip = (selectionDialog.open() == 1);
                 testdataDto.setExportFunctionalPolicy(selectionDialog.getSelectedPolicy());
             }
@@ -141,6 +143,10 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
             return generateInterop;
 
         return "";
+    }
+    
+    private boolean fileExistsInTestResources(IProject selectedProject, String filename){
+        return selectedProject.getFile(DevkitUtils.TEST_RESOURCES_FOLDER +"/"+ filename).exists();
     }
 
 }
