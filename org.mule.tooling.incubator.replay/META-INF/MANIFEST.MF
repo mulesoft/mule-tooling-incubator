@@ -19,5 +19,5 @@ Require-Bundle: org.eclipse.ui,
  org.mule.tooling.metadata;bundle-version="[4.0.0,5.0.0)",
  org.mule.tooling.utils;bundle-version="[4.0.0,5.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
