@@ -108,7 +108,7 @@
             class="org.mule.tooling.devkit.treeview.DevkitView"
             icon="icons/icon.png"
             id="org.mule.tooling.devkit.treeview.DevkitView"
-            name="Devkit">
+            name="DevKit">
       </view>
    </extension>
    <extension

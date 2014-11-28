@@ -21,14 +21,17 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.quickfix.LocateAnnotationVisitor;
+import org.mule.tooling.devkit.treeview.model.MetaDataCategory;
 import org.mule.tooling.devkit.treeview.model.ModelUtils;
 import org.mule.tooling.devkit.treeview.model.Module;
 import org.mule.tooling.devkit.treeview.model.ModuleField;
+import org.mule.tooling.devkit.treeview.model.ModuleFieldStragegy;
 import org.mule.tooling.devkit.treeview.model.ModuleMethod;
 import org.mule.tooling.devkit.treeview.model.ModuleSource;
 import org.mule.tooling.devkit.treeview.model.ModuleTransformer;
 import org.mule.tooling.devkit.treeview.model.ProjectRoot;
 import org.mule.tooling.devkit.treeview.model.Property;
+import org.mule.tooling.devkit.treeview.model.Strategy;
 
 public class ModuleVisitor extends ASTVisitor {
 
@@ -61,9 +64,25 @@ public class ModuleVisitor extends ASTVisitor {
 
         node.accept(visitorConnector);
         if (visitorConnector.getNode() != null || forceSearch) {
-            module = new Module(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
-
+            visitorConnector = new LocateAnnotationVisitor(0, ModelUtils.CONNECTOR_ANNOTATION).addAnnotation(ModelUtils.MODULE_ANNOTATION);
+            node.accept(visitorConnector);
+            if (visitorConnector.getNode() != null) {
+                module = new Module(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
+            } else {
+                visitorConnector = new LocateAnnotationVisitor(0, ModelUtils.METADATA_CATEGORY_ANNOTATION);
+                node.accept(visitorConnector);
+                if (visitorConnector.getNode() != null) {
+                    module = new MetaDataCategory(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
+                } else {
+                    if (forceSearch) {
+                        module = new Module(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
+                    } else {
+                        module = new Strategy(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
+                    }
+                }
+            }
             root.getModules().add(module);
+            forceSearch = false;
             return true;
         }
         module = null;
@@ -139,9 +158,16 @@ public class ModuleVisitor extends ASTVisitor {
             connectors.add((TypeDeclaration) node.getParent());
             return true;
         }
-        if (ModelUtils.annotationMatches(node.getTypeName(), ModelUtils.CONFIGURABLE_ANNOTATION)) {
+        if (ModelUtils.annotationMatches(node.getTypeName(), ModelUtils.CONFIGURABLE_ANNOTATION)
+                || ModelUtils.annotationMatches(node.getTypeName(), ModelUtils.CONNECTION_STRATEGY_ANNOTATION)) {
             configurable.add((FieldDeclaration) node.getParent());
-            ModuleField field = new ModuleField(module, (ICompilationUnit) compilationUnit.getJavaElement(), node.getParent());
+
+            ModuleField field = null;
+            if (ModelUtils.annotationMatches(node.getTypeName(), ModelUtils.CONFIGURABLE_ANNOTATION))
+                field = new ModuleField(module, (ICompilationUnit) compilationUnit.getJavaElement(), node.getParent());
+            else
+                field = new ModuleFieldStragegy(module, (ICompilationUnit) compilationUnit.getJavaElement(), node.getParent());
+
             field.setField((FieldDeclaration) node.getParent());
             try {
                 if (module == null)

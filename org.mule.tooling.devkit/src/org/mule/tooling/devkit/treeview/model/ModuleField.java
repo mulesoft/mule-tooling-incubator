@@ -9,7 +9,7 @@ import org.mule.tooling.devkit.DevkitImages;
 
 public class ModuleField extends DefaultNodeItem {
 
-	public ModuleField(NodeItem parent, ICompilationUnit cu, ASTNode node) {
+    public ModuleField(NodeItem parent, ICompilationUnit cu, ASTNode node) {
 		super(parent, cu, node);
 	}
 
