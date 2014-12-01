@@ -56,8 +56,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/spring-core.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spring-expression.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/stringtemplate.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tomcat-apr.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tomcat-util.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/validation-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-plugin-oauth-client.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mule-devkit-plugin-rest-client.jar"/>
