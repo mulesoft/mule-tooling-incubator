@@ -9,7 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.mule.tooling.ui;bundle-version="[5.0.0,6.0.0)",
  org.mule.tooling.core;bundle-version="[5.0.0,6.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Eclipse-BundleShape: dir
 Import-Package: org.eclipse.core.resources,
  org.eclipse.jdt.core,
@@ -17,3 +17,4 @@ Import-Package: org.eclipse.core.resources,
  org.mule.tooling.core.model,
  org.mule.tooling.core.utils,
  org.mule.tooling.messageflow.events
+Bundle-ClassPath: lib/mule-module-aop.jar
