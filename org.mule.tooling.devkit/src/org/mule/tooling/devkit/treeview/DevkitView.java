@@ -206,18 +206,27 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
 
     @Override
     public void resourceChanged(IResourceChangeEvent event) {
-        if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+        try {
+            if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
 
-            if (event.getSource() instanceof IWorkspace) {
-                IWorkspace workspace = (IWorkspace) event.getSource();
+                if (event.getSource() instanceof IWorkspace) {
+                    IWorkspace workspace = (IWorkspace) event.getSource();
 
-                try {
                     IWorkspaceRoot root = workspace.getRoot();
                     if (root != null) {
                         if (event.getDelta().getAffectedChildren().length > 0) {
                             IResourceDelta delta = event.getDelta().getAffectedChildren()[0];
+                            IProject project = delta.getResource().getProject();
+                            if (project != null && project.isAccessible()) {
+                                if (!project.hasNature(DevkitNature.NATURE_ID)) {
+                                    Display.getDefault().asyncExec(new Runnable() {
 
-                            if (delta.getResource().getProject() != null && delta.getResource().getProject().isOpen()) {
+                                        public void run() {
+                                            viewer.setInput(new ProjectRoot());
+                                        }
+                                    });
+                                    return;
+                                }
                                 // When the user navigates from the sample file to the JAVA File we don't want to trigger the mechanism
                                 if (delta.getProjectRelativePath() != null) {
                                     if (delta.getProjectRelativePath().lastSegment() != null) {
@@ -230,28 +239,27 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                             }
                         }
                     }
-                } catch (CoreException e) {
-                    e.printStackTrace();
                 }
-            }
-        } else {
-            // PRE CLOSE OR DELETE
-            if (event.getResource() != null) {
-                IResource resource = event.getResource();
+            } else {
+                // PRE CLOSE OR DELETE
+                if (event.getResource() != null) {
+                    IResource resource = event.getResource();
+                    IProject project = resource.getProject();
+                    if (project != null && project.isAccessible()) {
+                        if (current != null && current.getName().equals(project.getName())) {
+                            // Set empty project as input
+                            Display.getDefault().asyncExec(new Runnable() {
 
-                if (resource.getProject() != null && resource.getProject().isOpen()) {
-                    if (current != null && current.getName().equals(resource.getProject().getName())) {
-                        // Set empty project as input
-                        Display.getDefault().asyncExec(new Runnable() {
-
-                            public void run() {
-                                viewer.setInput(new ProjectRoot());
-                            }
-                        });
-
+                                public void run() {
+                                    viewer.setInput(new ProjectRoot());
+                                }
+                            });
+                        }
                     }
                 }
             }
+        } catch (CoreException e) {
+            e.printStackTrace();
         }
     }
 
@@ -296,7 +304,9 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
         for (ICompilationUnit unit : mypackage.getCompilationUnits()) {
             // now create the AST for the ICompilationUnits
             CompilationUnit parse = ASTUtils.parse(unit);
-            parse.accept(visitor);
+            if (parse != null) {
+                parse.accept(visitor);
+            }
         }
         if (visitor.getRoot().getModules() != null && !visitor.getRoot().getModules().isEmpty()) {
             return true;
