@@ -80,8 +80,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private Button useDefaultValuesCheckbox;
 
     private String connectorCategory = DEFAULT_CATEGORY;
-    private final Pattern connectorName = Pattern.compile("[A-Z]+[a-zA-Z0-9]+");
-
+    private static final Pattern CONNECTOR_NAME_REGEXP = Pattern.compile("[A-Z]+[a-zA-Z0-9]+");
+    private static final Pattern VALID_NAME_REGEX = Pattern.compile("[A-Za-z]+[a-zA-Z0-9\\-_]*");
     private ConnectorMavenModel model;
 
     private Combo apiType;
@@ -111,6 +111,14 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         layout.verticalSpacing = 6;
 
         Group connectorGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_CONNECTOR, 3);
+        ModifyListener simple = new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                dialogChanged();
+            }
+
+        };
         ModifyListener connectorNameListener = new ModifyListener() {
 
             @Override
@@ -165,14 +173,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             }
         });
 
-        projectName = initializeTextField(connectorGroupBox, PROJECT_NAME_LABEL, DEFAULT_NAME, "Project name.", 2, new ModifyListener() {
-
-            @Override
-            public void modifyText(ModifyEvent e) {
-                dialogChanged();
-            }
-
-        });
+        projectName = initializeTextField(connectorGroupBox, PROJECT_NAME_LABEL, DEFAULT_NAME, "Project name.", 2,simple);
 
         name.addModifyListener(new ModifyListener() {
 
@@ -187,17 +188,11 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         });
 
         connectorNamespace = initializeTextField(connectorGroupBox, CONNECTOR_NAMESPACE_LABEL, DEFAULT_NAME,
-                "Namespace that will be used when your connector is added into a mule application.", 2, null);
+                "Namespace that will be used when your connector is added into a mule application.", 2, simple);
 
         location = initializeTextField(connectorGroupBox, LOCATION_LABEL, ResourcesPlugin.getWorkspace().getRoot().getFullPath().toOSString(),
-                "Project location in the file system.", 1, new ModifyListener() {
-
-                    @Override
-                    public void modifyText(ModifyEvent e) {
-                        dialogChanged();
-                    }
-
-                });
+                "Project location in the file system.", 1,simple);
+        
         browse = new Button(connectorGroupBox, SWT.NONE);
         browse.setText("Browse");
         browse.setLayoutData(GridDataFactory.fillDefaults().create());
@@ -444,11 +439,19 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         } else if (DevkitUtils.isReserved(this.getName().toLowerCase())) {
             updateStatus("Cannot use Java language keywords for the name");
             return;
-        } else if (!connectorName.matcher(this.getName()).matches()) {
+        } else if (!CONNECTOR_NAME_REGEXP.matcher(this.getName()).matches()) {
             updateStatus("The Name must start with an upper case character followed by other alphanumeric characters.");
             return;
         } else if (this.getApiType().equals(ApiType.SOAP) && !isValidateFileOrFolder(this.wsdlLocation.getText())) {
             updateStatus("The selected wsdl location is not valid.");
+            return;
+        }
+        if (!this.getName().equals(StringUtils.trim(this.getName()))) {
+            updateStatus("Name cannot contain spaces.");
+            return;
+        }
+        if (!VALID_NAME_REGEX.matcher(this.getConnectorNamespace()).matches()) {
+            updateStatus("Namespace must start with a letter, and might be followed by a letter, number, _, or -.");
             return;
         }
         if (StringUtils.isBlank(this.location.getText())) {
@@ -541,7 +544,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     public String getName() {
-        return name.getText().trim();
+        return name.getText();
     }
 
     public String getCategory() {
@@ -709,8 +712,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         }
         return file.canWrite();
     }
-    
-    public boolean usesDefaultValues(){
+
+    public boolean usesDefaultValues() {
         return useDefaultValuesCheckbox.getSelection();
     }
 }
