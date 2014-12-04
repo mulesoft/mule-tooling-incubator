@@ -6,6 +6,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IEditorPart;
 import org.mule.tooling.messageflow.editor.MessageFlowContextMenuProvider;
 import org.mule.tooling.messageflow.editor.MessageFlowNodeContextMenuProviderManager;
+import org.mule.tooling.messageflow.editpart.EntityEditPart;
+import org.mule.tooling.model.messageflow.MessageFlowEntity;
 import org.mule.tooling.model.messageflow.MessageFlowNode;
 
 /**
@@ -21,7 +23,9 @@ public class MunitMessageFlowContextMenuProvider extends MessageFlowContextMenuP
 
     @Override
     public void buildContextMenu(IMenuManager menu) {
-        final MessageFlowNode selected = getSelectedNode();
+        final EntityEditPart<? extends MessageFlowEntity> selectedEditPart = getSelectedEditPart();
+        
+        final MessageFlowNode selected = getNode(selectedEditPart);
 
         if (selected != null) {
             final MessageFlowNodeContextMenuProviderManager defaultMenuProvider = MessageFlowNodeContextMenuProviderManager.getDefault();
