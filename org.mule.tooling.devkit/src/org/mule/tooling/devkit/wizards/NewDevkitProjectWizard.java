@@ -469,8 +469,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
      */
     private void generateStrategyComponent(ConnectorMavenModel mavenModel, ClassReplacer classReplacer, TemplateFileWriter templateFileWriter) throws CoreException {
         switch (mavenModel.getAuthenticationType()) {
-        case BASIC:
-            templateFileWriter.apply("/templates/connector_basic_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+        case CONNECTION_MANAGEMENT:
+            templateFileWriter.apply("/templates/connector_connection_management.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
             return;
         case HTTP_BASIC:
             templateFileWriter.apply("/templates/connector_basic_http_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
