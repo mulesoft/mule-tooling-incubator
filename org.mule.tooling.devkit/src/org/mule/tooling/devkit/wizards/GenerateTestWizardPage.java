@@ -9,8 +9,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -163,7 +166,7 @@ public class GenerateTestWizardPage extends WizardPage {
         createBrowser(interopGroup);
     }
 
-    private void updateFinishAllowedStatus(){
+    private void updateFinishAllowedStatus() {
         boolean completed = (selectedFunctional || selectedScafolding || selectedInterop);
         setPageComplete(completed);
     }
@@ -202,6 +205,21 @@ public class GenerateTestWizardPage extends WizardPage {
         }
         txtAutomationPackage = initializeTextField(container, LABEL_PACKAGE_NAME, dataModel.getAutomationPackage(), 1, interopFileListener);
         txtAutomationPackage.setText(dataModel.getAutomationPackage());
+        txtAutomationPackage.addModifyListener(new ModifyListener() {
+
+            public void modifyText(ModifyEvent e) {
+                String text = ((Text) e.widget).getText();
+
+                final IStatus packageStatus = JavaConventions.validatePackageName(text, JavaCore.VERSION_1_7, JavaCore.VERSION_1_7);
+                if (!packageStatus.isOK()) {
+                    setMessage(packageStatus.getMessage(), IMessageProvider.ERROR);
+                    setPageComplete(false);
+                } else {
+                    setMessage(GENERAL_MESSAGE, IMessageProvider.INFORMATION);
+                    updateFinishAllowedStatus();
+                }
+            }
+        });
     }
 
     private void createFileInput(Composite container) {
