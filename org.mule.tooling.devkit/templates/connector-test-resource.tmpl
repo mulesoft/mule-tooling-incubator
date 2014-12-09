@@ -12,7 +12,7 @@
 #if($project.authenticationType == 'NONE' )
     <${project.moduleName}:config-type name="config" myProperty="Some string"/>
 #end
-#if($project.authenticationType == 'BASIC' )
+#if($project.authenticationType == 'CONNECTION_MANAGEMENT' )
     <${project.moduleName}:config-type name="config" myProperty="Some string" username="foo" password="foo"/>
 #end
     
