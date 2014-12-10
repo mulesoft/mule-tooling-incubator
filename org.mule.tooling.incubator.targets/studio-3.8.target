@@ -41,7 +41,7 @@
 <unit id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.ecf.filetransfer.ssl.feature.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.e4.rcp.feature.group" version="0.0.0"/>
-<repository location="http://54.86.196.140:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/4.2.0-SNAPSHOT/orbit-4.2.0-SNAPSHOT.zip-unzip/"/>
+<repository location="http://54.86.196.140:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.0.0-SNAPSHOT/orbit-5.0.0-SNAPSHOT.zip-unzip/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="com.sun.jersey" version="0.0.0"/>
@@ -65,11 +65,11 @@
 <unit id="javax.wsdl" version="1.6.2.v201012040545"/>
 <unit id="javax.ws.rs" version="0.0.0"/>
 <unit id="com.google.gson" version="0.0.0"/>
-<repository location="http://54.86.196.140:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/4.2.0-SNAPSHOT/orbit-4.2.0-SNAPSHOT.zip-unzip/"/>
+<repository location="http://54.86.196.140:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.0.0-SNAPSHOT/orbit-5.0.0-SNAPSHOT.zip-unzip/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.codehaus.groovy" version="2.0.7.xx-201407142131-e42-RELEASE"/>
-<repository location="http://54.86.196.140:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/4.2.0-SNAPSHOT/orbit-4.2.0-SNAPSHOT.zip-unzip/"/>
+<repository location="http://54.86.196.140:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.0.0-SNAPSHOT/orbit-5.0.0-SNAPSHOT.zip-unzip/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.mule.tooling.branding" version="0.0.0"/>
