@@ -91,15 +91,16 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
         final IJavaProject javaProject = JavaCore.create(selectedProject);
         String jobDetail = "Generating test project for " + DevkitUtils.getProjectLabel(javaProject);
 
-        String[] mavenCommand = new String[] { "org.mule.connectors.interop:interop-ce-runtime-generation:create" };
+        String[] mavenCommand = new String[] { "install","-DskipTests","org.mule.connectors.interop:interop-ce-runtime-generation:create" };
 
         System.out.println("** Command :: " + StringUtils.join(mavenCommand, " "));
 
         MavenUtils.runMavenGoalJob(selectedProject, mavenCommand, jobMsg, DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.TEST_RESOURCES_FOLDER), null), jobDetail);
 
-        mavenCommand = new String[] { "install", "-f", projectPath + "/target/interop-ce-project/pom.xml", "-Dsuite.testData=" + runnerConfig.getTestDataPath(),
-                "-Dsuite.testDataOverride=" + runnerConfig.getTestDataOverridePath(), "-Dsuite.testConnect=" + runnerConfig.getRunConnectivityTest(),
-                "-Dsuite.testDMapper=" + runnerConfig.getRunDMapperTest(), "-Dsuite.testXml=" + runnerConfig.getRunXmlTest() };
+        mavenCommand = new String[] { "org.mule.connectors.interop:interop-ce-runtime-generation:run", "-DtestData=" + runnerConfig.getTestDataPath(),
+                "-DtestDataOverride=" + runnerConfig.getTestDataOverridePath(), "-DtestConnect=" + runnerConfig.getRunConnectivityTest(),
+                "-DtestDMapper=" + runnerConfig.getRunDMapperTest(), "-DtestXml=" + runnerConfig.getRunXmlTest(), "-DtestDataSense=" + runnerConfig.getRunDataSense(),
+                "-DtestOAuth=" + runnerConfig.getRunOAuth() };
 
         jobMsg = "Running Interop Test";
         jobDetail = "Running interop test for " + DevkitUtils.getProjectLabel(javaProject);
