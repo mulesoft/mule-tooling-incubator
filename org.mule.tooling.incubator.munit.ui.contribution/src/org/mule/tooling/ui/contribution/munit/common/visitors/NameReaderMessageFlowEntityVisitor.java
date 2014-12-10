@@ -16,7 +16,6 @@ import org.mule.tooling.model.messageflow.MultiSourceNode;
 import org.mule.tooling.model.messageflow.NestedContainer;
 import org.mule.tooling.model.messageflow.PatternNode;
 import org.mule.tooling.model.messageflow.ResponseNode;
-import org.mule.tooling.model.messageflow.ScopeNode;
 import org.mule.tooling.model.messageflow.SplitterNode;
 import org.mule.tooling.model.messageflow.UnknownNode;
 import org.mule.tooling.model.messageflow.util.MessageFlowEntityVisitor;
@@ -73,11 +72,6 @@ public class NameReaderMessageFlowEntityVisitor implements MessageFlowEntityVisi
     @Override
     public void visitMultiSourceNode(MultiSourceNode multiSourceNode) {
         doVisit(multiSourceNode);
-    }
-
-    @Override
-    public void visitScopeNode(ScopeNode scopeNode) {
-        doVisit(scopeNode);
     }
 
     @Override
