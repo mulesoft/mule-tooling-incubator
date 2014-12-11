@@ -112,6 +112,8 @@ public class ConnectorImportWizzardPage extends WizardPage {
         GridLayout layout = new GridLayout(3, false);
         composite.setLayout(layout);
 
+        final Label projectRootLabel = new Label(composite, SWT.NULL);
+        projectRootLabel.setText("Select root directory:");
         rootDirectoryCombo = new Combo(composite, SWT.NONE);
         rootDirectoryCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         rootDirectoryCombo.setFocus();
@@ -274,7 +276,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
         projectTreeViewer.refresh();
         projectTreeViewer.expandAll();
         testMaven();
-        setPageComplete(false);
+        setPageComplete();
     }
 
     /**
@@ -498,6 +500,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
         setPageComplete(checkedElements != null && checkedElements.length > 0);
         if (checkedElements != null && checkedElements.length > 0) {
             setMessage(null);
+            setPageComplete(true);
         }
     }
 
@@ -536,7 +539,6 @@ public class ConnectorImportWizzardPage extends WizardPage {
         MavenInfo elements = (MavenInfo) projectTreeViewer.getInput();
         for (MavenInfo item : elements.getModules()) {
             projectTreeViewer.setChecked(item, true);
-
         }
         validate();
     }
