@@ -57,6 +57,8 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
     private Button testDataOverrideBrowser;
     private Button connectivityCheckBox;
     private Button dmapperCheckBox;
+    private Button dataSenseCheckBox;
+    private Button oAuthCheckBox;
     private Button xmlCheckBox;
 
     // Remote configurations
@@ -85,7 +87,7 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-  //      newShell.setSize(750, newShell.getBounds().height);
+        // newShell.setSize(750, newShell.getBounds().height);
         newShell.setSize(700, 370);
     }
 
@@ -115,19 +117,17 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
         createGeneralSettings(generalGroupBox);
 
         config.setRunAsLocal(true);
-//        Group runnerGroupBox = UiUtils.createGroupWithTitle(container, "Runner settings", 2);
-//        createLocalOrRemoteCombo(runnerGroupBox);
-//
-//        createLabel(runnerGroupBox, " ");
-//
-//        remoteGroupBox = UiUtils.createGroupWithTitle(runnerGroupBox, "Remote run configuration", 1);
-//
-//        createRemoteConfigurationGroup();
+        // Group runnerGroupBox = UiUtils.createGroupWithTitle(container, "Runner settings", 2);
+        // createLocalOrRemoteCombo(runnerGroupBox);
+        //
+        // createLabel(runnerGroupBox, " ");
+        //
+        // remoteGroupBox = UiUtils.createGroupWithTitle(runnerGroupBox, "Remote run configuration", 1);
+        //
+        // createRemoteConfigurationGroup();
 
         return area;
     }
-
-
 
     private void createGeneralSettings(Composite container) {
         createLabel(container, "Tests to run");
@@ -147,16 +147,31 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
             }
         });
 
-        xmlCheckBox = createCheckbox(container, " Xml Generation", "Run Xml generation tests", false, new SelectionAdapter() {
+        dataSenseCheckBox = createCheckbox(container, "DataSense", "Run DataSense compliance tests", false, new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                config.setRunDataSense(dataSenseCheckBox.getSelection());
+            }
+        });
+
+        oAuthCheckBox = createCheckbox(container, "OAuth", "Run OAuth tests", false, new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                config.setRunOAuth(oAuthCheckBox.getSelection());
+            }
+        });
+
+        createLabel(container, " ");
+
+        xmlCheckBox = createCheckbox(container, "Xml Generation", "Run Xml generation tests", false, new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
                 config.setRunXmlTest(xmlCheckBox.getSelection());
             }
         });
-
-        createLabel(container, " ");
-        createLabel(container, " ");
 
         verboseCheckBox = createCheckbox(container, VERBOSE_LOGGING, "Set test's log level to verbose", false, new SelectionAdapter() {
 
@@ -184,7 +199,7 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 
         dropDown.setToolTipText("");
     }
-    
+
     private void createRemoteConfigurationGroup() {
         createEmailPropertiesGroup(remoteGroupBox);
         createRepositoryInputGroup(remoteGroupBox);
@@ -204,7 +219,7 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
         Group repositoryGroupBox = UiUtils.createGroupWithTitle(container, CONNECTOR_REPOSITORY_SSH_URL, 7);
 
         repositoryField = createTextInput(repositoryGroupBox, defaultListener, GIT_REPO_DIR, config.getRepository(), 5);
-        
+
         final Combo dropDown = new Combo(repositoryGroupBox, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         dropDown.setLayoutData(GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).span(1, 1).grab(false, false).create());
         String[] branches = new String[config.getBranches().size()];
@@ -428,11 +443,11 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
 
     private void saveSelectionsAsDefault() {
 
-//        emailDefault = config.getDestinationEmail() == null ? emailDefault : config.getDestinationEmail();
-//        repositoryDefault = config.getRepository() == null ? repositoryDefault : config.getRepository();
-//        serverDefaultUrl = config.getServerURL() == null ? serverDefaultUrl : config.getServerURL();
-//        selectedWindowsDefault = config.getSelectedWindows() == null ? selectedWindowsDefault : config.getSelectedWindows();
-//        selectedLinuxDefault = config.getSelectedLinux() == null ? selectedLinuxDefault : config.getSelectedLinux();
+        // emailDefault = config.getDestinationEmail() == null ? emailDefault : config.getDestinationEmail();
+        // repositoryDefault = config.getRepository() == null ? repositoryDefault : config.getRepository();
+        // serverDefaultUrl = config.getServerURL() == null ? serverDefaultUrl : config.getServerURL();
+        // selectedWindowsDefault = config.getSelectedWindows() == null ? selectedWindowsDefault : config.getSelectedWindows();
+        // selectedLinuxDefault = config.getSelectedLinux() == null ? selectedLinuxDefault : config.getSelectedLinux();
     }
 
     @Override
