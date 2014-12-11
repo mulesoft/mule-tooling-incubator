@@ -6,11 +6,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -21,6 +24,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.GridData;
@@ -61,13 +66,6 @@ public class DevkitExportPage extends WizardPage {
         setTitle("Export Anypoint Connector");
         setDescription("Export an Anypoint Connector as an Update  Site");
         this.project = selected;
-        try {
-            if (project != null && project.hasNature(DevkitNature.NATURE_ID)) {
-                this.setErrorMessage("The selected project doesn't seems to be a Devkit Project");
-            }
-        } catch (CoreException e) {
-
-        }
     }
 
     public void createControl(Composite parent) {
@@ -111,9 +109,17 @@ public class DevkitExportPage extends WizardPage {
 
         name = new Text(exportGroup, SWT.BORDER | SWT.SINGLE);
         name.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        name.addModifyListener(new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                updatePageComplete();
+            }
+
+        });
 
         browseButton = new Button(exportGroup, SWT.PUSH);
-        browseButton.setText("Browse...");
+        browseButton.setText("...");
         browseButton.addMouseListener(new MouseListener() {
 
             public void mouseDoubleClick(MouseEvent e) {
@@ -128,6 +134,15 @@ public class DevkitExportPage extends WizardPage {
         });
 
         setControl(control);
+
+        try {
+            if (project != null && project.hasNature(DevkitNature.NATURE_ID)) {
+                setErrorMessage("The selected project doesn't seems to be a Devkit Project");
+                setPageComplete(false);
+            }
+        } catch (CoreException e) {
+
+        }
     }
 
     /**
@@ -152,25 +167,27 @@ public class DevkitExportPage extends WizardPage {
     public boolean performFinish() {
         outputAbsolutePath = name.getText();
         File tempFile = new File(outputAbsolutePath);
-        File folder = new File(tempFile.getParent());
-        if (!saveModifiedResources()) {
-            MessageDialog.openError(this.getContainer().getShell(), "Update site export", "Update site creation failed. There are unsaved resources in the project.");
-            return false;
-        }
-        if (!folder.exists()) {
-            boolean success = createFolder(folder);
-            if (!success)
+        if (tempFile.getParent() != null) {
+            File folder = new File(tempFile.getParent());
+            if (!saveModifiedResources()) {
+                MessageDialog.openError(this.getContainer().getShell(), "Update site export", "Update site creation failed. There are unsaved resources in the project.");
                 return false;
-        }
+            }
+            if (!folder.exists()) {
+                boolean success = createFolder(folder);
+                if (!success)
+                    return false;
+            }
 
-        File outputFile = createOutputFile(folder.getAbsolutePath(), tempFile.getName());
-        if (outputFile.exists()) {
-            boolean confirmation = MessageDialog.openQuestion(this.getContainer().getShell(), "Confirmation", outputFile.getAbsolutePath()
-                    + " already exists.\nDo you want to replace it?");
-            if (confirmation)
+            File outputFile = createOutputFile(folder.getAbsolutePath(), tempFile.getName());
+            if (outputFile.exists()) {
+                boolean confirmation = MessageDialog.openQuestion(this.getContainer().getShell(), "Confirmation", outputFile.getAbsolutePath()
+                        + " already exists.\nDo you want to replace it?");
+                if (confirmation)
+                    return createUpdateSite(outputFile);
+            } else
                 return createUpdateSite(outputFile);
-        } else
-            return createUpdateSite(outputFile);
+        }
         return false;
     }
 
@@ -248,5 +265,14 @@ public class DevkitExportPage extends WizardPage {
         if (project != null) {
             this.setErrorMessage(null);
         }
+        if (StringUtils.isBlank(name.getText())) {
+            setErrorMessage("Specify where you want to create the Update Site.");
+        }
+
+        File tempFile = new File(name.getText());
+        if (tempFile.getParent() == null) {
+            setErrorMessage("Cannot save file in the root directory. Selected a different folder.");
+        }
+        setPageComplete(StringUtils.isBlank(this.getErrorMessage()));
     }
 }
