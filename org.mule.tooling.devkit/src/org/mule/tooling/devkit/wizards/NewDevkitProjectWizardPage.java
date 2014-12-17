@@ -651,7 +651,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         if (comboAuthentication.getText().equals(HTTP_BASIC))
             return "Basic authentication provides username and password when making each request.It generates HTTP Authentication RFC2617 strategy";
         if (comboAuthentication.getText().equals(CONNECTION_MANAGEMENT))
-            return "This will generate a basic auth connection strategy, with username and password. You can change the connection methods as required.";
+            return "This will generate a Connection Management strategy, with username and password. You can change the connection methods as required.";
         if (comboAuthentication.getText().equals(OAUTH_V2))
             return "OAuth V2, the next evolution of the OAuth protocol, provides a method for Mule applications to access server resources on behalf of a resource owner without sharing their credentials.";
         return "No tip";
