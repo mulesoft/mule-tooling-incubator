@@ -102,7 +102,7 @@ public class MessageProcessorMatchingForm {
         attributesLabel.setText("And attributes satisfy:");
         attributeMatchingTable = new WidgetUtils().createTableForMap(parentForm);
 
-        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(ATTRIBUTE_VIEWER_COLUMNS, 3).grab(true, true).applyTo(attributeMatchingTable);
+        GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).span(ATTRIBUTE_VIEWER_COLUMNS, 3).grab(true, true).hint(SWT.DEFAULT, 120).indent(0, 10).applyTo(attributeMatchingTable);
     }
 
     private void drawMockingConditionForm(final Composite parentForm) {

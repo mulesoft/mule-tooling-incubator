@@ -3,14 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.mule.tooling</groupId>
+	<groupId>org.mule.tooling.munit</groupId>
 	<artifactId>org.mule.tooling.maven.dependencies</artifactId>
 	<version>0.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<lib-dir>lib</lib-dir>
-<!-- 		<munit.version>3.5-M3-SNAPSHOT</munit.version> -->
 		<munit.version>3.6.0-SNAPSHOT</munit.version>
 	</properties>
 
@@ -27,6 +26,41 @@
             <version>${munit.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.mule.munit</groupId>
+            <artifactId>munit-mock</artifactId>
+            <version>${munit.version}</version>
+        </dependency>
+         <dependency>
+            <groupId>org.mule.munit</groupId>
+            <artifactId>munit-assert</artifactId>
+            <version>${munit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.munit</groupId>
+            <artifactId>munit-common</artifactId>
+            <version>${munit.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>mule-interceptor-module</artifactId>
+            <groupId>org.mule.modules</groupId>
+            <version>${munit.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>mule-interceptor-module</artifactId>
+            <groupId>org.mule.modules</groupId>
+            <version>${munit.version}</version>
+        </dependency>
+         <dependency>
+            <groupId>org.mule.munit.plugins</groupId>
+            <artifactId>munit-mule-extension-loader</artifactId>
+            <version>${munit.version}</version>
+        </dependency>
+ 	    <dependency>
+            <groupId>org.mule.munit</groupId>
+            <artifactId>munit-coverage-plugin</artifactId>
+ 	    <version>${munit.version}</version>
+        </dependency>
+             <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.2.4</version>
@@ -59,6 +93,7 @@
 			</plugin>
 		</plugins>
 	</build>
+
   <repositories>
         <repository>
             <id>mulesoft-releases</id>
@@ -73,4 +108,5 @@
             <layout>default</layout>
         </repository>
     </repositories>
+
 </project>

@@ -63,17 +63,34 @@
 		<string indented="true" name="value-ref" caption="value-ref" visibleInDialog="false"/>
 	</nested>
 	 
-	<component category="org.mule.tooling.category.munit" versions="[3.4.0,10.0.0]" localId="verify-call"
+	<component localId="verify-call"
+		versions="[3.4.0,10.0.0]"
+		category="org.mule.tooling.category.munit" 
 		description="Verify calls definition" 
-		image="icons/large/Verify-Call.png" icon="icons/small/Verify-Call-Palette.png"
+		image="icons/large/Verify-Call.png" 
+		icon="icons/small/Verify-Call-Palette.png"
 		caption="Verify Call">
 		<attribute-category description="Mocking conditions and return value." caption="Verify Condition">
+      		
+
       		<group caption="Message processor Verify definition" id="verify-call">
-      			   <string indented="true" name="messageProcessor" caption="messageProcessor" visibleInDialog="false"/>     		
-      			   <childElement visibleInDialog="false" allowMultiple="false" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/attributes"/>
-        		     <custom javaType="java.lang.String"
-        	  		class="org.mule.tooling.ui.contribution.munit.editors.custom.VerifyCustomEditor"></custom>
+      			<string indented="true" name="messageProcessor" caption="messageProcessor" visibleInDialog="false"/>     		
+      			   
+      			<childElement visibleInDialog="false" allowMultiple="false" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/attributes"/>
+				<custom javaType="java.lang.String" class="org.mule.tooling.ui.contribution.munit.editors.custom.VerifyCustomEditor"></custom>
       		</group>
+      		
+      		<group caption="Message processor Verify Times" collapsable="true" collapsed="true">
+				<radioBoolean name="times-r" caption="Times"  fillLine="true" group="quantity" />
+				<string name="times" description="Number of times this message processor should have been called"  indented="true" inplace="true"  controlled="times-r" />
+				
+				<radioBoolean name="at-least-r" caption="At Least" fillLine="true" group="quantity" />
+				<string name="at-least" description="Number of times this message processor should have been called"  indented="true" inplace="true" controlled="at-least-r" />
+				
+				<radioBoolean name="at-most-r" caption="At Least" fillLine="true" group="quantity" />
+				<string name="at-most"  description="Number of times this message processor should have been called"  indented="true" inplace="true" controlled="at-most-r" />
+      		</group>
+      		
     	</attribute-category>
 	</component>
 	

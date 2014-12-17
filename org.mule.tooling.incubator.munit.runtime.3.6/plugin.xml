@@ -3,13 +3,13 @@
 <plugin>
    <extension
          point="org.mule.tooling.ui.contribution.munit.munitRuntime">
-      <runtime minMuleVersion="3.5" maxMuleVersion="3.5" munitVersion="3.5-M3-SNAPSHOT">
+      <runtime minMuleVersion="3.6" munitVersion="3.6.0-SNAPSHOT">
          <library
             path="lib/munit-assert.jar">
          <mavenProperties
                artifactId="munit-assert"
                groupId="org.mule.munit"
-               version="3.5-M3-SNAPSHOT">
+               version="3.6.0-SNAPSHOT">
          </mavenProperties>
       </library>
       <library
@@ -17,7 +17,7 @@
          <mavenProperties
                artifactId="munit-mock"
                groupId="org.mule.munit"
-               version="3.5-M3-SNAPSHOT">
+               version="3.6.0-SNAPSHOT">
          </mavenProperties>
       </library>
       <library
@@ -25,7 +25,7 @@
          <mavenProperties
                artifactId="munit-common"
                groupId="org.mule.munit"
-               version="3.5-M3-SNAPSHOT">
+               version="3.6.0-SNAPSHOT">
          </mavenProperties>
       </library>
       <library
@@ -33,7 +33,7 @@
          <mavenProperties
                artifactId="munit-runner"
                groupId="org.mule.munit"
-               version="3.5-M3-SNAPSHOT">
+               version="3.6.0-SNAPSHOT">
          </mavenProperties>
       </library>
       <library
@@ -41,7 +41,7 @@
          <mavenProperties
                artifactId="mule-interceptor-module"
                groupId="org.mule.modules"
-               version="3.5-M3-SNAPSHOT">
+               version="3.6.0-SNAPSHOT">
          </mavenProperties>
       </library>
       <library
