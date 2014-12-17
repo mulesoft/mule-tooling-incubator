@@ -10,7 +10,7 @@
 
     <artifactId>org.mule.tooling.ui.contribution.mule-synchronize</artifactId>
     <packaging>eclipse-plugin</packaging>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <description>Studio plugin</description>
 
     <properties>
