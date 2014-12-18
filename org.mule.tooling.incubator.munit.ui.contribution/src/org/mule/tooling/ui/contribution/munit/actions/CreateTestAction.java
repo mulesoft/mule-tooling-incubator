@@ -9,11 +9,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.messageflow.editor.MessageFlowEditor;
 import org.mule.tooling.messageflow.editor.MultiPageMessageFlowEditor;
 import org.mule.tooling.messageflow.editpart.EntityEditPart;
 import org.mule.tooling.messageflow.editpart.MuleConfigurationEditPart;
+import org.mule.tooling.messageflow.events.RefreshRequestedEvent;
 import org.mule.tooling.model.messageflow.MessageFlowNode;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 import org.mule.tooling.ui.contribution.munit.MunitResourceUtils;
@@ -45,6 +47,7 @@ public class CreateTestAction extends Action {
             final MultiPageMessageFlowEditor editor = (MultiPageMessageFlowEditor) activeEditor;
             final MessageFlowEditor messageFlowEditor = editor.getFlowEditor();
             IMuleProject muleProject = messageFlowEditor.getMuleProject();
+            
             MunitResourceUtils.configureProjectForMunit(muleProject);
             IFolder munitFolder = createMunitFolder(activeWorkbenchWindow, muleProject);
             createMunitFile(activeWorkbenchWindow, messageFlowEditor, munitFolder);
@@ -56,21 +59,30 @@ public class CreateTestAction extends Action {
         IFile munitConfigFile = MunitResourceUtils.createMunitFileFromXmlConfigFile(munitFolder, messageFlowEditor.getInputXmlConfigFile());
         if (!munitConfigFile.exists()) {
             try {
-                StructuredSelection selection = (StructuredSelection) messageFlowEditor.getSelection();
-                EntityEditPart<?> editPart = (EntityEditPart<?>) selection.getFirstElement();
-                editPart = getParent(editPart);
-                MunitResourceUtils.createXMLConfigurationFromTemplate(messageFlowEditor.getMuleProject(), munitConfigFile.getName(),
-                        munitConfigFile.getName().replace("-test", ""), munitFolder);
-                IEditorPart openEditor = MunitResourceUtils.open(munitConfigFile);
-                MultiPageMessageFlowEditor multiPageEditor = (MultiPageMessageFlowEditor) openEditor;
+            	MunitResourceUtils.createXMLConfigurationFromTemplate(messageFlowEditor.getMuleProject(), munitConfigFile.getName(),
+            			munitConfigFile.getName().replace("-test", ""), munitFolder);
 
-                MessageFlowEditor flowEditor = multiPageEditor.getFlowEditor();
-                MunitResourceUtils.createDefaultMunitTest(flowEditor, ((MessageFlowNode) editPart.getEntity()).getName());
-                multiPageEditor.openFlowEditorPage();
+            	openMunitEditor(messageFlowEditor, munitConfigFile);
             } catch (Throwable e) {
                 MessageDialog.openError(activeWorkbenchWindow.getShell(), "Munit Suite file creation error", "Could not create a new Suite File for your Munit tests.");
             }
         }
+    }
+    
+    private void openMunitEditor(MessageFlowEditor messageFlowEditor,  IFile munitConfigFile) throws CoreException{
+    	StructuredSelection selection = (StructuredSelection) messageFlowEditor.getSelection();
+        EntityEditPart<?> editPart = (EntityEditPart<?>) selection.getFirstElement();
+        editPart = getParent(editPart);
+        
+        
+        IEditorPart openEditor = MunitResourceUtils.open(munitConfigFile);
+        MultiPageMessageFlowEditor multiPageEditor = (MultiPageMessageFlowEditor) openEditor;
+        MessageFlowEditor flowEditor = multiPageEditor.getFlowEditor();
+        
+        MunitResourceUtils.createDefaultMunitTest(flowEditor, ((MessageFlowNode) editPart.getEntity()).getName());
+        
+        multiPageEditor.updateFlowFromSource();
+        multiPageEditor.openFlowEditorPage();
     }
 
     private EntityEditPart<?> getParent(EntityEditPart<?> editPart) {

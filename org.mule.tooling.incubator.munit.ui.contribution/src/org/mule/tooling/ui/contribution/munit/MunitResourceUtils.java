@@ -110,12 +110,15 @@ public class MunitResourceUtils {
      *             In case the test could not be created
      */
     public static void createDefaultMunitTest(MessageFlowEditor flowEditor, String flowName) throws CoreException {
-        final MuleConfigurationBuilder muleConfigurationBuilder = new MuleConfigurationBuilder(flowEditor.getMuleConfigurationDecorator());
 
-        final MuleConfigurationNamingSupport naming = new MuleConfigurationNamingSupport(flowEditor.getMuleConfiguration());
+    	final MuleConfigurationNamingSupport naming = new MuleConfigurationNamingSupport(flowEditor.getMuleConfiguration());
+        final MuleConfigurationBuilder muleConfigurationBuilder = new MuleConfigurationBuilder(flowEditor.getMuleConfigurationDecorator());
+        
+        // Add Munit Test
         final ContainerBuilder<MuleConfigurationBuilder> munitElement = muleConfigurationBuilder.addContainer("munit_test", "http://www.mulesoft.org/schema/mule/munit/test");
         munitElement.usingProperties().property("description", "Test").property("name", naming.getAvailableName(flowName + "Test")).endProperties();
-
+        
+        // Add Flow ref
         final AbstractPipelineBuilder<ContainerBuilder<MuleConfigurationBuilder>> addFlowRef = munitElement.editNested(1).addFlowRef("Flow-ref to " + flowName);
         addFlowRef.usingProperties().property("name", flowName).endProperties();
 
