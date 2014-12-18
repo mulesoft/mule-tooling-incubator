@@ -71,6 +71,10 @@
 		icon="icons/small/Mock-Palette.png"
 		acceptedByElements="http://www.mulesoft.org/schema/mule/munit/setup">
 		
+		<keywords>
+			<keyword value="mock" weight="1" />
+		</keywords>
+		
 		<attribute-category description="Mocking conditions and return value." caption="Mock Condition">
 			<group caption="General Settings" id="generalSettings">
 				<globalRef name="config-ref" caption="Mock Configuration" required="true"
@@ -98,7 +102,12 @@
 		icon="icons/small/Mock-Palette.png"
 		acceptedByElements="http://www.mulesoft.org/schema/mule/munit/setup">
 		
-		<attribute-category description="Mocking conditions and throw an Exception." caption="Mock Condition">
+		<keywords>
+			<keyword value="mock" weight="1" />
+			<keyword value="throw-an" weight="1" />
+		</keywords>
+		
+		<attribute-category caption="Mock Condition" description="Mocking conditions and throw an Exception." >
 			<group caption="General Settings" id="generalSettings">
 				<globalRef name="config-ref" caption="Mock Configuration" required="true"
 					description="The name of the global configuration to be used."
