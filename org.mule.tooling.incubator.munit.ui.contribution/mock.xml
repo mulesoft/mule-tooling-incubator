@@ -89,6 +89,35 @@
     	</attribute-category>
 	</component>
 	
+	<component localId="throw-an"
+		versions="[3.4.0,10.0.0]"
+		category="org.mule.tooling.category.munit"
+		caption="Throw An"  
+		description="Mocking Definition that Throws an Exception" 
+		image="icons/large/Mock.png" 
+		icon="icons/small/Mock-Palette.png"
+		acceptedByElements="http://www.mulesoft.org/schema/mule/munit/setup">
+		
+		<attribute-category description="Mocking conditions and throw an Exception." caption="Mock Condition">
+			<group caption="General Settings" id="generalSettings">
+				<globalRef name="config-ref" caption="Mock Configuration" required="true"
+					description="The name of the global configuration to be used."
+					requiredType="http://www.mulesoft.org/schema/mule/mock/config"/>
+			</group>
+			
+      		<group caption="Message processor Mocking definition" id="throw-an">
+      			   <string name="whenCalling" caption="messageProcessor" indented="true" visibleInDialog="false"/>     		
+      			   <childElement visibleInDialog="false" allowMultiple="false" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/mock/with-attributes"/>
+        		   <custom javaType="java.lang.String" class="org.mule.tooling.ui.contribution.munit.editors.custom.MockThrowCustomEditor"></custom>
+      		</group>
+      		
+      		<group caption="Exception To Be Thrown" id="exception-to-be-thrown">
+				<string name="exception-ref" defaultValue="#[]" alwaysFill="true" description="An Then Throw Exception"  indented="true" inplace="true"  />
+      		</group>
+      		
+    	</attribute-category>
+	</component>
+	
 	 
 	<component localId="verify-call"
 		versions="[3.4.0,10.0.0]"

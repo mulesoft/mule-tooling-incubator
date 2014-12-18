@@ -23,65 +23,69 @@ import org.mule.tooling.ui.contribution.munit.editors.MunitMultiPageEditor;
 
 /**
  * <p>
- * Extension in order to create a new test, only applicable to flows and subflows.
+ * Extension in order to create a new test, only applicable to flows and
+ * subflows.
  * </p>
  */
 public class CreateNewExtension implements IMessageFlowNodeContextMenuProvider {
 
-    @Override
-    public void addActionsForNode(IMenuManager menu, MessageFlowNode selected) {
-        IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	@Override
+	public void addActionsForNode(IMenuManager menu, MessageFlowNode selected) {
+		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
-        if (comesFromRightEditor(activePage)) {
-            MultiPageMessageFlowEditor editor = (MultiPageMessageFlowEditor) activePage.getActiveEditor();
-            menu.add(new Separator("Test"));
-            MenuManager wrapInMenu = new MenuManager("Munit", "Munit");
-            menu.appendToGroup("Test", wrapInMenu);
+		if (comesFromRightEditor(activePage)) {
+			menu.add(new Separator("Test"));
+			MenuManager wrapInMenu = new MenuManager("Munit", "Munit");
+			menu.appendToGroup("Test", wrapInMenu);
 
-            String testName = editor.getFileName().replace(".mflow", "-test");
-            boolean found = false;
-            IMuleConfigurationsCache configurationsCache = editor.getFlowEditor().getMuleProject().getConfigurationsCache();
-            Map<IFile, MuleConfiguration> configurationEntries = configurationsCache.getResourceToConfigMap();
-            for (Map.Entry<IFile, MuleConfiguration> entry : configurationEntries.entrySet()) {
-                if (isImportedMuleConfiguraiton(entry.getValue(), editor.getFlowEditor().getMuleConfiguration().getName())) {
-                    wrapInMenu.add(new JumpToTestAction(entry.getKey(), entry.getValue().getName()));
-                    found = true;
-                }
-            }
+			// TODO: we need to double check this replace
+			MultiPageMessageFlowEditor editor = (MultiPageMessageFlowEditor) activePage.getActiveEditor();
+			String testName = editor.getFileName().replace(".mflow", "-test");
 
-            if (!found) {
-                wrapInMenu.add(new CreateTestAction(selected, testName));
-            } else {
-                wrapInMenu.add(new Separator("Create Test"));
-                wrapInMenu.add(new CreateNewTestWizardAction());
-            }
-        }
-    }
+			boolean found = false;
+			IMuleConfigurationsCache configurationsCache = editor.getFlowEditor().getMuleProject().getConfigurationsCache();
+			Map<IFile, MuleConfiguration> configurationEntries = configurationsCache.getResourceToConfigMap();
+			
+			for (Map.Entry<IFile, MuleConfiguration> entry : configurationEntries.entrySet()) {
+				if (isImportedMuleConfiguraiton(entry.getValue(), editor.getFlowEditor().getMuleConfiguration().getName())) {
+					wrapInMenu.add(new JumpToTestAction(entry.getKey(), entry.getValue().getName()));
+					found = true;
+				}
+			}
 
-    protected boolean comesFromRightEditor(IWorkbenchPage activePage) {
+			if (!found) {
+				wrapInMenu.add(new CreateTestAction(selected, testName));
+			} else {
+				wrapInMenu.add(new Separator("Create Test"));
+				wrapInMenu.add(new CreateNewTestWizardAction());
+			}
+		}
+	}
 
-        if (activePage != null) {
-            return !(activePage.getActiveEditor() instanceof MunitMultiPageEditor);
-        }
+	protected boolean comesFromRightEditor(IWorkbenchPage activePage) {
 
-        return false;
-    }
+		if (activePage != null) {
+			return !(activePage.getActiveEditor() instanceof MunitMultiPageEditor);
+		}
 
-    public boolean isImportedMuleConfiguraiton(MuleConfiguration muleConfiguration, String referencedFile) {
-        final List<? extends MessageFlowEntity> globalEntries = muleConfiguration.getGlobalEntries();
-        final ImportedFilesVisitor visitor = new ImportedFilesVisitor();
-        for (MessageFlowEntity globalEntry : globalEntries) {
-            globalEntry.accept(visitor);
-        }
+		return false;
+	}
 
-        final List<String> importedFiles = visitor.getFiles();
+	public boolean isImportedMuleConfiguraiton(MuleConfiguration muleConfiguration, String referencedFile) {
+		final List<? extends MessageFlowEntity> globalEntries = muleConfiguration.getGlobalEntries();
+		final ImportedFilesVisitor visitor = new ImportedFilesVisitor();
+		for (MessageFlowEntity globalEntry : globalEntries) {
+			globalEntry.accept(visitor);
+		}
 
-        for (String importedFile : importedFiles) {
-            if (importedFile.contains(referencedFile)) {
-                return true;
-            }
-        }
-        return false;
-    }
+		final List<String> importedFiles = visitor.getFiles();
+
+		for (String importedFile : importedFiles) {
+			if (importedFile.contains(referencedFile)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

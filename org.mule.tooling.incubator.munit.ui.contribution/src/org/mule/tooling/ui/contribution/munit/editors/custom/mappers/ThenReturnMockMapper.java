@@ -60,7 +60,7 @@ public class ThenReturnMockMapper extends MunitMockModuleMapper {
             }
 
         }
-        props.addPropertyCollection(getSchema("then-return") + ";0", propertyCollectionMap);
+        props.addPropertyCollection(getSchema("throw-an") + ";0", propertyCollectionMap);
         propertyCollectionMap.addProperty(new Property("payload-ref", this.payloadReference.getText()));
 
     }
