@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Control;
 import org.mule.tooling.incubator.maven.ui.MavenCommandLineConfigurationComponent;
 import org.mule.tooling.incubator.maven.ui.MavenImages;
 import org.mule.tooling.incubator.maven.ui.MavenRunCommandLineConfigurationComponent;
+import org.mule.tooling.maven.cmdline.MavenCommandLine;
 import org.mule.tooling.ui.wizards.extensible.PartStatusHandler;
 import org.mule.tooling.ui.wizards.extensible.WizardPagePartExtension;
 
@@ -26,7 +27,7 @@ public class MavenLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
             JFaceResources.getImageRegistry().put(MVN_IMG_KEY, MavenImages.MVN.createImage());
         }
 
-        configurationComponent = new MavenRunCommandLineConfigurationComponent("");
+        configurationComponent = new MavenRunCommandLineConfigurationComponent();
         configurationComponent.setStatusHandler(new PartStatusHandler() {
 
             @Override
@@ -60,24 +61,17 @@ public class MavenLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 
     @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-
+        String value = "mvn clean test";
+        configuration.setAttribute(MavenCommandLineConfigurationComponent.KEY_MVN_COMMAND_LINE, value);
+        configurationComponent.setCommandLine(value);
     }
 
     @Override
     public void initializeFrom(ILaunchConfiguration configuration) {
         try {
             String storedCommandline = configuration.getAttribute(MavenCommandLineConfigurationComponent.KEY_MVN_COMMAND_LINE, MavenLaunchDelegate.MVN_BASE_COMMANDLINE);
-            String goals = configuration.getAttribute(MavenCommandLineConfigurationComponent.KEY_MVN_GOALS, MavenLaunchDelegate.MVN_BASE_COMMANDLINE);
-            configurationComponent.setCommandLine(storedCommandline);
-            configurationComponent.setGoals(goals);
-            Boolean skip = configuration.getAttribute(MavenCommandLineConfigurationComponent.KEY_MVN_SKIP_TESTS, false);
-            configurationComponent.setSkipTests(skip);
-            Boolean offlineMode = configuration.getAttribute(MavenCommandLineConfigurationComponent.KEY_MVN_OFFLINE, false);
-            configurationComponent.setOfflineMode(offlineMode);
-            Boolean quietMode = configuration.getAttribute(MavenCommandLineConfigurationComponent.KEY_MVN_QUIET, false);
-            configurationComponent.setQuietMode(quietMode);
-            String profiles = configuration.getAttribute(MavenCommandLineConfigurationComponent.KEY_MVN_PROFILES, "");
-            configurationComponent.setProfiles(profiles );
+            MavenCommandLine mavenCommandLine = MavenCommandLine.fromString(storedCommandline);
+            configurationComponent.loadFrom(mavenCommandLine);
             setDirty(false);
         } catch (CoreException e) {
             e.printStackTrace();
