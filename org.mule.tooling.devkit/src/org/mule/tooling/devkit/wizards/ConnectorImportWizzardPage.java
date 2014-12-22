@@ -41,12 +41,13 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -70,6 +71,9 @@ import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
 import org.mule.tooling.maven.ui.preferences.MavenPreferences;
 
+/**
+ * Page for importing a Mule project from a Folder.
+ */
 public class ConnectorImportWizzardPage extends WizardPage {
 
     /** the history limit */
@@ -112,65 +116,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
         GridLayout layout = new GridLayout(3, false);
         composite.setLayout(layout);
 
-        final Label projectRootLabel = new Label(composite, SWT.NULL);
-        projectRootLabel.setText("Select root directory:");
-        rootDirectoryCombo = new Combo(composite, SWT.NONE);
-        rootDirectoryCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        rootDirectoryCombo.setFocus();
-        addFieldWithHistory("rootDirectory", rootDirectoryCombo);
-        loadInputHistory();
-
-        rootDirectoryCombo.addModifyListener(new ModifyListener() {
-
-            public void modifyText(ModifyEvent e) {
-                setMessage(null);
-                scanProject();
-            }
-        });
-        rootDirectoryCombo.addFocusListener(new FocusAdapter() {
-
-            public void focusLost(FocusEvent e) {
-                scanProject();
-            }
-        });
-        rootDirectoryCombo.addSelectionListener(new SelectionAdapter() {
-
-            public void widgetDefaultSelected(SelectionEvent e) {
-                setMessage(null);
-                scanProject();
-            }
-
-            public void widgetSelected(SelectionEvent e) {
-                // in runnable to have the combo popup collapse before disabling controls.
-                Display.getDefault().asyncExec(new Runnable() {
-
-                    public void run() {
-                        scanProject();
-                    }
-                });
-            }
-        });
-        final Button browseButton2 = new Button(composite, SWT.NONE);
-        browseButton2.setText("Browse");
-        browseButton2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-        browseButton2.addSelectionListener(new SelectionAdapter() {
-
-            public void widgetSelected(SelectionEvent e) {
-                DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.NONE);
-                dialog.setText("Import Folder");
-                String path = rootDirectoryCombo.getText();
-                if (path.length() == 0) {
-                    path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPortableString();
-                }
-                dialog.setFilterPath(path);
-
-                String result = dialog.open();
-                if (result != null) {
-                    rootDirectoryCombo.setText(result);
-                    scanProject();
-                }
-            }
-        });
+        addRootComboSection(composite);
 
         final Label projectsLabel = new Label(composite, SWT.NONE);
         projectsLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
@@ -183,14 +129,8 @@ public class ConnectorImportWizzardPage extends WizardPage {
                 projectTreeViewer.setSubtreeChecked(event.getElement(), event.getChecked());
                 for (MavenInfo item : ((MavenInfo) event.getElement()).getModules()) {
                     projectTreeViewer.setChecked(item, event.getChecked());
-                    if (existsInWorkspace(item) && event.getChecked()) {
-                        validate();
-                    }
                 }
-                if (existsInWorkspace((MavenInfo) event.getElement()) && event.getChecked()) {
-                    validate();
-                }
-                setPageComplete();
+                updatePageComplete();
             }
         });
 
@@ -231,8 +171,11 @@ public class ConnectorImportWizzardPage extends WizardPage {
                         projectTreeViewer.setChecked(selection.getFirstElement(), false);
                         setMessage("Project " + ((MavenInfo) selection.getFirstElement()).getArtifactId() + " is already in the workspace", IMessageProvider.WARNING);
                     } else {
-                        setMessage(null);
+                        setMessage(null, IMessageProvider.WARNING);
                     }
+                    updatePageComplete();
+                } else {
+                    setMessage(null, IMessageProvider.WARNING);
                 }
             }
         });
@@ -250,6 +193,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
             public void widgetSelected(SelectionEvent e) {
                 projectTreeViewer.expandAll();
                 selectecAll();
+                updatePageComplete();
             }
         });
 
@@ -259,15 +203,14 @@ public class ConnectorImportWizzardPage extends WizardPage {
         deselectAllButton.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
+                setMessage(null, IMessageProvider.WARNING);
                 setAllChecked(false);
                 projectTreeViewer.setSubtreeChecked(projectTreeViewer.getInput(), false);
                 MavenInfo elements = (MavenInfo) projectTreeViewer.getInput();
                 for (MavenInfo item : elements.getModules()) {
                     projectTreeViewer.setChecked(item, false);
-
                 }
-                setPageComplete(false);
-                setMessage(null);
+                updatePageComplete();
             }
         });
 
@@ -276,11 +219,97 @@ public class ConnectorImportWizzardPage extends WizardPage {
         projectTreeViewer.refresh();
         projectTreeViewer.expandAll();
         testMaven();
-        setPageComplete();
+        setPageComplete(false);
+    }
+
+    private void addRootComboSection(Composite composite) {
+        final Label projectRootLabel = new Label(composite, SWT.NULL);
+        projectRootLabel.setText("Select root directory:");
+        rootDirectoryCombo = new Combo(composite, SWT.NONE);
+        rootDirectoryCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        rootDirectoryCombo.setFocus();
+        addFieldWithHistory("rootDirectory", rootDirectoryCombo);
+        loadInputHistory();
+
+        ComboListener listener = new ComboListener();
+        rootDirectoryCombo.addModifyListener(listener);
+        rootDirectoryCombo.addFocusListener(listener);
+        rootDirectoryCombo.addSelectionListener(listener);
+
+        final Button browseButton2 = new Button(composite, SWT.NONE);
+        browseButton2.setText("Browse");
+        browseButton2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+        browseButton2.addSelectionListener(new SelectionAdapter() {
+
+            public void widgetSelected(SelectionEvent e) {
+                DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.NONE);
+                dialog.setText("Import Folder");
+                String path = rootDirectoryCombo.getText();
+                if (path.length() == 0) {
+                    path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPortableString();
+                }
+                dialog.setFilterPath(path);
+
+                String result = dialog.open();
+                if (result != null) {
+                    rootDirectoryCombo.setText(result);
+                    scanProject();
+                    updatePageComplete();
+                }
+
+            }
+        });
     }
 
     /**
-     * Execute logic for exporting Mule project as an archive.
+     * Update the indicator for whether the page is complete.
+     */
+    protected void updatePageComplete() {
+        if (mavenFailure) {
+            setErrorMessage("Maven home is not properly configured. Check your maven preferences.");
+            setPageComplete(false);
+            return;
+        }
+
+        Object[] checkedElements = projectTreeViewer.getCheckedElements();
+        boolean complete = checkedElements != null && checkedElements.length > 0;
+        if (complete) {
+            Object[] elements = projectTreeViewer.getCheckedElements();
+            for (int i = 0; i < elements.length; i++) {
+                Object element = elements[i];
+                if (element instanceof MavenInfo) {
+                    final MavenInfo mavenProject = (MavenInfo) element;
+                    if (existsInWorkspace(mavenProject)) {
+                        projectTreeViewer.setChecked(element, false);
+                        setMessage("Project " + mavenProject.getArtifactId() + " is already in the workspace", IMessageProvider.WARNING);
+                        complete = false;
+                    }
+                }
+            }
+
+            if (complete)
+                setMessage(null, IMessageProvider.WARNING);
+        }
+
+        setPageComplete(complete);
+    }
+
+    /**
+     * Gets a safe project name based on a given name.
+     * 
+     * @param input
+     * @return
+     */
+    protected String getSafeName(String input) {
+        return input.toLowerCase().replace(' ', '_');
+    }
+
+    /**
+     * Perform the import operation.
+     * 
+     * @param window
+     * 
+     * @return
      */
     public boolean performFinish() {
         final Object[] items = getSelectedItems();
@@ -326,65 +355,82 @@ public class ConnectorImportWizzardPage extends WizardPage {
         return runInContainer(op);
     }
 
-    public Object[] getSelectedItems() {
-        return projectTreeViewer.getCheckedElements();
+    private IProject createProject(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root, File folder) throws CoreException {
+
+        IProjectDescription projectDescription = getProjectDescription(root, artifactId, folder);
+
+        return getProjectWithDescription(artifactId, monitor, root, projectDescription);
     }
 
-    /**
-     * ProjectLabelProvider
-     */
-    class ProjectLabelProvider extends LabelProvider implements IColorProvider, DelegatingStyledCellLabelProvider.IStyledLabelProvider {
-
-        public String getText(Object element) {
-
-            if (element instanceof MavenInfo) {
-                MavenInfo info = (MavenInfo) element;
-                return info.toString();
-            }
-            return super.getText(element);
+    protected IProject getProjectWithDescription(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root, IProjectDescription projectDescription) throws CoreException {
+        IProject project = root.getProject(artifactId);
+        if (!project.exists()) {
+            project.create(projectDescription, monitor);
+            project.open(monitor);
+            project.setDescription(projectDescription, monitor);
         }
+        return project;
+    }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-         */
-        public org.eclipse.swt.graphics.Color getForeground(Object element) {
-            if (element instanceof MavenInfo)
-                if (existsInWorkspace((MavenInfo) element)) {
-                    return Display.getDefault().getSystemColor(SWT.COLOR_GRAY);
+    private IProjectDescription getProjectDescription(IWorkspaceRoot root, String artifactId, File folder) throws CoreException {
+
+        File projectDescriptionFile = new File(folder, ".project");
+        IProjectDescription currentDescription = null;
+        ICommand[] commands = null;
+        int commandsLength = 0;
+        if (projectDescriptionFile.exists()) {
+            currentDescription = root.getWorkspace().loadProjectDescription(Path.fromOSString(new File(folder, ".project").getAbsolutePath()));
+            commands = currentDescription.getBuildSpec();
+            commandsLength = commands.length;
+            for (int i = 0; i < commands.length; ++i) {
+                if (commands[i].getBuilderName().equals(DevkitBuilder.BUILDER_ID)) {
+                    return currentDescription;
                 }
-            return null;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-         */
-        public org.eclipse.swt.graphics.Color getBackground(Object element) {
-            return null;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
-         */
-        public StyledString getStyledText(Object element) {
-            if (element instanceof MavenInfo) {
-                MavenInfo info = (MavenInfo) element;
-                StyledString ss = new StyledString();
-                ss.append(info.getArtifactId() + "/pom.xml ");
-                ss.append(info.getGroupId() + ":" + info.getArtifactId(), StyledString.DECORATIONS_STYLER);
-                if (!info.getVersion().isEmpty()) {
-                    ss.append(" - " + info.getVersion(), StyledString.QUALIFIER_STYLER);
-                }
-                return ss;
             }
-            return null;
         }
+        ICommand[] newCommands = new ICommand[commandsLength + 1];
+        if (commands != null) {
+            System.arraycopy(commands, 0, newCommands, 0, commandsLength);
+        }
+        IProjectDescription projectDescription = root.getWorkspace().newProjectDescription(artifactId);
+        projectDescription.setNatureIds(new String[] { JavaCore.NATURE_ID, DevkitNature.NATURE_ID });
 
+        ICommand command = projectDescription.newCommand();
+        command.setBuilderName(DevkitBuilder.BUILDER_ID);
+        newCommands[newCommands.length - 1] = command;
+
+        projectDescription.setBuildSpec(newCommands);
+
+        projectDescription.setLocation(Path.fromOSString(folder.getAbsolutePath()));
+
+        return projectDescription;
+    }
+
+    protected void testMaven() {
+        mavenFailure = false;
+        MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
+        final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
+        // Using a callback doesn't work. Set null callback and just handle the result.
+        int result = mavenInstallationTester.test(null);
+        onTestFinished(result);
+    }
+
+    void onTestFinished(final int result) {
+        mavenFailure = result != 0;
+        updatePageComplete();
+    }
+
+    private boolean runInContainer(final IRunnableWithProgress work) {
+        try {
+            getContainer().run(true, true, work);
+        } catch (InterruptedException e) {
+            return false;
+        } catch (InvocationTargetException e) {
+            Throwable realException = e.getTargetException();
+            MessageDialog.openError(getShell(), "Error", realException.getMessage());
+            return false;
+        }
+        return true;
     }
 
     /** Loads the dialog settings using the page name as a section name. */
@@ -465,10 +511,55 @@ public class ConnectorImportWizzardPage extends WizardPage {
         super.dispose();
     }
 
-    void setAllChecked(boolean state) {
-        MavenInfo input = (MavenInfo) projectTreeViewer.getInput();
-        for (MavenInfo mavenProjectInfo : input.getModules()) {
-            projectTreeViewer.setSubtreeChecked(mavenProjectInfo, state);
+    private boolean existsInWorkspace(MavenInfo mavenProject) {
+        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+        final File folder = mavenProject.getProjectRoot();
+        for (int index = 0; index < projects.length; index++) {
+            if (projects[index].getLocation().toFile().equals(folder)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * ProjectLabelProvider
+     */
+    class ProjectLabelProvider extends LabelProvider implements IColorProvider, DelegatingStyledCellLabelProvider.IStyledLabelProvider {
+
+        public String getText(Object element) {
+
+            if (element instanceof MavenInfo) {
+                MavenInfo info = (MavenInfo) element;
+                return info.toString();
+            }
+            return super.getText(element);
+        }
+
+        public org.eclipse.swt.graphics.Color getForeground(Object element) {
+            if (element instanceof MavenInfo)
+                if (existsInWorkspace((MavenInfo) element)) {
+                    return Display.getDefault().getSystemColor(SWT.COLOR_GRAY);
+                }
+            return null;
+        }
+
+        public org.eclipse.swt.graphics.Color getBackground(Object element) {
+            return null;
+        }
+
+        public StyledString getStyledText(Object element) {
+            if (element instanceof MavenInfo) {
+                MavenInfo info = (MavenInfo) element;
+                StyledString ss = new StyledString();
+                ss.append(info.getArtifactId() + "/pom.xml ");
+                ss.append(info.getGroupId() + ":" + info.getArtifactId(), StyledString.DECORATIONS_STYLER);
+                if (!info.getVersion().isEmpty()) {
+                    ss.append(" - " + info.getVersion(), StyledString.QUALIFIER_STYLER);
+                }
+                return ss;
+            }
+            return null;
         }
 
     }
@@ -484,53 +575,16 @@ public class ConnectorImportWizzardPage extends WizardPage {
             projectTreeViewer.refresh();
             projectTreeViewer.expandAll();
             selectecAll();
-            validate();
         } catch (CoreException e1) {
             e1.printStackTrace();
         }
     }
 
-    void setPageComplete() {
-        if (mavenFailure) {
-            setMessage("Maven home is not properly configured. Check your maven preferences.", IMessageProvider.ERROR);
-            setPageComplete(false);
-            return;
+    void setAllChecked(boolean state) {
+        MavenInfo input = (MavenInfo) projectTreeViewer.getInput();
+        for (MavenInfo mavenProjectInfo : input.getModules()) {
+            projectTreeViewer.setSubtreeChecked(mavenProjectInfo, state);
         }
-        Object[] checkedElements = projectTreeViewer.getCheckedElements();
-        setPageComplete(checkedElements != null && checkedElements.length > 0);
-        if (checkedElements != null && checkedElements.length > 0) {
-            setMessage(null);
-            setPageComplete(true);
-        }
-    }
-
-    private boolean existsInWorkspace(MavenInfo mavenProject) {
-        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-        final File folder = mavenProject.getProjectRoot();
-        for (int index = 0; index < projects.length; index++) {
-            if (projects[index].getLocation().toFile().equals(folder)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void validate() {
-
-        Object[] elements = projectTreeViewer.getCheckedElements();
-        for (int i = 0; i < elements.length; i++) {
-            Object element = elements[i];
-            if (element instanceof MavenInfo) {
-                final MavenInfo mavenProject = (MavenInfo) element;
-
-                if (existsInWorkspace(mavenProject)) {
-                    projectTreeViewer.setChecked(element, false);
-                    setMessage("Project " + mavenProject.getArtifactId() + " is already in the workspace", IMessageProvider.WARNING);
-                }
-
-            }
-        }
-        setPageComplete();
     }
 
     private void selectecAll() {
@@ -540,85 +594,48 @@ public class ConnectorImportWizzardPage extends WizardPage {
         for (MavenInfo item : elements.getModules()) {
             projectTreeViewer.setChecked(item, true);
         }
-        validate();
     }
 
-    protected void testMaven() {
-        mavenFailure = false;
-        MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
-        final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
-        // Using a callback doesn't work. Set null callback and just handle the result.
-        int result = mavenInstallationTester.test(null);
-        onTestFinished(result);
-    }
+    private class ComboListener implements ModifyListener, FocusListener, SelectionListener {
 
-    void onTestFinished(final int result) {
-        mavenFailure = result != 0;
-        this.setPageComplete();
-    }
-
-    private IProject createProject(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root, File folder) throws CoreException {
-
-        IProjectDescription projectDescription = getProjectDescription(root, artifactId, folder);
-
-        return getProjectWithDescription(artifactId, monitor, root, projectDescription);
-    }
-
-    protected IProject getProjectWithDescription(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root, IProjectDescription projectDescription) throws CoreException {
-        IProject project = root.getProject(artifactId);
-        if (!project.exists()) {
-            project.create(projectDescription, monitor);
-            project.open(monitor);
-            project.setDescription(projectDescription, monitor);
+        private void scanAndUpdate() {
+            scanProject();
+            updatePageComplete();
         }
-        return project;
-    }
 
-    private IProjectDescription getProjectDescription(IWorkspaceRoot root, String artifactId, File folder) throws CoreException {
+        @Override
+        public void modifyText(ModifyEvent e) {
+            scanAndUpdate();
+        }
 
-        File projectDescriptionFile = new File(folder, ".project");
-        IProjectDescription currentDescription = null;
-        ICommand[] commands = null;
-        int commandsLength = 0;
-        if (projectDescriptionFile.exists()) {
-            currentDescription = root.getWorkspace().loadProjectDescription(Path.fromOSString(new File(folder, ".project").getAbsolutePath()));
-            commands = currentDescription.getBuildSpec();
-            commandsLength = commands.length;
-            for (int i = 0; i < commands.length; ++i) {
-                if (commands[i].getBuilderName().equals(DevkitBuilder.BUILDER_ID)) {
-                    return currentDescription;
+        @Override
+        public void focusGained(FocusEvent e) {
+            scanAndUpdate();
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+
+        }
+
+        @Override
+        public void widgetSelected(SelectionEvent e) {
+            // in runnable to have the combo popup collapse before disabling controls.
+            Display.getDefault().asyncExec(new Runnable() {
+
+                public void run() {
+                    scanAndUpdate();
                 }
-            }
+            });
         }
-        ICommand[] newCommands = new ICommand[commandsLength + 1];
-        if (commands != null) {
-            System.arraycopy(commands, 0, newCommands, 0, commandsLength);
+
+        @Override
+        public void widgetDefaultSelected(SelectionEvent e) {
+            scanAndUpdate();
         }
-        IProjectDescription projectDescription = root.getWorkspace().newProjectDescription(artifactId);
-        projectDescription.setNatureIds(new String[] { JavaCore.NATURE_ID, DevkitNature.NATURE_ID });
-
-        ICommand command = projectDescription.newCommand();
-        command.setBuilderName(DevkitBuilder.BUILDER_ID);
-        newCommands[newCommands.length - 1] = command;
-
-        projectDescription.setBuildSpec(newCommands);
-
-        projectDescription.setLocation(Path.fromOSString(folder.getAbsolutePath()));
-
-        return projectDescription;
     }
 
-    private boolean runInContainer(final IRunnableWithProgress work) {
-        try {
-            getContainer().run(true, true, work);
-        } catch (InterruptedException e) {
-            return false;
-        } catch (InvocationTargetException e) {
-            Throwable realException = e.getTargetException();
-            MessageDialog.openError(getShell(), "Error", realException.getMessage());
-            return false;
-        }
-
-        return true;
+    public Object[] getSelectedItems() {
+        return projectTreeViewer.getCheckedElements();
     }
 }

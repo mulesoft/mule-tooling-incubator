@@ -33,8 +33,10 @@ public class ScanProject extends WorkspaceJob {
     class XMLHandler extends DefaultHandler {
 
         boolean skip = false;
+        boolean build = false;
         boolean modules = false;
         boolean parent = false;
+
         StringBuffer accumulator = new StringBuffer();
 
         MavenInfo project;
@@ -56,6 +58,9 @@ public class ScanProject extends WorkspaceJob {
                 skip = true;
             }
             if (qName.equals("build")) {
+                build = true;
+            }
+            if (qName.equals("scm")) {
                 skip = true;
             }
             if (qName.equals("parent")) {
@@ -67,6 +72,7 @@ public class ScanProject extends WorkspaceJob {
         }
 
         public void endElement(String uri, String localName, String qName) {
+
             if (qName.equals("modules")) {
                 modules = false;
             }
@@ -75,12 +81,17 @@ public class ScanProject extends WorkspaceJob {
                 return;
             }
             if (qName.equals("build")) {
+                build = false;
+                return;
+            }
+            if (qName.equals("scm")) {
                 skip = false;
                 return;
             }
 
-            if (skip)
+            if (skip || build)
                 return;
+
             String value = accumulator.toString().trim();
             if (modules) {
                 File file = new File(projectRoot, value);
@@ -93,7 +104,6 @@ public class ScanProject extends WorkspaceJob {
             }
             if (qName.equals("parent")) {
                 parent = false;
-                return;
             }
             if (parent) {
                 if ("groupId".equals(qName)) {
@@ -106,14 +116,11 @@ public class ScanProject extends WorkspaceJob {
             }
             if ("groupId".equals(qName)) {
                 project.setGroupId(value);
-            }
-            if ("artifactId".equals(qName)) {
+            } else if ("artifactId".equals(qName)) {
                 project.setArtifactId(value);
-            }
-            if ("version".equals(qName)) {
+            } else if ("version".equals(qName)) {
                 project.setVersion(value);
-            }
-            if ("packaging".equals(qName)) {
+            } else if ("packaging".equals(qName)) {
                 project.setPackaging(value);
             }
 

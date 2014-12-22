@@ -140,10 +140,6 @@
 		<command id="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
 			name="Run Interop Tests">
 		</command>
-		<command id="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand"
-			name="Generate Functional TestCases"
-			defaultHandler="org.mule.tooling.devkit.popup.actions.GenerateTestCasesCommand">
-		</command>
 		<command id="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
 			name="Create documentation">
 		</command>

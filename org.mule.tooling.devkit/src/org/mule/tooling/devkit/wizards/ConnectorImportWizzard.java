@@ -6,7 +6,7 @@ import org.eclipse.ui.IWorkbench;
 
 public class ConnectorImportWizzard extends AbstractDevkitProjectWizzard implements IImportWizard {
 
-    ConnectorImportWizzardPage importPage;
+    private ConnectorImportWizzardPage importPage;
 
     public ConnectorImportWizzard() {
         super();
@@ -15,7 +15,7 @@ public class ConnectorImportWizzard extends AbstractDevkitProjectWizzard impleme
 
     @Override
     public void init(IWorkbench workbench, IStructuredSelection selection) {
-
+        setWindowTitle("Anypoint Connector Import from Folder");
     }
 
     public void addPages() {
@@ -26,11 +26,9 @@ public class ConnectorImportWizzard extends AbstractDevkitProjectWizzard impleme
     public boolean performCancel() {
         return true;
     }
-    
+
     @Override
     public boolean performFinish() {
         return importPage.performFinish();
-
     }
-
 }

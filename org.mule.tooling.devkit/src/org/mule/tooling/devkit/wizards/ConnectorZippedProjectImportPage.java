@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -126,7 +125,7 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
      */
     protected void updatePageComplete() {
         if (mavenFailure) {
-            setMessage("Maven home is not properly configured. Check your maven preferences.", IMessageProvider.ERROR);
+            setErrorMessage("Maven home is not properly configured. Check your maven preferences.");
             setPageComplete(false);
             return;
         }
@@ -344,7 +343,7 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
         mavenFailure = result != 0;
         updatePageComplete();
     }
-
+    
     private boolean runInContainer(final IRunnableWithProgress work) {
         try {
             getContainer().run(true, true, work);
