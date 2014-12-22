@@ -23,22 +23,7 @@ public class ProjectRoot extends DefaultNodeItem {
 
     @Override
     public Object[] getChildren() {
-        Collections.sort(modules, new Comparator<Module>() {
-
-            @Override
-            public int compare(Module o1, Module o2) {
-                if (o1.getType().equals(o2))
-                    return o1.getName().compareTo(o2.getName());
-                if (o1.getType().equals(ModelUtils.CONNECTOR_ANNOTATION.getName().toString()) || o1.getType().equals(ModelUtils.MODULE_ANNOTATION.getName().toString())) {
-                    if (o2.getType().equals(ModelUtils.CONNECTOR_ANNOTATION.getName().toString()) || o2.getType().equals(ModelUtils.MODULE_ANNOTATION.getName().toString())) {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                    return -1;
-                }
-                return 1;
-            }
-
-        });
+        Collections.sort(modules, new ModuleComparator());
         return modules.toArray();
     }
 }
