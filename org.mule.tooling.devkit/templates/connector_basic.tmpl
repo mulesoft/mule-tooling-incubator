@@ -5,16 +5,16 @@
 
 package ${project.package}.strategy;
 
-import org.mule.api.annotations.components.Basic;
+import org.mule.api.annotations.components.Configuration;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
 
 /**
- * Basic Connection Strategy
+ * Configuration type Strategy
  *
  * @author MuleSoft, Inc.
  */
-@Basic(configElementName = "config-type", friendlyName = "Basic type strategy")
+@Configuration(configElementName = "config-type", friendlyName = "Configuration type strategy")
 public class ${project.strategyClassName}
 {
     /**

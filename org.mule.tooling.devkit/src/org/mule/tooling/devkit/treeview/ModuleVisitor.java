@@ -59,7 +59,7 @@ public class ModuleVisitor extends ASTVisitor {
     public boolean visit(CompilationUnit node) {
         compilationUnit = node;
         LocateAnnotationVisitor visitorConnector = new LocateAnnotationVisitor(0, ModelUtils.CONNECTOR_ANNOTATION).addAnnotation(ModelUtils.MODULE_ANNOTATION)
-                .addAnnotation(ModelUtils.BASIC_ANNOTATION).addAnnotation(ModelUtils.BASIC_AUTH_ANNOTATION).addAnnotation(ModelUtils.OAUTH_ANNOTATION)
+                .addAnnotation(ModelUtils.CONFIGURATION_ANNOTATION).addAnnotation(ModelUtils.BASIC_AUTH_ANNOTATION).addAnnotation(ModelUtils.OAUTH_ANNOTATION)
                 .addAnnotation(ModelUtils.METADATA_CATEGORY_ANNOTATION).addAnnotation(ModelUtils.HTTP_BASIC_AUTH_ANNOTATION);
 
         node.accept(visitorConnector);
