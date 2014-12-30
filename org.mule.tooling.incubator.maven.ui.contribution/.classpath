@@ -7,14 +7,12 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-io.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/google-collections.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/junit.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-ant-tasks.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-artifact-manager.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-artifact.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-error-diagnostics.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-model-builder.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/maven-model.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-plugin-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-plugin-descriptor.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/maven-plugin-registry.jar"/>
@@ -24,10 +22,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/maven-settings.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/nekohtml.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/plexus-classworlds.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/plexus-component-annotations.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/plexus-container-default.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/plexus-interpolation.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/plexus-utils.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/wagon-file.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/wagon-http-lightweight.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/wagon-http-shared.jar"/>

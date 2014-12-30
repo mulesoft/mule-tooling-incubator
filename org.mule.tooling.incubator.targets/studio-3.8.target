@@ -41,7 +41,7 @@
 <unit id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.ecf.filetransfer.ssl.feature.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.e4.rcp.feature.group" version="0.0.0"/>
-<repository location="http://54.86.196.140:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.0.0-SNAPSHOT/orbit-5.0.0-SNAPSHOT.zip-unzip/"/>
+<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.1.0-SNAPSHOT/orbit-5.1.0-SNAPSHOT.zip-unzip/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="com.sun.jersey" version="0.0.0"/>
@@ -65,11 +65,11 @@
 <unit id="javax.wsdl" version="1.6.2.v201012040545"/>
 <unit id="javax.ws.rs" version="0.0.0"/>
 <unit id="com.google.gson" version="0.0.0"/>
-<repository location="http://54.86.196.140:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.0.0-SNAPSHOT/orbit-5.0.0-SNAPSHOT.zip-unzip/"/>
+<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.1.0-SNAPSHOT/orbit-5.1.0-SNAPSHOT.zip-unzip/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.codehaus.groovy" version="2.0.7.xx-201407142131-e42-RELEASE"/>
-<repository location="http://54.86.196.140:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.0.0-SNAPSHOT/orbit-5.0.0-SNAPSHOT.zip-unzip/"/>
+<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.1.0-SNAPSHOT/orbit-5.1.0-SNAPSHOT.zip-unzip/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.mule.tooling.branding" version="0.0.0"/>
@@ -79,7 +79,19 @@
 <unit id="org.mule.tooling.extension.server.3.6.0.ee.feature.group" version="0.0.0"/>
 <unit id="org.mule.tooling.ui.extension.sap.feature.group" version="0.0.0"/>
 <unit id="org.mule.tooling.ui.extension.sap.3.5.0.feature.group" version="0.0.0"/>
-<repository location="http://studio-nightly-update.s3.amazonaws.com/himalaya"/>
+<repository location="http://studio-nightly-update.s3.amazonaws.com/icefall"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.apache.maven.model" version="3.0.4"/>
+<unit id="org.apache.maven.shared.maven-invoker" version="2.1.0"/>
+<unit id="org.codehaus.classworlds" version="1.1.0.alpha-2"/>
+<unit id="org.codehaus.plexus.archiver" version="2.2.0"/>
+<unit id="org.codehaus.plexus.container-default" version="1.0.0.alpha-9-stable-1"/>
+<unit id="org.codehaus.plexus.io" version="2.0.4"/>
+<unit id="org.codehaus.plexus.utils" version="3.0.8"/>
+<unit id="org.codehaus.plexus.component-annotations" version="1.6.0"/>
+<unit id="junit" version="3.8.1"/>
+<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.1.0-SNAPSHOT/orbit-5.1.0-SNAPSHOT.zip-unzip/"/>
 </location>
 </locations>
 </target>
