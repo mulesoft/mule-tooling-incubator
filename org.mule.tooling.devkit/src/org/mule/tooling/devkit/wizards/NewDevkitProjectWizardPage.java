@@ -56,14 +56,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
     private static final String GROUP_TITLE_CONNECTOR = "";
     private static final String GROUP_TITLE_API = "API";
-    private static final String NO_AUTHENTICATION = "No Authentication";
-    private static final String NONE = "none";
-    private static final String OAUTH_V2 = "OAuth V2";
-    private static final String CONNECTION_MANAGEMENT = "Connection Management";
-    private static final String HTTP_BASIC = "HTTP Basic";
-    private static final String[] SUPPORTED_AUTHENTICATION_SOAP_OPTIONS = new String[] { NONE };
-    private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { NO_AUTHENTICATION, HTTP_BASIC, CONNECTION_MANAGEMENT, OAUTH_V2 };
-    private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { NO_AUTHENTICATION, CONNECTION_MANAGEMENT, OAUTH_V2 };
+    private static final String[] SUPPORTED_AUTHENTICATION_SOAP_OPTIONS = new String[] { AuthenticationType.NONE.label() };
+    private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { AuthenticationType.NONE.label(), AuthenticationType.HTTP_BASIC.label(), AuthenticationType.CONNECTION_MANAGEMENT.label(), AuthenticationType.OAUTH_V2.label() };
+    private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { AuthenticationType.NONE.label(), AuthenticationType.CONNECTION_MANAGEMENT.label(), AuthenticationType.OAUTH_V2.label() };
     private static final String[] SUPPORTED_API_OPTIONS = new String[] { ApiType.GENERIC.label(), ApiType.SOAP.label(), ApiType.REST.label() };
     private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.";
     private static final String OTHER_COMMENT = "This will generate the scaffolding for the connector.\nIf you want to create a connector for a java client this will help you get started.";
@@ -591,7 +586,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private boolean isBasic() {
-        return comboAuthentication.getText().equals(CONNECTION_MANAGEMENT);
+        return comboAuthentication.getText().equals(AuthenticationType.CONNECTION_MANAGEMENT.label());
     }
 
     public boolean hasQuery() {
@@ -648,11 +643,11 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private String getAuthenticationDescription() {
-        if (comboAuthentication.getText().equals(HTTP_BASIC))
+        if (comboAuthentication.getText().equals(AuthenticationType.HTTP_BASIC.label()))
             return "Basic authentication provides username and password when making each request.It generates HTTP Authentication RFC2617 strategy";
-        if (comboAuthentication.getText().equals(CONNECTION_MANAGEMENT))
+        if (comboAuthentication.getText().equals(AuthenticationType.CONNECTION_MANAGEMENT.label()))
             return "This will generate a Connection Management strategy, with username and password. You can change the connection methods as required.";
-        if (comboAuthentication.getText().equals(OAUTH_V2))
+        if (comboAuthentication.getText().equals(AuthenticationType.OAUTH_V2.label()))
             return "OAuth V2, the next evolution of the OAuth protocol, provides a method for Mule applications to access server resources on behalf of a resource owner without sharing their credentials.";
         return "No tip";
     }
