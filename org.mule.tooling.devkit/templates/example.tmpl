@@ -1,13 +1,13 @@
 <!-- BEGIN_INCLUDE(${project.moduleName}:my-processor) -->
-    <${project.moduleName}:my-processor content="#[map-payload:content]" />
+    <${project.moduleName}:my-processor config-ref="" content="#[map-payload:content]" />
 <!-- END_INCLUDE(${project.moduleName}:my-processor) -->
 #if(${project.hasQuery} == true )
 <!-- BEGIN_INCLUDE(${project.moduleName}:query-processor) -->
-    <${project.moduleName}:query-processor query="SELECT fieldName FROM MY_TABLE" />
+    <${project.moduleName}:query-processor config-ref="" query="SELECT fieldName FROM MY_TABLE" />
 <!-- END_INCLUDE(${project.moduleName}:query-processor) -->
 #end
 #if(${project.dataSenseEnabled} == true )
 <!-- BEGIN_INCLUDE(${project.moduleName}:add-entity) -->
-    <${project.moduleName}:add-entity key="id1"/>
+    <${project.moduleName}:add-entity config-ref="" key="id1"/>
 <!-- END_INCLUDE(${project.moduleName}:add-entity) -->
 #end
