@@ -368,5 +368,9 @@
       </perspectiveExtension>
    </extension>
    
+   	<extension point="org.eclipse.ui.startup">
+	    <startup class="org.mule.tooling.ui.contribution.munit.MunitStartup">
+	    </startup>
+	 </extension>
 
 </plugin>
