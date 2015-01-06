@@ -275,6 +275,7 @@ public class MunitResourceUtils {
             String version = (isEnterprise ? "EE" : "CE") + "-" + muleProject.getServerDefinition().getVersion();
 
             context.put("version", version);
+            context.put("mock_name", productionFileName.split(".xml")[0]);
             context.put("resource", productionFileName);
 
             Velocity.evaluate(context, writer, "velocity  rendering", reader);

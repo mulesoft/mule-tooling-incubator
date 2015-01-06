@@ -46,10 +46,8 @@ public class PomResourceListener implements IResourceChangeListener {
                     }
 
                     if (IResourceDelta.CHANGED == delta.getKind() || IResourceDelta.ADDED == delta.getKind()) {
-                        // if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
                         IFile deltaResource = (IFile) delta.getResource();
                         onFileChanged(deltaResource);
-                        // }
                     }
                     return false;
                 }
