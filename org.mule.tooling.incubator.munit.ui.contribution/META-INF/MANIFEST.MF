@@ -35,7 +35,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.junit,
  org.eclipse.jdt.launching,
  org.apache.commons.lang;bundle-version="2.3.0",
- org.mule.tooling.utils;bundle-version="[5.0.0,6.0.0)"
+ org.mule.tooling.utils;bundle-version="[5.0.0,6.0.0)",
+ org.apache.maven.model;bundle-version="3.0.4"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir

@@ -168,7 +168,7 @@ public class MunitResourceUtils {
 
     /**
      * <p>
-     * Add the Munit maven configuratio to the mule pom
+     * Add the Munit maven configuration to the mule pom
      * </p>
      * 
      * @param muleProject
