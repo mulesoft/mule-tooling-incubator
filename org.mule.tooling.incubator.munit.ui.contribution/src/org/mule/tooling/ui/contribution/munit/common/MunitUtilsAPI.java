@@ -1,6 +1,7 @@
 package org.mule.tooling.ui.contribution.munit.common;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -8,6 +9,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.model.MuleProjectKind;
+import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 import org.mule.tooling.ui.contribution.munit.MunitResourceUtils;
 
 /**
@@ -47,25 +49,47 @@ public class MunitUtilsAPI {
 
     }
 
+    public static IWorkspace getWorkspace(IFile file) {
+        return file.getWorkspace();
+    }
+
+    public static IWorkspace getWorkspace(IMuleProject muleProject) {
+        return muleProject.getJavaProject().getProject().getWorkspace();
+    }
+
     /**
      * This method will try to configure the project to work properly with munit.
      * 
      * @param file
      * @throws CoreException
      */
-    public static void configureProjectForMunit(IFile file) throws CoreException {
-        final IMuleProject muleProject = MunitUtilsAPI.getMuleProject(file);
+    public static void configureProjectForMunit(IFile file) {
+        try {
+            IMuleProject muleProject = MunitUtilsAPI.getMuleProject(file);
+            configureProjectForMunit(muleProject);
+        } catch (CoreException e) {
+            MunitPlugin.log(e);
+        }
+    }
+
+    /**
+     * This method will try to configure the project to work properly with munit.
+     * 
+     * @param file
+     * @throws CoreException
+     */
+    public static void configureProjectForMunit(IMuleProject muleProject) {
         if (null == muleProject) {
             return;
         }
 
-        if (!file.getWorkspace().isTreeLocked()) {
+        if (!getWorkspace(muleProject).isTreeLocked()) {
             MunitResourceUtils.configureProjectForMunit(muleProject);
             return;
         }
 
         WorkspaceJob workspaceJob = buildConfigureMuleProjectJob(muleProject);
-        workspaceJob.setRule(file);     
+        workspaceJob.setRule(muleProject.getProjectFile());
         workspaceJob.schedule();
     }
 

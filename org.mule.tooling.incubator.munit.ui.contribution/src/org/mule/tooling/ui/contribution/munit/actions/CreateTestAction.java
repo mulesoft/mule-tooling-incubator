@@ -17,6 +17,7 @@ import org.mule.tooling.messageflow.editpart.MuleConfigurationEditPart;
 import org.mule.tooling.model.messageflow.MessageFlowNode;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 import org.mule.tooling.ui.contribution.munit.MunitResourceUtils;
+import org.mule.tooling.ui.contribution.munit.common.MunitUtilsAPI;
 
 /**
  * <p>
@@ -45,8 +46,8 @@ public class CreateTestAction extends Action {
             final MultiPageMessageFlowEditor editor = (MultiPageMessageFlowEditor) activeEditor;
             final MessageFlowEditor messageFlowEditor = editor.getFlowEditor();
             IMuleProject muleProject = messageFlowEditor.getMuleProject();
-            
-            MunitResourceUtils.configureProjectForMunit(muleProject);
+
+            MunitUtilsAPI.configureProjectForMunit(muleProject);
             IFolder munitFolder = createMunitFolder(activeWorkbenchWindow, muleProject);
             createMunitFile(activeWorkbenchWindow, messageFlowEditor, munitFolder);
         }
@@ -57,28 +58,27 @@ public class CreateTestAction extends Action {
         IFile munitConfigFile = MunitResourceUtils.createMunitFileFromXmlConfigFile(munitFolder, messageFlowEditor.getInputXmlConfigFile());
         if (!munitConfigFile.exists()) {
             try {
-            	MunitResourceUtils.createXMLConfigurationFromTemplate(messageFlowEditor.getMuleProject(), munitConfigFile.getName(),
-            			munitConfigFile.getName().replace("-test", ""), munitFolder);
+                MunitResourceUtils.createXMLConfigurationFromTemplate(messageFlowEditor.getMuleProject(), munitConfigFile.getName(),
+                        munitConfigFile.getName().replace("-test", ""), munitFolder);
 
-            	openMunitEditor(messageFlowEditor, munitConfigFile);
+                openMunitEditor(messageFlowEditor, munitConfigFile);
             } catch (Throwable e) {
                 MessageDialog.openError(activeWorkbenchWindow.getShell(), "Munit Suite file creation error", "Could not create a new Suite File for your Munit tests.");
             }
         }
     }
-    
-    private void openMunitEditor(MessageFlowEditor messageFlowEditor,  IFile munitConfigFile) throws CoreException{
-    	StructuredSelection selection = (StructuredSelection) messageFlowEditor.getSelection();
+
+    private void openMunitEditor(MessageFlowEditor messageFlowEditor, IFile munitConfigFile) throws CoreException {
+        StructuredSelection selection = (StructuredSelection) messageFlowEditor.getSelection();
         EntityEditPart<?> editPart = (EntityEditPart<?>) selection.getFirstElement();
         editPart = getParent(editPart);
-        
-        
+
         IEditorPart openEditor = MunitResourceUtils.open(munitConfigFile);
         MultiPageMessageFlowEditor multiPageEditor = (MultiPageMessageFlowEditor) openEditor;
         MessageFlowEditor flowEditor = multiPageEditor.getFlowEditor();
-        
+
         MunitResourceUtils.createDefaultMunitTest(flowEditor, ((MessageFlowNode) editPart.getEntity()).getName());
-        
+
         multiPageEditor.updateFlowFromSource();
         multiPageEditor.openFlowEditorPage();
     }

@@ -134,6 +134,7 @@ public class MunitResourceUtils {
      *            The project to be configured
      */
     public static void configureProjectForMunit(IMuleProject muleProject) {
+        
         if (MavenUtils.isMavenBased(muleProject)) {
             MunitResourceUtils.configureMaven(muleProject);
         } else {

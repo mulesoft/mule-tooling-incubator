@@ -6,6 +6,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IStartup;
 import org.mule.tooling.ui.contribution.munit.listeners.PomResourceListener;
 
+/**
+ * Early startup class for Munit Plugin.
+ * 
+ * @author damiansima
+ */
 public class MunitStartup implements IStartup {
 
     @Override
