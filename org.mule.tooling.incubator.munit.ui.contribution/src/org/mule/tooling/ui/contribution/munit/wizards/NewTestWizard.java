@@ -24,6 +24,7 @@ import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.model.MuleProjectKind;
 import org.mule.tooling.ui.contribution.munit.MunitPlugin;
 import org.mule.tooling.ui.contribution.munit.MunitResourceUtils;
+import org.mule.tooling.ui.contribution.munit.common.MunitUtilsAPI;
 
 public class NewTestWizard extends Wizard implements INewWizard {
 
@@ -82,7 +83,7 @@ public class NewTestWizard extends Wizard implements INewWizard {
             public void run() {
                 try {
                     IMuleProject muleProject = MuleProjectKind.APPLICATION.adapt(container.getProject());
-                    MunitResourceUtils.configureProjectForMunit(muleProject);
+                    MunitUtilsAPI.configureProjectForMunit(muleProject);
                     IFolder munitFolder = MunitResourceUtils.createMunitFolder(muleProject);
                     IFile munitFile = MunitResourceUtils.createXMLConfigurationFromTemplate(muleProject, page.getFileName(), resource.getName(), munitFolder);
                     MunitResourceUtils.open(munitFile);
