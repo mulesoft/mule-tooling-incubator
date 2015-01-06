@@ -29,6 +29,8 @@ import org.mule.tooling.core.classloader.ProjectClasspathUtils;
 import org.mule.tooling.core.io.MuleResourceUtils;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.maven.MavenMuleProjectDecorator;
+import org.mule.tooling.maven.dependency.MavenDependency;
+import org.mule.tooling.maven.dependency.PojoMavenDependency;
 import org.mule.tooling.maven.utils.MavenUtils;
 import org.mule.tooling.maven.utils.XmlEditingHelper;
 import org.mule.tooling.maven.utils.XmlEditionCallable;
@@ -111,13 +113,13 @@ public class MunitResourceUtils {
      */
     public static void createDefaultMunitTest(MessageFlowEditor flowEditor, String flowName) throws CoreException {
 
-    	final MuleConfigurationNamingSupport naming = new MuleConfigurationNamingSupport(flowEditor.getMuleConfiguration());
+        final MuleConfigurationNamingSupport naming = new MuleConfigurationNamingSupport(flowEditor.getMuleConfiguration());
         final MuleConfigurationBuilder muleConfigurationBuilder = new MuleConfigurationBuilder(flowEditor.getMuleConfigurationDecorator());
-        
+
         // Add Munit Test
         final ContainerBuilder<MuleConfigurationBuilder> munitElement = muleConfigurationBuilder.addContainer("munit_test", "http://www.mulesoft.org/schema/mule/munit/test");
         munitElement.usingProperties().property("description", "Test").property("name", naming.getAvailableName(flowName + "Test")).endProperties();
-        
+
         // Add Flow ref
         final AbstractPipelineBuilder<ContainerBuilder<MuleConfigurationBuilder>> addFlowRef = munitElement.editNested(1).addFlowRef("Flow-ref to " + flowName);
         addFlowRef.usingProperties().property("name", flowName).endProperties();
@@ -134,11 +136,33 @@ public class MunitResourceUtils {
      *            The project to be configured
      */
     public static void configureProjectForMunit(IMuleProject muleProject) {
-        
         if (MavenUtils.isMavenBased(muleProject)) {
-            MunitResourceUtils.configureMaven(muleProject);
+            configureMavenProjectForMunit(muleProject);
         } else {
-            MunitResourceUtils.configureProjectClasspath(muleProject);
+            configureNormalProjectForMunit(muleProject);
+        }
+    }
+
+    private static void configureMavenProjectForMunit(IMuleProject muleProject) {
+        MavenMuleProjectDecorator mavenProject = MavenMuleProjectDecorator.decorate(muleProject);
+
+        String groupId = "org.mule.modules";
+        String artifactId = "mule-interceptor-module";
+        String version = "";
+        MavenDependency dependency = new PojoMavenDependency(groupId, artifactId, version);
+
+        if (!mavenProject.hasDependency(dependency, false)) {
+            MunitResourceUtils.configureMaven(muleProject);
+        }
+    }
+
+    private static void configureNormalProjectForMunit(IMuleProject muleProject) {
+        try {
+            if (!(ProjectClasspathUtils.isClasspathEntryInProject(MunitClassPathContainer.CONTAINER_ID, muleProject.getJavaProject()))) {
+                MunitResourceUtils.configureProjectClasspath(muleProject);
+            }
+        } catch (JavaModelException e) {
+            MunitPlugin.log(e);
         }
     }
 
