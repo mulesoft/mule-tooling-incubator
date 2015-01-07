@@ -255,10 +255,22 @@ public class MunitResourceUtils {
         }
     }
 
-    /**
+    /***
      * <p>
      * Creates the Munit first test template file
      * </p>
+     * 
+     * @param muleProject
+     *            the mule project
+     * @param testFileName
+     *            name of the test file
+     * @param productionFileName
+     *            name of the file that is object of this test suite
+     * @param outputFolder
+     *            folder in where to place the new test file
+     * @return the new test config file
+     * @throws IOException
+     * @throws CoreException
      */
     public static IFile createXMLConfigurationFromTemplate(IMuleProject muleProject, String testFileName, String productionFileName, IFolder outputFolder) throws IOException,
             CoreException {
@@ -271,7 +283,7 @@ public class MunitResourceUtils {
             Velocity.init();
             VelocityContext context = new VelocityContext();
 
-            final boolean isEnterprise = muleProject.getServerDefinition().isEnterpriseRuntime();
+            boolean isEnterprise = muleProject.getServerDefinition().isEnterpriseRuntime();
             String version = (isEnterprise ? "EE" : "CE") + "-" + muleProject.getServerDefinition().getVersion();
 
             context.put("version", version);
