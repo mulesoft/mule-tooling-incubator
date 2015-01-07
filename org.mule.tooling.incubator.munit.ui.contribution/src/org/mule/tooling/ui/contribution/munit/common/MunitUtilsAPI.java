@@ -89,7 +89,7 @@ public class MunitUtilsAPI {
         }
 
         WorkspaceJob workspaceJob = buildConfigureMuleProjectJob(muleProject);
-        workspaceJob.setRule(muleProject.getProjectFile());
+        workspaceJob.setRule(getWorkspace(muleProject).getRoot());
         workspaceJob.schedule();
     }
 
