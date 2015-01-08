@@ -25,8 +25,9 @@ public class RunTestExtension implements IMessageFlowNodeContextMenuProvider {
             menu.add(new Separator("Test"));
             MenuManager wrapInMenu = new MenuManager("Munit", "Munit");
             menu.appendToGroup("Test", wrapInMenu);
-            wrapInMenu.add(new RunTestAction(selected, "Run Suite", "run", null, MunitPlugin.RUN_ICON_DESCRIPTOR));
-            wrapInMenu.add(new RunTestAction(selected, "Debug Suite", "debug", IDebuggerConstants.DEBUG_PERSPECTIVE_ID, MunitPlugin.DEBUG_ICON_DESCRIPTOR));
+         
+            wrapInMenu.add(new RunTestAction(selected, "Run Suite", RunTestAction.RUN_MODE, null, MunitPlugin.RUN_ICON_DESCRIPTOR));
+            wrapInMenu.add(new RunTestAction(selected, "Debug Suite", RunTestAction.DEBUG_MODE, IDebuggerConstants.DEBUG_PERSPECTIVE_ID, MunitPlugin.DEBUG_ICON_DESCRIPTOR));
         }
     }
 

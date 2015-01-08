@@ -1,5 +1,8 @@
 package org.mule.tooling.ui.contribution.munit.runner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +23,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleConstants;
+import org.mule.tooling.runtime.launch.IMuleLaunchConstants;
 
 /**
  * <p>
@@ -28,14 +32,16 @@ import org.eclipse.ui.console.IConsoleConstants;
  */
 public class MunitLaunchConfigurationConstants {
 
-    private static final String MUNIT_LAUNCH_CONFIG = "org.eclipse.jdt.munit.launchconfig";
-    public static final String ATTR_TEST_METHOD_NAME = "methodName";
-    public static final String CONFIGURATION_TAB_NAME = "Test";
-    public static final String TEST_RESOURCE = "resource";
-    public static final String MUNIT_TEST_PATH = "Mpath";
-    public static final String ATTR_TEST_CONTAINER = "container";
     public static final String MUNIT_TEST_ID = "Munit Test";
+    private static final String MUNIT_LAUNCH_CONFIG = "org.eclipse.jdt.munit.launchconfig";
+
     public static final String ATTR_FAILURES_NAMES = "failures";
+    public static final String ATTR_TEST_CONTAINER = "container";
+    public static final String ATTR_TEST_METHOD_NAME = "methodName";
+
+    public static final String MUNIT_TEST_PATH = "Mpath";
+    public static final String TEST_RESOURCE = "resource";
+    public static final String CONFIGURATION_TAB_NAME = "Test";
 
     public static IJavaProject getJavaProject(ILaunchConfiguration configuration) {
         try {
@@ -75,7 +81,12 @@ public class MunitLaunchConfigurationConstants {
     private static ILaunchConfiguration crateNewConfig(IFile inputFile, ILaunchManager launchManager) throws CoreException {
         ILaunchConfigurationType launchConfiguration = launchManager.getLaunchConfigurationType(MUNIT_LAUNCH_CONFIG);
         ILaunchConfigurationWorkingCopy newInstance = launchConfiguration.newInstance(null, launchManager.generateLaunchConfigurationName(inputFile.getName()));
+
+        List<String> projectNames = new ArrayList<String>();
+        projectNames.add(inputFile.getProject().getName());
+        newInstance.setAttribute(IMuleLaunchConstants.ATT_MULE_PROJECT_NAMES, projectNames);
         newInstance.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, inputFile.getProject().getName());
+
         newInstance.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, inputFile.getName());
         newInstance.setAttribute(MunitLaunchConfigurationConstants.TEST_RESOURCE, inputFile.getName());
         newInstance.setAttribute(MunitLaunchConfigurationConstants.MUNIT_TEST_PATH, inputFile.getLocation().toString());

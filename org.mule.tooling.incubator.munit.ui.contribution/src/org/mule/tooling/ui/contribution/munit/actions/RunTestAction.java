@@ -21,9 +21,35 @@ import org.mule.tooling.ui.contribution.munit.runner.MunitLaunchConfigurationCon
  * </p>
  */
 public class RunTestAction extends Action {
+    public static final String RUN_MODE = "run";
+    public static final String DEBUG_MODE = "debug";
 
     private String mode;
     private String perspective;
+
+    public static void runOrdebugMunitTest(String perspective, String mode) {
+        IWorkbenchWindow activeWorkbenchWindow = MunitPlugin.getActiveWorkbenchWindow();
+        if (activeWorkbenchWindow == null) {
+            return;
+        }
+
+        try {
+            MunitResourceUtils.openMunitRunner();
+            if (perspective != null) {
+                PlatformUI.getWorkbench().showPerspective(perspective, activeWorkbenchWindow);
+            }
+        } catch (WorkbenchException e1) {
+            MunitPlugin.log(e1);
+        }
+
+        IEditorPart activeEditor = activeWorkbenchWindow.getActivePage().getActiveEditor();
+        if (activeEditor instanceof MunitMultiPageEditor) {
+            MultiPageMessageFlowEditor editor = (MultiPageMessageFlowEditor) activeEditor;
+            MessageFlowEditor messageFlowEditor = editor.getFlowEditor();
+            IFile configFileFromFlowFile = messageFlowEditor.getInputXmlConfigFile();
+            MunitLaunchConfigurationConstants.runTest(configFileFromFlowFile, mode);
+        }
+    }
 
     public RunTestAction(MessageFlowNode selected, String message, String mode, String perspective, ImageDescriptor imageDescriptor) {
         super();
@@ -37,29 +63,6 @@ public class RunTestAction extends Action {
 
     @Override
     public void run() {
-
-        final IWorkbenchWindow activeWorkbenchWindow = MunitPlugin.getActiveWorkbenchWindow();
-        if (activeWorkbenchWindow == null) {
-            return;
-        }
-
-        try {
-            MunitResourceUtils.openMunitRunner();
-            if (perspective != null) {
-                PlatformUI.getWorkbench().showPerspective(perspective, activeWorkbenchWindow);
-            }
-
-        } catch (WorkbenchException e1) {
-            MunitPlugin.log(e1);
-        }
-
-        final IEditorPart activeEditor = activeWorkbenchWindow.getActivePage().getActiveEditor();
-        if (activeEditor instanceof MunitMultiPageEditor) {
-            final MultiPageMessageFlowEditor editor = (MultiPageMessageFlowEditor) activeEditor;
-            final MessageFlowEditor messageFlowEditor = editor.getFlowEditor();
-            final IFile configFileFromFlowFile = messageFlowEditor.getInputXmlConfigFile();
-            MunitLaunchConfigurationConstants.runTest(configFileFromFlowFile, mode);
-        }
-
+        runOrdebugMunitTest(perspective, mode);
     }
 }

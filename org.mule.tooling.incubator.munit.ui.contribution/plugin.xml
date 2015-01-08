@@ -230,6 +230,14 @@
             categoryId="org.mule.tooling.munit.commands.category"
             id="org.mule.tooling.munit.commands.filterTests">
       </command>
+      <command
+            id="org.mule.tooling.incubator.munit.ui.contribution.RunMunitTestCommand"
+            name="Run Munit Test">
+      </command>
+      <command
+            id="org.mule.tooling.incubator.munit.ui.contribution.DebugMunitTestCommand"
+            name="Debug Munit Test">
+      </command>
    </extension>
   
   
@@ -238,6 +246,14 @@
       <handler
             commandId="org.mule.tooling.munit.commands.filterTests"
             class="org.mule.tooling.ui.contribution.munit.handlers.FilterTestsHandler">
+      </handler>
+      <handler
+            class="org.mule.tooling.ui.contribution.munit.handlers.RunMunitTestHandler"
+            commandId="org.mule.tooling.incubator.munit.ui.contribution.RunMunitTestCommand">
+      </handler>
+      <handler
+            class="org.mule.tooling.ui.contribution.munit.handlers.DebugMunitTestHandler"
+            commandId="org.mule.tooling.incubator.munit.ui.contribution.DebugMunitTestCommand">
       </handler>
    </extension>
    
@@ -372,5 +388,20 @@
 	    <startup class="org.mule.tooling.ui.contribution.munit.MunitStartup">
 	    </startup>
 	 </extension>
+    <extension
+          point="org.eclipse.ui.bindings">
+       <key
+             commandId="org.mule.tooling.incubator.munit.ui.contribution.RunMunitTestCommand"
+             contextId="org.eclipse.ui.contexts.window"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+M2+M R">
+       </key>
+       <key
+             commandId="org.mule.tooling.incubator.munit.ui.contribution.DebugMunitTestCommand"
+             contextId="org.eclipse.ui.contexts.window"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+M2+M D">
+       </key>
+    </extension>
 
 </plugin>
