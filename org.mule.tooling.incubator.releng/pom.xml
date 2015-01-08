@@ -28,7 +28,7 @@
 				<aws.secret>${settings.servers.studio-s3-releases.password}</aws.secret>
 				<incubators.endpoint>s3.amazonaws.com</incubators.endpoint>
 				<incubators.bucket>studio.mulesoft.org</incubators.bucket>
-				<incubators.dir>r3/addons/beta</incubators.dir>
+				<incubators.dir>r4/addons/beta</incubators.dir>
 			</properties>
 			<activation>
 				<property>
@@ -43,7 +43,7 @@
 				<aws.secret>${settings.servers.studio-s3-releases.password}</aws.secret>
 				<incubators.endpoint>s3.amazonaws.com</incubators.endpoint>
 				<incubators.bucket>studio.mulesoft.org</incubators.bucket>
-				<incubators.dir>staging/r3/addons/beta</incubators.dir>
+				<incubators.dir>staging/r4/addons/beta</incubators.dir>
 			</properties>
 			<activation>
 				<property>
