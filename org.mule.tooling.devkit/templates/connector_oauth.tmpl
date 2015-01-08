@@ -7,18 +7,21 @@ package ${project.package}.strategy;
 
 import org.mule.api.ConnectionException;
 import org.mule.api.annotations.Configurable;
+#if( ${project.apiType} != 'REST' )
 import org.mule.api.annotations.Connect;
 import org.mule.api.annotations.ConnectionIdentifier;
 import org.mule.api.annotations.Disconnect;
 import org.mule.api.annotations.TestConnectivity;
 import org.mule.api.annotations.ValidateConnection;
 import org.mule.api.annotations.display.Password;
+#end
 import org.mule.api.annotations.oauth.OAuth2;
 import org.mule.api.annotations.oauth.OAuthAccessToken;
-import org.mule.api.annotations.oauth.OAuthAccessTokenSecret;
 import org.mule.api.annotations.oauth.OAuthConsumerKey;
 import org.mule.api.annotations.oauth.OAuthConsumerSecret;
+#if( ${project.apiType} != 'REST' )
 import org.mule.api.annotations.param.ConnectionKey;
+#end
 import org.mule.api.annotations.param.Default;
 
 /**
@@ -59,6 +62,7 @@ public class ${project.strategyClassName}
     @Configurable
     @OAuthConsumerSecret
     private String consumerSecret;
+#if( ${project.apiType} != 'REST' )
 
     /**
      * Connect
@@ -102,7 +106,7 @@ public class ${project.strategyClassName}
     public String connectionId() {
         return "001";
     }
-
+#end
     /**
      * Set strategy property
      *
