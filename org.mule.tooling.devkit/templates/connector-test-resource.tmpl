@@ -15,7 +15,11 @@
 #if($project.authenticationType == 'CONNECTION_MANAGEMENT' )
     <${project.moduleName}:config-type name="config" myProperty="Some string" username="foo" password="foo"/>
 #end
-    
+#if($project.authenticationType == 'OAUTH_V2' )
+    <${project.moduleName}:config-type name="config" consumerKey="my-key" consumerSecret="my-secret">
+        <${project.moduleName}:oauth-callback-config domain="localhost" localPort="8082" path="callback"/>
+    </${project.moduleName}:config-type>
+#end
     <flow name="testFlow">
         <${project.moduleName}:my-processor config-ref="config" content="Another string"/>
     </flow>
