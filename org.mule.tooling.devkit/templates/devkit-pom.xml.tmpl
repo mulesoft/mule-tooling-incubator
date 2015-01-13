@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.mule.tools.devkit</groupId>
         <artifactId>mule-devkit-parent</artifactId>
-        <version>3.6.0-M3-SNAPSHOT</version>
+        <version>3.6.0</version>
     </parent>
 
     <properties>
@@ -23,7 +23,7 @@
 #set( $wsdlUrl = '${basedir}/src/main/resources/wsdl/'+${project.wsdlPath} )
 #end
         <cxf.version.boolean>2.6.0</cxf.version.boolean>
-        <connector.generator.version>1.0.4-SNAPSHOT</connector.generator.version>
+        <connector.generator.version>1.0.4</connector.generator.version>
 #end
         <category>${project.category}</category>
         <licensePath>LICENSE.md</licensePath>
@@ -170,13 +170,16 @@
         </profile>
     </profiles>
 #end
+#if( ${project.apiType} == 'REST' || ${project.apiType} == 'SOAP')
     <dependencies>
+#if( ${project.apiType} == 'REST' )
         <dependency>
-            <groupId>eclipse</groupId>
-            <artifactId>eclipse-runtime</artifactId>
-            <version>2.1.0</version>
-            <scope>provided</scope>
+             <artifactId>mule-transport-http</artifactId>
+             <groupId>org.mule.transports</groupId>
+             <version>${mule.version}</version>
+             <scope>compile</scope>
         </dependency>
+#end
 #if( ${project.apiType} == 'SOAP' )
         <dependency>
             <groupId>org.apache.cxf</groupId>
@@ -235,6 +238,7 @@
         </dependency>
 #end
     </dependencies>
+#end
     <repositories>
         <repository>
             <id>mulesoft-releases</id>
