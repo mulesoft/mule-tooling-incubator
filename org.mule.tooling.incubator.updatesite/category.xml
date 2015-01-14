@@ -9,24 +9,6 @@
     <feature id="org.mule.tooling.incubator.maven.extension">
         <category name="org.mule.tooling.incubator.category.maven"/>
     </feature>
-    <feature id="org.mule.tooling.incubator.munit.extension">
-      <category name="org.mule.tooling.incubator.category.munit"/>
-    </feature>
-    <feature id="org.mule.tooling.incubator.aop.extension">
-        <category name="org.mule.tooling.incubator.category"/>
-    </feature>
-    <feature id="org.mule.tooling.ui.extension.munit-mclient-module">
-      <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
-    </feature>
-   <feature id="org.mule.tooling.ui.extension.munit-ftpserver-module">
-      <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
-    </feature>
-   <feature id="org.mule.tooling.ui.extension.munit-dbserver-module">
-      <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
-    </feature>
-   <feature id="org.mule.tooling.ui.synchronize.extension">
-       <category name="org.mule.tooling.incubator.category.munit.tools.34"/>
-   </feature>
    <feature id="org.mule.tooling.incubator.gradle.extension">
        <category name="org.mule.tooling.incubator.category.gradle"/>
    </feature>
@@ -39,16 +21,6 @@
       <description>
             Mule Replay Project
       </description>
-   </category-def>
-   <category-def name="org.mule.tooling.incubator.category.munit" label="Munit">
-      <description>
-            Munit Studio integration
-      </description>
-   </category-def>
-   <category-def name="org.mule.tooling.incubator.category.munit.tools.34" label="Munit Tools for Mule">
-       <description>
-           Munit Tools for Mule
-       </description>
    </category-def>
     <category-def name="org.mule.tooling.incubator.category.maven" label="Maven Tools for Mule">
         <description>
