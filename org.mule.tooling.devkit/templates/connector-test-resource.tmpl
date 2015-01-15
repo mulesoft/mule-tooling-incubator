@@ -20,6 +20,7 @@
         <${project.moduleName}:oauth-callback-config domain="localhost" localPort="8082" path="callback"/>
     </${project.moduleName}:config-type>
 #end
+
     <flow name="testFlow">
         <${project.moduleName}:my-processor config-ref="config" content="Another string"/>
     </flow>
