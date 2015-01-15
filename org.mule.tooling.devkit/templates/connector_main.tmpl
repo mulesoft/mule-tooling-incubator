@@ -4,7 +4,12 @@
  */
 
 package ${project.package};
+#if(${project.hasQuery} == true )
 
+import java.util.ArrayList;
+import java.util.List;
+
+#end
 #if($project.authenticationType == 'OAUTH_V2')  
 import org.mule.api.annotations.oauth.OAuthProtected;
 
@@ -22,6 +27,7 @@ import org.mule.api.annotations.rest.RestCall;
 import org.mule.api.annotations.rest.RestUriParam;
 #if(${project.hasQuery} == true)
 import org.mule.api.annotations.Query;
+
 #end
 
 import ${project.package}.strategy.${project.strategyClassName};
@@ -31,7 +37,7 @@ import ${project.package}.strategy.${project.strategyClassName};
  *
  * @author MuleSoft, Inc.
  */
-@Connector(name="${project.moduleName}", schemaVersion="1.0", friendlyName="${project.connectorName}")
+@Connector(name="${project.moduleName}", friendlyName="${project.connectorName}")
 public abstract class ${project.connectorClassName} {
     
     /**
