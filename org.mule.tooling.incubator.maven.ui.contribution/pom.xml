@@ -6,9 +6,9 @@
 	<parent>
 		<groupId>org.mule.tooling.incubator</groupId>
 		<artifactId>org.mule.tooling.incubator.parent</artifactId>
-		<version>1.0.3-SNAPSHOT</version>
+		<version>1.0.4-SNAPSHOT</version>
 	</parent>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
 	<artifactId>org.mule.tooling.incubator.maven.ui.contribution</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
