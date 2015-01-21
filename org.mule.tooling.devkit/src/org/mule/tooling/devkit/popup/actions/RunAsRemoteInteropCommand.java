@@ -97,10 +97,14 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
 
         MavenUtils.runMavenGoalJob(selectedProject, mavenCommand, jobMsg, DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.TEST_RESOURCES_FOLDER), null), jobDetail);
 
-        mavenCommand = new String[] { "org.mule.connectors.interop:interop-ce-runtime-generation:run", "-DtestData=" + runnerConfig.getTestDataPath(),
-                "-DtestDataOverride=" + runnerConfig.getTestDataOverridePath(), "-DtestConnect=" + runnerConfig.getRunConnectivityTest(),
-                "-DtestDMapper=" + runnerConfig.getRunDMapperTest(), "-DtestXml=" + runnerConfig.getRunXmlTest(), "-DtestDataSense=" + runnerConfig.getRunDataSense(),
-                "-DtestOAuth=" + runnerConfig.getRunOAuth() };
+        mavenCommand = new String[] { "org.mule.connectors.interop:interop-ce-runtime-generation:run",
+                                    "-DtestData=" + runnerConfig.getTestDataPath(),
+                                    "-DtestDataOverride=" + runnerConfig.getTestDataOverridePath(),
+                                    "-DtestConnect=" + runnerConfig.getRunConnectivityTest(),
+                                    "-DtestDMapper=" + runnerConfig.getRunDMapperTest(),
+                                    "-DtestXml=" + runnerConfig.getRunXmlTest(),
+                                    "-DtestDataSense=" + runnerConfig.getRunDataSense(),
+                                    "-DtestOAuth=" + runnerConfig.getRunOAuth() };
 
         jobMsg = "Running Interop Test";
         jobDetail = "Running interop test for " + DevkitUtils.getProjectLabel(javaProject);
@@ -108,24 +112,6 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
 
             @Override
             public int execute(int previousResult) {
-                try {
-                    File report = new File(projectTarget + GENERATED_REPORTS_PATH);
-                    File reportTarget = new File(projectTarget + "surefire-reports");
-                    File textReport = new File(reportTarget, "suite.ConnectorsInteropTestSuite.txt");
-
-                    FileUtils.deleteDirectory(reportTarget);
-                    FileUtils.moveDirectory(report, reportTarget);
-                    if (textReport.exists()) {
-                        FileUtils.writeStringToFile(textReport, FileUtils.readFileToString(textReport).replaceAll(" skipped", " skipped\n").replaceAll(" sectest", " sec\ntest"));
-                    }
-                    System.out.println("Moved and formatted Report");
-
-                    FileUtils.deleteDirectory(new File(projectTarget + "interop-ce-project"));
-                    System.out.println("Delete dir");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return Status.ERROR;
-                }
 
                 DevkitUtils.refreshFolder(selectedProject.getFolder("target"), null).execute(Status.OK);
 
