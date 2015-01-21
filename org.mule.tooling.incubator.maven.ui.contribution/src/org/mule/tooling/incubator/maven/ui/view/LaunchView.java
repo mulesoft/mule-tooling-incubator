@@ -145,7 +145,7 @@ public class LaunchView extends ViewPart implements IResourceChangeListener {
                             lifeCycle = LifeCycle.valueOf(mojo.getPhase());
                         command = mojo.getPluginDescriptor().getGoalPrefix() + ":" + mojo.getGoal() + " " + command;
                     }
-                    LifeCycleJob job = new LifeCycleJob(lifeCycle, ResourcesPlugin.getWorkspace().getRoot().getProject(selected.getPaths()[0].getSegment(1).toString()), command);
+                    LifeCycleJob job = new LifeCycleJob(lifeCycle, ResourcesPlugin.getWorkspace().getRoot().getProject(selected.getPaths()[0].getSegment(1).toString()), command,"");
                     job.setPriority(Job.BUILD);
                     job.schedule();
                 }
@@ -191,7 +191,7 @@ public class LaunchView extends ViewPart implements IResourceChangeListener {
                     command += " -P" + StringUtils.join(profilesList.getCheckedElements(), ",");
                 }
                 IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(selected.getPaths()[0].getSegment(1).toString());
-                LifeCycleJob job = new LifeCycleJob((LifeCycle) selected.getFirstElement(), project, command);
+                LifeCycleJob job = new LifeCycleJob((LifeCycle) selected.getFirstElement(), project, command,"");
                 job.setPriority(Job.BUILD);
                 job.schedule();
             }
@@ -505,7 +505,7 @@ public class LaunchView extends ViewPart implements IResourceChangeListener {
                     MojoDescriptor mojo = (MojoDescriptor) selected.getFirstElement();
                     lifeCycle = LifeCycle.valueOf(mojo.getPhase());
                 }
-                LifeCycleJob job = new LifeCycleJob(lifeCycle, project, mojoCommand + " " + command);
+                LifeCycleJob job = new LifeCycleJob(lifeCycle, project, mojoCommand + " " + command,"");
                 job.setPriority(Job.BUILD);
                 job.schedule();
             }

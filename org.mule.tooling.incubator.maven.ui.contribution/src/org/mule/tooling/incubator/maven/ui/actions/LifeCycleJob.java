@@ -47,19 +47,21 @@ public class LifeCycleJob extends WorkspaceJob {
     private ILifeCycle phase;
     private IProject project;
     private String otherOptions;
-
-    public LifeCycleJob(ILifeCycle phase, IProject project, String command) {
+    private String jvmArguments;
+    public LifeCycleJob(ILifeCycle phase, IProject project, String command,String jvmArguments) {
         super("Running phase " + phase);
         this.phase = phase;
         this.project = project;
         this.otherOptions = command;
+        this.jvmArguments = jvmArguments;
     }
 
-    public LifeCycleJob(String command) {
+    public LifeCycleJob(String command,String jvmArguments) {
         super("Running Command " + command);
         this.phase = null;
         this.project = null;
         this.otherOptions = command;
+        this.jvmArguments = jvmArguments;
     }
 
     @Override
@@ -119,7 +121,7 @@ public class LifeCycleJob extends WorkspaceJob {
         final MavenRunnerBuilder mavenRunnerBuilder = new MavenRunnerBuilder();
         MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
         mavenRunnerBuilder.setMavenInstallationHome(preferencesAccessor.getMavenInstallationHome());
-        mavenRunnerBuilder.addMavenOpts(preferencesAccessor.getMavenOpts());
+        mavenRunnerBuilder.addMavenOpts(preferencesAccessor.getMavenOpts()+" "+ jvmArguments);
         mavenRunnerBuilder.setJavaHome(VMUtils.getDefaultJvmHome(JavaCore.create(project)));
         final PipedOutputStream pipedOutputStream = new PipedOutputStream();
 

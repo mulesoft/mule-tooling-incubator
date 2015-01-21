@@ -20,17 +20,18 @@ public class MavenLaunchDelegate implements org.eclipse.debug.core.model.ILaunch
 
         String commandLine = configuration.getAttribute(MavenCommandLineConfigurationComponent.KEY_MVN_COMMAND_LINE, MVN_BASE_COMMANDLINE);
         String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+        String jvmArguments = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "");
         if (!projectName.isEmpty()) {
             IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
             if (project.exists()) {
                 IFile pomFile = project.getFile("pom.xml");
                 if (pomFile.exists()) {
-                    LifeCycleJob job = new LifeCycleJob(commandLine + " -f " + pomFile.getRawLocation().toFile().getAbsolutePath().toString());
+                    LifeCycleJob job = new LifeCycleJob(commandLine + " -f " + pomFile.getRawLocation().toFile().getAbsolutePath().toString(),jvmArguments);
                     job.runInWorkspace(monitor);
                 }
             }
         } else {
-            LifeCycleJob job = new LifeCycleJob(commandLine);
+            LifeCycleJob job = new LifeCycleJob(commandLine,jvmArguments);
             job.runInWorkspace(monitor);
         }
     }
