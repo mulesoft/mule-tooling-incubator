@@ -690,10 +690,11 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private void updateProjectComponentsEnablement() {
-        boolean useDefaults = !useDefaultValuesCheckbox.getSelection();
-        projectName.setEnabled(useDefaults);
-        connectorNamespace.setEnabled(useDefaults);
-        location.setEnabled(useDefaults);
+        boolean enabled = !useDefaultValuesCheckbox.getSelection();
+        projectName.setEnabled(enabled);
+        connectorNamespace.setEnabled(enabled);
+        location.setEnabled(enabled);
+        browse.setEnabled(enabled);
     }
 
     protected String getDefaultPath(String name) {
