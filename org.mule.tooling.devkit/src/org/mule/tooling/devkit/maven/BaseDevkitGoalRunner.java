@@ -15,8 +15,10 @@ import org.mule.tooling.core.utils.VMUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.maven.MavenPlugin;
 import org.mule.tooling.maven.cmdline.MavenCommandLine;
+import org.mule.tooling.maven.runner.MavenExecutionException;
 import org.mule.tooling.maven.runner.MavenRunner;
 import org.mule.tooling.maven.runner.MavenRunnerBuilder;
+import org.mule.tooling.maven.runner.MavenRuntimeException;
 import org.mule.tooling.maven.runner.SyncGetResultCallback;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.preferences.MavenPreferences;
@@ -62,31 +64,36 @@ public class BaseDevkitGoalRunner {
 
         mavenRunner = mavenRunnerBuilder.build();
         SyncGetResultCallback callback = new SyncGetResultCallback();
-        runCommand(pomFile, pipedOutputStream, callback);
-
-        PipedOutputStream nextOutput = new PipedOutputStream();
-        redirectOutputToMonitor(pipedOutputStream, monitor, nextOutput);
-
-        redirectOutputToConsole(nextOutput);
-        int result;
 
         try {
+            runCommand(pomFile, pipedOutputStream, callback);
+
+            PipedOutputStream nextOutput = new PipedOutputStream();
+            redirectOutputToMonitor(pipedOutputStream, monitor, nextOutput);
+            redirectOutputToConsole(nextOutput);
+
+            int result;
+
             while ((result = callback.getResult(100)) == SyncGetResultCallback.STILL_NOT_FINISHED) {
                 if (monitor.isCanceled()) {
                     this.cancelBuild();
-                    result = CANCELED;
                     break;
                 }
             }
             stopOutputThreads();
+            if(result==SyncGetResultCallback.STILL_NOT_FINISHED){
+                return CANCELED;
+            }
             return result;
+        } catch (MavenExecutionException e) {
+            throw new MavenRuntimeException(e);
         } catch (InterruptedException e) {
             MavenPlugin.logWarning("Maven build interrupted", e);
             return INTERRUPTED;
         }
     }
 
-    protected void runCommand(IFile pomFile, final PipedOutputStream pipedOutputStream, SyncGetResultCallback callback) {
+    protected void runCommand(IFile pomFile, final PipedOutputStream pipedOutputStream, SyncGetResultCallback callback) throws MavenExecutionException {
         StringBuilder commandString = new StringBuilder();
         for (String command : commands) {
             commandString.append(command + " ");
@@ -96,8 +103,7 @@ public class BaseDevkitGoalRunner {
         if (debug) {
             commandString.append(" -X ");
         }
-        commandString.append("-f " + pomFile.getRawLocation().toFile().getAbsolutePath());
-        mavenRunner.runBare(MavenCommandLine.fromString(commandString.toString()), callback, pipedOutputStream);
+        mavenRunner.run(pomFile.getRawLocation().toFile(), MavenCommandLine.fromString(commandString.toString()), callback, pipedOutputStream);
     }
 
     private void redirectOutputToConsole(PipedOutputStream nextOutput) {
