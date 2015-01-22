@@ -588,7 +588,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private boolean isBasic() {
-        return comboAuthentication.getText().equals(AuthenticationType.CONNECTION_MANAGEMENT.label());
+        return comboAuthentication.getText().equals(AuthenticationType.CONNECTION_MANAGEMENT.label())
+                || comboAuthentication.getText().equals(AuthenticationType.NONE.label());
     }
 
     public boolean hasQuery() {
