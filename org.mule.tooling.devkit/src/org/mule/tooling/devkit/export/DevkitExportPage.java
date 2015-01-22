@@ -181,8 +181,10 @@ public class DevkitExportPage extends WizardPage {
             if (outputFile.exists()) {
                 boolean confirmation = MessageDialog.openQuestion(this.getContainer().getShell(), "Confirmation", outputFile.getAbsolutePath()
                         + " already exists.\nDo you want to replace it?");
-                if (confirmation)
+                if (confirmation) {
+                    outputFile.delete();
                     return createUpdateSite(outputFile);
+                }
             } else
                 return createUpdateSite(outputFile);
         }
