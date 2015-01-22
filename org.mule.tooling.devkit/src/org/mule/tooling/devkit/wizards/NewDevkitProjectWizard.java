@@ -152,6 +152,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                     javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
                 } catch (CoreException e) {
+
                     throw new InvocationTargetException(e);
                 } finally {
                     monitor.done();
@@ -160,6 +161,20 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         };
         if (!runInContainer(op)) {
             return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean performCancel() {
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IProject project = root.getProject(page.getProjectName());
+        if (project != null) {
+            try {
+                project.delete(true, new NullProgressMonitor());
+            } catch (CoreException e) {
+                e.printStackTrace();
+            }
         }
         return true;
     }
