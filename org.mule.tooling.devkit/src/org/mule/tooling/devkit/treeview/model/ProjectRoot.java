@@ -2,7 +2,6 @@ package org.mule.tooling.devkit.treeview.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class ProjectRoot extends DefaultNodeItem {
@@ -26,4 +25,6 @@ public class ProjectRoot extends DefaultNodeItem {
         Collections.sort(modules, new ModuleComparator());
         return modules.toArray();
     }
+    
+    public static final ProjectRoot EMPTY = new ProjectRoot(); 
 }

@@ -1,5 +1,6 @@
 package org.mule.tooling.devkit.treeview;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -36,7 +37,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -65,11 +69,6 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
         this.current = current;
     }
 
-    public DevkitView() {
-        super();
-
-    }
-
     @Override
     public void dispose() {
         getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
@@ -77,6 +76,35 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
         workspace.removeResourceChangeListener(this);
     }
 
+    @Override
+    public void init(IViewSite site) throws PartInitException {
+        super.init(site);
+        checkEditorActiveProject(site);
+    }
+
+    private void checkEditorActiveProject(IWorkbenchPartSite site) {
+        IWorkbenchPage page = site.getPage();
+        if (page != null) {
+            IEditorPart editor = page.getActiveEditor();
+            if (editor != null) {
+                IEditorInput input = editor.getEditorInput();
+                if (input != null) {
+                    IFile file = (IFile) input.getAdapter(IFile.class);
+                    try {
+                        if (file != null && file.getProject().isOpen() && file.getProject().hasNature(DevkitNature.NATURE_ID)) {
+                            handleNewProjectSelectedChange(file.getProject());
+                            return;
+                        }
+                    } catch (CoreException e) {
+                        // Do nothing
+                    }
+                }
+            }
+        }
+        clear();
+    }
+
+    @Override
     public void createPartControl(Composite parent) {
         PatternFilter filter = new PatternFilter();
         FilteredTree tree = new FilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, filter, true);
@@ -127,8 +155,10 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
     @Override
     public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 
-        if (selection.isEmpty())
+        if (selection.isEmpty()) {
+            this.checkEditorActiveProject(this.getSite());
             return;
+        }
         final ISelection currentSelection = selection;
         final IWorkbenchPart workbenchPart = part;
         final String convertingMsg = "Checking Modules in project...";
@@ -170,12 +200,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                 analyseMethods(selectedProject);
             } else {
                 current = null;
-                Display.getDefault().asyncExec(new Runnable() {
-
-                    public void run() {
-                        viewer.setInput(new ProjectRoot());
-                    }
-                });
+                clear();
             }
 
         } catch (JavaModelException e) {
@@ -219,12 +244,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                             IProject project = delta.getResource().getProject();
                             if (project != null && project.isAccessible()) {
                                 if (!project.hasNature(DevkitNature.NATURE_ID)) {
-                                    Display.getDefault().asyncExec(new Runnable() {
-
-                                        public void run() {
-                                            viewer.setInput(new ProjectRoot());
-                                        }
-                                    });
+                                    clear();
                                     return;
                                 }
                                 // When the user navigates from the sample file to the JAVA File we don't want to trigger the mechanism
@@ -247,13 +267,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                     IProject project = resource.getProject();
                     if (project != null && project.isAccessible()) {
                         if (current != null && current.getName().equals(project.getName())) {
-                            // Set empty project as input
-                            Display.getDefault().asyncExec(new Runnable() {
-
-                                public void run() {
-                                    viewer.setInput(new ProjectRoot());
-                                }
-                            });
+                            clear();
                         }
                     }
                 }
@@ -282,21 +296,23 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
         }
         if (hasConnector) {
             final ProjectRoot root = visitor.getRoot();
-            // Update the user interface asynchronously
-            Display.getDefault().asyncExec(new Runnable() {
-
-                public void run() {
-                    viewer.setInput(root);
-                }
-            });
+            update(root);
         } else {
-            Display.getDefault().asyncExec(new Runnable() {
-
-                public void run() {
-                    viewer.setInput(new ProjectRoot());
-                }
-            });
+            clear();
         }
+    }
+
+    private void clear() {
+        update(ProjectRoot.EMPTY);
+    }
+
+    private void update(final ProjectRoot project) {
+        Display.getDefault().asyncExec(new Runnable() {
+
+            public void run() {
+                viewer.setInput(project);
+            }
+        });
     }
 
     private boolean createAST(IPackageFragment mypackage, ModuleVisitor visitor) throws JavaModelException {
