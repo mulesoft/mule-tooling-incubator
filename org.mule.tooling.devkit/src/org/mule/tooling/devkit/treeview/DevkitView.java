@@ -199,7 +199,6 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
             if (selectedProject.isOpen() && selectedProject.hasNature(DevkitNature.NATURE_ID)) {
                 analyseMethods(selectedProject);
             } else {
-                current = null;
                 clear();
             }
 
@@ -303,6 +302,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
     }
 
     private void clear() {
+        current = null;
         update(ProjectRoot.EMPTY);
     }
 
