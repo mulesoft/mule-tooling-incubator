@@ -343,7 +343,7 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
         mavenFailure = result != 0;
         updatePageComplete();
     }
-    
+
     private boolean runInContainer(final IRunnableWithProgress work) {
         try {
             getContainer().run(true, true, work);

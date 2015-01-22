@@ -6,6 +6,7 @@ import org.mule.tooling.devkit.common.ConnectorMavenModel;
 public class ClassReplacer extends VelocityReplacer {
 
     private ConnectorMavenModel model;
+
     public ClassReplacer(ConnectorMavenModel model) {
         this.model = model;
 

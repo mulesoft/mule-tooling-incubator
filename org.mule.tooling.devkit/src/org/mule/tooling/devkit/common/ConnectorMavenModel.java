@@ -23,7 +23,7 @@ public class ConnectorMavenModel {
     private String strategyClassName;
     private String projectName;
     private String projectLocation;
-    
+
     public String getPackageName() {
         return packageName;
     }

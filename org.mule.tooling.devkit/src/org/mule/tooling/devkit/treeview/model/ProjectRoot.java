@@ -25,6 +25,6 @@ public class ProjectRoot extends DefaultNodeItem {
         Collections.sort(modules, new ModuleComparator());
         return modules.toArray();
     }
-    
-    public static final ProjectRoot EMPTY = new ProjectRoot(); 
+
+    public static final ProjectRoot EMPTY = new ProjectRoot();
 }

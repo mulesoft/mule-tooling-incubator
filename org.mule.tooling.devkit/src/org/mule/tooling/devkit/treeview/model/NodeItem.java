@@ -6,15 +6,15 @@ import org.eclipse.swt.graphics.Image;
 
 public interface NodeItem {
 
-	ICompilationUnit getCompilationUnit();
-	
-	IJavaElement getJavaElement();
-	
-	String getLabel();
+    ICompilationUnit getCompilationUnit();
 
-	Image getImage();
+    IJavaElement getJavaElement();
 
-	Object[] getChildren();
+    String getLabel();
 
-	Object getParent();
+    Image getImage();
+
+    Object[] getChildren();
+
+    Object getParent();
 }

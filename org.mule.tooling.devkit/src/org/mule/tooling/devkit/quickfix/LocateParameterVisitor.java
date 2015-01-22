@@ -6,26 +6,26 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 public class LocateParameterVisitor extends ASTVisitor {
 
-	private ASTNode node;
-	private int chartStart;
+    private ASTNode node;
+    private int chartStart;
 
-	public LocateParameterVisitor(int chartStart) {
-		this.chartStart = chartStart;
-	}
+    public LocateParameterVisitor(int chartStart) {
+        this.chartStart = chartStart;
+    }
 
-	@Override
-	public boolean visit(SingleVariableDeclaration node) {
-		if (node.getName().getStartPosition() == chartStart) {
-			setNode(node);
-		}
-		return false;
-	}
+    @Override
+    public boolean visit(SingleVariableDeclaration node) {
+        if (node.getName().getStartPosition() == chartStart) {
+            setNode(node);
+        }
+        return false;
+    }
 
-	public ASTNode getNode() {
-		return node;
-	}
+    public ASTNode getNode() {
+        return node;
+    }
 
-	public void setNode(ASTNode node) {
-		this.node = node;
-	}
+    public void setNode(ASTNode node) {
+        this.node = node;
+    }
 }

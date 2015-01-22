@@ -5,7 +5,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.swt.graphics.Image;
 import org.mule.tooling.devkit.DevkitImages;
 
-public class MetaDataCategory extends Module{
+public class MetaDataCategory extends Module {
 
     public MetaDataCategory(NodeItem parent, ICompilationUnit cu, ASTNode node) {
         super(parent, cu, node);

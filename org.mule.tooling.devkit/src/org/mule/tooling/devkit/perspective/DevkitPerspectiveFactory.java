@@ -12,20 +12,19 @@ import org.mule.tooling.devkit.treeview.DevkitView;
 
 public class DevkitPerspectiveFactory implements IPerspectiveFactory {
 
-	@Override
-	public void createInitialLayout(IPageLayout layout) {
-		// Get the editor area.
+    @Override
+    public void createInitialLayout(IPageLayout layout) {
+        // Get the editor area.
         String editorArea = layout.getEditorArea();
 
         // Top left: Resource Navigator view and Bookmarks view placeholder
-        IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f,
-                editorArea);
+        IFolderLayout topLeft = layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea);
         topLeft.addView(JavaUI.ID_PACKAGES);
         topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 
         // Bottom right: Task List view
         layout.addView(IPageLayout.ID_PROBLEM_VIEW, IPageLayout.BOTTOM, 0.66f, editorArea);
-        
+
         layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
         layout.addActionSet(JavaUI.ID_ACTION_SET);
         layout.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);
@@ -46,12 +45,11 @@ public class DevkitPerspectiveFactory implements IPerspectiveFactory {
         layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
         layout.addShowViewShortcut(IProgressConstants.PROGRESS_VIEW_ID);
         layout.addShowViewShortcut(IPageLayout.ID_PROJECT_EXPLORER);
-        
+
         // RIGT left: Resource Navigator view and Bookmarks view placeholder
-        IFolderLayout topRight = layout.createFolder("topRight", IPageLayout.RIGHT, 0.77f,
-                editorArea);
+        IFolderLayout topRight = layout.createFolder("topRight", IPageLayout.RIGHT, 0.77f, editorArea);
         topRight.addView(IPageLayout.ID_OUTLINE);
         topRight.addView(DevkitView.ID);
-	}
+    }
 
 }

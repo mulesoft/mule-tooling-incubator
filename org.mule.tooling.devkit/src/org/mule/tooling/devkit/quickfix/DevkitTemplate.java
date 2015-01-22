@@ -7,11 +7,10 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.swt.graphics.Image;
 
-public class DevkitTemplate extends TemplateProposal implements IJavaCompletionProposal{
+public class DevkitTemplate extends TemplateProposal implements IJavaCompletionProposal {
 
-	public DevkitTemplate(Template template, TemplateContext context,
-			IRegion region, Image image) {
-		super(template, context, region, image);
-	}
+    public DevkitTemplate(Template template, TemplateContext context, IRegion region, Image image) {
+        super(template, context, region, image);
+    }
 
 }

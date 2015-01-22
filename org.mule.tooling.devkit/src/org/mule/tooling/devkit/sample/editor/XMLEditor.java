@@ -15,84 +15,76 @@ import org.eclipse.ui.editors.text.TextEditor;
 
 public class XMLEditor extends TextEditor {
 
-	private ProjectionSupport projectionSupport;
+    private ProjectionSupport projectionSupport;
 
-	private ColorManager colorManager;
+    private ColorManager colorManager;
 
-	public XMLEditor() {
-		super();
-		colorManager = new ColorManager();
-		setSourceViewerConfiguration(new XMLConfiguration(colorManager, this));
-		setDocumentProvider(new XMLDocumentProvider());
-	}
+    public XMLEditor() {
+        super();
+        colorManager = new ColorManager();
+        setSourceViewerConfiguration(new XMLConfiguration(colorManager, this));
+        setDocumentProvider(new XMLDocumentProvider());
+    }
 
-	public void dispose() {
-		colorManager.dispose();
-		super.dispose();
-	}
+    public void dispose() {
+        colorManager.dispose();
+        super.dispose();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
-	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
-		ProjectionViewer viewer = (ProjectionViewer) getSourceViewer();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets .Composite)
+     */
+    public void createPartControl(Composite parent) {
+        super.createPartControl(parent);
+        ProjectionViewer viewer = (ProjectionViewer) getSourceViewer();
 
-		projectionSupport = new ProjectionSupport(viewer,
-				getAnnotationAccess(), getSharedColors());
-		projectionSupport.install();
+        projectionSupport = new ProjectionSupport(viewer, getAnnotationAccess(), getSharedColors());
+        projectionSupport.install();
 
-		// turn projection mode on
-		viewer.doOperation(ProjectionViewer.TOGGLE);
+        // turn projection mode on
+        viewer.doOperation(ProjectionViewer.TOGGLE);
 
-		annotationModel = viewer.getProjectionAnnotationModel();
+        annotationModel = viewer.getProjectionAnnotationModel();
 
-	}
+    }
 
-	private Annotation[] oldAnnotations;
-	private ProjectionAnnotationModel annotationModel;
+    private Annotation[] oldAnnotations;
+    private ProjectionAnnotationModel annotationModel;
 
-	public void updateFoldingStructure(ArrayList<?> positions) {
-		Annotation[] annotations = new Annotation[positions.size()];
+    public void updateFoldingStructure(ArrayList<?> positions) {
+        Annotation[] annotations = new Annotation[positions.size()];
 
-		// this will hold the new annotations along
-		// with their corresponding positions
-		HashMap<ProjectionAnnotation, Object> newAnnotations = new HashMap<ProjectionAnnotation, Object>();
+        // this will hold the new annotations along
+        // with their corresponding positions
+        HashMap<ProjectionAnnotation, Object> newAnnotations = new HashMap<ProjectionAnnotation, Object>();
 
-		for (int i = 0; i < positions.size(); i++) {
-			ProjectionAnnotation annotation = new ProjectionAnnotation();
+        for (int i = 0; i < positions.size(); i++) {
+            ProjectionAnnotation annotation = new ProjectionAnnotation();
 
-			newAnnotations.put(annotation, positions.get(i));
+            newAnnotations.put(annotation, positions.get(i));
 
-			annotations[i] = annotation;
-		}
+            annotations[i] = annotation;
+        }
 
-		annotationModel.modifyAnnotations(oldAnnotations, newAnnotations, null);
+        annotationModel.modifyAnnotations(oldAnnotations, newAnnotations, null);
 
-		oldAnnotations = annotations;
-	}
+        oldAnnotations = annotations;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse
-	 * .swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler,
-	 * int)
-	 */
-	protected ISourceViewer createSourceViewer(Composite parent,
-			IVerticalRuler ruler, int styles) {
-		ISourceViewer viewer = new ProjectionViewer(parent, ruler,
-				getOverviewRuler(), isOverviewRulerVisible(), styles);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse .swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
+     */
+    protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+        ISourceViewer viewer = new ProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
 
-		// ensure decoration support has been created and configured.
-		getSourceViewerDecorationSupport(viewer);
+        // ensure decoration support has been created and configured.
+        getSourceViewerDecorationSupport(viewer);
 
-		return viewer;
-	}
+        return viewer;
+    }
 
 }

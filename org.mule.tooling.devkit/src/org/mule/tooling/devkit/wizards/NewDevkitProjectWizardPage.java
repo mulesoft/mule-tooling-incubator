@@ -57,8 +57,10 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String GROUP_TITLE_CONNECTOR = "";
     private static final String GROUP_TITLE_API = "API";
     private static final String[] SUPPORTED_AUTHENTICATION_SOAP_OPTIONS = new String[] { AuthenticationType.NONE.label() };
-    private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { AuthenticationType.NONE.label(), AuthenticationType.HTTP_BASIC.label(), AuthenticationType.CONNECTION_MANAGEMENT.label(), AuthenticationType.OAUTH_V2.label() };
-    private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { AuthenticationType.NONE.label(), AuthenticationType.CONNECTION_MANAGEMENT.label(), AuthenticationType.OAUTH_V2.label() };
+    private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { AuthenticationType.NONE.label(), AuthenticationType.HTTP_BASIC.label(),
+            AuthenticationType.CONNECTION_MANAGEMENT.label(), AuthenticationType.OAUTH_V2.label() };
+    private static final String[] SUPPORTED_AUTHENTICATION_OTHER_OPTIONS = new String[] { AuthenticationType.NONE.label(), AuthenticationType.CONNECTION_MANAGEMENT.label(),
+            AuthenticationType.OAUTH_V2.label() };
     private static final String[] SUPPORTED_API_OPTIONS = new String[] { ApiType.GENERIC.label(), ApiType.SOAP.label(), ApiType.REST.label() };
     private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.";
     private static final String OTHER_COMMENT = "This will generate the scaffolding for the connector.\nIf you want to create a connector for a java client this will help you get started.";
@@ -168,7 +170,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             }
         });
 
-        projectName = initializeTextField(connectorGroupBox, PROJECT_NAME_LABEL, DEFAULT_NAME, "Project name.", 2,simple);
+        projectName = initializeTextField(connectorGroupBox, PROJECT_NAME_LABEL, DEFAULT_NAME, "Project name.", 2, simple);
 
         name.addModifyListener(new ModifyListener() {
 
@@ -186,8 +188,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 "Namespace that will be used when your connector is added into a mule application.", 2, simple);
 
         location = initializeTextField(connectorGroupBox, LOCATION_LABEL, ResourcesPlugin.getWorkspace().getRoot().getFullPath().toOSString(),
-                "Project location in the file system.", 1,simple);
-        
+                "Project location in the file system.", 1, simple);
+
         browse = new Button(connectorGroupBox, SWT.NONE);
         browse.setText("Browse");
         browse.setLayoutData(GridDataFactory.fillDefaults().create());

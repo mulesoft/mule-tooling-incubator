@@ -59,11 +59,11 @@ public class UpdateProjectClasspath {
 
         scheduleWork(project, monitor, updateJob);
     }
-    
-    public void execute(final IJavaProject project, String[] commands,IProgressMonitor monitor) {
+
+    public void execute(final IJavaProject project, String[] commands, IProgressMonitor monitor) {
         cancelExistingUpdateJobsForProject(project);
 
-        WorkspaceJob updateJob = new UpdateProjectClasspathWorkspaceJob(project,commands);
+        WorkspaceJob updateJob = new UpdateProjectClasspathWorkspaceJob(project, commands);
 
         scheduleWork(project, monitor, updateJob);
     }
@@ -76,7 +76,7 @@ public class UpdateProjectClasspath {
         updateJob.addJobChangeListener(new RefreshWhenDoneChangeListener(project));
         monitor.worked(20);
     }
-    
+
     private void cancelExistingUpdateJobsForProject(final IJavaProject project) {
         Job[] existentJobs = Job.getJobManager().find(DevkitGoal.INSTANCE);
         for (Job job : existentJobs) {

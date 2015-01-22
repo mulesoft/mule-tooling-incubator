@@ -7,13 +7,13 @@ import org.mule.tooling.devkit.DevkitImages;
 
 public class ModuleTransformer extends ModuleMethod {
 
-	public ModuleTransformer(NodeItem parent, ICompilationUnit cu, ASTNode node) {
-		super(parent, cu, node);
-	}
+    public ModuleTransformer(NodeItem parent, ICompilationUnit cu, ASTNode node) {
+        super(parent, cu, node);
+    }
 
-	@Override
-	public Image getImage() {
-		
-		return DevkitImages.getManagedImage("", "transformer.gif");
-	}
+    @Override
+    public Image getImage() {
+
+        return DevkitImages.getManagedImage("", "transformer.gif");
+    }
 }

@@ -3,7 +3,6 @@ package org.mule.tooling.devkit.quickfix;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.jdt.core.search.TypeNameMatch;
 import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
 

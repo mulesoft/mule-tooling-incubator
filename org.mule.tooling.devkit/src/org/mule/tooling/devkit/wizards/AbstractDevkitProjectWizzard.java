@@ -9,7 +9,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.mule.tooling.devkit.common.DevkitUtils;
 
 public abstract class AbstractDevkitProjectWizzard extends Wizard {
-    
+
     protected IProject getProjectWithDescription(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root, IProjectDescription projectDescription) throws CoreException {
         IProject project = root.getProject(artifactId);
         if (!project.exists()) {
@@ -43,11 +43,11 @@ public abstract class AbstractDevkitProjectWizzard extends Wizard {
     protected String buildTestTargetFilePath(String packageName, String className) {
         return DevkitUtils.TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + className + "Test.java";
     }
-    
+
     protected String buildQueryTestTargetFilePath(String packageName, String className) {
         return DevkitUtils.TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + className + "QueryTest.java";
     }
-    
+
     protected String buildDataSenseTestTargetFilePath(String packageName, String className) {
         return DevkitUtils.TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + className + "AddEntityTest.java";
     }

@@ -13,66 +13,55 @@ import org.eclipse.swt.graphics.Image;
 @SuppressWarnings("restriction")
 public class AddDatasenseMethodQuickFix extends QuickFix {
 
-	AddDatasenseMethodQuickFix(String label, ConditionMarkerEvaluator evaluator) {
-		super(label, evaluator);
-	}
+    AddDatasenseMethodQuickFix(String label, ConditionMarkerEvaluator evaluator) {
+        super(label, evaluator);
+    }
 
-	@Override
-	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
-		ASTRewrite rewrite = null;
-		LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(
-				errorMarkerStart);
+    @Override
+    protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+        ASTRewrite rewrite = null;
+        LocateFieldOrMethodVisitor visitor = new LocateFieldOrMethodVisitor(errorMarkerStart);
 
-		unit.accept(visitor);
+        unit.accept(visitor);
 
-		if (visitor.getNode() != null) {
-			if (!unit.types().isEmpty()) {
-				AST ast = unit.getAST();
-				rewrite = ASTRewrite.create(ast);
+        if (visitor.getNode() != null) {
+            if (!unit.types().isEmpty()) {
+                AST ast = unit.getAST();
+                rewrite = ASTRewrite.create(ast);
 
-				// for getting insertion position
-				TypeDeclaration typeDecl = (TypeDeclaration) unit.types()
-						.get(0);
+                // for getting insertion position
+                TypeDeclaration typeDecl = (TypeDeclaration) unit.types().get(0);
 
-				ListRewrite list = rewrite.getListRewrite(typeDecl,
-						TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
+                ListRewrite list = rewrite.getListRewrite(typeDecl, TypeDeclaration.BODY_DECLARATIONS_PROPERTY);
 
-				addDatasenseMethods(rewrite, list);
+                addDatasenseMethods(rewrite, list);
 
-				addImports(unit, rewrite);
-			}
-		}
-		return rewrite;
-	}
+                addImports(unit, rewrite);
+            }
+        }
+        return rewrite;
+    }
 
-	private void addDatasenseMethods(ASTRewrite rewrite, ListRewrite list) {
-		Statement placeHolder = (Statement) rewrite
-				.createStringPlaceholder(
-						"@MetaDataKeyRetriever\npublic List<MetaDataKey> getKeys() throws Exception {\n\treturn null;\n}",
-						ASTNode.EMPTY_STATEMENT);
-		list.insertLast(placeHolder, null);
+    private void addDatasenseMethods(ASTRewrite rewrite, ListRewrite list) {
+        Statement placeHolder = (Statement) rewrite.createStringPlaceholder("@MetaDataKeyRetriever\npublic List<MetaDataKey> getKeys() throws Exception {\n\treturn null;\n}",
+                ASTNode.EMPTY_STATEMENT);
+        list.insertLast(placeHolder, null);
 
-		placeHolder = (Statement) rewrite
-				.createStringPlaceholder(
-						"@MetaDataRetriever\npublic MetaData getMetaData(MetaDataKey key) throws Exception {\n\treturn null;\n}",
-						ASTNode.EMPTY_STATEMENT);
-		list.insertLast(placeHolder, null);
-	}
+        placeHolder = (Statement) rewrite.createStringPlaceholder("@MetaDataRetriever\npublic MetaData getMetaData(MetaDataKey key) throws Exception {\n\treturn null;\n}",
+                ASTNode.EMPTY_STATEMENT);
+        list.insertLast(placeHolder, null);
+    }
 
-	private void addImports(CompilationUnit unit, ASTRewrite rewrite) {
-		addImportIfRequired(unit, rewrite,
-				"org.mule.api.annotations.MetaDataKeyRetriever");
-		addImportIfRequired(unit, rewrite,
-				"org.mule.api.annotations.MetaDataRetriever");
-		addImportIfRequired(unit, rewrite, "java.util.List");
-		addImportIfRequired(unit, rewrite,
-				"org.mule.common.metadata.MetaDataKey");
-		addImportIfRequired(unit, rewrite,
-				"org.mule.common.metadata.MetaData");
-	}
+    private void addImports(CompilationUnit unit, ASTRewrite rewrite) {
+        addImportIfRequired(unit, rewrite, "org.mule.api.annotations.MetaDataKeyRetriever");
+        addImportIfRequired(unit, rewrite, "org.mule.api.annotations.MetaDataRetriever");
+        addImportIfRequired(unit, rewrite, "java.util.List");
+        addImportIfRequired(unit, rewrite, "org.mule.common.metadata.MetaDataKey");
+        addImportIfRequired(unit, rewrite, "org.mule.common.metadata.MetaData");
+    }
 
-	@Override
-	public Image getImage() {
-		return JavaPluginImages.get(JavaPluginImages.IMG_CORRECTION_ADD);
-	}
+    @Override
+    public Image getImage() {
+        return JavaPluginImages.get(JavaPluginImages.IMG_CORRECTION_ADD);
+    }
 }

@@ -5,7 +5,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.swt.graphics.Image;
 import org.mule.tooling.devkit.DevkitImages;
 
-public class Strategy extends Module{
+public class Strategy extends Module {
 
     public Strategy(NodeItem parent, ICompilationUnit cu, ASTNode node) {
         super(parent, cu, node);

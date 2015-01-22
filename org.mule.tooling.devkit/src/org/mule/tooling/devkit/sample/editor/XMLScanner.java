@@ -9,35 +9,25 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 
 public class XMLScanner extends RuleBasedScanner {
-	
-	public XMLScanner(ColorManager manager) {
-		IToken procInstr =
-			new Token(
-				new TextAttribute(
-					manager.getColor(IXMLColorConstants.PROC_INSTR)));
 
-		IToken xmlAttribute =
-				new Token(
-					new TextAttribute(
-						manager.getColor(IXMLColorConstants.XML_ATTRIBUTE)));
-		
-		IToken sampleDelimiter =
-				new Token(
-					new TextAttribute(
-						manager.getColor(IXMLColorConstants.BEGIN_END_SAMPLE)));
-		
-		IRule[] rules = new IRule[4];
-		//Add rule for processing instructions
-		rules[0] = new SingleLineRule("<?", "?>", procInstr);
-		
-		// Add generic whitespace rule.
-		rules[1] = new WhitespaceRule(new XMLWhitespaceDetector());
-		
-		rules[2] = new SingleLineRule("\"", "\"", xmlAttribute);
-		
-		rules[3] = new SingleLineRule("<!--", "-->", sampleDelimiter);
+    public XMLScanner(ColorManager manager) {
+        IToken procInstr = new Token(new TextAttribute(manager.getColor(IXMLColorConstants.PROC_INSTR)));
 
-		
-		setRules(rules);
-	}
+        IToken xmlAttribute = new Token(new TextAttribute(manager.getColor(IXMLColorConstants.XML_ATTRIBUTE)));
+
+        IToken sampleDelimiter = new Token(new TextAttribute(manager.getColor(IXMLColorConstants.BEGIN_END_SAMPLE)));
+
+        IRule[] rules = new IRule[4];
+        // Add rule for processing instructions
+        rules[0] = new SingleLineRule("<?", "?>", procInstr);
+
+        // Add generic whitespace rule.
+        rules[1] = new WhitespaceRule(new XMLWhitespaceDetector());
+
+        rules[2] = new SingleLineRule("\"", "\"", xmlAttribute);
+
+        rules[3] = new SingleLineRule("<!--", "-->", sampleDelimiter);
+
+        setRules(rules);
+    }
 }

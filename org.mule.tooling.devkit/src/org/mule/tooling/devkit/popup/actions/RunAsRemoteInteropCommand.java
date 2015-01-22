@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -91,20 +90,16 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
         final IJavaProject javaProject = JavaCore.create(selectedProject);
         String jobDetail = "Generating test project for " + DevkitUtils.getProjectLabel(javaProject);
 
-        String[] mavenCommand = new String[] { "install","-DskipTests","org.mule.connectors.interop:interop-ce-runtime-generation:create" };
+        String[] mavenCommand = new String[] { "install", "-DskipTests", "org.mule.connectors.interop:interop-ce-runtime-generation:create" };
 
         System.out.println("** Command :: " + StringUtils.join(mavenCommand, " "));
 
         MavenUtils.runMavenGoalJob(selectedProject, mavenCommand, jobMsg, DevkitUtils.refreshFolder(selectedProject.getFolder(DevkitUtils.TEST_RESOURCES_FOLDER), null), jobDetail);
 
-        mavenCommand = new String[] { "org.mule.connectors.interop:interop-ce-runtime-generation:run",
-                                    "-DtestData=" + runnerConfig.getTestDataPath(),
-                                    "-DtestDataOverride=" + runnerConfig.getTestDataOverridePath(),
-                                    "-DtestConnect=" + runnerConfig.getRunConnectivityTest(),
-                                    "-DtestDMapper=" + runnerConfig.getRunDMapperTest(),
-                                    "-DtestXml=" + runnerConfig.getRunXmlTest(),
-                                    "-DtestDataSense=" + runnerConfig.getRunDataSense(),
-                                    "-DtestOAuth=" + runnerConfig.getRunOAuth() };
+        mavenCommand = new String[] { "org.mule.connectors.interop:interop-ce-runtime-generation:run", "-DtestData=" + runnerConfig.getTestDataPath(),
+                "-DtestDataOverride=" + runnerConfig.getTestDataOverridePath(), "-DtestConnect=" + runnerConfig.getRunConnectivityTest(),
+                "-DtestDMapper=" + runnerConfig.getRunDMapperTest(), "-DtestXml=" + runnerConfig.getRunXmlTest(), "-DtestDataSense=" + runnerConfig.getRunDataSense(),
+                "-DtestOAuth=" + runnerConfig.getRunOAuth() };
 
         jobMsg = "Running Interop Test";
         jobDetail = "Running interop test for " + DevkitUtils.getProjectLabel(javaProject);

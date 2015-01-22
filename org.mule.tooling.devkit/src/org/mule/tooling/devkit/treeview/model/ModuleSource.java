@@ -7,13 +7,13 @@ import org.mule.tooling.devkit.DevkitImages;
 
 public class ModuleSource extends ModuleMethod {
 
-	public ModuleSource(NodeItem parent, ICompilationUnit cu, ASTNode node) {
-		super(parent, cu, node);
-	}
+    public ModuleSource(NodeItem parent, ICompilationUnit cu, ASTNode node) {
+        super(parent, cu, node);
+    }
 
-	@Override
-	public Image getImage() {
-		
-		return DevkitImages.getManagedImage("", "source.png");
-	}
+    @Override
+    public Image getImage() {
+
+        return DevkitImages.getManagedImage("", "source.png");
+    }
 }

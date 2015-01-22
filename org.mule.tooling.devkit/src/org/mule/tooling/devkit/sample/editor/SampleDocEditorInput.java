@@ -6,15 +6,15 @@ import org.mule.tooling.devkit.treeview.model.Module;
 
 public class SampleDocEditorInput extends FileEditorInput {
 
-	private final Module module;
-	
-	public SampleDocEditorInput(IFile file,Module module) {
-		super(file);
-		this.module = module;
-	}
+    private final Module module;
 
-	public Module getModule() {
-		return module;
-	}
+    public SampleDocEditorInput(IFile file, Module module) {
+        super(file);
+        this.module = module;
+    }
+
+    public Module getModule() {
+        return module;
+    }
 
 }

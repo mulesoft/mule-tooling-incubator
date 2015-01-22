@@ -10,38 +10,37 @@ import org.eclipse.core.runtime.CoreException;
 import org.mule.devkit.generation.api.gatherer.DevkitNotification;
 
 public class MessageMatches implements ConditionMarkerEvaluator {
-	final List<DevkitNotification> notifications;
 
-	public MessageMatches(List<DevkitNotification> notifications) {
-		this.notifications = notifications;
-	}
+    final List<DevkitNotification> notifications;
 
-	public MessageMatches(DevkitNotification notification) {
-		this.notifications = new ArrayList<DevkitNotification>();
-		notifications.add(notification);
-	}
+    public MessageMatches(List<DevkitNotification> notifications) {
+        this.notifications = notifications;
+    }
 
-	@Override
-	public boolean hasFixForMarker(IMarker marker) {
-		String problem = "";
-		try {
-			problem = (String) marker.getAttribute(IMarker.MESSAGE);
-			for (DevkitNotification notification : notifications) {
-				Pattern p = Pattern.compile(escapeRE(notification.getMessage())
-						.replaceAll("%s", ".*"));
-				Matcher m = p.matcher(problem);
-				if (m.matches()) {
-					return true;
-				}
-			}
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
+    public MessageMatches(DevkitNotification notification) {
+        this.notifications = new ArrayList<DevkitNotification>();
+        notifications.add(notification);
+    }
 
-	public static String escapeRE(String str) {
-		return str.replaceAll("\\[.*\\][^ \\.].*", "[%s]").replaceAll(
-				"([{}\\.\\[\\]\\(\\)])", "\\\\$1");
-	}
+    @Override
+    public boolean hasFixForMarker(IMarker marker) {
+        String problem = "";
+        try {
+            problem = (String) marker.getAttribute(IMarker.MESSAGE);
+            for (DevkitNotification notification : notifications) {
+                Pattern p = Pattern.compile(escapeRE(notification.getMessage()).replaceAll("%s", ".*"));
+                Matcher m = p.matcher(problem);
+                if (m.matches()) {
+                    return true;
+                }
+            }
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static String escapeRE(String str) {
+        return str.replaceAll("\\[.*\\][^ \\.].*", "[%s]").replaceAll("([{}\\.\\[\\]\\(\\)])", "\\\\$1");
+    }
 }

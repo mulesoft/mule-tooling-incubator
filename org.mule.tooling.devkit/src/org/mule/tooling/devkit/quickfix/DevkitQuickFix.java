@@ -6,5 +6,6 @@ import org.eclipse.core.resources.IMarker;
  * Basic interface to determine if the error can be fixed by this marker.
  */
 public interface DevkitQuickFix {
-	boolean hasFixForMarker(IMarker marker);
+
+    boolean hasFixForMarker(IMarker marker);
 }

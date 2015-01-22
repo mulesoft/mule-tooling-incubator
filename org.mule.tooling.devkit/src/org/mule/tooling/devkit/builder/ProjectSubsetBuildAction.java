@@ -7,7 +7,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.actions.BuildAction;
 
-
 public class ProjectSubsetBuildAction extends BuildAction {
 
     private IProject[] projectsToBuild = new IProject[0];

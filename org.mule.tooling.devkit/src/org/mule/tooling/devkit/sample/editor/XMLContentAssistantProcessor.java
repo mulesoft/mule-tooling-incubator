@@ -23,112 +23,82 @@ import org.eclipse.swt.graphics.Image;
 import org.mule.tooling.devkit.DevkitImages;
 
 public class XMLContentAssistantProcessor implements IContentAssistProcessor {
-	private static final String CONTEXT_ID = "devkit.sample";
 
-	TemplateContextType templateContext = new TemplateContextType(CONTEXT_ID,
-			"Samples Templates");
+    private static final String CONTEXT_ID = "devkit.sample";
 
-	Template template = new Template(
-			"Sample",
-			"Create a sample with no attributes or childs",
-			CONTEXT_ID,
-			"<!-- BEGIN_INCLUDE(${prefix}:${operation}) -->\n" +
-			"\t<${prefix}:${operation}/>\n" +
-			"<!-- END_INCLUDE(${prefix}:${operation}) -->\n",
-			true);
+    TemplateContextType templateContext = new TemplateContextType(CONTEXT_ID, "Samples Templates");
 
-	Template templateWithAttribute = new Template(
-			"Sample",
-			"Create a sample with an attributes",
-			CONTEXT_ID,
-			"<!-- BEGIN_INCLUDE(${prefix}:${operation}) -->\n"
-					+ "\t<${prefix}:${operation} ${attributeName}=\"${attributeValue}\" />\n"
-					+ "<!-- END_INCLUDE(${prefix}:${operation}) -->\n", true);
+    Template template = new Template("Sample", "Create a sample with no attributes or childs", CONTEXT_ID, "<!-- BEGIN_INCLUDE(${prefix}:${operation}) -->\n"
+            + "\t<${prefix}:${operation}/>\n" + "<!-- END_INCLUDE(${prefix}:${operation}) -->\n", true);
 
-	Template templateWithChild = new Template(
-			"Sample",
-			"Create a sample with a childs that takes its value from Payload",
-			CONTEXT_ID,
-			"<!-- BEGIN_INCLUDE(${prefix}:${operation}) -->\n"
-					+ "\t<${prefix}:${operation}>\n"
-					+ "\t\t<${prefix}:${childName} value-ref=\"#[payload]\"/>\n"
-					+ "\t</${prefix}:${operation}>\n"
-					+ "<!-- END_INCLUDE(${prefix}:${operation}) -->\n", true);
+    Template templateWithAttribute = new Template("Sample", "Create a sample with an attributes", CONTEXT_ID, "<!-- BEGIN_INCLUDE(${prefix}:${operation}) -->\n"
+            + "\t<${prefix}:${operation} ${attributeName}=\"${attributeValue}\" />\n" + "<!-- END_INCLUDE(${prefix}:${operation}) -->\n", true);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#
-	 * computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
-	 */
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
-			int offset) {
-		Image templateImage = DevkitImages.getManagedImage("","template.gif");
-		ICompletionProposal[] completionProposals = new ICompletionProposal[3];
-		Region region = new Region(offset - 1, 1);
-		TemplateContext context = new DocumentTemplateContext(templateContext,
-				viewer.getDocument(), offset - 1, 1);
-		completionProposals[0] = new TemplateProposal(template, context,
-				region, templateImage);
-		completionProposals[1] = new TemplateProposal(templateWithAttribute,
-				context, region, templateImage);
-		completionProposals[2] = new TemplateProposal(templateWithChild,
-				context, region, templateImage);
+    Template templateWithChild = new Template("Sample", "Create a sample with a childs that takes its value from Payload", CONTEXT_ID,
+            "<!-- BEGIN_INCLUDE(${prefix}:${operation}) -->\n" + "\t<${prefix}:${operation}>\n" + "\t\t<${prefix}:${childName} value-ref=\"#[payload]\"/>\n"
+                    + "\t</${prefix}:${operation}>\n" + "<!-- END_INCLUDE(${prefix}:${operation}) -->\n", true);
 
-		return completionProposals;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor# computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
+     */
+    public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+        Image templateImage = DevkitImages.getManagedImage("", "template.gif");
+        ICompletionProposal[] completionProposals = new ICompletionProposal[3];
+        Region region = new Region(offset - 1, 1);
+        TemplateContext context = new DocumentTemplateContext(templateContext, viewer.getDocument(), offset - 1, 1);
+        completionProposals[0] = new TemplateProposal(template, context, region, templateImage);
+        completionProposals[1] = new TemplateProposal(templateWithAttribute, context, region, templateImage);
+        completionProposals[2] = new TemplateProposal(templateWithChild, context, region, templateImage);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#
-	 * computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
-	 */
-	public IContextInformation[] computeContextInformation(ITextViewer viewer,
-			int offset) {
-		return null;
-	}
+        return completionProposals;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#
-	 * getCompletionProposalAutoActivationCharacters()
-	 */
-	public char[] getCompletionProposalAutoActivationCharacters() {
-		return new char[] { '<' };
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor# computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
+     */
+    public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
+        return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#
-	 * getContextInformationAutoActivationCharacters()
-	 */
-	public char[] getContextInformationAutoActivationCharacters() {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor# getCompletionProposalAutoActivationCharacters()
+     */
+    public char[] getCompletionProposalAutoActivationCharacters() {
+        return new char[] { '<' };
+    }
 
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor# getContextInformationAutoActivationCharacters()
+     */
+    public char[] getContextInformationAutoActivationCharacters() {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage
-	 * ()
-	 */
-	public String getErrorMessage() {
-		return null;
-	}
+        return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#
-	 * getContextInformationValidator()
-	 */
-	public IContextInformationValidator getContextInformationValidator() {
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage ()
+     */
+    public String getErrorMessage() {
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor# getContextInformationValidator()
+     */
+    public IContextInformationValidator getContextInformationValidator() {
+        return null;
+    }
 
 }

@@ -319,8 +319,8 @@ public class DevkitUtils {
             } else {
                 if (wasDigit || waslowerCase) {
                     result.append("-");
-                } else if (i > 0 && i < characters.length-1) {
-                    // If this is not the first character,and  If the next caracter is a lowercase, this uppercase is actually from the next word
+                } else if (i > 0 && i < characters.length - 1) {
+                    // If this is not the first character,and If the next caracter is a lowercase, this uppercase is actually from the next word
                     if (Character.isLowerCase(characters[i + 1])) {
                         result.append("-");
                     }

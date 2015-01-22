@@ -105,9 +105,8 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
         boolean skip = false;
         ExportTypeSelectionDialog selectionDialog;
         if (testdataDto.selectedInterop()) {
-            if (fileExistsInTestResources(selectedProject, testdataDto.getOutputFile()) ||
-                fileExistsInTestResources(selectedProject, testdataDto.getOutputFile().replace(".xml", ".-override.xml"))) 
-            {
+            if (fileExistsInTestResources(selectedProject, testdataDto.getOutputFile())
+                    || fileExistsInTestResources(selectedProject, testdataDto.getOutputFile().replace(".xml", ".-override.xml"))) {
                 selectionDialog = new ExportTypeSelectionDialog(Display.getCurrent().getActiveShell(), INTEROP_FILES_DIALOG_TITLE);
                 skip = (selectionDialog.open() == 1);
                 testdataDto.setExportInteropPolicy(selectionDialog.getSelectedPolicy());
@@ -144,9 +143,9 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
 
         return "";
     }
-    
-    private boolean fileExistsInTestResources(IProject selectedProject, String filename){
-        return selectedProject.getFile(DevkitUtils.TEST_RESOURCES_FOLDER +"/"+ filename).exists();
+
+    private boolean fileExistsInTestResources(IProject selectedProject, String filename) {
+        return selectedProject.getFile(DevkitUtils.TEST_RESOURCES_FOLDER + "/" + filename).exists();
     }
 
 }

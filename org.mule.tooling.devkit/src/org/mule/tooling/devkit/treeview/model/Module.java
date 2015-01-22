@@ -68,7 +68,7 @@ public class Module extends DefaultNodeItem implements Comparable<Module> {
 
     @Override
     public Image getImage() {
-        
+
         return DevkitImages.getManagedImage("", "module.gif");
     }
 

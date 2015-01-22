@@ -340,6 +340,6 @@ public class MavenDevkitProjectDecorator {
     }
 
     public IJavaProject getProject() {
-		return project;
-	}
+        return project;
+    }
 }

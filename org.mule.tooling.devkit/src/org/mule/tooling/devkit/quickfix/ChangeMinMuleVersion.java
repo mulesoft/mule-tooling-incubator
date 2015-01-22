@@ -12,43 +12,42 @@ import org.mule.tooling.devkit.treeview.model.ModelUtils;
 
 public class ChangeMinMuleVersion extends QuickFix {
 
-	private final QualifiedName annotation;
+    private final QualifiedName annotation;
 
-	public ChangeMinMuleVersion(String label, ConditionMarkerEvaluator evaluator) {
-		super(label, evaluator);
-		this.annotation = ModelUtils.CONNECTOR_ANNOTATION;
-	}
+    public ChangeMinMuleVersion(String label, ConditionMarkerEvaluator evaluator) {
+        super(label, evaluator);
+        this.annotation = ModelUtils.CONNECTOR_ANNOTATION;
+    }
 
-	@Override
-	protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
-		ASTRewrite rewrite = null;
-		LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(
-				errorMarkerStart, annotation);
+    @Override
+    protected ASTRewrite getFix(CompilationUnit unit, Integer errorMarkerStart) {
+        ASTRewrite rewrite = null;
+        LocateAnnotationVisitor visitor = new LocateAnnotationVisitor(errorMarkerStart, annotation);
 
-		unit.accept(visitor);
+        unit.accept(visitor);
 
-		if (visitor.getNode() != null) {
-			AST ast = unit.getAST();
+        if (visitor.getNode() != null) {
+            AST ast = unit.getAST();
 
-			rewrite = ASTRewrite.create(ast);
-			Annotation annotation = (Annotation) visitor.getNode();
+            rewrite = ASTRewrite.create(ast);
+            Annotation annotation = (Annotation) visitor.getNode();
 
-			if (annotation.isNormalAnnotation()) {
-				NormalAnnotation value = (NormalAnnotation) annotation;
-				for (Object member : value.values()) {
-					if (member instanceof MemberValuePair) {
-						MemberValuePair pair = (MemberValuePair) member;
-						if (pair.getName().toString().equals("minMuleVersion")) {
-							StringLiteral literal = ast.newStringLiteral();
-							literal.setLiteralValue("3.4");
+            if (annotation.isNormalAnnotation()) {
+                NormalAnnotation value = (NormalAnnotation) annotation;
+                for (Object member : value.values()) {
+                    if (member instanceof MemberValuePair) {
+                        MemberValuePair pair = (MemberValuePair) member;
+                        if (pair.getName().toString().equals("minMuleVersion")) {
+                            StringLiteral literal = ast.newStringLiteral();
+                            literal.setLiteralValue("3.4");
 
-							rewrite.replace(pair.getValue(), literal, null);
-						}
-					}
-				}
-			}
+                            rewrite.replace(pair.getValue(), literal, null);
+                        }
+                    }
+                }
+            }
 
-		}
-		return rewrite;
-	}
+        }
+        return rewrite;
+    }
 }

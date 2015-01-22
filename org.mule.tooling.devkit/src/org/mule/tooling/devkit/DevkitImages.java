@@ -17,7 +17,7 @@ public class DevkitImages {
 
     /** Base path for icons */
     private static final IPath ICONS_PATH = new Path("icons");
-    
+
     /**
      * Get an image from the managed registry.
      * 
@@ -34,7 +34,7 @@ public class DevkitImages {
         }
         return image;
     }
-    
+
     /**
      * Get an image descriptor from the managed registry.
      * 
@@ -51,7 +51,7 @@ public class DevkitImages {
         }
         return desc;
     }
-    
+
     /**
      * Create an image descriptor.
      * 
@@ -62,7 +62,7 @@ public class DevkitImages {
     public static ImageDescriptor create(IPath path) {
         return createImageDescriptor(DevkitUIPlugin.getDefault().getBundle(), path, true);
     }
-    
+
     /**
      * Create an ImageDescriptor for a bundle-relative path.
      * 
