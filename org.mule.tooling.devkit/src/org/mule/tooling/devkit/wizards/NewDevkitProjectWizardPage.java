@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.mule.tooling.core.utils.VMUtils;
 import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.ApiType;
@@ -423,7 +424,12 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             updateStatus("Maven home is not properly configured. Check your maven preferences.");
             return;
         }
-
+        
+        if (!VMUtils.isJdkJavaHome(VMUtils.getJdkJavaHome())) {
+            updateStatus("The default JRE configured is not a JDK. Install or configure a JDK in order to build Devkit projects.");
+            return;
+        }
+        
         if (StringUtils.isBlank(this.getName())) {
             updateStatus("The Connector Name must be specified.");
             return;
