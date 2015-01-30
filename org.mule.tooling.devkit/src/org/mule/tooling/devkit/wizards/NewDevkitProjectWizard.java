@@ -47,6 +47,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.ide.IDE;
+import org.mule.tooling.core.utils.VMUtils;
 import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
@@ -79,6 +80,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private NewDevkitProjectWizardPageAdvance advancePage;
     private ConnectorMavenModel connectorModel;
     private IWorkbenchPage workbenchPage;
+    private boolean wasCreated;
 
     public NewDevkitProjectWizard() {
         super();
@@ -107,7 +109,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
     @Override
     public boolean performFinish() {
-
+        wasCreated = false;
         final ConnectorMavenModel mavenModel = getPopulatedModel();
         if (mavenModel.getApiType().equals(ApiType.SOAP)) {
             if (!isValidWsdl(getWsdlPath())) {
@@ -121,7 +123,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                 try {
 
                     final IJavaProject javaProject = doFinish(mavenModel, monitor);
-
                     downloadJavadocForAnnotations(javaProject, monitor);
                     if (mavenModel.getApiType().equals(ApiType.SOAP)) {
                         MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("clean").withArg("compile").withArg("-Pconnector-generator")
@@ -150,7 +151,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                     }
                     openConnectorClass(mavenModel, javaProject.getProject());
                     javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-
+                    wasCreated = true;
                 } catch (CoreException e) {
 
                     throw new InvocationTargetException(e);
@@ -168,12 +169,14 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     @Override
     public boolean performCancel() {
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        IProject project = root.getProject(page.getProjectName());
-        if (project != null) {
-            try {
-                project.delete(true, new NullProgressMonitor());
-            } catch (CoreException e) {
-                e.printStackTrace();
+        if (wasCreated && StringUtils.isEmpty(page.getProjectName())) {
+            IProject project = root.getProject(page.getProjectName());
+            if (project != null) {
+                try {
+                    project.delete(true, new NullProgressMonitor());
+                } catch (CoreException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return true;
