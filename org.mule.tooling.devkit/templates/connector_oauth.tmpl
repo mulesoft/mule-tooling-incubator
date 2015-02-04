@@ -40,8 +40,8 @@ public class ${project.strategyClassName}
      * Configurable
      */
     @Configurable
-    @Default("value")
-    private String myStrategyProperty;
+    @Default("How are you?")
+    private String replay;
 
     /**
      * The OAuth access token
@@ -110,17 +110,17 @@ public class ${project.strategyClassName}
     /**
      * Set strategy property
      *
-     * @param myStrategyProperty my strategy property
+     * @param replay my strategy property
      */
-    public void setMyStrategyProperty(String myStrategyProperty) {
-        this.myStrategyProperty = myStrategyProperty;
+    public void setReplay(String replay) {
+        this.replay = replay;
     }
 
     /**
      * Get property
      */
-    public String getMyStrategyProperty() {
-        return this.myStrategyProperty;
+    public String getReplay() {
+        return this.replay;
     }
 
     /**

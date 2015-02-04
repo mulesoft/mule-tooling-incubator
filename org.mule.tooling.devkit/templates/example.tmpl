@@ -1,6 +1,6 @@
-<!-- BEGIN_INCLUDE(${project.moduleName}:my-processor) -->
-    <${project.moduleName}:my-processor config-ref="" content="#[map-payload:content]" />
-<!-- END_INCLUDE(${project.moduleName}:my-processor) -->
+<!-- BEGIN_INCLUDE(${project.moduleName}:greet) -->
+    <${project.moduleName}:greet config-ref="" friend="#[map-payload:friend]" />
+<!-- END_INCLUDE(${project.moduleName}:greet) -->
 #if(${project.hasQuery} == true )
 <!-- BEGIN_INCLUDE(${project.moduleName}:query-processor) -->
     <${project.moduleName}:query-processor config-ref="" query="SELECT fieldName FROM MY_TABLE" />

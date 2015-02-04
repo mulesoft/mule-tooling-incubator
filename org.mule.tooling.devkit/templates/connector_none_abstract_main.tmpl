@@ -41,24 +41,27 @@ import ${project.package}.strategy.${project.strategyClassName};
 #if(${project.dataSenseEnabled} == true )
 @MetaDataScope( DataSenseResolver.class )
 #end
-public class ${project.connectorClassName}
-{
+public class ${project.connectorClassName} {
+#if(${project.generateDefaultBody} == true )
+    
     /**
      * Configurable
      */
     @Configurable
-    @Default("value")
-    private String myProperty;
+    @Default("Hello")
+    private String greeting;
+#end
 
     @ConnectionStrategy
     ${project.strategyClassName} connectionStrategy;
 
+#if(${project.generateDefaultBody} == true )
     /**
      * Custom processor
      *
-     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:my-processor}
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:greet}
      *
-     * @param content Content to be processed
+     * @param friend Content to be processed
      * @return Some string
 #if($project.authenticationType == 'OAUTH_V2' )
      * @throws Exception Comment for Exception     
@@ -68,14 +71,14 @@ public class ${project.connectorClassName}
 #if($project.authenticationType == 'OAUTH_V2' )
     @OAuthProtected
     @ReconnectOn(exceptions = { Exception.class })
-    public String myProcessor(@Default("content") String content) throws Exception {
+    public String greet(@Default("friend") String friend) throws Exception {
 #else
-    public String myProcessor(String content) {
+    public String greet(String friend) {
 #end
         /*
          * MESSAGE PROCESSOR CODE GOES HERE
          */
-        return content;
+        return greeting + " " + friend + ". " + connectionStrategy.getReplay();
     }
 
 #if(${project.hasQuery} == true )
@@ -120,18 +123,27 @@ public class ${project.connectorClassName}
     /**
      * Set property
      *
-     * @param myProperty My property
+     * @param greeting My property
      */
-    public void setMyProperty(String myProperty) {
-        this.myProperty = myProperty;
+    public void setGreeting(String greeting) {
+        this.greeting = greeting;
     }
 
     /**
      * Get property
      */
-    public String getMyProperty() {
-        return this.myProperty;
+    public String getGreeting() {
+        return this.greeting;
     }
+#else
+    /**
+     * Dummy operation to avoid compilation issues since @Connector need at least on @Processor, @Transformer or @Source
+     */
+    @Processor
+    public void foo() {
+        // TODO REMOVE THIS
+    }
+#end
 
     public ${project.strategyClassName} getConnectionStrategy() {
         return connectionStrategy;

@@ -10,10 +10,10 @@
         http://www.mulesoft.org/schema/mule/${project.moduleName} http://www.mulesoft.org/schema/mule/${project.moduleName}/1.0/mule-${project.moduleName}.xsd">
 
 #if($project.authenticationType == 'NONE' )
-    <${project.moduleName}:config-type name="config" myProperty="Some string"/>
+    <${project.moduleName}:config-type name="config" greeting="Hi"/>
 #end
 #if($project.authenticationType == 'CONNECTION_MANAGEMENT' )
-    <${project.moduleName}:config-type name="config" myProperty="Some string" username="foo" password="foo"/>
+    <${project.moduleName}:config-type name="config" greeting="Hi" username="foo" password="foo"/>
 #end
 #if($project.authenticationType == 'OAUTH_V2' )
     <${project.moduleName}:config-type name="config" consumerKey="my-key" consumerSecret="my-secret">
@@ -22,7 +22,7 @@
 #end
 
     <flow name="testFlow">
-        <${project.moduleName}:my-processor config-ref="config" content="Another string"/>
+        <${project.moduleName}:greet config-ref="config" friend="Foo"/>
     </flow>
 #if(${project.hasQuery} == true )
     <flow name="testQueryFlow">

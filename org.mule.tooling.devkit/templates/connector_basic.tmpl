@@ -15,29 +15,31 @@ import org.mule.api.annotations.param.Default;
  * @author MuleSoft, Inc.
  */
 @Configuration(configElementName = "config-type", friendlyName = "Configuration type strategy")
-public class ${project.strategyClassName}
-{
+public class ${project.strategyClassName} {
+#if(${project.generateDefaultBody} == true )
+
     /**
      * Configurable
      */
     @Configurable
-    @Default("value")
-    private String myStrategyProperty;
+    @Default("How are you?")
+    private String replay;
 
     /**
      * Set strategy property
      *
-     * @param myStrategyProperty my strategy property
+     * @param replay my strategy property
      */
-    public void setMyStrategyProperty(String myStrategyProperty) {
-        this.myStrategyProperty = myStrategyProperty;
+    public void setReplay(String replay) {
+        this.replay = replay;
     }
 
     /**
      * Get property
      */
-    public String getMyStrategyProperty() {
-        return this.myStrategyProperty;
+    public String getReplay() {
+        return this.replay;
     }
+#end
 
 }

@@ -47,7 +47,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.ide.IDE;
-import org.mule.tooling.core.utils.VMUtils;
 import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
@@ -242,10 +241,13 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         ProjectGenerator generator = ProjectGeneratorFactory.newInstance();
 
         NullProgressMonitor nullMonitor = new NullProgressMonitor();
+
         List<IClasspathEntry> entries = generator.generateProjectEntries(nullMonitor, project);
+
         if (mavenModel.getApiType().equals(ApiType.SOAP)) {
             entries.add(generator.createEntry(project.getFolder(DevkitUtils.CXF_GENERATED_SOURCES_FOLDER), nullMonitor));
         }
+
         generator.create(project.getFolder(DOCS_FOLDER), nullMonitor);
         generator.create(project.getFolder(ICONS_FOLDER), nullMonitor);
         generator.create(project.getFolder(DEMO_FOLDER), nullMonitor);
@@ -261,22 +263,25 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         templateFileWriter.apply("/templates/CHANGELOG.tmpl", "CHANGELOG.md", classReplacer);
         templateFileWriter.apply("/templates/LICENSE_HEADER.txt.tmpl", "LICENSE_HEADER.txt", classReplacer);
         templateFileWriter.apply("/templates/LICENSE.tmpl", "LICENSE.md", new NullReplacer());
+
         String uncammelName = mavenModel.getModuleName();
         ImageWriter imageWriter = new ImageWriter(project, nullMonitor);
         imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(uncammelName));
         imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
 
         generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
-
         generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
 
         if (mavenModel.getDataSenseEnabled()) {
             templateFileWriter.apply("/templates/connector_metadata_category.tmpl", MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/"
                     + "DataSenseResolver.java", classReplacer);
         }
+
         if (mavenModel.getApiType().equals(ApiType.SOAP)) {
             generator.create(project.getFolder("src/main/resources/wsdl/"), nullMonitor);
             templateFileWriter.apply("/templates/binding.xml.tmpl", "src/main/resources/wsdl/binding.xml", classReplacer);
+            // Add extra binding file to prevent JABElement generation. WSDL2Connector solves this, so this needs to be added from outside.
+            templateFileWriter.apply("/templates/binding-xjc.xml.tmpl", "src/main/resources/wsdl/binding-xjc.xml", classReplacer);
             File wsdlFileOrDirectory = new File(mavenModel.getWsdlPath());
             try {
                 if (wsdlFileOrDirectory.isDirectory()) {
@@ -285,9 +290,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                         File temp = new File(files[i]);
                         wsdlFileName = temp.getName();
                     }
-
                     org.apache.commons.io.FileUtils.copyDirectory(wsdlFileOrDirectory, project.getFolder("src/main/resources/wsdl/").getRawLocation().toFile());
-
                 } else {
                     wsdlFileName = wsdlFileOrDirectory.getName();
                     if (mavenModel.getWsdlPath().startsWith("http")) {
@@ -303,11 +306,16 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
         mavenModel.setWsdlPath(wsdlFileName);
 
-        String mainTemplatePath = mavenModel.getApiType().equals(ApiType.GENERIC) ? MAIN_NONE_ABSTRACT_TEMPLATE_PATH : MAIN_TEMPLATE_PATH;
+        String mainTemplatePath = MAIN_NONE_ABSTRACT_TEMPLATE_PATH;
+
+        if (mavenModel.getApiType().equals(ApiType.REST)) {
+            mainTemplatePath = MAIN_TEMPLATE_PATH;
+        }
+
         templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, classReplacer);
+
         create(mavenModel.getConnectorName(), mavenModel.getModuleName(), nullMonitor, mainTemplatePath, getTestResourcePath(),
-                DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName()), mavenModel.getPackage(), project, classReplacer, mavenModel.getAuthenticationType(),
-                mavenModel.getApiType(), mavenModel.getHasQuery(), mavenModel.getDataSenseEnabled());
+                DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName()), mavenModel.getPackage(), project, classReplacer, mavenModel);
 
         DevkitUtils.configureDevkitAPT(javaProject);
 
@@ -321,25 +329,27 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     }
 
     protected void create(String moduleName, String namespace, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className,
-            String packageName, IProject project, ClassReplacer classReplacer, AuthenticationType authenticationType, ApiType apiType, boolean hasQuery, boolean hasDatasense)
-            throws CoreException {
+            String packageName, IProject project, ClassReplacer classReplacer, ConnectorMavenModel mavenModel) throws CoreException {
+
         TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
-        if (!apiType.equals(ApiType.SOAP)) {
+
+        ApiType apiType = mavenModel.getApiType();
+        if (!apiType.equals(ApiType.SOAP) || !mavenModel.getGenerateDefaultBody()) {
             fileWriter.apply(mainTemplatePath, buildMainTargetFilePath(packageName, className), classReplacer);
         }
-        if (!(apiType.equals(ApiType.REST) || apiType.equals(ApiType.SOAP))) {
-            fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(namespace), classReplacer);
-            fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);
-            if (hasDatasense) {
-                fileWriter.apply(TEST_DATASENSE_TEMPLATE_PATH, buildDataSenseTestTargetFilePath(packageName, className), classReplacer);
+        if (mavenModel.getGenerateDefaultBody()) {
+            if (!(apiType.equals(ApiType.REST) || apiType.equals(ApiType.SOAP))) {
+                fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(namespace), classReplacer);
+                fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);
+                if (mavenModel.getDataSenseEnabled()) {
+                    fileWriter.apply(TEST_DATASENSE_TEMPLATE_PATH, buildDataSenseTestTargetFilePath(packageName, className), classReplacer);
+                }
+                if (mavenModel.getHasQuery()) {
+                    fileWriter.apply(TEST_QUERY_TEMPLATE_PATH, buildQueryTestTargetFilePath(packageName, className), classReplacer);
+                }
             }
-            if (hasQuery) {
-                fileWriter.apply(TEST_QUERY_TEMPLATE_PATH, buildQueryTestTargetFilePath(packageName, className), classReplacer);
-            }
+            fileWriter.apply("/templates/example.tmpl", getExampleFileName(namespace), classReplacer);
         }
-
-        fileWriter.apply("/templates/example.tmpl", getExampleFileName(namespace), classReplacer);
-
     }
 
     /**
@@ -427,6 +437,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         mavenModel.setAuthenticationType(getAuthenticationType());
         mavenModel.setModuleName(page.getConnectorNamespace());
         mavenModel.setProjectName(page.getProjectName());
+        mavenModel.setGenerateDefaultBody(page.generateDefaultBody());
         return mavenModel;
     }
 
@@ -486,23 +497,25 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
      * @throws CoreException
      */
     private void generateStrategyComponent(ConnectorMavenModel mavenModel, ClassReplacer classReplacer, TemplateFileWriter templateFileWriter) throws CoreException {
-        switch (mavenModel.getAuthenticationType()) {
-        case CONNECTION_MANAGEMENT:
-            templateFileWriter.apply("/templates/connector_connection_management.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-            return;
-        case HTTP_BASIC:
-            templateFileWriter.apply("/templates/connector_basic_http_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-            return;
-        case NONE:
-            templateFileWriter.apply("/templates/connector_basic.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-            return;
-        case OAUTH_V2:
-            templateFileWriter.apply("/templates/connector_oauth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
-            return;
-        default:
-            break;
+        if (!mavenModel.getApiType().equals(ApiType.SOAP) || !mavenModel.getGenerateDefaultBody()) {
+            switch (mavenModel.getAuthenticationType()) {
+            case CONNECTION_MANAGEMENT:
+                templateFileWriter.apply("/templates/connector_connection_management.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+                return;
+            case HTTP_BASIC:
+                templateFileWriter.apply("/templates/connector_basic_http_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+                return;
+            case NONE:
+                templateFileWriter.apply("/templates/connector_basic.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+                return;
+            case OAUTH_V2:
+                templateFileWriter.apply("/templates/connector_oauth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+                return;
+            default:
+                break;
 
+            }
+            throw new RuntimeException("Unssuported AuthenticationType");
         }
-        throw new RuntimeException("Unssuported AuthenticationType");
     }
 }

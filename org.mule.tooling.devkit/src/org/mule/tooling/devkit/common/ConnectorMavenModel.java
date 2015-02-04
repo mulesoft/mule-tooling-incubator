@@ -23,6 +23,7 @@ public class ConnectorMavenModel {
     private String strategyClassName;
     private String projectName;
     private String projectLocation;
+    private boolean generateDefaultBody;
 
     public String getPackageName() {
         return packageName;
@@ -210,6 +211,14 @@ public class ConnectorMavenModel {
 
     public void setProjectLocation(String projectLocation) {
         this.projectLocation = projectLocation;
+    }
+
+    public boolean getGenerateDefaultBody() {
+        return generateDefaultBody;
+    }
+
+    public void setGenerateDefaultBody(boolean generateDefaultBody) {
+        this.generateDefaultBody = generateDefaultBody;
     }
 
 }

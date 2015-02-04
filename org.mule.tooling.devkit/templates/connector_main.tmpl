@@ -39,40 +39,27 @@ import ${project.package}.strategy.${project.strategyClassName};
  */
 @Connector(name="${project.moduleName}", friendlyName="${project.connectorName}")
 public abstract class ${project.connectorClassName} {
-    
+#if(${project.generateDefaultBody} == true )
+
     /**
-     * Configurable
+     * Greeting message
      */
     @Configurable
-    @Default("value")
-    private String myProperty;
+    @Default("Hello")
+    private String greeting;
+#end
 
     @ConnectionStrategy
     ${project.strategyClassName} connectionStrategy;   
 
-    /**
-     * Set property
-     *
-     * @param myProperty My property
-     */
-    public void setMyProperty(String myProperty) {
-        this.myProperty = myProperty;
-    }
-
-    /**
-     * Get property
-     */
-    public String getMyProperty() {
-        return this.myProperty;
-    }
-
+#if(${project.generateDefaultBody} == true )
     /**
      * Custom processor
      *
-     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:my-processor}
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:greet}
      *
-     * @param content Content to be processed
-     * @return Some string
+     * @param friend Name of a friend we want to greet
+     * @return The greeting and replay to the selected friend.
      * @throws IOException Comment for Exception
      */
     @Processor
@@ -80,27 +67,16 @@ public abstract class ${project.connectorClassName} {
     @OAuthProtected
 #end
     @ReconnectOn(exceptions = { Exception.class })
-    @RestCall(uri="https://myapiurl/{content}", method=HttpMethod.GET)
-    public abstract void myProcessor(@RestUriParam("content") String content) throws IOException;  
-
-#if(${project.hasQuery} == true )
-
+    @RestCall(uri="https://myapiurl/{friend}", method=HttpMethod.GET)
+    public abstract void greet(@RestUriParam("friend") String friend) throws IOException;  
+#else
     /**
-     * Description for query
-     *
-     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:query-processor}
-     *
-     *  @param query The dsql query
-     *  @return List of elements that match the criteria
+     * Dummy operation to prevent compilation errors.
      */
     @Processor
-    public List<Object> queryProcessor(@Query String query) {
-        //TODO
-        /*
-         * MESSAGE PROCESSOR CODE GOES HERE
-         */
-        return new ArrayList<Object>();
-    }
+    @ReconnectOn(exceptions = { Exception.class })
+    @RestCall(uri="https://foo/{param}", method=HttpMethod.GET)
+    public abstract void greet(@RestUriParam("param") String param) throws IOException;  
 #end
 
     public ${project.strategyClassName} getConnectionStrategy() {
@@ -111,4 +87,21 @@ public abstract class ${project.connectorClassName} {
         this.connectionStrategy = connectionStrategy;
     }
 
+#if(${project.generateDefaultBody} == true )
+    /**
+     * Set greeting message
+     *
+     * @param greeting the message
+     */
+    public void setGreeting(String greeting) {
+        this.greeting = greeting;
+    }
+
+    /**
+     * Get greeting message
+     */
+    public String getGreeting() {
+        return this.greeting;
+    }
+#end
 }

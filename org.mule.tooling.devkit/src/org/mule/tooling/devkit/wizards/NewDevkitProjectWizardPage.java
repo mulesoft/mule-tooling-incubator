@@ -69,6 +69,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String PROJECT_NAME_LABEL = "Project Name:";
     private static final String CONNECTOR_NAMESPACE_LABEL = "Namespace:";
     private static final String USE_DEFAULT_LABEL = "Use default values";
+    private static final String GENERATE_EMPTY_PROJECT_LABEL = "Generated default body for @Connector.";
     private static final String LOCATION_LABEL = "Location:";
     private Text name;
     private Text projectName;
@@ -76,7 +77,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private Text location;
 
     private Button useDefaultValuesCheckbox;
-
+    private Button generateEmptyProjectCheckbox;
     private String connectorCategory = DEFAULT_CATEGORY;
     private static final Pattern CONNECTOR_NAME_REGEXP = Pattern.compile("[A-Z]+[a-zA-Z0-9]+");
     private static final Pattern VALID_NAME_REGEX = Pattern.compile("[A-Za-z]+[a-zA-Z0-9\\-_]*");
@@ -212,6 +213,27 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             }
         });
 
+        generateEmptyProjectCheckbox = new Button(connectorGroupBox, SWT.CHECK);
+        generateEmptyProjectCheckbox.setSelection(true);
+        generateEmptyProjectCheckbox.setText(" " + GENERATE_EMPTY_PROJECT_LABEL);
+        generateEmptyProjectCheckbox.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
+        generateEmptyProjectCheckbox
+                .setToolTipText("This will generate a @Connector with configurables, operations and tests.\n Recommended for users who haven't build connectors before.");
+        generateEmptyProjectCheckbox.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                model.setGenerateDefaultBody(generateEmptyProjectCheckbox.getSelection());
+                updateComponentsEnablement();
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                model.setGenerateDefaultBody(generateEmptyProjectCheckbox.getSelection());
+                updateComponentsEnablement();
+            }
+
+        });
         Group apiGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_API, 4);
         apiType = initializeComboField(apiGroupBox, "Type: ", SUPPORTED_API_OPTIONS,
                 "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener, 1);
@@ -424,12 +446,12 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             updateStatus("Maven home is not properly configured. Check your maven preferences.");
             return;
         }
-        
+
         if (!VMUtils.isJdkJavaHome(VMUtils.getJdkJavaHome())) {
             updateStatus("The default JRE configured is not a JDK. Install or configure a JDK in order to build Devkit projects.");
             return;
         }
-        
+
         if (StringUtils.isBlank(this.getName())) {
             updateStatus("The Connector Name must be specified.");
             return;
@@ -584,7 +606,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private void updateComponentsEnablement() {
-        boolean enabled = isBasic() && apiType.getText().equals(ApiType.GENERIC.label());
+        boolean enabled = isBasic() && apiType.getText().equals(ApiType.GENERIC.label()) && this.generateDefaultBody();
         datasense.setEnabled(enabled);
         query.setEnabled(enabled);
         if (enabled) {
@@ -594,8 +616,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private boolean isBasic() {
-        return comboAuthentication.getText().equals(AuthenticationType.CONNECTION_MANAGEMENT.label())
-                || comboAuthentication.getText().equals(AuthenticationType.NONE.label());
+        return comboAuthentication.getText().equals(AuthenticationType.CONNECTION_MANAGEMENT.label()) || comboAuthentication.getText().equals(AuthenticationType.NONE.label());
     }
 
     public boolean hasQuery() {
@@ -722,5 +743,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
 
     public boolean usesDefaultValues() {
         return useDefaultValuesCheckbox.getSelection();
+    }
+
+    public boolean generateDefaultBody() {
+        return generateEmptyProjectCheckbox.getSelection();
     }
 }

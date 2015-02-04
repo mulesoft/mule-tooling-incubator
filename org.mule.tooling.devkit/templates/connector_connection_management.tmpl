@@ -23,14 +23,15 @@ import org.mule.api.annotations.param.Default;
  * @author MuleSoft, Inc.
  */
 @ConnectionManagement(configElementName = "config-type", friendlyName = "Connection Managament type strategy")
-public class ${project.strategyClassName}
-{
+public class ${project.strategyClassName} {
+#if(${project.generateDefaultBody} == true )
     /**
-     * Configurable
+     * Replay message
      */
     @Configurable
-    @Default("value")
-    private String myStrategyProperty;
+    @Default("How are you?")
+    private String replay;
+#end
 
     /**
      * Connect
@@ -75,19 +76,21 @@ public class ${project.strategyClassName}
         return "001";
     }
 
+#if(${project.generateDefaultBody} == true )
     /**
-     * Set strategy property
+     * Set replay message
      *
-     * @param myStrategyProperty my strategy property
+     * @param replay The replay message 
      */
-    public void setMyStrategyProperty(String myStrategyProperty) {
-        this.myStrategyProperty = myStrategyProperty;
+    public void setReplay(String replay) {
+        this.replay = replay;
     }
 
     /**
-     * Get property
+     * Get configured replay message
      */
-    public String getMyStrategyProperty() {
-        return this.myStrategyProperty;
+    public String getReplay() {
+        return this.replay;
     }
+#end
 }

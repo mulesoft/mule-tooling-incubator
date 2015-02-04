@@ -23,7 +23,9 @@
 #set( $wsdlUrl = '${basedir}/src/main/resources/wsdl/'+${project.wsdlPath} )
 #end
         <cxf.version.boolean>2.6.0</cxf.version.boolean>
+#if(${project.generateDefaultBody} == true )
         <connector.generator.version>1.0.4</connector.generator.version>
+#end
 #end
         <category>${project.category}</category>
         <licensePath>LICENSE.md</licensePath>
@@ -84,6 +86,8 @@
                                                 <extraarg>-xjc-Xcollection-setter-injector</extraarg>
                                                 <extraarg>-b</extraarg>
                                                 <extraarg>${basedir}/src/main/resources/wsdl/binding.xml</extraarg>
+                                                <extraarg>-b</extraarg>
+                                                <extraarg>${basedir}/src/main/resources/wsdl/binding-xjc.xml</extraarg>
                                                 <extraarg>-p</extraarg>
                                                 <extraarg>${project.package}.api</extraarg>
                                             </extraargs>
@@ -110,6 +114,7 @@
                 </plugins>
             </build>
         </profile>
+#if(${project.generateDefaultBody} == true )        
         <!-- USE THIS PROFILE ONLY TO GENERATE THE BASE CODE -->
         <profile>
             <id>connector-generator</id>
@@ -138,6 +143,7 @@
                             <wsdlFile>${wsdlUrl}</wsdlFile>
                             <bindingFiles>
                                 <bindingFile>${basedir}/src/main/resources/wsdl/binding.xml</bindingFile>
+                                <bindingFile>${basedir}/src/main/resources/wsdl/binding-xjc.xml</bindingFile>
                             </bindingFiles>
                         </configuration>
                         <executions>
@@ -168,6 +174,7 @@
                 </plugins>
             </build>
         </profile>
+#end
     </profiles>
 #end
 #if( ${project.apiType} == 'REST' || ${project.apiType} == 'SOAP')
