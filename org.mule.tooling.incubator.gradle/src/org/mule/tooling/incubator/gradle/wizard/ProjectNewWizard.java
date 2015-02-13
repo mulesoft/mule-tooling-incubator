@@ -86,6 +86,7 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
                 
                 } catch (RuntimeException e) {
                 	deleteFailedProject(project, monitor);
+                	e.printStackTrace();
                 	throw new RuntimeException("Failed to create project", e);
                 } catch (CoreException e) {
                     deleteFailedProject(project, monitor);
