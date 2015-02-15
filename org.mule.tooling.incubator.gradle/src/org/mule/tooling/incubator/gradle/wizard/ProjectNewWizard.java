@@ -16,6 +16,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.gradle.tooling.ProjectConnection;
+import org.mule.tooling.incubator.gradle.Activator;
 import org.mule.tooling.incubator.gradle.GradlePluginConstants;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.GradleRunner;
@@ -80,18 +81,18 @@ public class ProjectNewWizard extends Wizard implements INewWizard {
                     
                     //programmatically add the src/main/app folder to the build path
                     //this is required until https://github.com/mulesoft-labs/mule-gradle-plugin/issues/13 is fixed
-                    GradlePluginUtils.addSourceFolder(project, monitor, "src/main/app");
+                    //GradlePluginUtils.addSourceFolder(project, monitor, "src/main/app");
                     
                     connection.close();
                 
                 } catch (RuntimeException e) {
                 	deleteFailedProject(project, monitor);
-                	e.printStackTrace();
+                	Activator.logError("Error while creating project...", e);
                 	throw new RuntimeException("Failed to create project", e);
                 } catch (CoreException e) {
                     deleteFailedProject(project, monitor);
-                	e.printStackTrace();
-                	throw new RuntimeException("Failed to create project", e);
+                	Activator.logError("Error while creating project...", e);
+                    throw new RuntimeException("Failed to create project", e);
                 }
             }
 

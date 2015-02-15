@@ -1,7 +1,10 @@
 package org.mule.tooling.incubator.gradle.wizard;
 
 import java.io.File;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Properties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.wizard.WizardPage;
@@ -18,6 +21,7 @@ import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.incubator.gradle.Activator;
+import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.model.GradleProject;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 import org.mule.tooling.incubator.gradle.ui.Utils;
@@ -73,6 +77,17 @@ public class ProjectNewWizardPage extends WizardPage {
         Group repoGroupBox = UiUtils.createGroupWithTitle(container, "Enterprise repository settings", 2);
         username = Utils.initializeTextField(repoGroupBox, "Username: ", "", "Username of ee repo.", connectorNameListener);
         password = initializePasswordField(repoGroupBox, "Password: ", "", "Password of ee repo.", connectorNameListener);
+        
+        
+        Properties props = GradlePluginUtils.locateGradleGlobalProperties();
+        
+        Collection<String> extProps = buildExternalPropertiesProposal(props.keySet());
+        
+        //set username and password autocomplete options.
+        Utils.initializeAutoCompleteField(username, extProps);
+        Utils.initializeAutoCompleteField(password, extProps);
+        
+        
         updateEnablement();
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 0, 0).margins(0, 0).spacing(0, 0).applyTo(container);
         GridDataFactory.fillDefaults().indent(0, 0).applyTo(container);
@@ -80,7 +95,20 @@ public class ProjectNewWizardPage extends WizardPage {
         setControl(container);
     }
 
-    private void addRuntime(Composite container) {
+    private Collection<String> buildExternalPropertiesProposal(Collection<Object> keySet) {
+		
+    	ArrayList<String> proposals = new ArrayList<String>();
+    	
+    	for(Object o : keySet) {
+    		proposals.add("$" + o.toString());
+    	}
+    	
+    	Collections.sort(proposals);
+    	
+    	return proposals;
+	}
+
+	private void addRuntime(Composite container) {
         ServerChooserComponent serverChooserComponent = new ServerChooserComponent("Runtime");
         serverChooserComponent.createControl(container);
         if (selectedServerDefinition.getId() != null) {

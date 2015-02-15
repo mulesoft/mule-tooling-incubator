@@ -1,5 +1,10 @@
 package org.mule.tooling.incubator.gradle.ui;
 
+import java.util.Collection;
+import java.util.Set;
+
+import org.eclipse.jface.fieldassist.AutoCompleteField;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
@@ -22,4 +27,8 @@ public class Utils {
         textField.setToolTipText(tooltip);
         return textField;
     }
+
+	public static AutoCompleteField initializeAutoCompleteField(Text text, Collection<?> keySet) {
+		return new AutoCompleteField(text, new TextContentAdapter(), keySet.toArray(new String[0]));
+	}
 }
