@@ -87,6 +87,7 @@ public class ProjectNewWizardPage extends WizardPage {
         Utils.initializeAutoCompleteField(username, extProps);
         Utils.initializeAutoCompleteField(password, extProps);
         
+        username.setMessage("Use $ to access external properties...");
         
         updateEnablement();
         GridLayoutFactory.fillDefaults().numColumns(1).extendedMargins(2, 2, 0, 0).margins(0, 0).spacing(0, 0).applyTo(container);

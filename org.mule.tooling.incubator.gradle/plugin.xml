@@ -26,7 +26,7 @@
             class="org.mule.tooling.incubator.gradle.wizard.ProjectNewWizard"
             icon="icons/gradle16x16.png"
             id="org.mule.tooling.incubator.gradle.wizard"
-            name="New Gradle Mule Project"
+            name="Mule Project with Gradle"
             project="true">
       </wizard>
    </extension>
@@ -56,13 +56,15 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
+            targetID="org.mule.tooling.ui.toolingPerspective">
          <view
                id="org.mule.tooling.gradle.views.TasksView"
-               ratio="0.5"
-               relationship="right"
+               relationship="stack"
                relative="org.eclipse.ui.views.ProblemView">
          </view>
+         <newWizardShortcut
+               id="org.mule.tooling.incubator.gradle.wizard">
+         </newWizardShortcut>
       </perspectiveExtension>
    </extension>
    <extension
