@@ -69,7 +69,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String PROJECT_NAME_LABEL = "Project Name:";
     private static final String CONNECTOR_NAMESPACE_LABEL = "Namespace:";
     private static final String USE_DEFAULT_LABEL = "Use default values";
-    private static final String GENERATE_EMPTY_PROJECT_LABEL = "Generated default body for @Connector.";
+    private static final String GENERATE_EMPTY_PROJECT_LABEL = "Generate default body for @Connector.";
     private static final String LOCATION_LABEL = "Location:";
     private Text name;
     private Text projectName;
@@ -218,7 +218,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         generateEmptyProjectCheckbox.setText(" " + GENERATE_EMPTY_PROJECT_LABEL);
         generateEmptyProjectCheckbox.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
         generateEmptyProjectCheckbox
-                .setToolTipText("This will generate a @Connector with configurables, operations and tests.\n Recommended for users who haven't build connectors before.");
+                .setToolTipText("This will generate an @Connector with configurables, operations and tests.\nRecommended for users who haven't build connectors before.");
         generateEmptyProjectCheckbox.addSelectionListener(new SelectionListener() {
 
             @Override
