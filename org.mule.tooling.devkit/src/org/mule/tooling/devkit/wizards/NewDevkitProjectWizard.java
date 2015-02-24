@@ -74,6 +74,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private static final String TEST_QUERY_TEMPLATE_PATH = "/templates/connector-query-test.tmpl";
     private static final String TEST_DATASENSE_TEMPLATE_PATH = "/templates/connector-test-datasense.tmpl";
     private static final String TEST_RESOURCE_PATH = "/templates/connector-test-resource.tmpl";
+    private static final String LOG4J_PATH = "/templates/devkit-log4j2.xml.tmpl";
     public static final String WIZZARD_PAGE_TITTLE = "Create an Anypoint Connector";
     private NewDevkitProjectWizardPage page;
     private NewDevkitProjectWizardPageAdvance advancePage;
@@ -263,6 +264,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         templateFileWriter.apply("/templates/CHANGELOG.tmpl", "CHANGELOG.md", classReplacer);
         templateFileWriter.apply("/templates/LICENSE_HEADER.txt.tmpl", "LICENSE_HEADER.txt", classReplacer);
         templateFileWriter.apply("/templates/LICENSE.tmpl", "LICENSE.md", new NullReplacer());
+        templateFileWriter.apply(LOG4J_PATH, DevkitUtils.MAIN_RESOURCES_FOLDER+"/log4j2.xml", new NullReplacer());
 
         String uncammelName = mavenModel.getModuleName();
         ImageWriter imageWriter = new ImageWriter(project, nullMonitor);
