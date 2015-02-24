@@ -30,7 +30,7 @@ public class UpdateSiteExportWizard extends Wizard implements IExportWizard {
             wizardSettings = workbenchSettings.addNewSection(UPDATE_SITE_SECTION);
         }
         setDialogSettings(wizardSettings);
-        setWindowTitle("Export an Anypoint Connector as an Update  Site");
+        setWindowTitle("Export an Anypoint Connector as an Update Site");
     }
 
     public void addPages() {

@@ -69,8 +69,9 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String PROJECT_NAME_LABEL = "Project Name:";
     private static final String CONNECTOR_NAMESPACE_LABEL = "Namespace:";
     private static final String USE_DEFAULT_LABEL = "Use default values";
-    private static final String GENERATE_EMPTY_PROJECT_LABEL = "Generate default body for @Connector.";
+    private static final String GENERATE_EMPTY_PROJECT_LABEL = "Generate default body for @Connector";
     private static final String LOCATION_LABEL = "Location:";
+    
     private Text name;
     private Text projectName;
     private Text connectorNamespace;

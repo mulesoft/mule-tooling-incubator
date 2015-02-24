@@ -281,7 +281,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
             generator.create(project.getFolder("src/main/resources/wsdl/"), nullMonitor);
             templateFileWriter.apply("/templates/binding.xml.tmpl", "src/main/resources/wsdl/binding.xml", classReplacer);
             // Add extra binding file to prevent JABElement generation. WSDL2Connector solves this, so this needs to be added from outside.
-            templateFileWriter.apply("/templates/binding-xjc.xml.tmpl", "src/main/resources/wsdl/binding-xjc.xml", classReplacer);
             File wsdlFileOrDirectory = new File(mavenModel.getWsdlPath());
             try {
                 if (wsdlFileOrDirectory.isDirectory()) {

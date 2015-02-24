@@ -24,7 +24,7 @@
 #end
         <cxf.version.boolean>2.6.0</cxf.version.boolean>
 #if(${project.generateDefaultBody} == true )
-        <connector.generator.version>1.0.4</connector.generator.version>
+        <connector.generator.version>1.0.5-SNAPSHOT</connector.generator.version>
 #end
 #end
         <category>${project.category}</category>
@@ -86,8 +86,6 @@
                                                 <extraarg>-xjc-Xcollection-setter-injector</extraarg>
                                                 <extraarg>-b</extraarg>
                                                 <extraarg>${basedir}/src/main/resources/wsdl/binding.xml</extraarg>
-                                                <extraarg>-b</extraarg>
-                                                <extraarg>${basedir}/src/main/resources/wsdl/binding-xjc.xml</extraarg>
                                                 <extraarg>-p</extraarg>
                                                 <extraarg>${project.package}.api</extraarg>
                                             </extraargs>
@@ -143,7 +141,6 @@
                             <wsdlFile>${wsdlUrl}</wsdlFile>
                             <bindingFiles>
                                 <bindingFile>${basedir}/src/main/resources/wsdl/binding.xml</bindingFile>
-                                <bindingFile>${basedir}/src/main/resources/wsdl/binding-xjc.xml</bindingFile>
                             </bindingFiles>
                         </configuration>
                         <executions>
