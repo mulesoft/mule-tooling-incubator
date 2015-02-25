@@ -271,8 +271,10 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(uncammelName));
         imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
 
-        generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
-        generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
+        if (!mavenModel.getApiType().equals(ApiType.SOAP)) {
+        	generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
+        	generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
+        }
 
         if (mavenModel.getDataSenseEnabled()) {
             templateFileWriter.apply("/templates/connector_metadata_category.tmpl", MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/"
