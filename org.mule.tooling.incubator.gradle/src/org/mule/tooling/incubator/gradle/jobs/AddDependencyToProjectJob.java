@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.Status;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.module.ExternalContributionMuleModule;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
+import org.mule.tooling.incubator.gradle.WellBehavedMavenDependency;
 import org.mule.tooling.incubator.gradle.parser.GradleMuleBuildModelProvider;
 import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTParser;
 import org.mule.tooling.maven.dependency.ExternalModuleMavenDependency;
@@ -29,7 +30,7 @@ public class AddDependencyToProjectJob extends AbstractDependencyJob {
 
     protected IStatus runTask(IProgressMonitor monitor, IFile scriptFile) throws Exception {
         
-        MavenDependency dep = ExternalModuleMavenDependency.from(module);
+        MavenDependency dep = new WellBehavedMavenDependency(ExternalModuleMavenDependency.from(module));
         
         String libraryFileName = module.getContributionLibs();
         
@@ -72,8 +73,8 @@ public class AddDependencyToProjectJob extends AbstractDependencyJob {
         return Status.OK_STATUS;
     }
     
-    
-    private String buildComponentsString(String dependencyText) {
+
+	private String buildComponentsString(String dependencyText) {
         return "mule.components {" + buildIndentedDependency(dependencyText) + "}\n";
     }
 
