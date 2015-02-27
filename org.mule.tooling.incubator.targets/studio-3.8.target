@@ -91,5 +91,13 @@
 <unit id="junit" version="3.8.1"/>
 <repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.1.0-SNAPSHOT/orbit-5.1.0-SNAPSHOT.zip-unzip/"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.mule.tooling.extension.server.3.6.1.ee.feature.group" version="0.0.0"/>
+<repository location="http://studio-nightly-update.s3.amazonaws.com/icefall"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.mule.tooling.extension.server.3.6.0.feature.group" version="0.0.0"/>
+<repository location="http://tooling-runtimes.s3.amazonaws.com/icefall/repository/"/>
+</location>
 </locations>
 </target>
