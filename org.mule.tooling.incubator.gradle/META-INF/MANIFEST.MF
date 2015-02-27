@@ -20,7 +20,8 @@ Require-Bundle: org.eclipse.ui,
  org.apache.commons.lang,
  org.eclipse.ui.editors,
  org.eclipse.ui.forms,
- org.codehaus.groovy
+ org.codehaus.groovy,
+ org.apache.maven.model;bundle-version="3.0.4"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .,
