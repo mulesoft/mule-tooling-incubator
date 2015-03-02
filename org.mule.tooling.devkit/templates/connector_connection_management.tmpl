@@ -14,8 +14,10 @@ import org.mule.api.annotations.Disconnect;
 import org.mule.api.annotations.param.ConnectionKey;
 import org.mule.api.ConnectionException;
 import org.mule.api.annotations.display.Password;
+#if(${project.generateDefaultBody} == true )
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
+#end
 
 /**
  * Connection Management Strategy
