@@ -6,7 +6,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -62,6 +64,21 @@ public class DevkitBuilder extends IncrementalProjectBuilder {
 
     protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
         try {
+            final IFolder muleFolder = getProject().getFolder("target/generated-sources/mule");
+            if (muleFolder.exists()) {
+                muleFolder.accept(new IResourceVisitor() {
+
+                    @Override
+                    public boolean visit(IResource resource) throws CoreException {
+                        if (resource.equals(muleFolder)) {
+                            return true;
+                        }
+                        resource.delete(true, monitor);
+                        return false;
+                    }
+                });
+
+            }
             getProject().accept(new SampleResourceVisitor(monitor));
         } catch (CoreException e) {
             DevkitUIPlugin.log(e);
