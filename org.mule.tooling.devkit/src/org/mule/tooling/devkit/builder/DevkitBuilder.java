@@ -6,6 +6,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.codehaus.plexus.util.CollectionUtils;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -63,25 +64,28 @@ public class DevkitBuilder extends IncrementalProjectBuilder {
     }
 
     protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
+
+        deleteMuleTargetFolder(monitor);
+        
         try {
-            final IFolder muleFolder = getProject().getFolder("target/generated-sources/mule");
-            if (muleFolder.exists()) {
-                muleFolder.accept(new IResourceVisitor() {
-
-                    @Override
-                    public boolean visit(IResource resource) throws CoreException {
-                        if (resource.equals(muleFolder)) {
-                            return true;
-                        }
-                        resource.delete(true, monitor);
-                        return false;
-                    }
-                });
-
-            }
             getProject().accept(new SampleResourceVisitor(monitor));
         } catch (CoreException e) {
             DevkitUIPlugin.log(e);
+        }
+    }
+
+    private void deleteMuleTargetFolder(final IProgressMonitor monitor) throws CoreException {
+        final IFolder muleFolder = getProject().getFolder("target/generated-sources/mule");
+
+        if (muleFolder.exists()) {
+            IResource[] resources = muleFolder.members();
+            for (int index = 0; index < resources.length; index++) {
+                try {
+                    resources[index].delete(true, monitor);
+                } catch (CoreException ex) {
+                    // Ignore errors
+                }
+            }
         }
     }
 
