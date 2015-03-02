@@ -351,8 +351,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                     fileWriter.apply(TEST_QUERY_TEMPLATE_PATH, buildQueryTestTargetFilePath(packageName, className), classReplacer);
                 }
             }
-            fileWriter.apply("/templates/example.tmpl", getExampleFileName(namespace), classReplacer);
         }
+        fileWriter.apply("/templates/example.tmpl", getExampleFileName(namespace), classReplacer);
     }
 
     /**

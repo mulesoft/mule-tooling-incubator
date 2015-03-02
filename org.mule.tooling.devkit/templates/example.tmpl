@@ -1,3 +1,4 @@
+#if(${project.generateDefaultBody} == true )
 <!-- BEGIN_INCLUDE(${project.moduleName}:greet) -->
     <${project.moduleName}:greet config-ref="" friend="#[map-payload:friend]" />
 <!-- END_INCLUDE(${project.moduleName}:greet) -->
@@ -10,4 +11,5 @@
 <!-- BEGIN_INCLUDE(${project.moduleName}:add-entity) -->
     <${project.moduleName}:add-entity config-ref="" key="id1"/>
 <!-- END_INCLUDE(${project.moduleName}:add-entity) -->
+#end
 #end
