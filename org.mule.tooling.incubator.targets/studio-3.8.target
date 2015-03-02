@@ -96,7 +96,7 @@
 <repository location="http://studio-nightly-update.s3.amazonaws.com/icefall"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
-<unit id="org.mule.tooling.extension.server.3.6.0.feature.group" version="0.0.0"/>
+<unit id="org.mule.tooling.extension.server.3.6.1.feature.group" version="0.0.0"/>
 <repository location="http://tooling-runtimes.s3.amazonaws.com/icefall/repository/"/>
 </location>
 </locations>
