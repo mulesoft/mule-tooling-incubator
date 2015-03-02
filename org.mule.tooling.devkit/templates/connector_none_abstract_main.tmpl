@@ -7,7 +7,9 @@ package ${project.package};
 
 import org.mule.api.annotations.ConnectionStrategy;
 import org.mule.api.annotations.Connector;
+#if(${project.generateDefaultBody} == true )
 import org.mule.api.annotations.Configurable;
+#end
 #if(${project.dataSenseEnabled} == true )
 
 #if(${project.hasQuery} == true )
@@ -28,7 +30,9 @@ import org.mule.api.annotations.ReconnectOn;
 #if(${project.hasQuery} == true)
 import org.mule.api.annotations.Query;
 #end
+#if(${project.generateDefaultBody} == true )
 import org.mule.api.annotations.param.Default;
+#end
 
 import ${project.package}.strategy.${project.strategyClassName};
 

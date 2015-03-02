@@ -16,8 +16,10 @@ import org.mule.api.annotations.oauth.OAuthProtected;
 #end
 import org.mule.api.annotations.ConnectionStrategy;
 import org.mule.api.annotations.Connector;
+#if(${project.generateDefaultBody} == true )
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
+#end
 import org.mule.api.annotations.Processor;
 
 import java.io.IOException;

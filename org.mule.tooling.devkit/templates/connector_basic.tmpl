@@ -6,8 +6,10 @@
 package ${project.package}.strategy;
 
 import org.mule.api.annotations.components.Configuration;
+#if(${project.generateDefaultBody} == true )
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
+#end
 
 /**
  * Configuration type Strategy
