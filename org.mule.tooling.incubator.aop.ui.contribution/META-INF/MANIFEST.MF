@@ -6,8 +6,8 @@ Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: org.mule.tooling.ui.extension.aop.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.mule.tooling.ui;bundle-version="[5.0.0,6.0.0)",
- org.mule.tooling.core;bundle-version="[5.0.0,6.0.0)"
+ org.mule.tooling.ui;bundle-version="[5.1.0,5.2.0)",
+ org.mule.tooling.core;bundle-version="[5.1.0,5.2.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Eclipse-BundleShape: dir
