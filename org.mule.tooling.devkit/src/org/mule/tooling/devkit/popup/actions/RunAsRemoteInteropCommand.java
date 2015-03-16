@@ -98,7 +98,7 @@ public class RunAsRemoteInteropCommand extends AbstractMavenCommandRunner {
 
         mavenCommand = new String[] { "org.mule.connectors.interop:interop-ce-runtime-generation:run", "-DtestData=" + runnerConfig.getTestDataPath(),
                 "-DtestDataOverride=" + runnerConfig.getTestDataOverridePath(), "-DtestConnect=" + runnerConfig.getRunConnectivityTest(),
-                "-DtestDMapper=" + runnerConfig.getRunDMapperTest(), "-DtestXml=" + runnerConfig.getRunXmlTest(), "-DtestDataSense=" + runnerConfig.getRunDataSense(),
+                "-DtestDMapper=" + runnerConfig.getRunDMapperTest(), "-DtestXml=" + runnerConfig.getRunXmlTest(),
                 "-DtestOAuth=" + runnerConfig.getRunOAuth() };
 
         jobMsg = "Running Interop Test";

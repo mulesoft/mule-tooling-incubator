@@ -14,7 +14,6 @@ public class InteropConfigDto {
     private Boolean runConnectivityTest = false;
     private Boolean runDMapperTest = false;
     private Boolean runXmlTest = false;
-    private Boolean runDataSense = false;
     private Boolean runOAuth = false;
 
     private String destinationEmail = "";
@@ -129,14 +128,6 @@ public class InteropConfigDto {
 
     public void setRunXmlTest(Boolean runXmlTest) {
         this.runXmlTest = runXmlTest;
-    }
-
-    public Boolean getRunDataSense() {
-        return runDataSense;
-    }
-
-    public void setRunDataSense(Boolean runDataSense) {
-        this.runDataSense = runDataSense;
     }
 
     public Boolean getRunOAuth() {

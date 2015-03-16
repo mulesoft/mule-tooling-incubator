@@ -147,14 +147,6 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
             }
         });
 
-        dataSenseCheckBox = createCheckbox(container, "DataSense", "Run DataSense compliance tests", false, new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                config.setRunDataSense(dataSenseCheckBox.getSelection());
-            }
-        });
-
         oAuthCheckBox = createCheckbox(container, "OAuth", "Run OAuth tests", false, new SelectionAdapter() {
 
             @Override
@@ -163,8 +155,6 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
             }
         });
 
-        createLabel(container, " ");
-
         xmlCheckBox = createCheckbox(container, "Xml Generation", "Run Xml generation tests", false, new SelectionAdapter() {
 
             @Override
@@ -172,6 +162,8 @@ public class InteropRunOptionsSelectionDialog extends TitleAreaDialog {
                 config.setRunXmlTest(xmlCheckBox.getSelection());
             }
         });
+        
+        createLabel(container, " ");
 
         verboseCheckBox = createCheckbox(container, VERBOSE_LOGGING, "Set test's log level to verbose", false, new SelectionAdapter() {
 
