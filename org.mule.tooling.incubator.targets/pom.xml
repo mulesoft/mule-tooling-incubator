@@ -7,7 +7,7 @@
 	<parent>
 		 <groupId>org.mule.tooling.incubator</groupId>
   		 <artifactId>org.mule.tooling.incubator.parent</artifactId>
-  		<version>1.0.4-SNAPSHOT</version>
+  		<version>1.0.5-SNAPSHOT</version>
 	</parent>
 	
 	<name>Mule Studio Incubator Target Definition</name>

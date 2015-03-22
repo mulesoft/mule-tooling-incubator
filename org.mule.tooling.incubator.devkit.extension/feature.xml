@@ -2,7 +2,7 @@
 <feature
       id="org.mule.tooling.incubator.devkit.extension"
       label="Anypoint Devkit Extension"
-      version="1.0.4.qualifier"
+      version="1.0.5.qualifier"
       provider-name="MuleSoft Inc."
       plugin="org.mule.tooling.incubator.devkit.extension"
       exclusive="true">
