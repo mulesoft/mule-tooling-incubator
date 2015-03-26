@@ -274,6 +274,10 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         if (!mavenModel.getApiType().equals(ApiType.SOAP)) {
         	generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
         	generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
+        } else if(!mavenModel.getGenerateDefaultBody()){
+        	//It is SOAP and we don't want Default body
+    		generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
+        	generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
         }
 
         if (mavenModel.getDataSenseEnabled()) {
