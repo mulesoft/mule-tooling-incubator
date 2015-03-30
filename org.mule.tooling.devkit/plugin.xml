@@ -18,7 +18,7 @@
 	  </extension>
 	  <extension	
         point="org.eclipse.ui.perspectives">
-        <perspective name="Devkit"
+        <perspective name="DevKit"
                 icon="icons/icon.png"
                 class="org.mule.tooling.devkit.perspective.DevkitPerspectiveFactory"
                 id="org.mule.tooling.devkit.perspective">
@@ -59,7 +59,7 @@
 	  </extension>
       <extension
             id="devkitBuilder"
-            name="Devkit Project Builder"
+            name="DevKit Project Builder"
             point="org.eclipse.core.resources.builders">
          <builder hasNature="true">
             <run class="org.mule.tooling.devkit.builder.DevkitBuilder">
@@ -69,7 +69,7 @@
       
       <extension
             id="devkitNature"
-            name="Devkit Project Nature"
+            name="DevKit Project Nature"
             point="org.eclipse.core.resources.natures">
          <runtime>
             <run
@@ -271,7 +271,7 @@
     		id="org.mule.tooling.devkit.links.DevkitSampleHyperlinkDetector"
     		targetId="org.eclipse.jdt.ui.javaCode"
     		class="org.mule.tooling.devkit.links.DevkitSampleHyperlinkDetector"
-    		name="Devkit Sample Link Detector">
+    		name="DevKit Sample Link Detector">
 		</hyperlinkDetector>
 	</extension>
 	
@@ -392,7 +392,7 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
-			<toolbar id="org.mule.tooling.devkit.toolbar" label="Devkit Studio Toolbar">
+			<toolbar id="org.mule.tooling.devkit.toolbar" label="DevKit Studio Toolbar">
 				<command commandId="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand"
                          tooltip="Generate Tests"
                          icon="icons/tsuite.png">
@@ -439,7 +439,7 @@
       		category="org.mule.tooling.ui.messageflowpage"
             class="org.mule.tooling.devkit.preferences.WorkbenchPreferencePage"
             id="org.mule.tooling.devkit.preferences"
-            name="Devkit">
+            name="DevKit">
       </page>
    </extension>
 </plugin>
