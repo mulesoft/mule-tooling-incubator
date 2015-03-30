@@ -92,7 +92,7 @@ public class StudioAnnotationProcessorContext implements Context {
         @Override
         public Set<Dependency> getDependencies() {
             Set<Dependency> dummy = new HashSet<Dependency>();
-            dummy.add(SimpleDependency.create("org.mule.transports:mule-transport-http:3.0.0"));
+            dummy.add(SimpleDependency.create("org.mule.transports:mule-transport-http:3.0.0:provided"));
             dummy.add(SimpleDependency.create("oauth.signpost:signpost-core:1.2.1.2"));
             return dummy;
         }
