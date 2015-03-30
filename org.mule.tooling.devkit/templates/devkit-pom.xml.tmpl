@@ -8,11 +8,11 @@
     <packaging>mule-module</packaging>
     <name>Mule ${project.connectorName} Anypoint Connector</name>
 
-
+#set( $devkitVersion = '3.7.0-M1-SNAPSHOT' )
     <parent>
         <groupId>org.mule.tools.devkit</groupId>
         <artifactId>mule-devkit-parent</artifactId>
-        <version>3.7.0-M1-SNAPSHOT</version>
+        <version>${devkitVersion}</version>
     </parent>
 
     <properties>
@@ -250,6 +250,14 @@
             <url>http://repository.mulesoft.org/releases/</url>
             <layout>default</layout>
         </repository>
+#if($devkitVersion.contains('SNAPSHOT'))
+        <repository>
+            <id>mulesoft-snapshots</id>
+            <name>MuleSoft Snapshots Repository</name>
+            <url>http://repository.mulesoft.org/snapshots/</url>
+            <layout>default</layout>
+        </repository>
+#end
     </repositories>
 #if( $project.addGitInformation == true )        
     <scm>
