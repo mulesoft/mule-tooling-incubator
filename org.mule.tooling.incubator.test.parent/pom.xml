@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.mule.tooling.incubator</groupId>
+        <artifactId>org.mule.tooling.incubator.parent</artifactId>
+        <version>1.0.5-SNAPSHOT</version>
+    </parent>
+    <artifactId>org.mule.tooling.incubator.test.parent</artifactId>
+    <packaging>pom</packaging>
+    <properties>
+        <lib-dir>lib</lib-dir>
+        <surefire.argline></surefire.argline>
+        <surefire.base-argline></surefire.base-argline>
+        <surefire.useUIHarness>false</surefire.useUIHarness>
+    </properties>
+    <build>
+        <resources>
+            <resource>
+                <directory>resources</directory>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>${jarsigner.plugin.artifactId}</artifactId>
+                    <groupId>${jarsigner.plugin.groupId}</groupId>
+                    <version>${jarsigner.plugin.version}</version>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>${tycho.groupid}</groupId>
+                <artifactId>tycho-surefire-plugin</artifactId>
+                <configuration>
+                    <application>org.eclipse.ui.ide.workbench</application>
+                    <dependencies>
+                        <dependency>
+                            <!-- add the equinox.event plugin to the test runtimes, otherwise
+                             the UI won't load -->
+                            <type>p2-installable-unit</type>
+                            <artifactId>org.eclipse.equinox.event</artifactId>
+                        </dependency>
+                    </dependencies>
+                    <argLine>${surefire.base-argline} ${surefire.argline}</argLine>
+                    <includes>
+                        <include>**/*Tests*.java</include>
+                        <include>*/Test*.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*TestCase.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/Abstract*Test*.java</exclude>
+                        <exclude>**/*Abstract*Test*.java</exclude>
+                        <exclude>**/Abstract*TestCase.java</exclude>
+                    </excludes>
+                    <useUIHarness>${surefire.useUIHarness}</useUIHarness>
+                    <systemProperties>
+                        <DISPLAY>:${display-number}</DISPLAY>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.4</version>
+                <inherited>false</inherited>
+                <!-- DO install this parent pom please -->
+                <executions>
+                    <execution>
+                        <id>default-install</id>
+                        <phase>install</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>dm-test-on-mac-additional-argline</id>
+            <properties>
+                <surefire.base-argline>-XstartOnFirstThread</surefire.base-argline>
+            </properties>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+        </profile>
+        <profile>
+            <id>test-on-unix-use-xvfb</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <name>!mac os x</name>
+                </os>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>${tycho.groupid}</groupId>
+                            <artifactId>tycho-surefire-plugin</artifactId>
+                            <configuration>
+                                <systemProperties>
+                                    <DISPLAY>:${display-number}</DISPLAY>
+                                </systemProperties>
+                                <environmentVariables>
+                                    <DISPLAY>:${display-number}</DISPLAY>
+                                </environmentVariables>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>selenium-maven-plugin</artifactId>
+                        <version>2.3</version>
+                        <executions>
+                            <execution>
+                                <id>xvfb</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>xvfb</goal>
+                                </goals>
+                                <configuration>
+                                    <options>
+                                        <option>-ac</option>
+                                    </options>
+                                    <display>:${display-number}</display>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <id>generate-random-display-number</id>
+                                <phase>validate</phase>
+                                <configuration>
+                                    <target>
+                                        <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+                                        classpathref="maven.plugin.classpath" />
+                                        <math result="random-display-number">
+                                            <op op="rint">
+                                                <op op="*">
+                                                    <num value="32768" />
+                                                    <op op="random" />
+                                                </op>
+                                            </op>
+                                        </math>
+                                        <echo message="Random number for Xvfb: ${random-display-number}" />
+                                        <property name="display-number" value="${random-display-number}" />
+                                    </target>
+                                    <failOnError>true</failOnError>
+                                    <exportAntProperties>true</exportAntProperties>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>ant-contrib</groupId>
+                                <artifactId>ant-contrib</artifactId>
+                                <version>1.0b3</version>
+                                <exclusions>
+                                    <exclusion>
+                                        <groupId>ant</groupId>
+                                        <artifactId>ant</artifactId>
+                                    </exclusion>
+                                </exclusions>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-nodeps</artifactId>
+                                <version>1.8.1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

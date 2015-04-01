@@ -46,7 +46,9 @@ Require-Bundle: org.mule.tooling.runtime;bundle-version="[5.0.0,6.0.0)",
  org.codehaus.plexus.utils;bundle-version="3.0.8"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.mule.tooling.devkit.builder
+Export-Package: org.mule.tooling.devkit.builder,
+ org.mule.tooling.devkit.common,
+ org.mule.tooling.devkit.template
 Bundle-ClassPath: .,
  lib/httpclient.jar,
  lib/httpcore.jar,
