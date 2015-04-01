@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -45,6 +46,7 @@ import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.maven.runner.SyncGetResultCallback;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
 import org.mule.tooling.maven.ui.preferences.MavenPreferences;
@@ -71,7 +73,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String USE_DEFAULT_LABEL = "Use default values";
     private static final String GENERATE_EMPTY_PROJECT_LABEL = "Generate default body for @Connector";
     private static final String LOCATION_LABEL = "Location:";
-    
+
     private Text name;
     private Text projectName;
     private Text connectorNamespace;
@@ -687,10 +689,20 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         mavenFailure = false;
         MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
         final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
-        // Using a callback doesn't work. Set null callback and just handle the
-        // result.
-        int result = mavenInstallationTester.test(null);
-        onTestFinished(result);
+        mavenInstallationTester.test(new SyncGetResultCallback() {
+
+            @Override
+            public void finished(final int result) {
+                super.finished(result);
+                Display.getDefault().asyncExec(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        onTestFinished(result);
+                    }
+                });
+            }
+        });
     }
 
     void onTestFinished(final int result) {
