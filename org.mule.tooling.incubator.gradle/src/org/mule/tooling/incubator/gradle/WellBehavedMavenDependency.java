@@ -3,6 +3,8 @@ package org.mule.tooling.incubator.gradle;
 import org.apache.maven.model.Repository;
 import org.mule.tooling.maven.dependency.MavenDependency;
 
+import com.google.common.base.Optional;
+
 /**
  * Very ugly workaround for packaging inconsistencies, I hope to be able to get rid of this
  * very soon. 
@@ -66,5 +68,26 @@ public class WellBehavedMavenDependency implements MavenDependency {
 	public String getVersion() {
 		return delegate.getVersion();
 	}
+
+    @Override
+    public Optional<String> getType() {
+
+        return delegate.getType();
+    }
+
+    @Override
+    public Optional<String> getSystemPath() {
+        return delegate.getSystemPath();
+    }
+
+    @Override
+    public Optional<Boolean> isOptional() {
+        return delegate.isOptional();
+    }
+
+    @Override
+    public Optional<String> getClassifier() {
+        return delegate.getClassifier();
+    }
 	
 }

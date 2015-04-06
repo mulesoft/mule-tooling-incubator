@@ -28,3 +28,4 @@ Bundle-ClassPath: .,
  lib/gradle-tooling-api.jar,
  lib/slf4j-api.jar,
  lib/mule-gradle-plugin.jar
+Import-Package: com.google.common.base
