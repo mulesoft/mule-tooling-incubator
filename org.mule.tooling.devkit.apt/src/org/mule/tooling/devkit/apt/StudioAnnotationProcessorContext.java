@@ -284,4 +284,9 @@ public class StudioAnnotationProcessorContext implements Context {
     public Messager getMessager() {
         return messager;
     }
+    
+    @Override
+    public void printStack(Exception e) {
+        e.printStackTrace();
+    }
 }
