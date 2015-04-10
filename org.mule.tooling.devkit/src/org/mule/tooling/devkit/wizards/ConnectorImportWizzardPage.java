@@ -67,6 +67,7 @@ import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.MavenInfo;
 import org.mule.tooling.devkit.maven.ScanProject;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
+import org.mule.tooling.maven.runner.SyncGetResultCallback;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
 import org.mule.tooling.maven.ui.preferences.MavenPreferences;
@@ -410,9 +411,21 @@ public class ConnectorImportWizzardPage extends WizardPage {
         mavenFailure = false;
         MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
         final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
-        // Using a callback doesn't work. Set null callback and just handle the result.
-        int result = mavenInstallationTester.test(null);
-        onTestFinished(result);
+        mavenInstallationTester.test(new SyncGetResultCallback() {
+
+            @Override
+            public void finished(final int result) {
+                super.finished(result);
+                Display.getDefault().asyncExec(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        onTestFinished(result);
+                    }
+                });
+            }
+        });
+
     }
 
     void onTestFinished(final int result) {
