@@ -8,7 +8,9 @@ Bundle-Vendor: MuleSoft Inc.
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.apt.core,
  org.eclipse.core.resources,
- org.eclipse.jdt.apt.pluggable.core
+ org.eclipse.jdt.apt.pluggable.core,
+ org.eclipse.jdt.core,
+ org.apache.maven.model
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,

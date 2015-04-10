@@ -344,6 +344,7 @@ public class DevkitUtils {
         path.enablePlugin(org.mule.tooling.devkit.apt.Activator.PLUGIN_ID);
         AptConfig.setFactoryPath(javaProject, path);
         AptConfig.addProcessorOption(javaProject, "enableJavaDocValidation", "false");
+        AptConfig.addProcessorOption(javaProject, org.mule.tooling.devkit.apt.StudioAnnotationProcessor.ENABLED_DEVKIT_CHECK_VERSION, "true");
     }
 
     /**
