@@ -72,6 +72,8 @@ public class StudioAnnotationProcessor extends AnnotationProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
 
+        if(env.getRootElements().isEmpty())
+            return true;
         if (env.getRootElements().size() == 1) {
             if (needsToDisplayBuildTooltip(annotations, env)) {
                 processingEnv.getMessager().printMessage(Kind.WARNING,
@@ -86,6 +88,9 @@ public class StudioAnnotationProcessor extends AnnotationProcessor {
             if (Boolean.valueOf(enabledDevKitCheckVersion)) {
                 // If the version is not compatible, ignore the APT run.
                 if (!isDevKitVersionSupported()) {
+                    processingEnv.getMessager().printMessage(Kind.WARNING,
+                            "This version of the plugin will only",
+                            env.getRootElements().iterator().next());
                     return true;
                 }
             } else {

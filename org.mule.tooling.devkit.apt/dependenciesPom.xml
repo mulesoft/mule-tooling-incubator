@@ -164,6 +164,21 @@
 				<version>2.4</version>
 				<executions>
 					<execution>
+						<id>clean-dependencies</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<phase>clean</phase>
+						<configuration>
+							<pom>dependenciesPom.xml</pom>
+							<goals>
+								<goal>clean</goal>
+							</goals>
+							<streamLogs>true</streamLogs>
+							<disableReports>true</disableReports>
+						</configuration>
+					</execution>
+					<execution>
 						<id>download-maven-dependencies</id>
 						<phase>validate</phase>
 						<goals>
