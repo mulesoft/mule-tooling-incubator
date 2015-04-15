@@ -23,6 +23,21 @@
 				</configuration>
 				<executions>
 					<execution>
+						<id>clean-dependencies</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<phase>clean</phase>
+						<configuration>
+							<pom>dependenciesPom.xml</pom>
+							<goals>
+								<goal>clean</goal>
+							</goals>
+							<streamLogs>true</streamLogs>
+							<disableReports>true</disableReports>
+						</configuration>
+					</execution>
+					<execution>
 						<id>download-dependencies</id>
 						<goals>
 							<goal>run</goal>

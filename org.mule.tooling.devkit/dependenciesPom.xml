@@ -70,41 +70,26 @@
             <artifactId>mule-devkit-code-utils</artifactId>
             <version>${devkit-version}</version>
         </dependency>
-		<dependency>
-			<groupId>org.mule.tools.devkit</groupId>
-			<artifactId>mule-devkit-generation-api</artifactId>
-			<version>${devkit-version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>mule-devkit-code-model</artifactId>
-					<groupId>org.mule.tools.devkit</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>javax.inject</artifactId>
-					<groupId>javax.inject</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mule-devkit-schema-model</artifactId>
-					<groupId>org.mule.tools.devkit</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mule-devkit-studio-model</artifactId>
-					<groupId>org.mule.tools.devkit</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>mule-devkit-annotations</artifactId>
-					<groupId>org.mule.tools.devkit</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>tools</artifactId>
-					<groupId>com.sun</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+			<plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-clean-plugin</artifactId>
+	            <version>2.4.1</version>
+	            <configuration>
+	                <filesets>
+	                    <fileset>
+	                        <directory>${lib-dir}</directory>
+	                        <includes>
+	                            <include>**/*</include>
+	                        </includes>
+	                        <followSymlinks>false</followSymlinks>
+	                    </fileset>
+	                </filesets>
+	            </configuration>
+	        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>

@@ -1,8 +1,11 @@
 package org.mule.tooling.devkit;
 
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.mule.tooling.devkit.treeview.ModuleVisitor;
 
 public class ASTUtils {
 
@@ -23,5 +26,20 @@ public class ASTUtils {
         if (node == null)
             return false;
         return (node.getStartPosition() <= location) && (location <= (node.getStartPosition() + node.getLength()));
+    }
+    
+    public static boolean hasConnector(IPackageFragment mypackage, ModuleVisitor visitor) throws JavaModelException {
+
+        for (ICompilationUnit unit : mypackage.getCompilationUnits()) {
+            // now create the AST for the ICompilationUnits
+            CompilationUnit parse = ASTUtils.parse(unit);
+            if (parse != null) {
+                parse.accept(visitor);
+            }
+        }
+        if (visitor.getRoot().getModules() != null && !visitor.getRoot().getModules().isEmpty()) {
+            return true;
+        }
+        return false;
     }
 }

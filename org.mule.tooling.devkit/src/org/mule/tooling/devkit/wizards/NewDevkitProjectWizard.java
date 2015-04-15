@@ -44,8 +44,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.DevkitUIPlugin;
@@ -79,7 +79,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     private NewDevkitProjectWizardPage page;
     private NewDevkitProjectWizardPageAdvance advancePage;
     private ConnectorMavenModel connectorModel;
-    private IWorkbenchPage workbenchPage;
     private boolean wasCreated;
 
     public NewDevkitProjectWizard() {
@@ -264,7 +263,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         templateFileWriter.apply("/templates/CHANGELOG.tmpl", "CHANGELOG.md", classReplacer);
         templateFileWriter.apply("/templates/LICENSE_HEADER.txt.tmpl", "LICENSE_HEADER.txt", classReplacer);
         templateFileWriter.apply("/templates/LICENSE.tmpl", "LICENSE.md", new NullReplacer());
-        templateFileWriter.apply(LOG4J_PATH, DevkitUtils.MAIN_RESOURCES_FOLDER+"/log4j2.xml", new NullReplacer());
+        templateFileWriter.apply(LOG4J_PATH, DevkitUtils.MAIN_RESOURCES_FOLDER + "/log4j2.xml", new NullReplacer());
 
         String uncammelName = mavenModel.getModuleName();
         ImageWriter imageWriter = new ImageWriter(project, nullMonitor);
@@ -272,12 +271,12 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
 
         if (!mavenModel.getApiType().equals(ApiType.SOAP)) {
-        	generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
-        	generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
-        } else if(!mavenModel.getGenerateDefaultBody()){
-        	//It is SOAP and we don't want Default body
-    		generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
-        	generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
+            generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
+            generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
+        } else if (!mavenModel.getGenerateDefaultBody()) {
+            // It is SOAP and we don't want Default body
+            generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
+            generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
         }
 
         if (mavenModel.getDataSenseEnabled()) {
@@ -366,9 +365,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
      */
     @Override
     public void init(IWorkbench workbench, IStructuredSelection selection) {
-        if (workbench != null && workbench.getActiveWorkbenchWindow() != null) {
-            workbenchPage = workbench.getActiveWorkbenchWindow().getActivePage();
-        }
+
     }
 
     protected String getTestResourcePath() {
@@ -449,24 +446,22 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     }
 
     private void openConnectorClass(final ConnectorMavenModel mavenModel, final IProject project) {
-        if (workbenchPage != null) {
-            final IWorkbenchPage page = workbenchPage;
-            Display.getDefault().syncExec(new Runnable() {
 
-                public void run() {
-                    try {
-                        IFile connectorFile = project.getFile(buildMainTargetFilePath(mavenModel.getPackage(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName())));
-                        if (connectorFile.exists()) {
-                            IDE.openEditor(page, connectorFile);
-                        } else {
-                            // Inform severe error
-                        }
-                    } catch (CoreException e) {
-                        e.printStackTrace();
+        Display.getDefault().syncExec(new Runnable() {
+
+            public void run() {
+                try {
+                    IFile connectorFile = project.getFile(buildMainTargetFilePath(mavenModel.getPackage(), DevkitUtils.createConnectorNameFrom(mavenModel.getConnectorName())));
+                    if (connectorFile.exists()) {
+                        IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), connectorFile);
+                    } else {
+                        // Inform severe error
                     }
+                } catch (CoreException e) {
+                    e.printStackTrace();
                 }
-            });
-        }
+            }
+        });
     }
 
     private IProject createProject(String artifactId, IPath path, IProgressMonitor monitor, IWorkspaceRoot root) throws CoreException {

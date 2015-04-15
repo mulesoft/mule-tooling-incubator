@@ -290,7 +290,7 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
                 if (!mypackage.getPath().toString().contains(DevkitUtils.MAIN_JAVA_FOLDER)) {
                     continue;
                 }
-                hasConnector |= createAST(mypackage, visitor);
+                hasConnector |= ASTUtils.hasConnector(mypackage, visitor);
             }
         }
         if (hasConnector) {
@@ -315,18 +315,4 @@ public class DevkitView extends ViewPart implements IResourceChangeListener, ISe
         });
     }
 
-    private boolean createAST(IPackageFragment mypackage, ModuleVisitor visitor) throws JavaModelException {
-
-        for (ICompilationUnit unit : mypackage.getCompilationUnits()) {
-            // now create the AST for the ICompilationUnits
-            CompilationUnit parse = ASTUtils.parse(unit);
-            if (parse != null) {
-                parse.accept(visitor);
-            }
-        }
-        if (visitor.getRoot().getModules() != null && !visitor.getRoot().getModules().isEmpty()) {
-            return true;
-        }
-        return false;
-    }
 }

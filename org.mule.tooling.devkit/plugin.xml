@@ -15,6 +15,14 @@
             name="Anypoint Connector Project"
             project="true">
       </wizard>
+            <wizard
+            category="org.mule.tooling.ui.muleWizards"
+            class="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard"
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard"
+            name="Anypoint Connector Component"
+            project="false">
+      </wizard>
 	  </extension>
 	  <extension	
         point="org.eclipse.ui.perspectives">
