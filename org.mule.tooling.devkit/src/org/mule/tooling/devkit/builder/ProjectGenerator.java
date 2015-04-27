@@ -1,5 +1,11 @@
 package org.mule.tooling.devkit.builder;
 
+import static org.mule.tooling.devkit.common.DevkitUtils.DEMO_FOLDER;
+import static org.mule.tooling.devkit.common.DevkitUtils.DOCS_FOLDER;
+import static org.mule.tooling.devkit.common.DevkitUtils.ICONS_FOLDER;
+import static org.mule.tooling.devkit.common.DevkitUtils.MAIN_JAVA_FOLDER;
+import static org.mule.tooling.devkit.common.DevkitUtils.TEST_JAVA_FOLDER;
+
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +19,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
 
 public class ProjectGenerator {
 
-    protected ProjectGenerator() {
+    ConnectorMavenModel mavenModel;
 
+    protected ProjectGenerator(ConnectorMavenModel mavenModel) {
+        this.mavenModel = mavenModel;
     }
 
     public List<IClasspathEntry> generateProjectEntries(IProgressMonitor monitor, IProject project) throws CoreException {
@@ -35,6 +44,15 @@ public class ProjectGenerator {
     public IClasspathEntry createEntry(final IResource resource, IProgressMonitor monitor) throws CoreException {
         create(resource, monitor);
         return JavaCore.newSourceEntry(resource.getFullPath());
+    }
+
+    public void createProjectFolders(IProject project, IProgressMonitor monitor) throws CoreException {
+        create(project.getFolder(DOCS_FOLDER), monitor);
+        create(project.getFolder(ICONS_FOLDER), monitor);
+        create(project.getFolder(DEMO_FOLDER), monitor);
+        create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")), monitor);
+        create(project.getFolder(TEST_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")), monitor);
+
     }
 
     public void create(final IResource resource, IProgressMonitor monitor) throws CoreException {

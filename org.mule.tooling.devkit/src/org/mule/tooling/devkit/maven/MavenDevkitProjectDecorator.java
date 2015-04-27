@@ -256,7 +256,9 @@ public class MavenDevkitProjectDecorator {
 
     private void loadPom() {
         readPomModel();
-        readPomDocument();
+        if(pomWellFormed){
+            readPomDocument();    
+        }
     }
 
     private void readPomDocument() {

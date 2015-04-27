@@ -192,7 +192,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         connectorNamespace = initializeTextField(connectorGroupBox, CONNECTOR_NAMESPACE_LABEL, DEFAULT_NAME,
                 "Namespace that will be used when your connector is added into a mule application.", 2, simple);
 
-        location = initializeTextField(connectorGroupBox, LOCATION_LABEL, ResourcesPlugin.getWorkspace().getRoot().getFullPath().toOSString(),
+        location = initializeTextField(connectorGroupBox, LOCATION_LABEL, ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString(),
                 "Project location in the file system.", 1, simple);
 
         browse = new Button(connectorGroupBox, SWT.NONE);

@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.devkit.DevkitImages;
-import org.mule.tooling.ui.MuleUiConstants;
 
 public class ConnectorIconPanel {
 
@@ -38,18 +37,23 @@ public class ConnectorIconPanel {
     private Text connectorNameText;
 
     public void updateStatus() {
+        saveTo("", "", false);
+    }
+
+    public void saveTo(String bigIconLocation, String smallIconLocation, boolean save) {
         try {
             if (bigIcon != null) {
                 bigIcon.redraw();
                 GC gc = new GC(bigIcon);
                 Image image = new Image(bigIcon.getDisplay(), 48, 32);
                 gc.copyArea(image, 0, 0);
-                ImageLoader loader = new ImageLoader();
-                ImageData data = image.getImageData();
-                data.transparentPixel = data.transparentPixel =
-                        data.palette.getPixel(new RGB(255,255,255));
-                loader.data = new ImageData[] { data };
-                loader.save("/Users/pablocabrera/Pictures/swt.png", SWT.IMAGE_PNG);
+                if (save) {
+                    ImageLoader loader = new ImageLoader();
+                    ImageData data = image.getImageData();
+                    data.transparentPixel = data.transparentPixel = data.palette.getPixel(new RGB(255, 255, 255));
+                    loader.data = new ImageData[] { data };
+                    loader.save(bigIconLocation, SWT.IMAGE_PNG);
+                }
                 image.dispose();
                 gc.dispose();
             }
@@ -58,12 +62,13 @@ public class ConnectorIconPanel {
                 GC gc = new GC(smallIcon);
                 Image image = new Image(smallIcon.getDisplay(), 24, 16);
                 gc.copyArea(image, 0, 0);
-                ImageLoader loader = new ImageLoader();
-                ImageData data = image.getImageData();
-                data.transparentPixel = data.transparentPixel =
-                        data.palette.getPixel(new RGB(255,255,255));
-                loader.data = new ImageData[] { data };
-                loader.save("/Users/pablocabrera/Pictures/swt2.png", SWT.IMAGE_PNG);
+                if (save) {
+                    ImageLoader loader = new ImageLoader();
+                    ImageData data = image.getImageData();
+                    data.transparentPixel = data.transparentPixel = data.palette.getPixel(new RGB(255, 255, 255));
+                    loader.data = new ImageData[] { data };
+                    loader.save(smallIconLocation, SWT.IMAGE_PNG);
+                }
                 image.dispose();
                 gc.dispose();
             }
@@ -77,12 +82,20 @@ public class ConnectorIconPanel {
         Group group = new Group(parent, SWT.NONE);
         group.setText("Connector Image");
 
-        GridLayoutFactory.swtDefaults().numColumns(4).applyTo(group);
-        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).span(4, 1).applyTo(group);
+        GridLayoutFactory.swtDefaults().numColumns(3).applyTo(group);
+        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).span(2, 1).applyTo(group);
 
         addLabelGroup(group);
-        
-        bigIcon = new Canvas(group, SWT.NONE);
+
+        Composite iconGroup = new Composite(group, SWT.NONE);
+        GridLayoutFactory.swtDefaults().numColumns(1).applyTo(iconGroup);
+        GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(false, false).applyTo(iconGroup);
+
+        Label label = new Label(iconGroup, SWT.NULL);
+        label.setText("Palette Icon");
+        label.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).hint(SWT.DEFAULT, SWT.DEFAULT).create());
+
+        bigIcon = new Canvas(iconGroup, SWT.NONE);
         bigIcon.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).create());
         bigIcon.addPaintListener(new PaintListener() {
 
@@ -112,7 +125,14 @@ public class ConnectorIconPanel {
             }
         });
 
-        smallIcon = new Canvas(group, SWT.NONE);
+        iconGroup = new Composite(group, SWT.NONE);
+        GridLayoutFactory.swtDefaults().numColumns(1).applyTo(iconGroup);
+        GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(false, false).applyTo(iconGroup);
+        label = new Label(iconGroup, SWT.NULL);
+        label.setText("Canvas Icon");
+        label.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).hint(SWT.DEFAULT, SWT.DEFAULT).create());
+
+        smallIcon = new Canvas(iconGroup, SWT.NONE);
         smallIcon.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).create());
         smallIcon.addPaintListener(new PaintListener() {
 
@@ -143,12 +163,12 @@ public class ConnectorIconPanel {
         });
 
         Button browse = new Button(group, SWT.NONE);
-        browse.setText("Browse");
+        browse.setText("Select Icon");
         browse.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
                 FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell(), SWT.OPEN);
-                dialog.setText("Select Image");
+                dialog.setText("Select Icon");
                 dialog.setFilterExtensions(new String[] { "*.png;*.gif;*.jpg;*.tiff", "*.*" });
                 String result = dialog.open();
                 if (result != null) {
@@ -161,7 +181,7 @@ public class ConnectorIconPanel {
     }
 
     private void addLabelGroup(Group group) {
-        Composite labelGroup = new Composite(group,SWT.NONE);
+        Composite labelGroup = new Composite(group, SWT.NONE);
         Label label = new Label(labelGroup, SWT.NULL);
         label.setText("Label:");
         label.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).hint(SWT.DEFAULT, SWT.DEFAULT).create());
@@ -176,9 +196,11 @@ public class ConnectorIconPanel {
 
             }
         });
-        
-        GridLayoutFactory.swtDefaults().numColumns(2).applyTo(labelGroup);
-        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).applyTo(labelGroup);
+        Composite emptyComposite = new Composite(labelGroup, SWT.NONE);
+        GridDataFactory.swtDefaults().grab(true, false).hint(0, 0).applyTo(emptyComposite);
+
+        GridLayoutFactory.swtDefaults().numColumns(3).applyTo(labelGroup);
+        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).span(5, 1).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).applyTo(labelGroup);
     }
 
     public String getConnectorName() {

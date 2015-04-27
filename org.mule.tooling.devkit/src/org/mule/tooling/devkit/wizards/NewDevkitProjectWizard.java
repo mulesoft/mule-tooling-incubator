@@ -1,12 +1,8 @@
 package org.mule.tooling.devkit.wizards;
 
-import static org.mule.tooling.devkit.common.DevkitUtils.DEMO_FOLDER;
-import static org.mule.tooling.devkit.common.DevkitUtils.DOCS_FOLDER;
-import static org.mule.tooling.devkit.common.DevkitUtils.ICONS_FOLDER;
 import static org.mule.tooling.devkit.common.DevkitUtils.MAIN_JAVA_FOLDER;
 import static org.mule.tooling.devkit.common.DevkitUtils.POM_FILENAME;
 import static org.mule.tooling.devkit.common.DevkitUtils.POM_TEMPLATE_PATH;
-import static org.mule.tooling.devkit.common.DevkitUtils.TEST_JAVA_FOLDER;
 
 import java.io.File;
 import java.io.IOException;
@@ -238,7 +234,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         IProject project = createProject(mavenModel.getProjectName(), path, monitor, root);
         IJavaProject javaProject = JavaCore.create(root.getProject(mavenModel.getProjectName()));
 
-        ProjectGenerator generator = ProjectGeneratorFactory.newInstance();
+        ProjectGenerator generator = ProjectGeneratorFactory.newInstance(mavenModel);
 
         NullProgressMonitor nullMonitor = new NullProgressMonitor();
 
@@ -248,11 +244,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
             entries.add(generator.createEntry(project.getFolder(DevkitUtils.CXF_GENERATED_SOURCES_FOLDER), nullMonitor));
         }
 
-        generator.create(project.getFolder(DOCS_FOLDER), nullMonitor);
-        generator.create(project.getFolder(ICONS_FOLDER), nullMonitor);
-        generator.create(project.getFolder(DEMO_FOLDER), nullMonitor);
-        generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")), nullMonitor);
-        generator.create(project.getFolder(TEST_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/")), nullMonitor);
+        generator.createProjectFolders(project, nullMonitor);
 
         javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[] {}), nullMonitor);
 

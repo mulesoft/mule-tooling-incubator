@@ -12,11 +12,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.template.replacer.Replacer;
 
-public class TemplateStrigWriter {
+public class TemplateStringWriter {
 
     private IProgressMonitor monitor;
 
-    public TemplateStrigWriter(IProgressMonitor monitor) {
+    public TemplateStringWriter(IProgressMonitor monitor) {
         this.monitor = monitor;
     }
 
@@ -30,7 +30,7 @@ public class TemplateStrigWriter {
 
             InputStream pomTemplateResource;
 
-            pomTemplateResource = TemplateStrigWriter.class.getResourceAsStream(templatePath);
+            pomTemplateResource = TemplateStringWriter.class.getResourceAsStream(templatePath);
 
             reader = new InputStreamReader(pomTemplateResource, "UTF-8");
 

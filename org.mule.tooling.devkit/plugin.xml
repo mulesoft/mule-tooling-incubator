@@ -15,7 +15,7 @@
             name="Anypoint Connector Project"
             project="true">
       </wizard>
-            <wizard
+<!--            <wizard
             category="org.mule.tooling.ui.muleWizards"
             class="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard"
             icon="icons/icon.png"
@@ -23,6 +23,14 @@
             name="Anypoint Connector Component"
             project="false">
       </wizard>
+	  <wizard
+            category="org.mule.tooling.ui.muleWizards"
+            class="org.mule.tooling.devkit.wizards.NewDevkitWsdlBasedProjectWizard"
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.wizards.NewDevkitWsdlBasedProjectWizard"
+            name="Anypoint WSDL Based Connector Project"
+            project="false">
+      </wizard> -->
 	  </extension>
 	  <extension	
         point="org.eclipse.ui.perspectives">
