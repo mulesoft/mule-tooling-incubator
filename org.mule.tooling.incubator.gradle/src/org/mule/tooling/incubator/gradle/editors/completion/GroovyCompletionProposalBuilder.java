@@ -3,7 +3,7 @@ package org.mule.tooling.incubator.gradle.editors.completion;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.swt.graphics.Image;
-import org.mule.tooling.ui.modules.core.autocomplete.AutocompleteImages;
+import org.mule.tooling.ui.modules.core.ModulesUICoreImages;
 
 public class GroovyCompletionProposalBuilder {
     
@@ -31,24 +31,24 @@ public class GroovyCompletionProposalBuilder {
         
         switch (suggestion.getType()) {
         case MAP_ARGUMENT:
-            imgCode = AutocompleteImages.IMG_ELEMENT;
+            imgCode = ModulesUICoreImages.AUTOCOMLETE_ELEMENT;
             break;
         case METHOD:
-            imgCode = AutocompleteImages.IMG_FUNCTION;
+            imgCode = ModulesUICoreImages.AUTOCOMLETE_FUNCTION;
             break;
         case PROPERTY:
-            imgCode = AutocompleteImages.IMG_ATTRIBUTE;
+            imgCode = ModulesUICoreImages.AUTOCOMLETE_ATTRIBUTE;
             break;
         case STRING_VALUE:
         case RAW_VALUE:
-            imgCode = AutocompleteImages.IMG_TEMPLATE;
+            imgCode = ModulesUICoreImages.AUTOCOMLETE_TEMPLATE;
             break;
         default:
             return null;
         }
         
         
-        return AutocompleteImages.getImage(imgCode);
+        return ModulesUICoreImages.getImage(imgCode);
         
     }
 
