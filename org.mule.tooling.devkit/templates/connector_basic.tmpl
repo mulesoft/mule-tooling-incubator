@@ -3,7 +3,7 @@
  * a copy of which has been included with this distribution in the LICENSE.md file.
  */
 
-package ${project.package}.strategy;
+package ${project.package}.config;
 
 import org.mule.api.annotations.components.Configuration;
 #if(${project.generateDefaultBody} == true )
@@ -12,12 +12,12 @@ import org.mule.api.annotations.param.Default;
 #end
 
 /**
- * Configuration type Strategy
+ * Configuration type Config
  *
  * @author MuleSoft, Inc.
  */
-@Configuration(configElementName = "config-type", friendlyName = "Configuration type strategy")
-public class ${project.strategyClassName} {
+@Configuration(configElementName = "config-type", friendlyName = "Configuration type config")
+public class ${project.configClassName} {
 #if(${project.generateDefaultBody} == true )
 
     /**
@@ -28,9 +28,9 @@ public class ${project.strategyClassName} {
     private String reply;
 
     /**
-     * Set strategy property
+     * Set config property
      *
-     * @param reply my strategy property
+     * @param reply my config property
      */
     public void setReply(String reply) {
         this.reply = reply;

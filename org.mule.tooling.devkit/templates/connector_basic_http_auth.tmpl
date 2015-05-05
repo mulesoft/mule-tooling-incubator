@@ -3,7 +3,7 @@
  * a copy of which has been included with this distribution in the LICENSE.md file.
  */
 
-package ${project.package}.strategy;
+package ${project.package}.config;
 
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.components.HttpBasicAuth;
@@ -12,7 +12,7 @@ import org.mule.api.annotations.rest.BasicAuthUsername;
 
 
 @HttpBasicAuth( configElementName = "config-type", headerName="Authorization", friendlyName = "HttpBasicAuth")
-public class ${project.strategyClassName}{
+public class ${project.configClassName}{
 	
 	@Configurable
 	@BasicAuthUsername

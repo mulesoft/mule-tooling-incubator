@@ -26,7 +26,6 @@ public class MedaDataCategoryBuilder implements IComponentBuilder {
         imports.addImport("org.mule.common.metadata.MetaData");
         imports.addImport("org.mule.common.metadata.MetaDataKey");
 
-        newType.createField("@Inject private Object connector;", null, true, monitor);
 
         newType.createMethod("/**\n" + " * Retrieves the list of keys\n" + " */\n"
                 + "@MetaDataKeyRetriever public List<MetaDataKey> getMetaDataKeys() throws Exception { return null; }", null, true, monitor);
@@ -34,6 +33,5 @@ public class MedaDataCategoryBuilder implements IComponentBuilder {
         newType.createMethod("/**\n" + " * Get MetaData given a key\n" + " */\n"
                 + "@MetaDataRetriever public MetaData getMetaData(MetaDataKey key) throws Exception { return null; }", null, true, monitor);
 
-        newType.createMethod("public void setConnector(Object connector) throws Exception { this.connector=connector; }", null, true, monitor);
     }
 }

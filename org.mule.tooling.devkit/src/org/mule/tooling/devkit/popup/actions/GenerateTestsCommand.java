@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -40,10 +41,12 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
             commandArgs.addAll(Arrays.asList(commonCommand));
 
             if (testdataDto.selectedScafolding()) {
+                CompilationUnit unit = DevkitUtils.getConnectorClass(selectedProject);
 
                 String[] generateTestsCommand = new String[] { "compile", "-Ddevkit.studio.package.skip=true", "-Ddevkit.javadoc.check.skip=true", "-Dmaven.javadoc.skip=true",
                         "org.mule.tools.devkit:" + "connector-automation-generator-maven-plugin:" + "connector-automation-generator",
-                        "-DprocessorsList=" + testdataDto.getFilteredProcessors(), "-DautomationRootPackage=" + testdataDto.getAutomationPackage() };
+                        "-DprocessorsList=" + testdataDto.getFilteredProcessors(), "-DautomationRootPackage=" + testdataDto.getAutomationPackage(),
+                        "-DconnectorClassName="+unit.getPackage().getName()+"."+unit.getTypeRoot().getElementName().replace(".java", "")};
                 commandArgs.addAll(Arrays.asList(generateTestsCommand));
                 final String[] command = new String[commandArgs.size()];
                 commandArgs.toArray(command);

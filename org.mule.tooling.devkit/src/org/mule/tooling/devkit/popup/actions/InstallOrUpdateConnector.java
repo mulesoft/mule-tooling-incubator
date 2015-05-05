@@ -47,6 +47,8 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                 public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
                     monitor.beginTask(installingPalette, 100);
                     final Integer result = generateUpdateSite(selectedProject, monitor);
+                    
+                    DevkitUtils.refreshFolder(selectedProject.getProject().getFolder(DevkitUtils.GENERATED_SOURCES_FOLDER), monitor).execute(Status.OK);
 
                     if (result == BaseDevkitGoalRunner.CANCELED)
                         return Status.CANCEL_STATUS;

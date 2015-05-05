@@ -31,7 +31,7 @@ import org.mule.tooling.devkit.treeview.model.ModuleSource;
 import org.mule.tooling.devkit.treeview.model.ModuleTransformer;
 import org.mule.tooling.devkit.treeview.model.ProjectRoot;
 import org.mule.tooling.devkit.treeview.model.Property;
-import org.mule.tooling.devkit.treeview.model.Strategy;
+import org.mule.tooling.devkit.treeview.model.Configuration;
 
 public class ModuleVisitor extends ASTVisitor {
 
@@ -77,7 +77,7 @@ public class ModuleVisitor extends ASTVisitor {
                     if (forceSearch) {
                         module = new Module(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
                     } else {
-                        module = new Strategy(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
+                        module = new Configuration(root, (ICompilationUnit) compilationUnit.getJavaElement(), node);
                     }
                 }
             }

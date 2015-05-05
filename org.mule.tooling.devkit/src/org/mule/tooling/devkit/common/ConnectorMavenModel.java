@@ -20,7 +20,7 @@ public class ConnectorMavenModel {
     private String wsdlPath;
     private String moduleName;
     private String connectorClassName;
-    private String strategyClassName;
+    private String configClassName;
     private String projectName;
     private String projectLocation;
     private boolean generateDefaultBody;
@@ -39,14 +39,6 @@ public class ConnectorMavenModel {
 
     public void setConnectorClassName(String connectorClassName) {
         this.connectorClassName = connectorClassName;
-    }
-
-    public String getStrategyClassName() {
-        return strategyClassName;
-    }
-
-    public void setStrategyClassName(String strategyClassName) {
-        this.strategyClassName = strategyClassName;
     }
 
     public String getDevkitVersion() {
@@ -219,6 +211,14 @@ public class ConnectorMavenModel {
 
     public void setGenerateDefaultBody(boolean generateDefaultBody) {
         this.generateDefaultBody = generateDefaultBody;
+    }
+
+    public String getConfigClassName() {
+        return configClassName;
+    }
+
+    public void setConfigClassName(String configClassName) {
+        this.configClassName = configClassName;
     }
 
 }

@@ -4,6 +4,7 @@
    <!-- Forces startup of this plugin -->
    <extension
          point="org.eclipse.ui.startup">
+      <startup class="org.mule.tooling.devkit.DevkitUIPlugin"></startup>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -15,7 +16,7 @@
             name="Anypoint Connector Project"
             project="true">
       </wizard>
-<!--            <wizard
+      <wizard
             category="org.mule.tooling.ui.muleWizards"
             class="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard"
             icon="icons/icon.png"
@@ -23,7 +24,7 @@
             name="Anypoint Connector Component"
             project="false">
       </wizard>
-	  <wizard
+<!--	  <wizard
             category="org.mule.tooling.ui.muleWizards"
             class="org.mule.tooling.devkit.wizards.NewDevkitWsdlBasedProjectWizard"
             icon="icons/icon.png"
@@ -44,10 +45,13 @@
          point="org.eclipse.ui.perspectiveExtensions">
 	      <perspectiveExtension
 	            targetID="*">
-	            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard" />		
+	            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard" />
+	            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard"/>		
 	      </perspectiveExtension>
 	      <perspectiveExtension targetID="org.mule.tooling.devkit.perspective">
 				<newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard">
 				</newWizardShortcut>
 				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.JavaProjectWizard">
 				</newWizardShortcut>

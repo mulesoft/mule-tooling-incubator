@@ -263,11 +263,11 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         imageWriter.apply("/templates/extension-icon-48x32.png", getIcon48FileName(uncammelName));
 
         if (!mavenModel.getApiType().equals(ApiType.SOAP)) {
-            generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
+            generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "config"), nullMonitor);
             generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
         } else if (!mavenModel.getGenerateDefaultBody()) {
             // It is SOAP and we don't want Default body
-            generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy"), nullMonitor);
+            generator.create(project.getFolder(MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "config"), nullMonitor);
             generateStrategyComponent(mavenModel, classReplacer, templateFileWriter);
         }
 
@@ -322,8 +322,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         return javaProject;
     }
 
-    private String getConnectionStrategyFileName(ConnectorMavenModel mavenModel) {
-        return MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "strategy/ConnectorConnectionStrategy.java";
+    private String getConfigFileName(ConnectorMavenModel mavenModel) {
+        return MAIN_JAVA_FOLDER + "/" + mavenModel.getPackage().replaceAll("\\.", "/") + "/" + "config/ConnectorConfig.java";
     }
 
     protected void create(String moduleName, String namespace, IProgressMonitor monitor, String mainTemplatePath, String testResourceTemplatePath, String className,
@@ -422,7 +422,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         mavenModel.setGitDevConnection(advancePage.getDevConnection());
         mavenModel.setGitUrl(advancePage.getUrl());
         mavenModel.setConnectorClassName(DevkitUtils.createConnectorNameFrom(page.getName()));
-        mavenModel.setStrategyClassName("ConnectorConnectionStrategy");
+        mavenModel.setConfigClassName("ConnectorConfig");
         mavenModel.setDevkitVersion(page.getDevkitVersion());
         mavenModel.setPackage(advancePage.getPackage());
         mavenModel.setConnectorName(page.getName());
@@ -494,16 +494,16 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         if (!mavenModel.getApiType().equals(ApiType.SOAP) || !mavenModel.getGenerateDefaultBody()) {
             switch (mavenModel.getAuthenticationType()) {
             case CONNECTION_MANAGEMENT:
-                templateFileWriter.apply("/templates/connector_connection_management.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+                templateFileWriter.apply("/templates/connector_connection_management.tmpl", getConfigFileName(mavenModel), classReplacer);
                 return;
             case HTTP_BASIC:
-                templateFileWriter.apply("/templates/connector_basic_http_auth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+                templateFileWriter.apply("/templates/connector_basic_http_auth.tmpl", getConfigFileName(mavenModel), classReplacer);
                 return;
             case NONE:
-                templateFileWriter.apply("/templates/connector_basic.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+                templateFileWriter.apply("/templates/connector_basic.tmpl", getConfigFileName(mavenModel), classReplacer);
                 return;
             case OAUTH_V2:
-                templateFileWriter.apply("/templates/connector_oauth.tmpl", getConnectionStrategyFileName(mavenModel), classReplacer);
+                templateFileWriter.apply("/templates/connector_oauth.tmpl", getConfigFileName(mavenModel), classReplacer);
                 return;
             default:
                 break;

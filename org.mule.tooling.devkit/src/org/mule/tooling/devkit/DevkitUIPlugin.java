@@ -6,12 +6,13 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 
-public class DevkitUIPlugin extends AbstractUIPlugin {
+public class DevkitUIPlugin extends AbstractUIPlugin implements IStartup {
 
     public static final String PLUGIN_ID = "org.mule.tooling.devkit";
     private static final String PREFERENCES_CURRENT_UI_PLUGIN_VERSION = "devkit_ui_preference_current_ui_plugin_version";
@@ -20,10 +21,9 @@ public class DevkitUIPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        scheduleResetPerspectiveOnUpdateJob();
     }
 
-    private void scheduleResetPerspectiveOnUpdateJob() {
+    protected void scheduleResetPerspectiveOnUpdateJob() {
         IPreferenceStore store = getPreferenceStore();
 
         String storedUiPluginVersion = store.getString(PREFERENCES_CURRENT_UI_PLUGIN_VERSION);
@@ -94,5 +94,10 @@ public class DevkitUIPlugin extends AbstractUIPlugin {
 
     public static void log(IStatus status) {
         getDefault().getLog().log(status);
+    }
+
+    @Override
+    public void earlyStartup() {
+        scheduleResetPerspectiveOnUpdateJob();
     }
 }

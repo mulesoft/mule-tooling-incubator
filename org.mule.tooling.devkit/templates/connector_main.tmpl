@@ -14,7 +14,7 @@ import java.util.List;
 import org.mule.api.annotations.oauth.OAuthProtected;
 
 #end
-import org.mule.api.annotations.ConnectionStrategy;
+import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
 #if(${project.generateDefaultBody} == true )
 import org.mule.api.annotations.Configurable;
@@ -32,7 +32,7 @@ import org.mule.api.annotations.Query;
 
 #end
 
-import ${project.package}.strategy.${project.strategyClassName};
+import ${project.package}.config.${project.configClassName};
 
 /**
  * Anypoint Connector
@@ -51,8 +51,8 @@ public abstract class ${project.connectorClassName} {
     private String greeting;
 #end
 
-    @ConnectionStrategy
-    ${project.strategyClassName} connectionStrategy;   
+    @Config
+    ${project.configClassName} config;   
 
 #if(${project.generateDefaultBody} == true )
     /**
@@ -81,12 +81,12 @@ public abstract class ${project.connectorClassName} {
     public abstract void greet(@RestUriParam("param") String param) throws IOException;  
 #end
 
-    public ${project.strategyClassName} getConnectionStrategy() {
-        return connectionStrategy;
+    public ${project.configClassName} getConfig() {
+        return config;
     }
 
-    public void setConnectionStrategy(${project.strategyClassName} connectionStrategy) {
-        this.connectionStrategy = connectionStrategy;
+    public void setConfig(${project.configClassName} config) {
+        this.config = config;
     }
 
 #if(${project.generateDefaultBody} == true )

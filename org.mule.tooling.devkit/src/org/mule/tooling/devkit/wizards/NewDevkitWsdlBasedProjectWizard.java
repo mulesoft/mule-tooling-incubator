@@ -63,7 +63,7 @@ public class NewDevkitWsdlBasedProjectWizard extends Wizard implements INewWizar
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 monitor.beginTask("Parsing WSDL", wsdlFiles.size() + 1);
-                createWsdlStrategy(wsdlFiles, monitor);
+                createWsdlConfig(wsdlFiles, monitor);
             }
 
         };
@@ -138,14 +138,14 @@ public class NewDevkitWsdlBasedProjectWizard extends Wizard implements INewWizar
         public String address;
     }
 
-    private void createWsdlStrategy(final List<String> wsdlFiles, IProgressMonitor monitor) {
+    private void createWsdlConfig(final List<String> wsdlFiles, IProgressMonitor monitor) {
         try {
 
             List<ServiceDefinition> deff = getServiceDefinitions(wsdlFiles, monitor);
             TemplateStringWriter template = new TemplateStringWriter(new NullProgressMonitor());
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("package", "org.mule.modules");
-            map.put("strategyClassName", "WsdlStrategy");
+            map.put("strategyClassName", "WsdlConfig");
             map.put("serviceDefinitions", deff);
             monitor.worked(1);
             String value = template.apply("/templates/connector_wsdl.tmpl", new ComponentReplacer(map));

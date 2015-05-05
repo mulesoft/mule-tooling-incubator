@@ -5,14 +5,14 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.swt.graphics.Image;
 import org.mule.tooling.devkit.DevkitImages;
 
-public class Strategy extends Module {
+public class Configuration extends Module {
 
-    public Strategy(NodeItem parent, ICompilationUnit cu, ASTNode node) {
+    public Configuration(NodeItem parent, ICompilationUnit cu, ASTNode node) {
         super(parent, cu, node);
     }
 
     @Override
     public Image getImage() {
-        return DevkitImages.getManagedImage("", "strategy_class.png");
+        return DevkitImages.getManagedImage("", "configuration_class.png");
     }
 }

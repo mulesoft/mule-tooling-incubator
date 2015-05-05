@@ -34,7 +34,7 @@ public class CreateComponentTest {
 		String file = "Strategy.java";
 		ConnectorMavenModel connectorMavenModel = new ConnectorMavenModel();
 		connectorMavenModel.setGenerateDefaultBody(true);
-		connectorMavenModel.setStrategyClassName("ConnectorConnectionStrategy");
+		connectorMavenModel.setConfigClassName("ConnectorConnectionStrategy");
 		connectorMavenModel.setPackage("org.mule.modules.configuration");
 		File generated = org.mule.tooling.devkit.builder.ComponentFactory
 				.createConfigurationStrategy(project, connectorMavenModel,
