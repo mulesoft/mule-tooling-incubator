@@ -1,5 +1,8 @@
 package org.mule.tooling.devkit.wizards;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -38,6 +41,7 @@ import org.mule.tooling.devkit.treeview.model.ProjectRoot;
 public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
 
     private Combo textField;
+    private Map<String, String> components;
 
     IComponentBuilder componentBuilder;
 
@@ -45,6 +49,7 @@ public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
         super(true, "New DevKit Component");
         this.setTitle("DevKit Component");
         this.setDescription("Create a New DevKit Component.");
+
     }
 
     private void doStatusUpdate() {
@@ -66,6 +71,7 @@ public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
 
     public void createControl(Composite parent) {
         initializeDialogUnits(parent);
+        loadComponets();
         Composite composite = new Composite(parent, SWT.NONE);
         int nColumns = 4;
         GridLayout layout = new GridLayout();
@@ -89,6 +95,17 @@ public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
         setSuperClass("", true);
     }
 
+    private void loadComponets() {
+        components = new HashMap<String, String>();
+        components.put("Configuration", "A Connection Less Strategy.");
+        components.put("ConnectionManagement", "A Basic Auth Connection Strategy.");
+        components.put("OAuth2", "An OAuth 2.0 Connection Strategy.");
+        components.put("MetaDataCategory", "A grouping DataSense class, which will be responsible for returning types  and the descriptions for those types");
+        components.put("Handler", "An Exception Handler Component");
+        components.put("Connector", "A class that will export its functionality as a Mule Connector");
+        components.put("ProviderAwarePagingDelegate", "A ProviderAwarePagingDelegate is a component capable of consuming a data feed in pages.");
+    }
+
     private void createComponentControls(Composite composite) {
         Label label = new Label(composite, SWT.NONE);
         label.setText("Component Type:");
@@ -96,9 +113,8 @@ public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
         // Create the checkbox controlling whether we want stubs
         textField = new Combo(composite, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         textField.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).grab(true, false).align(SWT.FILL, SWT.FILL).create());
-        String[] initialValues = new String[] { "Configuration", "ConnectionManagement", "OAuth2", "MetaDataCategory", "Handler", "Connector", "ProviderAwarePagingDelegate" };
-        textField.setItems(initialValues);
-        textField.setText(initialValues[0]);
+        textField.setItems(components.keySet().toArray(new String[components.size()]));
+        textField.setText("Configuration");
 
         final ControlDecoration deco = new ControlDecoration(textField, SWT.TOP | SWT.LEFT);
         Image image = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL).getImage();
@@ -106,18 +122,18 @@ public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                deco.setDescriptionText("Different element supported by DevKit:" + e.getSource());
+                deco.setDescriptionText(getCommentForCombo());
                 updateComponent();
 
             }
 
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
-                deco.setDescriptionText("Different element supported by DevKit:" + e.getSource());
+            	deco.setDescriptionText(getCommentForCombo());
                 updateComponent();
             }
         });
-        deco.setDescriptionText("Different element supported by DevKit.");
+        deco.setDescriptionText(getCommentForCombo());
         deco.setImage(image);
         deco.setShowOnlyOnFocus(false);
         Composite emptyComposite = new Composite(composite, SWT.NONE);
@@ -208,6 +224,10 @@ public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
         }
     }
 
+    private String getCommentForCombo() {
+        return this.components.get(this.textField.getText());
+    }
+
     IStatus error = new IStatus() {
 
         @Override
@@ -252,7 +272,7 @@ public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
 
         @Override
         public boolean matches(int severityMask) {
-            return IStatus.ERROR==severityMask;
+            return IStatus.ERROR == severityMask;
         }
     };
 }
