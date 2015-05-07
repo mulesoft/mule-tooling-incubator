@@ -46,9 +46,9 @@ public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
     IComponentBuilder componentBuilder;
 
     public NewDevkitComponentWizardPage(String pageName) {
-        super(true, "New DevKit Component");
-        this.setTitle("DevKit Component");
-        this.setDescription("Create a New DevKit Component.");
+        super(true, "New Anypoint Connector Component");
+        this.setTitle("Anypoint Connector Component");
+        this.setDescription("Create a New Anypoint Connector Component.");
 
     }
 
