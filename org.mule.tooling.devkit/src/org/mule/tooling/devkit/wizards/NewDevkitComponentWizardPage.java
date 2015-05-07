@@ -52,6 +52,7 @@ public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
         IStatus[] status = null;
         if (textField != null && this.getTypeName().equals(this.textField.getText())) {
             status = new IStatus[] { fContainerStatus, isEnclosingTypeSelected() ? fEnclosingTypeStatus : fPackageStatus, fTypeNameStatus, error };
+            setPageComplete(false);
         } else {
             status = new IStatus[] { fContainerStatus, isEnclosingTypeSelected() ? fEnclosingTypeStatus : fPackageStatus, fTypeNameStatus, };
         }
@@ -216,7 +217,7 @@ public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
 
         @Override
         public int getCode() {
-            return 0;
+            return IStatus.ERROR;
         }
 
         @Override
@@ -251,7 +252,7 @@ public class NewDevkitComponentWizardPage extends NewTypeWizardPage {
 
         @Override
         public boolean matches(int severityMask) {
-            return false;
+            return IStatus.ERROR==severityMask;
         }
     };
 }
