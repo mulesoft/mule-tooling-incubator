@@ -25,9 +25,9 @@ public class ConnectorConnectionStrategy {
     private String reply;
 
     /**
-     * Set strategy property
+     * Set config property
      *
-     * @param reply my strategy property
+     * @param reply my config property
      */
     public void setReply(String reply) {
         this.reply = reply;

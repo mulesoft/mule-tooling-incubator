@@ -1,5 +1,6 @@
 package org.mule.tooling.incubator.devkit.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -39,7 +40,9 @@ public class CreateComponentTest {
 		File generated = org.mule.tooling.devkit.builder.ComponentFactory
 				.createConfigurationStrategy(project, connectorMavenModel,
 						file, progress);
-		assertTrue(FileUtils.contentEquals(expected, generated));
+		assertEquals("The files differ!", 
+		        FileUtils.readFileToString(expected, "utf-8"), 
+		        FileUtils.readFileToString(generated, "utf-8"));
 	}
 
 	@After
