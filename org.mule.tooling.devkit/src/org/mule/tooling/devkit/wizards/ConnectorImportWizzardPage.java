@@ -61,8 +61,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
-import org.mule.tooling.devkit.builder.ProjectGenerator;
-import org.mule.tooling.devkit.builder.ProjectGeneratorFactory;
+import org.mule.tooling.devkit.builder.ProjectBuilder;
+import org.mule.tooling.devkit.builder.ProjectBuilderFactory;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.MavenInfo;
 import org.mule.tooling.devkit.maven.ScanProject;
@@ -331,9 +331,9 @@ public class ConnectorImportWizzardPage extends WizardPage {
                                 IProject project = createProject(folder.getName(), monitor, root, folder);
 
                                 IJavaProject javaProject = JavaCore.create(root.getProject(folder.getName()));
-                                ProjectGenerator generator = ProjectGeneratorFactory.newInstance();
+                                ProjectBuilder generator = ProjectBuilderFactory.newInstance();
 
-                                List<IClasspathEntry> classpathEntries = generator.generateProjectEntries(monitor, project);
+                                List<IClasspathEntry> classpathEntries = generator.generateProjectEntries(project,monitor);
                                 javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[] {}), monitor);
                                 if (mavenProject.getPackaging() != null && mavenProject.getPackaging().equals("mule-module")) {
                                     DevkitUtils.configureDevkitAPT(javaProject);

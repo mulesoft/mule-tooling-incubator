@@ -44,8 +44,8 @@ public class DataSenseResolver {
         List<MetaDataKey> keys = new ArrayList<MetaDataKey>();
 
         //Generate the keys
-        keys.add(new DefaultMetaDataKey("id1", "User"));
-        keys.add(new DefaultMetaDataKey("id2", "Book"));
+        keys.add(new DefaultMetaDataKey("ENTITY_TYPE_1", "User"));
+        keys.add(new DefaultMetaDataKey("ENTITY_TYPE_2", "Book"));
 
         return keys;
     }
@@ -67,7 +67,7 @@ public class DataSenseResolver {
         DynamicObjectBuilder<?> dynamicObject = builder.createDynamicObject(key
                 .getId());
 
-        if (key.getId().equals("id1")) {
+        if (key.getId().equals("ENTITY_TYPE_1")) {
             dynamicObject.addSimpleField("Username", DataType.STRING);
             dynamicObject.addSimpleField("age", DataType.INTEGER);
         } else {

@@ -126,7 +126,7 @@ public class StudioAnnotationProcessorContext implements Context {
 
     @Override
     public void note(String msg) {
-        messager.printMessage(Diagnostic.Kind.NOTE, msg);
+        // Ignore notes
     }
 
     @Override
@@ -146,7 +146,7 @@ public class StudioAnnotationProcessorContext implements Context {
 
     @Override
     public void debug(String msg) {
-        messager.printMessage(Diagnostic.Kind.NOTE, "DEBUG: " + msg);
+        // Ignore notes
     }
 
     @Override
@@ -284,7 +284,7 @@ public class StudioAnnotationProcessorContext implements Context {
     public Messager getMessager() {
         return messager;
     }
-    
+
     @Override
     public void printStack(Exception e) {
         e.printStackTrace();

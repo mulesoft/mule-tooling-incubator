@@ -1,0 +1,54 @@
+/**
+ * (c) 2003-2015 MuleSoft, Inc. The software in this package is published under the terms of the CPAL v1.0 license,
+ * a copy of which has been included with this distribution in the LICENSE.md file.
+ */
+package ${project.package}.automation.testrunners;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.experimental.categories.Categories;
+import org.junit.experimental.categories.Categories.IncludeCategory;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite.SuiteClasses;
+#if(${project.dataSenseEnabled})
+import ${project.package}.automation.testcases.AddEntityTestCases;
+#end
+import ${project.package}.automation.testcases.GreetTestCases;
+#if(${project.hasQuery})
+import ${project.package}.automation.testcases.QueryProcessorTestCases;
+#end
+import ${project.package}.${project.connectorClassName};
+import org.mule.tools.devkit.ctf.junit.RegressionTests;
+import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
+
+@RunWith(Categories.class)
+@IncludeCategory(RegressionTests.class)
+
+@SuiteClasses({
+	GreetTestCases.class
+#if(${project.dataSenseEnabled})
+	,AddEntityTestCases.class
+#end
+#if(${project.hasQuery})
+	,QueryProcessorTestCases.class
+#end
+	
+})
+
+public class RegressionTestSuite {
+	
+	@BeforeClass
+	public static void initialiseSuite(){
+		
+		ConnectorTestContext.initialize(${project.connectorClassName}.class);
+
+	}
+	
+	@AfterClass
+	public static void shutdownSuite() throws Exception{
+		
+		ConnectorTestContext.shutDown();
+
+	}
+	
+}

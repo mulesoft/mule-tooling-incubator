@@ -17,3 +17,5 @@ bin
 
 # Build logs
 **/build.log
+
+*.log

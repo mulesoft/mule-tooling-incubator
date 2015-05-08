@@ -14,7 +14,6 @@ public class ConnectorMavenModel {
     private String gitDevConnection;
     private String gitUrl;
     private String packageName;
-    private String devkitVersion;
     private boolean dataSenseEnabled;
     private boolean hasQuery;
     private String wsdlPath;
@@ -39,14 +38,6 @@ public class ConnectorMavenModel {
 
     public void setConnectorClassName(String connectorClassName) {
         this.connectorClassName = connectorClassName;
-    }
-
-    public String getDevkitVersion() {
-        return devkitVersion;
-    }
-
-    public void setDevkitVersion(String devkitVersion) {
-        this.devkitVersion = devkitVersion;
     }
 
     public boolean getHasQuery() {

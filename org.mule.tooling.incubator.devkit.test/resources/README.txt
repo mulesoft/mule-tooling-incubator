@@ -1,4 +1,4 @@
-# ${project.connectorName} Anypoint Connector
+# Cloud Anypoint Connector
 
 [Connector description including destination service or application with]
 
@@ -27,8 +27,8 @@ For released connectors you can download them from the update site in Studio.
 Open MuleStudio, go to Help → Install New Software and select MuleStudio Cloud Connectors Update Site where you’ll find all avaliable connectors.
 
 #Usage
-For information about usage our documentation at ${project.gitUrl}.
+For information about usage our documentation at http://github.com/mulesoft/cloud.
 
 # Reporting Issues
 
-We use GitHub:Issues for tracking issues with this connector. You can report new issues at this link ${project.gitUrl}/issues.
+We use GitHub:Issues for tracking issues with this connector. You can report new issues at this link http://github.com/mulesoft/cloud/issues.

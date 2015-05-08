@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.mule.tooling.incubator.devkit.extension"
-      label="Anypoint Devkit Extension"
+      label="Anypoint DevKit Extension"
       version="1.0.5.qualifier"
       provider-name="MuleSoft Inc."
       plugin="org.mule.tooling.incubator.devkit.extension"
       exclusive="true">
 
    <description url="http://www.mulesoft.org/">
-       Anypoint Devkit Plugin.
+       Anypoint DevKit Plugin.
    </description>
 
    <copyright url="http://www.mulesoft.org">

@@ -1,57 +1,167 @@
+#set( $isSingleWsdl = $project.serviceDefinitions.size()==1 )
+#set( $isAuthEnabled = ($project.authenticationType == 'WS_SECURITY_USERNAME_TOKEN_PROFILE') || ($project.authenticationType == 'HTTP_BASIC') )
 /**
  * (c) 2003-2015 MuleSoft, Inc. The software in this package is published under the terms of the CPAL v1.0 license,
  * a copy of which has been included with this distribution in the LICENSE.md file.
  */
 
 package ${project.package}.config;
+#if( !$isSingleWsdl )
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+#end
 
-import javax.wsdl.WSDLException;
-import javax.wsdl.extensions.ExtensionRegistry;
-import javax.wsdl.factory.WSDLFactory;
-
+#if( $project.authenticationType == 'HTTP_BASIC' )
+import org.mule.api.annotations.ws.WsdlTransportResolver;
+import org.mule.devkit.api.ws.transport.WsdlTransport;
+import org.mule.devkit.api.ws.transport.HttpBasicWsdlTransport;
+#elseif( $project.authenticationType == 'WS_SECURITY_USERNAME_TOKEN_PROFILE' )
+import org.mule.api.annotations.ws.WsdlSecurityStrategyResolver;
+import org.mule.devkit.api.ws.authentication.WsdlSecurityStrategy;
+import org.mule.devkit.api.ws.authentication.WsdlUsernameToken;
+import org.mule.module.ws.security.PasswordType;
+#end
+#if( $isSingleWsdl || $isAuthEnabled )
+import org.mule.api.annotations.Configurable;
+#end
+#if( $isAuthEnabled )
+import org.mule.api.annotations.display.Password;
+import org.mule.api.annotations.display.Placement;
+#end
 import org.mule.api.annotations.components.WsdlProvider;
 import org.mule.api.annotations.ws.WsdlServiceAddressResolver;
 import org.mule.api.annotations.ws.WsdlServiceDefinitionRetriever;
-import org.mule.devkit.shade.ws.api.DefaultServiceDefinition;
-import org.mule.devkit.shade.ws.api.ServiceDefinition;
+import org.mule.devkit.api.ws.definition.DefaultServiceDefinition;
+import org.mule.devkit.api.ws.definition.ServiceDefinition;
+#if( $isSingleWsdl )
+import org.mule.api.annotations.param.Default;
+#end
+#if( $isAuthEnabled )
+import org.mule.api.annotations.param.Optional;
+#end
 
-/**
- * Wsdl type Config
- *
- * @author MuleSoft, Inc.
- */
-@WsdlProvider(configElementName = "config-type", friendlyName = "Configuration type config")
+@WsdlProvider(configElementName = "config-type", friendlyName = "Config")
 public class ${project.configClassName} {
+#if( $isAuthEnabled )
 
+    @Configurable
+    @Placement(order = 1)
+    private String username;
+
+    @Configurable
+    @Placement(order = 2)
+    @Password
+    @Optional
+    private String password;
+#end
+#if( $isSingleWsdl )
+
+    @Configurable
+    @Default("${project.serviceDefinitions.get(0).address}")
+#if( $isAuthEnabled )
+    @Placement(order = 3)
+#end
+    private String address;
+#end
+
+## Start WsdlServiceDefinitionRetriever method generation.
+#if($isSingleWsdl)
     @WsdlServiceDefinitionRetriever
-    public List<ServiceDefinition> getServiceDefinition() {
+    public ServiceDefinition getServiceDefinition() {
+    #set( $serviceDef = ${project.serviceDefinitions.get(0)} )
+       return new DefaultServiceDefinition(
+                "${serviceDef.id}",
+                "${serviceDef.display}",
+                "${serviceDef.location}",
+                "${serviceDef.serviceName}",
+                "${serviceDef.servicePort}");
+    }
+#else
+    @WsdlServiceDefinitionRetriever
+    public List<ServiceDefinition> getServiceDefinitions() {
 
-        List<ServiceDefinition> serviceDefinitions = new ArrayList<ServiceDefinition>();
-
+        final List<ServiceDefinition> serviceDefinitions = new ArrayList<ServiceDefinition>();
 #foreach ( $serviceDef in $project.serviceDefinitions )
+
         serviceDefinitions.add(new DefaultServiceDefinition(
                 "${serviceDef.id}",
                 "${serviceDef.display}",
                 "${serviceDef.location}",
-                "${serviceDef.serviceName}", 
-                "${serviceDef.servicePort}")
-        );
+                "${serviceDef.serviceName}",
+                "${serviceDef.servicePort}"));
 #end
         return serviceDefinitions;
     }
+#end
+## End WsdlServiceDefinitionRetriever method generation.
+## Start WsdlServiceAddressResolver method.
 
+#if( $isSingleWsdl )
     @WsdlServiceAddressResolver
     public String getServiceAddress(ServiceDefinition definition) {
-#foreach ( $serviceDef in $project.serviceDefinitions )
-        if ("${serviceDef.id}".equals(definition.getId())) {
-            return "${serviceDef.address}";
-        }
-#end
-        throw new RuntimeException("Unknown Definition");
+         return address;
     }
+#else
+    @WsdlServiceAddressResolver
+    public String getServiceAddress(ServiceDefinition definition) {
+        String result;
+        final String id = definition.getId();
+        switch(id){
+    #foreach ( $serviceDef in $project.serviceDefinitions )
+            case "${serviceDef.id}": {
+                result = "${serviceDef.address}";
+                break;
+            }
+    #end
+            default: {
+                throw new IllegalArgumentException(id + " address could not be resolved.");
+            }
+        }
+        return result;
+    }
+#end
+
+#if( $project.authenticationType == 'HTTP_BASIC' )
+    @WsdlTransportResolver
+    public WsdlTransport resolveTransport(ServiceDefinition serviceDefinition) {
+        return new HttpBasicWsdlTransport(getUsername(), getPassword());
+    }
+#elseif( $project.authenticationType == 'WS_SECURITY_USERNAME_TOKEN_PROFILE' )
+    @WsdlSecurityStrategyResolver
+     public List<WsdlSecurityStrategy> getWsdlSecurityResolver() {
+         List<WsdlSecurityStrategy> result = new ArrayList<WsdlSecurityStrategy>();
+         result.add(new WsdlUsernameToken(getUsername(),  getPassword(), PasswordType.TEXT, true, true));
+         return result;
+     }
+#end
+#if($isSingleWsdl)
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+#end
+#if( $isAuthEnabled )
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+#end
 
 }

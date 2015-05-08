@@ -1,8 +1,6 @@
 package org.mule.tooling.devkit.wizards;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -10,10 +8,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.mule.tooling.devkit.common.ConnectorMavenModel;
-import org.mule.tooling.devkit.ui.ConnectorIconPanel;
 import org.mule.tooling.devkit.ui.ConnectorProjectWidget;
-import org.mule.tooling.devkit.ui.WsdlChooser;
+import org.mule.tooling.devkit.ui.wsdl.WSDLChooserGroup;
 import org.mule.tooling.maven.runner.SyncGetResultCallback;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
@@ -21,16 +17,13 @@ import org.mule.tooling.maven.ui.preferences.MavenPreferences;
 
 public class NewDevkitWsdlBasedProjectWizardPage extends WizardPage {
 
-    private ConnectorMavenModel model;
     private ConnectorProjectWidget project;
-    private WsdlChooser wsdlChooser;
-    private ConnectorIconPanel iconPanel;
+    private WSDLChooserGroup group;
 
-    public NewDevkitWsdlBasedProjectWizardPage(ConnectorMavenModel model) {
+    public NewDevkitWsdlBasedProjectWizardPage() {
         super("wizardPage");
-        setTitle("Create an Anypoint Wsdl Based Connector");
-        setDescription("Create an Anypoint Wsdl Based Connector project.");
-        this.model = model;
+        setTitle("Create an Anypoint SOAP Connect Project");
+        setDescription("Create an Anypoint SOAP Connect project in the workspace or in an external location.");
     }
 
     /**
@@ -40,18 +33,14 @@ public class NewDevkitWsdlBasedProjectWizardPage extends WizardPage {
         Composite container = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
         container.setLayout(layout);
-        layout.numColumns = 3;
+        layout.numColumns = 1;
         layout.verticalSpacing = 6;
 
         project = new ConnectorProjectWidget();
         project.createControl(container);
 
-        wsdlChooser = new WsdlChooser();
-        wsdlChooser.createControl(container);
-
-        iconPanel = new ConnectorIconPanel();
-        iconPanel.createControl(container);
-
+        group = new WSDLChooserGroup();
+        group.createControl(container);
         setControl(container);
         initialize();
         testMaven();
@@ -77,19 +66,35 @@ public class NewDevkitWsdlBasedProjectWizardPage extends WizardPage {
     }
 
     void onTestFinished(final int result) {
-
+        setPageComplete(result == 0);
     }
 
     private void initialize() {
 
     }
 
-    public List<String> getWsdlPath() {
-        List<String> urls = new ArrayList<String>();
-        String path = this.wsdlChooser.getWsdlPath();
-        if (path.startsWith("http")) {
-            urls.addAll(Arrays.asList(path.split(",")));
-        }
-        return urls;
+    public String getName() {
+        return project.getName();
+    }
+
+    public String getProjectName() {
+        return project.getProjectName();
+    }
+
+    public String getNamespace() {
+        return project.getNameSpace();
+    }
+
+    public String getLocation() {
+        return project.getLocation();
+    }
+
+    public Map<String, String> getWsdlPath() {
+
+        return group.getWsdlFiles();
+    }
+
+    public void populateConnectorModel() {
+
     }
 }

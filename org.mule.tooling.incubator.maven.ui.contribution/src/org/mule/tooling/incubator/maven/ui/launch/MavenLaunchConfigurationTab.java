@@ -63,7 +63,8 @@ public class MavenLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
     public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
         String value = "mvn clean test";
         configuration.setAttribute(MavenCommandLineConfigurationComponent.KEY_MVN_COMMAND_LINE, value);
-        if(configurationComponent != null){
+
+        if (configurationComponent != null) {
             configurationComponent.setCommandLine(value);
         }
     }
@@ -72,6 +73,9 @@ public class MavenLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
     public void initializeFrom(ILaunchConfiguration configuration) {
         try {
             String storedCommandline = configuration.getAttribute(MavenCommandLineConfigurationComponent.KEY_MVN_COMMAND_LINE, MavenLaunchDelegate.MVN_BASE_COMMANDLINE);
+            if (!storedCommandline.startsWith("mvn")) {
+                storedCommandline = "mvn " + storedCommandline;
+            }
             MavenCommandLine mavenCommandLine = MavenCommandLine.fromString(storedCommandline);
             configurationComponent.loadFrom(mavenCommandLine);
             setDirty(false);

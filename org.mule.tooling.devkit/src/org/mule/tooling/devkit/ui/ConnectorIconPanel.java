@@ -31,46 +31,19 @@ import org.mule.tooling.devkit.DevkitImages;
 
 public class ConnectorIconPanel {
 
+    private static final int MAX_NAME_LENGTH = 9;
     private Canvas bigIcon;
     private Canvas smallIcon;
     private String imagePath = "";
     private Text connectorNameText;
 
     public void updateStatus() {
-        saveTo("", "", false);
-    }
-
-    public void saveTo(String bigIconLocation, String smallIconLocation, boolean save) {
         try {
             if (bigIcon != null) {
                 bigIcon.redraw();
-                GC gc = new GC(bigIcon);
-                Image image = new Image(bigIcon.getDisplay(), 48, 32);
-                gc.copyArea(image, 0, 0);
-                if (save) {
-                    ImageLoader loader = new ImageLoader();
-                    ImageData data = image.getImageData();
-                    data.transparentPixel = data.transparentPixel = data.palette.getPixel(new RGB(255, 255, 255));
-                    loader.data = new ImageData[] { data };
-                    loader.save(bigIconLocation, SWT.IMAGE_PNG);
-                }
-                image.dispose();
-                gc.dispose();
             }
             if (smallIcon != null) {
                 smallIcon.redraw();
-                GC gc = new GC(smallIcon);
-                Image image = new Image(smallIcon.getDisplay(), 24, 16);
-                gc.copyArea(image, 0, 0);
-                if (save) {
-                    ImageLoader loader = new ImageLoader();
-                    ImageData data = image.getImageData();
-                    data.transparentPixel = data.transparentPixel = data.palette.getPixel(new RGB(255, 255, 255));
-                    loader.data = new ImageData[] { data };
-                    loader.save(smallIconLocation, SWT.IMAGE_PNG);
-                }
-                image.dispose();
-                gc.dispose();
             }
 
         } catch (Exception ex) {
@@ -86,6 +59,23 @@ public class ConnectorIconPanel {
         GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).span(2, 1).applyTo(group);
 
         addLabelGroup(group);
+
+        Button selectIcon = new Button(group, SWT.NONE);
+        selectIcon.setText("Select Icon");
+        selectIcon.addSelectionListener(new SelectionAdapter() {
+
+            public void widgetSelected(SelectionEvent e) {
+                FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell(), SWT.OPEN);
+                dialog.setText("Select Icon");
+                dialog.setFilterExtensions(new String[] { "*.png;*.gif;*.jpg;*.tiff", "*.*" });
+                String result = dialog.open();
+                if (result != null) {
+                    imagePath = result;
+                    updateStatus();
+                }
+            }
+        });
+        GridDataFactory.swtDefaults().grab(false, false).applyTo(selectIcon);
 
         Composite iconGroup = new Composite(group, SWT.NONE);
         GridLayoutFactory.swtDefaults().numColumns(1).applyTo(iconGroup);
@@ -110,13 +100,16 @@ public class ConnectorIconPanel {
                     e.gc.setFont(font);
                     FontMetrics metrics = e.gc.getFontMetrics();
                     int averageWidth = metrics.getAverageCharWidth();
-                    String name = getConnectorName();
-                    e.gc.drawText(getConnectorName(), (47 - averageWidth * name.length()) / 2, (32 - metrics.getHeight()) / 2, true);
+                    int labelLength = MAX_NAME_LENGTH < getConnectorName().length() ? MAX_NAME_LENGTH : getConnectorName().length();
+                    String name = getConnectorName().substring(0, labelLength);
+                    e.gc.drawText(name, (47 - averageWidth * name.length()) / 2, (32 - metrics.getHeight()) / 2, true);
                     font.dispose();
                 } else {
                     Rectangle iconBounds = icon.getBounds();
                     ImageData data = icon.getImageData();
-                    data.transparentPixel = data.palette.getPixel(new RGB(255, 255, 255));
+                    if (data.transparentPixel == -1) {
+                        data.transparentPixel = data.palette.getPixel(data.palette.getRGB(data.getPixel(0, 0)));
+                    }
                     final Image transparentIdeaImage = new Image(e.display, data);
                     e.gc.drawImage(transparentIdeaImage, 0, 0, iconBounds.width, iconBounds.height, 9, 1, 30, 30);
                     icon.dispose();
@@ -147,13 +140,16 @@ public class ConnectorIconPanel {
                     e.gc.setFont(font);
                     FontMetrics metrics = e.gc.getFontMetrics();
                     int averageWidth = metrics.getAverageCharWidth();
-                    String name = getConnectorName();
-                    e.gc.drawText(getConnectorName(), (23 - averageWidth * name.length()) / 2, (16 - metrics.getHeight()) / 2, true);
+                    int labelLength = MAX_NAME_LENGTH < getConnectorName().length() ? MAX_NAME_LENGTH : getConnectorName().length();
+                    String name = getConnectorName().substring(0, labelLength);
+                    e.gc.drawText(name, (23 - averageWidth * name.length()) / 2, (16 - metrics.getHeight()) / 2, true);
                     font.dispose();
                 } else {
                     Rectangle iconBounds = icon.getBounds();
                     ImageData data = icon.getImageData();
-                    data.transparentPixel = data.palette.getPixel(new RGB(255, 255, 255));
+                    if (data.transparentPixel == -1) {
+                        data.transparentPixel = data.palette.getPixel(data.palette.getRGB(data.getPixel(0, 0)));
+                    }
                     final Image transparentIdeaImage = new Image(e.display, data);
                     e.gc.drawImage(transparentIdeaImage, 0, 0, iconBounds.width, iconBounds.height, 5, 1, 14, 14);
                     icon.dispose();
@@ -162,22 +158,17 @@ public class ConnectorIconPanel {
             }
         });
 
-        Button browse = new Button(group, SWT.NONE);
-        browse.setText("Select Icon");
-        browse.addSelectionListener(new SelectionAdapter() {
+        Button reset = new Button(group, SWT.NONE);
+        reset.setText("Reset");
+        reset.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
-                FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell(), SWT.OPEN);
-                dialog.setText("Select Icon");
-                dialog.setFilterExtensions(new String[] { "*.png;*.gif;*.jpg;*.tiff", "*.*" });
-                String result = dialog.open();
-                if (result != null) {
-                    imagePath = result;
-                    updateStatus();
-                }
+                imagePath = null;
+                connectorNameText.setText("Connector");
             }
         });
-        browse.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).create());
+        GridDataFactory.swtDefaults().grab(false, false).applyTo(reset);
+        updateStatus();
     }
 
     private void addLabelGroup(Group group) {
@@ -216,6 +207,26 @@ public class ConnectorIconPanel {
             return null;
         } else {
             return new Image(Display.getDefault(), imagePath);
+        }
+    }
+
+    public void saveTo(String smallIconPath, String bigIconPath) {
+        saveIcon(bigIcon, bigIconPath, 48, 32);
+        saveIcon(smallIcon, smallIconPath, 24, 16);
+    }
+
+    private void saveIcon(Canvas icon, String iconPath, int width, int height) {
+        if (icon != null) {
+            GC gc = new GC(icon);
+            Image image = new Image(icon.getDisplay(), width, height);
+            gc.copyArea(image, 0, 0);
+            ImageLoader loader = new ImageLoader();
+            ImageData data = image.getImageData();
+            data.transparentPixel = data.transparentPixel = data.palette.getPixel(new RGB(255, 255, 255));
+            loader.data = new ImageData[] { data };
+            loader.save(iconPath, SWT.IMAGE_PNG);
+            image.dispose();
+            gc.dispose();
         }
     }
 }

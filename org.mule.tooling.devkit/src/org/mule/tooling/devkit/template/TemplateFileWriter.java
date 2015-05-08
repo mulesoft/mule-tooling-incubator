@@ -19,58 +19,54 @@ import org.mule.tooling.devkit.template.replacer.Replacer;
 
 public class TemplateFileWriter {
 
-	private IProject project;
-	private IProgressMonitor monitor;
+    private IProject project;
+    private IProgressMonitor monitor;
 
-	public TemplateFileWriter(IProject project, IProgressMonitor monitor) {
-		this.project = project;
-		this.monitor = monitor;
-	}
+    public TemplateFileWriter(IProject project, IProgressMonitor monitor) {
+        this.project = project;
+        this.monitor = monitor;
+    }
 
-	public void apply(final String templatePath, final String resultPath,
-			Replacer replacer) throws CoreException {
-		final IFile fileToCreate = project.getProject().getFile(resultPath);
+    public void apply(final String templatePath, final String resultPath, Replacer replacer) throws CoreException {
+        final IFile fileToCreate = project.getProject().getFile(resultPath);
 
-		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		Writer writer = null;
-		Reader reader = null;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        Writer writer = null;
+        Reader reader = null;
 
-		try {
-			monitor.beginTask("Creating file " + resultPath, 100);
+        try {
+            monitor.beginTask("Creating file " + resultPath, 100);
 
-			InputStream pomTemplateResource;
+            InputStream pomTemplateResource;
 
-			pomTemplateResource = TemplateFileWriter.class
-					.getResourceAsStream(templatePath);
+            pomTemplateResource = TemplateFileWriter.class.getResourceAsStream(templatePath);
 
-			reader = new InputStreamReader(pomTemplateResource, "UTF-8");
-			writer = new OutputStreamWriter(byteArrayOutputStream, "UTF-8");
+            reader = new InputStreamReader(pomTemplateResource, "UTF-8");
+            writer = new OutputStreamWriter(byteArrayOutputStream, "UTF-8");
 
-			replacer.replace(reader, writer);
+            replacer.replace(reader, writer);
 
-			writer.flush();
+            writer.flush();
 
-			monitor.worked(30);
+            monitor.worked(30);
 
-			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-					byteArrayOutputStream.toByteArray());
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 
-			fileToCreate.create(byteArrayInputStream, false,
-					new SubProgressMonitor(monitor, 40));
-			fileToCreate.setDerived(false, new SubProgressMonitor(monitor, 30));
+            fileToCreate.create(byteArrayInputStream, false, new SubProgressMonitor(monitor, 40));
+            fileToCreate.setDerived(false, new SubProgressMonitor(monitor, 30));
 
-		} catch (Exception e) {
-			DevkitUIPlugin.getDefault().logError("Failed to generate file", e);
-		} finally {
-			monitor.done();
-			if (writer != null) {
-				IOUtils.closeQuietly(writer);
-			}
-			if (reader != null) {
-				IOUtils.closeQuietly(reader);
-			}
-		}
+        } catch (Exception e) {
+            DevkitUIPlugin.getDefault().logError("Failed to generate file", e);
+        } finally {
+            monitor.done();
+            if (writer != null) {
+                IOUtils.closeQuietly(writer);
+            }
+            if (reader != null) {
+                IOUtils.closeQuietly(reader);
+            }
+        }
 
-	}
+    }
 
 }

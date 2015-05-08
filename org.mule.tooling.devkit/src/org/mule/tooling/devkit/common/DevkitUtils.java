@@ -79,7 +79,8 @@ public class DevkitUtils {
     public static final String POM_FILENAME = "pom.xml";
     public static final String POM_TEMPLATE_PATH = "/templates/devkit-pom.xml.tmpl";
     public static final String UPDATE_SITE_FOLDER = "/target/update-site/";
-
+    public static final String LOG4J_PATH = "/templates/devkit-log4j2.xml.tmpl";
+    
     public static final String DEVKIT_CURRENT = "3.6.0-M3-SNAPSHOT";
 
     public static final String CATEGORY_COMMUNITY = "Community";

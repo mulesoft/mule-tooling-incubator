@@ -47,8 +47,8 @@ import org.mule.tooling.devkit.DevkitImages;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
-import org.mule.tooling.devkit.builder.ProjectGenerator;
-import org.mule.tooling.devkit.builder.ProjectGeneratorFactory;
+import org.mule.tooling.devkit.builder.ProjectBuilder;
+import org.mule.tooling.devkit.builder.ProjectBuilderFactory;
 import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
 import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
@@ -66,7 +66,9 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
     // TODO Re factor this, to many "if"s
     private static final String MAIN_TEMPLATE_PATH = "/templates/connector_main.tmpl";
     private static final String MAIN_NONE_ABSTRACT_TEMPLATE_PATH = "/templates/connector_none_abstract_main.tmpl";
-    private static final String TEST_TEMPLATE_PATH = "/templates/connector_test.tmpl";
+    private static final String TEST_TEMPLATE_PATH = "/templates/connector-test.tmpl";
+    private static final String TEST_PARENT_TEMPLATE_PATH = "/templates/connector-test-parent.tmpl";
+    private static final String TEST_PARENT_REGRESSION_SUITE_TEMPLATE_PATH = "/templates/connector-test-regression-suite.tmpl";
     private static final String TEST_QUERY_TEMPLATE_PATH = "/templates/connector-query-test.tmpl";
     private static final String TEST_DATASENSE_TEMPLATE_PATH = "/templates/connector-test-datasense.tmpl";
     private static final String TEST_RESOURCE_PATH = "/templates/connector-test-resource.tmpl";
@@ -234,17 +236,17 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         IProject project = createProject(mavenModel.getProjectName(), path, monitor, root);
         IJavaProject javaProject = JavaCore.create(root.getProject(mavenModel.getProjectName()));
 
-        ProjectGenerator generator = ProjectGeneratorFactory.newInstance(mavenModel);
-
+        ProjectBuilder generator = ProjectBuilderFactory.newInstance();
+        generator.withPackageName(mavenModel.getPackageName());
         NullProgressMonitor nullMonitor = new NullProgressMonitor();
 
-        List<IClasspathEntry> entries = generator.generateProjectEntries(nullMonitor, project);
+        List<IClasspathEntry> entries = generator.generateProjectEntries(project, nullMonitor);
 
         if (mavenModel.getApiType().equals(ApiType.SOAP)) {
             entries.add(generator.createEntry(project.getFolder(DevkitUtils.CXF_GENERATED_SOURCES_FOLDER), nullMonitor));
         }
 
-        generator.createProjectFolders(project, nullMonitor);
+        generator.build(project, nullMonitor);
 
         javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[] {}), nullMonitor);
 
@@ -337,14 +339,19 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         }
         if (mavenModel.getGenerateDefaultBody()) {
             if (!(apiType.equals(ApiType.REST) || apiType.equals(ApiType.SOAP))) {
-                fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(namespace), classReplacer);
-                fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);
-                if (mavenModel.getDataSenseEnabled()) {
-                    fileWriter.apply(TEST_DATASENSE_TEMPLATE_PATH, buildDataSenseTestTargetFilePath(packageName, className), classReplacer);
+                // fileWriter.apply(testResourceTemplatePath, getResourceExampleFileName(namespace), classReplacer);
+                fileWriter.apply(TEST_PARENT_TEMPLATE_PATH, buildTestParentFilePath(packageName, className), classReplacer);
+                if (!apiType.equals(ApiType.SOAP)) {
+                    fileWriter.apply(TEST_PARENT_REGRESSION_SUITE_TEMPLATE_PATH, buildRegressionTestsFilePath(packageName, className), classReplacer);
+                    fileWriter.apply(TEST_TEMPLATE_PATH, buildTestTargetFilePath(packageName, className), classReplacer);
+                    if (mavenModel.getDataSenseEnabled()) {
+                        fileWriter.apply(TEST_DATASENSE_TEMPLATE_PATH, buildDataSenseTestTargetFilePath(packageName, className), classReplacer);
+                    }
+                    if (mavenModel.getHasQuery()) {
+                        fileWriter.apply(TEST_QUERY_TEMPLATE_PATH, buildQueryTestTargetFilePath(packageName, className), classReplacer);
+                    }
                 }
-                if (mavenModel.getHasQuery()) {
-                    fileWriter.apply(TEST_QUERY_TEMPLATE_PATH, buildQueryTestTargetFilePath(packageName, className), classReplacer);
-                }
+
             }
         }
         fileWriter.apply("/templates/example.tmpl", getExampleFileName(namespace), classReplacer);
@@ -423,7 +430,6 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         mavenModel.setGitUrl(advancePage.getUrl());
         mavenModel.setConnectorClassName(DevkitUtils.createConnectorNameFrom(page.getName()));
         mavenModel.setConfigClassName("ConnectorConfig");
-        mavenModel.setDevkitVersion(page.getDevkitVersion());
         mavenModel.setPackage(advancePage.getPackage());
         mavenModel.setConnectorName(page.getName());
         mavenModel.setDataSenseEnabled(page.isMetadaEnabled());

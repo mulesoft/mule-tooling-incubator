@@ -1,0 +1,66 @@
+/**
+ * (c) 2003-2015 MuleSoft, Inc. The software in this package is published under the terms of the CPAL v1.0 license,
+ * a copy of which has been included with this distribution in the LICENSE.md file.
+ */
+
+package org.mule.modules.cloud.config;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.mule.api.annotations.Configurable;
+import org.mule.api.annotations.param.Optional;
+import org.mule.api.annotations.components.WsdlProvider;
+import org.mule.api.annotations.ws.WsdlServiceAddressResolver;
+import org.mule.api.annotations.ws.WsdlServiceDefinitionRetriever;
+import org.mule.devkit.api.ws.definition.DefaultServiceDefinition;
+import org.mule.devkit.api.ws.definition.ServiceDefinition;
+
+/**
+ * Wsdl type Config
+ *
+ * @author MuleSoft, Inc.
+ */
+@WsdlProvider(configElementName = "config-type", friendlyName = "Configuration type config")
+public class ConnectorConfig {
+
+    @Configurable
+    @Optional
+    private String address;
+
+    @WsdlServiceDefinitionRetriever
+    public List<ServiceDefinition> getServiceDefinition() {
+
+        List<ServiceDefinition> serviceDefinitions = new ArrayList<ServiceDefinition>();
+
+        serviceDefinitions.add(new DefaultServiceDefinition(
+                "SforceService_Soap",
+                "Salesforce API",
+                "wsdl/enterprise.wsdl",
+                "SforceService", 
+                "Soap")
+        );
+        return serviceDefinitions;
+    }
+
+    @WsdlServiceAddressResolver
+    public String getServiceAddress(ServiceDefinition definition) {
+        if(StringUtils.isNotEmpty(address)){
+            return address;
+        }
+        if ("SforceService_Soap".equals(definition.getId())) {
+            return "https://login.salesforce.com/services/Soap/c/22.0";
+        }
+        throw new RuntimeException("Unknown Definition");
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+}

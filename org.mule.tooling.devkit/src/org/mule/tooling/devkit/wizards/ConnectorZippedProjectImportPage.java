@@ -38,8 +38,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.devkit.builder.DevkitBuilder;
 import org.mule.tooling.devkit.builder.DevkitNature;
-import org.mule.tooling.devkit.builder.ProjectGenerator;
-import org.mule.tooling.devkit.builder.ProjectGeneratorFactory;
+import org.mule.tooling.devkit.builder.ProjectBuilder;
+import org.mule.tooling.devkit.builder.ProjectBuilderFactory;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
 import org.mule.tooling.maven.runner.SyncGetResultCallback;
@@ -242,9 +242,9 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
                         IProject project = createProject(projectName, monitor, root, new File(root.getLocation().toFile(), projectName));
 
                         IJavaProject javaProject = JavaCore.create(root.getProject(projectName));
-                        ProjectGenerator generator = ProjectGeneratorFactory.newInstance();
+                        ProjectBuilder generator = ProjectBuilderFactory.newInstance();
 
-                        List<IClasspathEntry> classpathEntries = generator.generateProjectEntries(monitor, project);
+                        List<IClasspathEntry> classpathEntries = generator.generateProjectEntries(project,monitor);
                         javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[] {}), monitor);
 
                         try {

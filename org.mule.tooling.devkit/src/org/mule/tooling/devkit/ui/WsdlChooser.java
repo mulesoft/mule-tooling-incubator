@@ -48,7 +48,8 @@ public class WsdlChooser {
         GridData gData = new GridData(GridData.FILL_HORIZONTAL);
         gData.horizontalSpan = 2;
         wsdlLocation.setLayoutData(gData);
-
+        wsdlLocation.setText("http://");
+        
         final Button buttonPickFile = new Button(apiGroupBox, SWT.NONE);
         buttonPickFile.setText("...");
         buttonPickFile.setLayoutData(GridDataFactory.fillDefaults().create());

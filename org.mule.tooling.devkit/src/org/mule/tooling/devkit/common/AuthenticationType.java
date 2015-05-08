@@ -1,7 +1,7 @@
 package org.mule.tooling.devkit.common;
 
 public enum AuthenticationType {
-    NONE("None"), CONNECTION_MANAGEMENT("Custom"), HTTP_BASIC("HTTP Basic"), OAUTH_V2("OAuth V2");
+    NONE("None"), CONNECTION_MANAGEMENT("Custom"), HTTP_BASIC("HTTP Basic"), OAUTH_V2("OAuth V2"), WS_SECURITY_USERNAME_TOKEN_PROFILE("WS-Security Username Token");
 
     AuthenticationType(String label) {
         this.label = label;

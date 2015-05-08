@@ -40,6 +40,7 @@ public class ConnectorProjectWidget {
     private Button browse;
     private Button useDefaultValuesCheckbox;
     private Button generateEmptyProjectCheckbox;
+    private boolean addEmptyProjectCheckbox = false;
 
     public void createControl(Composite parent) {
         Group connectorGroupBox = UiUtils.createGroupWithTitle(parent, GROUP_TITLE_CONNECTOR, 3);
@@ -147,24 +148,26 @@ public class ConnectorProjectWidget {
             }
         });
 
-        generateEmptyProjectCheckbox = new Button(connectorGroupBox, SWT.CHECK);
-        generateEmptyProjectCheckbox.setSelection(true);
-        generateEmptyProjectCheckbox.setText(" " + GENERATE_EMPTY_PROJECT_LABEL);
-        generateEmptyProjectCheckbox.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
-        generateEmptyProjectCheckbox
-                .setToolTipText("This will generate an @Connector with configurables, operations and tests.\nRecommended for users who haven't build connectors before.");
-        generateEmptyProjectCheckbox.addSelectionListener(new SelectionListener() {
+        if (addEmptyProjectCheckbox) {
+            generateEmptyProjectCheckbox = new Button(connectorGroupBox, SWT.CHECK);
+            generateEmptyProjectCheckbox.setSelection(true);
+            generateEmptyProjectCheckbox.setText(" " + GENERATE_EMPTY_PROJECT_LABEL);
+            generateEmptyProjectCheckbox.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
+            generateEmptyProjectCheckbox
+                    .setToolTipText("This will generate an @Connector with configurables, operations and tests.\nRecommended for users who haven't build connectors before.");
+            generateEmptyProjectCheckbox.addSelectionListener(new SelectionListener() {
 
-            @Override
-            public void widgetSelected(SelectionEvent e) {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
 
-            }
+                }
 
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
+                @Override
+                public void widgetDefaultSelected(SelectionEvent e) {
 
-            }
-        });
+                }
+            });
+        }
         initialize();
         dialogChanged();
     }
@@ -221,5 +224,13 @@ public class ConnectorProjectWidget {
         connectorNamespace.setEnabled(enabled);
         location.setEnabled(enabled);
         browse.setEnabled(enabled);
+    }
+
+    public boolean isAddEmptyProjectCheckbox() {
+        return addEmptyProjectCheckbox;
+    }
+
+    public void setAddEmptyProjectCheckbox(boolean addEmptyProjectCheckbox) {
+        this.addEmptyProjectCheckbox = addEmptyProjectCheckbox;
     }
 }
