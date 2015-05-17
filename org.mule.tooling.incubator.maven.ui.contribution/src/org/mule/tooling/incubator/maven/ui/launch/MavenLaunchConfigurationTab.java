@@ -63,7 +63,9 @@ public class MavenLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
     public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
         String value = "mvn clean test";
         configuration.setAttribute(MavenCommandLineConfigurationComponent.KEY_MVN_COMMAND_LINE, value);
-        configurationComponent.setCommandLine(value);
+        if(configurationComponent != null){
+            configurationComponent.setCommandLine(value);
+        }
     }
 
     @Override

@@ -486,7 +486,7 @@ public class LaunchView extends ViewPart implements IResourceChangeListener {
         final String lifeCyclePhase = lifeCycle;
         final String projectName = project;
         final String configName = project + " [" + (mojoLabel.isEmpty() ? lifeCyclePhase : mojoLabel) + "]";
-        final String mojoCommand = label;
+        final String mojoCommand = "mvn "+label;
 
         Action run = new Action("Run '" + project + " [" + label + "]'") {
 
