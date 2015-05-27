@@ -1,38 +1,46 @@
 package org.mule.tooling.devkit.popup.actions;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Collection;
+import java.util.jar.JarFile;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.OperationStatus;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.p2.core.ProvisionException;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.operations.InstallOperation;
-import org.eclipse.equinox.p2.query.IQueryResult;
-import org.eclipse.equinox.p2.query.QueryUtil;
-import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
-import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
-import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.mule.tooling.core.MuleCorePlugin;
+import org.mule.tooling.core.event.MuleModuleManagerRestartedEvent;
+import org.mule.tooling.core.module.ModuleContributionManager;
+import org.mule.tooling.core.runtime.server.MuleServerManager;
+import org.mule.tooling.core.utils.BundleJarFileInspector;
+import org.mule.tooling.core.utils.BundleManifestReader;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
 import org.mule.tooling.devkit.maven.MavenRunBuilder;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 
 public class InstallOrUpdateConnector extends AbstractHandler {
 
@@ -45,80 +53,33 @@ public class InstallOrUpdateConnector extends AbstractHandler {
 
                 @Override
                 public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-                    monitor.beginTask(installingPalette, 100);
-                    final Integer result = generateUpdateSite(selectedProject, monitor);
-                    
-                    DevkitUtils.refreshFolder(selectedProject.getProject().getFolder(DevkitUtils.GENERATED_SOURCES_FOLDER), monitor).execute(Status.OK);
-
-                    if (result == BaseDevkitGoalRunner.CANCELED)
-                        return Status.CANCEL_STATUS;
-
-                    if (selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER) != null && (result == Status.OK)) {
-
-                        final List<IInstallableUnit> list = new ArrayList<IInstallableUnit>();
-                        final URI uri = selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER).getLocationURI();
-
-                        refreshRepository(monitor, uri);
-
-                        getInstallablesFromRepo(monitor, list, uri);
-
-                        if (list.isEmpty()) {
-                            return new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR, "No installable was found at repository: " + uri, null);
-                        }
-                        openInstallWizzard(monitor, list, uri);
-
-                    } else {
-                        return new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR,
-                                "Failed to generate Update Site. Check the logs for more details.", null);
-                    }
-                    return Status.OK_STATUS;
-                }
-
-                private void getInstallablesFromRepo(final IProgressMonitor monitor, final List<IInstallableUnit> list, final URI uri) throws ProvisionException {
-                    IMetadataRepository repo = ProvisioningUI.getDefaultUI().loadMetadataRepository(uri, false, null);
-                    if (repo != null) {
-                        repo.setProperty("name", selectedProject.getElementName() + " local Update Site");
-                        IQueryResult<IInstallableUnit> queryResult = repo.query(QueryUtil.createIUAnyQuery(), monitor);
-
-                        for (Iterator<IInstallableUnit> iterator = queryResult.iterator(); iterator.hasNext();) {
-                            IInstallableUnit current = iterator.next();
-                            if (current.getId().endsWith("feature.group")) {
-                                list.add(current);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                private void refreshRepository(final IProgressMonitor monitor, final URI uri) {
                     try {
-                        ((IMetadataRepositoryManager) ProvisioningUI.getDefaultUI().getSession().getProvisioningAgent().getService(IMetadataRepositoryManager.SERVICE_NAME))
-                                .refreshRepository(uri, monitor);
+                        IStatus status = Status.OK_STATUS;
+                        monitor.beginTask(installingPalette, 100);
+                        final Integer result = generateUpdateSite(selectedProject, monitor);
 
-                    } catch (ProvisionException e) {
-                        // If the repo diesn't exist
+                        DevkitUtils.refreshFolder(selectedProject.getProject().getFolder(DevkitUtils.GENERATED_SOURCES_FOLDER), monitor).execute(Status.OK);
+
+                        if (result == BaseDevkitGoalRunner.CANCELED) {
+                            status = Status.CANCEL_STATUS;
+                        } else if (selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER) != null && (result == Status.OK)) {
+
+                            final URI uri = selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER).getLocationURI();
+
+                            DevkitUtils.refreshFolder(selectedProject.getProject().getFolder(DevkitUtils.GENERATED_SOURCES_FOLDER), monitor).execute(Status.OK);
+
+                            status = installAtDropinsFolder(selectedProject, monitor, uri);
+
+                        } else {
+                            status = new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR,
+                                    "Failed to generate Update Site. Check the logs for more details.", null);
+                        }
+                        return status;
+                    } finally {
+                        monitor.done();
                     }
                 }
 
-                private void openInstallWizzard(final IProgressMonitor monitor, final List<IInstallableUnit> list, final URI uri) {
-                    Display.getDefault().syncExec(new Runnable() {
-
-                        public void run() {
-                            InstallOperation op = ProvisioningUI.getDefaultUI().getInstallOperation(list, new URI[] { uri });
-
-                            op.resolveModal(monitor);
-
-                            ProvisioningUI.getDefaultUI().openInstallWizard(list, op, null);
-                        }
-                    });
-                }
-
-                private Integer generateUpdateSite(final IJavaProject selectedProject, final IProgressMonitor monitor) {
-                    final Integer result = MavenRunBuilder.newMavenRunBuilder().withProject(selectedProject)
-                            .withArgs(new String[] { "clean", "install", "-DskipTests", "-Ddevkit.studio.package.skip=false" })
-                            .withTaskName("Generating update site for " + DevkitUtils.getProjectLabel(selectedProject)).build().run(monitor);
-                    return result;
-                }
             };
             installOrUpdate.setUser(true);
             installOrUpdate.setRule(selectedProject.getProject());
@@ -141,4 +102,103 @@ public class InstallOrUpdateConnector extends AbstractHandler {
         return null;
     }
 
+    private Integer generateUpdateSite(final IJavaProject selectedProject, final IProgressMonitor monitor) {
+        MavenRunBuilder builder = MavenRunBuilder.newMavenRunBuilder().withProject(selectedProject)
+                .withArgs(new String[] { "clean", "install", "-DskipTests", "-Ddevkit.studio.package.skip=false" })
+                .withTaskName("Generating update site for " + DevkitUtils.getProjectLabel(selectedProject));
+
+        return builder.build().run(monitor);
+    }
+
+    private void installOrUpdateBundle(File pluginDir, String synmbolicName) {
+        try {
+
+            BundleContext bundleContext = DevkitUIPlugin.getDefault().getBundle().getBundleContext();
+            String location = pluginDir.toURI().toString();
+
+            Bundle bundle = Platform.getBundle(synmbolicName);
+
+            if (bundle != null) {
+                bundle.update();
+            } else {
+                bundle = bundleContext.installBundle(location);
+            }
+
+            bundle.start();
+
+        } catch (BundleException e) {
+            DevkitUIPlugin.getDefault().logError(e.getMessage(), e);
+        }
+    }
+
+    private BundleManifestReader geManifestFromJar(File pluginJar) throws IOException {
+        return new BundleJarFileInspector(new JarFile(pluginJar)).getManifest();
+
+    }
+
+    private IStatus installAtDropinsFolder(final IJavaProject selectedProject, final IProgressMonitor monitor, final URI uri) {
+        IStatus status = Status.OK_STATUS;
+        try {
+
+            String eclipseHome = System.getProperty("eclipse.home.location");
+            URI fileUri = URI.create(eclipseHome);
+            fileUri.getPath();
+            File dropins = new File(fileUri.getPath(), "dropins");
+
+            if (!dropins.exists()) {
+                dropins.mkdir();
+            }
+            unzipPluginOnDropinsFolder(selectedProject, monitor, dropins);
+            reloadPalette();
+        } catch (IllegalStateException e) {
+            status = new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR, "No installable was found at repository: " + uri, e);
+        } catch (IOException e) {
+            status = new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR, "No installable was found at repository: " + uri, e);
+        }
+        return status;
+    }
+
+    private void unzipPluginOnDropinsFolder(final IJavaProject selectedProject, final IProgressMonitor monitor, File dropins) throws IOException {
+        Collection<File> files = FileUtils.listFiles(selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER).getFolder("plugins").getLocation().toFile(),
+                new String[] { "jar" }, false);
+        for (File pluginJarFile : files) {
+
+            BundleManifestReader manifestReader = geManifestFromJar(pluginJarFile);
+
+            File dropinPluginFolder = new File(dropins, manifestReader.getSymbolicName());
+
+            if (dropinPluginFolder.exists()) {
+                FileUtils.deleteDirectory(dropinPluginFolder);
+            }
+
+            DevkitUtils.unzipToFolder(pluginJarFile, dropinPluginFolder);
+
+            installOrUpdateBundle(dropinPluginFolder, manifestReader.getSymbolicName());
+
+        }
+    }
+
+    private void reloadPalette() {
+        Display.getDefault().asyncExec(new Runnable() {
+
+            @Override
+            public void run() {
+                MuleServerManager serverManager = MuleCorePlugin.getServerManager();
+                try {
+                    ModuleContributionManager.clear();
+                    serverManager.initialize();
+                } catch (CoreException e) {
+                    DevkitUIPlugin.getDefault().logError(e.getMessage(), e);
+                }
+                MuleCorePlugin.getEventBus().fireEvent(new MuleModuleManagerRestartedEvent(null));
+                // Refresh workspace project so that any mule app using this plugin refresh the classpath container
+                IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                try {
+                    root.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+                } catch (CoreException e) {
+                    DevkitUIPlugin.getDefault().logError(e.getMessage(), e);
+                }
+            }
+        });
+    }
 }

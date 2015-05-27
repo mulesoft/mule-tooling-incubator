@@ -2,13 +2,19 @@ package org.mule.tooling.devkit.common;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.operations.OperationStatus;
@@ -381,5 +387,36 @@ public class DevkitUtils {
         newIds[0] = DevkitNature.NATURE_ID;
         description.setNatureIds(newIds);
         project.setDescription(description, null);
+    }
+    
+    public static void unzipToFolder(File zipFile, File destination) throws IOException {
+        ZipFile zip = new ZipFile(zipFile);
+        try {
+            Enumeration<? extends ZipEntry> e = zip.entries();
+            while (e.hasMoreElements()) {
+                ZipEntry entry = e.nextElement();
+                File file = new File(destination, entry.getName());
+                if (entry.isDirectory()) {
+                    file.getParentFile().mkdirs();
+                } else {
+                    InputStream is = zip.getInputStream(entry);
+                    File parent = file.getParentFile();
+                    if (parent != null && parent.exists() == false) {
+                        parent.mkdirs();
+                    }
+                    FileOutputStream os = new FileOutputStream(file);
+                    try {
+                        IOUtils.copy(is, os);
+                    } finally {
+                        os.close();
+                        is.close();
+                    }
+                    file.setLastModified(entry.getTime());
+
+                }
+            }
+        } finally {
+            zip.close();
+        }
     }
 }

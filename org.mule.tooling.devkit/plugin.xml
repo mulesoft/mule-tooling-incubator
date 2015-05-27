@@ -147,10 +147,6 @@
 		<command id="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
 			name="Enable/Disable Javadoc Check">
 		</command>
-		<command id="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand"
-			name="Try it out!"
-			defaultHandler="org.mule.tooling.devkit.popup.actions.SendToPaletteCommand">
-		</command>
 		<command id="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
 			name="Generate Sources">
 		</command>
