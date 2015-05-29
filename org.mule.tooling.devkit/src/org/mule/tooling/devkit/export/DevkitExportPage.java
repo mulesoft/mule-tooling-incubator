@@ -102,7 +102,7 @@ public class DevkitExportPage extends WizardPage {
         });
         projects.setInput(ResourcesPlugin.getWorkspace());
         Label outputFileName = new Label(exportGroup, SWT.NULL);
-        outputFileName.setText("Location:");
+        outputFileName.setText("Zip file:");
         outputFileName.setToolTipText("The name for the archive that will be generated.");
 
         name = new Text(exportGroup, SWT.BORDER | SWT.SINGLE);
