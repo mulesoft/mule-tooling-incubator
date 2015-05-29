@@ -269,7 +269,8 @@ public class ProjectBuilder {
 
         templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, replacer);
         templateFileWriter.apply("/templates/example.tmpl", getExampleFileName(), replacer);
-
+        templateFileWriter.apply("/templates/connector-test-automation-credentials.properties.tmpl", "automation-credentials.properties", replacer);
+        
         createIcons(project, monitor);
 
         for (Entry<String, String> keyValuePair : wsdlFiles.entrySet()) {

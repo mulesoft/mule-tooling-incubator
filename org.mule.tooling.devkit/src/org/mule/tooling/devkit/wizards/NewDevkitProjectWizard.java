@@ -258,7 +258,8 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
         templateFileWriter.apply("/templates/LICENSE_HEADER.txt.tmpl", "LICENSE_HEADER.txt", classReplacer);
         templateFileWriter.apply("/templates/LICENSE.tmpl", "LICENSE.md", new NullReplacer());
         templateFileWriter.apply(LOG4J_PATH, DevkitUtils.MAIN_RESOURCES_FOLDER + "/log4j2.xml", new NullReplacer());
-
+        templateFileWriter.apply("/templates/connector-test-automation-credentials.properties.tmpl", DevkitUtils.TEST_RESOURCES_FOLDER+"/automation-credentials.properties", new NullReplacer());
+        
         String uncammelName = mavenModel.getModuleName();
         ImageWriter imageWriter = new ImageWriter(project, nullMonitor);
         imageWriter.apply("/templates/extension-icon-24x16.png", getIcon24FileName(uncammelName));
