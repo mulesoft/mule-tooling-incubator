@@ -9,11 +9,6 @@ import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
 import org.mule.modules.cloud.config.ConnectorConfig;
 
-/**
- * Anypoint Connector
- *
- * @author MuleSoft, Inc.
- */
 @Connector(name="cloud", friendlyName="Cloud", minMuleVersion = "3.7")
 public class CloudConnector {
 

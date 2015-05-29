@@ -5,30 +5,12 @@
 
 package org.mule.modules.cloud;
 
-import org.mule.api.MuleContext;
-import org.mule.api.MuleException;
-import org.mule.api.annotations.lifecycle.Start;
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
 import org.mule.modules.cloud.config.ConnectorConfig;
 
-import javax.inject.Inject;
-
-/**
- * Anypoint Connector
- *
- * @author MuleSoft, Inc.
- */
 @Connector(name="cloud", friendlyName="Cloud", minMuleVersion = "3.7")
 public class CloudConnector {
-
-    @Inject
-    MuleContext muleContext;
-
-    @Start
-    public void initConnector() throws MuleException {
-        getConfig().initializeMuleContext(muleContext);
-    }
 
     @Config
     ConnectorConfig config;
@@ -39,14 +21,6 @@ public class CloudConnector {
 
     public void setConfig(ConnectorConfig config) {
         this.config = config;
-    }
-
-    public MuleContext getMuleContext() {
-        return muleContext;
-    }
-
-    public void setMuleContext(MuleContext muleContext) {
-        this.muleContext = muleContext;
     }
 
 }

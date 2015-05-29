@@ -5,22 +5,10 @@
 
 package org.mule.modules.cloud.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.mule.api.MuleContext;
-import org.mule.api.MuleException;
 import org.mule.api.annotations.ws.WsdlTransportResolver;
-import org.mule.devkit.api.lifecycle.LifeCycleManager;
-import org.mule.devkit.api.ws.transport.HttpRequesterConfigWsdlTransport;
 import org.mule.devkit.api.ws.transport.WsdlTransport;
-import org.mule.module.http.api.HttpConstants;
-import org.mule.module.http.api.requester.HttpRequesterConfig;
-import org.mule.module.http.api.requester.HttpRequesterConfigBuilder;
-import org.mule.module.http.api.requester.authentication.BasicAuthenticationBuilder;
+import org.mule.devkit.api.ws.transport.HttpBasicWsdlTransport;
 import org.mule.api.annotations.Configurable;
-import org.mule.api.annotations.param.Optional;
 import org.mule.api.annotations.display.Password;
 import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.components.WsdlProvider;
@@ -28,84 +16,45 @@ import org.mule.api.annotations.ws.WsdlServiceAddressResolver;
 import org.mule.api.annotations.ws.WsdlServiceDefinitionRetriever;
 import org.mule.devkit.api.ws.definition.DefaultServiceDefinition;
 import org.mule.devkit.api.ws.definition.ServiceDefinition;
+import org.mule.api.annotations.param.Default;
+import org.mule.api.annotations.param.Optional;
 
-/**
- * Wsdl type Config
- *
- * @author MuleSoft, Inc.
- */
-@WsdlProvider(configElementName = "config-type", friendlyName = "Configuration type config")
+@WsdlProvider(configElementName = "config-type", friendlyName = "Config")
 public class ConnectorConfig {
 
-    private HttpRequesterConfig httpRequesterConfig;
-
-    @WsdlTransportResolver
-    public WsdlTransport resolveTransport() {
-        // Basic Http Authentication, keep in mind that the initialization of the DefaultHttpRequesterConfig is up to
-        // connectors' developer
-        return new HttpRequesterConfigWsdlTransport(httpRequesterConfig);
-    }
-
-    public void initializeMuleContext(MuleContext muleContext) throws MuleException {
-        HttpRequesterConfigBuilder httpRequesterConfigBuilder = new HttpRequesterConfigBuilder(muleContext);
-
-        BasicAuthenticationBuilder basicAuthenticationBuilder = new BasicAuthenticationBuilder(muleContext);
-        basicAuthenticationBuilder.setUsername(getUsername());
-        basicAuthenticationBuilder.setPassword(getPassword());
-        httpRequesterConfigBuilder.setAuthentication(basicAuthenticationBuilder.build());
-
-        httpRequesterConfigBuilder.setProtocol(HttpConstants.Protocols.HTTPS);
-        httpRequesterConfigBuilder.setHostExpression(getAddress());
-        httpRequesterConfigBuilder.setPort(443);
-
-        httpRequesterConfig = httpRequesterConfigBuilder.build();
-        LifeCycleManager.executeInitialiseAndStart(httpRequesterConfig);
-    }
-
-    /**
-     * Username used to initialise a ServiceNow session.
-     */
     @Configurable
-    @Placement(order = 1, group = "Connection")
+    @Placement(order = 1)
     private String username;
 
-    /**
-     * Password to authenticate the user.
-     */
     @Configurable
-    @Placement(order = 2, group = "Connection")
+    @Placement(order = 2)
     @Password
+    @Optional
     private String password;
 
     @Configurable
-    @Optional
-    @Placement(order = 3, group = "Connection")
+    @Default("https://login.salesforce.com/services/Soap/c/22.0")
+    @Placement(order = 3)
     private String address;
 
     @WsdlServiceDefinitionRetriever
-    public List<ServiceDefinition> getServiceDefinition() {
-
-        List<ServiceDefinition> serviceDefinitions = new ArrayList<ServiceDefinition>();
-
-        serviceDefinitions.add(new DefaultServiceDefinition(
+    public ServiceDefinition getServiceDefinition() {
+           return new DefaultServiceDefinition(
                 "SforceService_Soap",
                 "Salesforce API",
                 "wsdl/enterprise.wsdl",
-                "SforceService", 
-                "Soap")
-        );
-        return serviceDefinitions;
+                "SforceService",
+                "Soap");
     }
 
     @WsdlServiceAddressResolver
     public String getServiceAddress(ServiceDefinition definition) {
-        if(StringUtils.isNotEmpty(address)){
-            return address;
-        }
-        if ("SforceService_Soap".equals(definition.getId())) {
-            return "https://login.salesforce.com/services/Soap/c/22.0";
-        }
-        throw new RuntimeException("Unknown Definition");
+         return address;
+    }
+
+    @WsdlTransportResolver
+    public WsdlTransport resolveTransport(ServiceDefinition serviceDefinition) {
+        return new HttpBasicWsdlTransport(getUsername(), getPassword());
     }
 
     public String getAddress() {
@@ -123,7 +72,7 @@ public class ConnectorConfig {
     public void setUsername(String username) {
         this.username = username;
     }
-    
+
     public String getPassword() {
         return password;
     }
