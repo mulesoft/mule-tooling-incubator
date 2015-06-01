@@ -6,7 +6,7 @@
  */
 
 package ${project.package}.config;
-#if( !$isSingleWsdl )
+#if( !$isSingleWsdl || ( $project.authenticationType == 'WS_SECURITY_USERNAME_TOKEN_PROFILE') )
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,11 +129,11 @@ public class ${project.configClassName} {
     }
 #elseif( $project.authenticationType == 'WS_SECURITY_USERNAME_TOKEN_PROFILE' )
     @WsdlSecurityStrategyResolver
-     public List<WsdlSecurityStrategy> getWsdlSecurityResolver() {
-         List<WsdlSecurityStrategy> result = new ArrayList<WsdlSecurityStrategy>();
-         result.add(new WsdlUsernameToken(getUsername(),  getPassword(), PasswordType.TEXT, true, true));
-         return result;
-     }
+    public List<WsdlSecurityStrategy> getWsdlSecurityResolver(ServiceDefinition definition) {
+        List<WsdlSecurityStrategy> result = new ArrayList<WsdlSecurityStrategy>();
+        result.add(new WsdlUsernameToken(getUsername(),  getPassword(), PasswordType.TEXT, true, true));
+        return result;
+    }
 #end
 #if($isSingleWsdl)
 
