@@ -449,6 +449,7 @@ public class ProjectBuilder {
         return MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + "config/" + configClassName + ".java";
     }
 
+    @SuppressWarnings("rawtypes")
     private List<ServiceDefinition> getServiceDefinitions(IProgressMonitor monitor) throws WSDLException {
         WSDLFactory factory;
         List<ServiceDefinition> deff = new ArrayList<ServiceDefinition>();
@@ -498,6 +499,7 @@ public class ProjectBuilder {
 
     private String getPortAddress(javax.wsdl.Port portItem) {
         String addressValue = "";
+        @SuppressWarnings("rawtypes")
         List extElements = portItem.getExtensibilityElements();
         for (Object element : extElements) {
             if (element instanceof SOAPAddress) {

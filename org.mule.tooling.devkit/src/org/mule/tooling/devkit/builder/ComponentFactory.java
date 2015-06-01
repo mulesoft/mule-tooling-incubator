@@ -3,7 +3,6 @@ package org.mule.tooling.devkit.builder;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -18,7 +17,6 @@ import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.template.TemplateFileWriter;
 import org.mule.tooling.devkit.template.replacer.ClassReplacer;
 import org.mule.tooling.devkit.template.replacer.ComponentReplacer;
-import org.mule.tooling.devkit.template.replacer.VelocityReplacer;
 
 public class ComponentFactory {
 

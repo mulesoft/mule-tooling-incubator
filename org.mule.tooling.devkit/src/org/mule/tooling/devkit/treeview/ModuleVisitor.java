@@ -60,7 +60,8 @@ public class ModuleVisitor extends ASTVisitor {
         compilationUnit = node;
         LocateAnnotationVisitor visitorConnector = new LocateAnnotationVisitor(0, ModelUtils.CONNECTOR_ANNOTATION).addAnnotation(ModelUtils.MODULE_ANNOTATION)
                 .addAnnotation(ModelUtils.CONFIGURATION_ANNOTATION).addAnnotation(ModelUtils.BASIC_AUTH_ANNOTATION).addAnnotation(ModelUtils.OAUTH_ANNOTATION)
-                .addAnnotation(ModelUtils.METADATA_CATEGORY_ANNOTATION).addAnnotation(ModelUtils.HTTP_BASIC_AUTH_ANNOTATION).addAnnotation(ModelUtils.WSDL_PROVIDER);
+                .addAnnotation(ModelUtils.METADATA_CATEGORY_ANNOTATION).addAnnotation(ModelUtils.HTTP_BASIC_AUTH_ANNOTATION).addAnnotation(ModelUtils.WSDL_PROVIDER)
+                .addAnnotation(ModelUtils.HANDLER);
 
         node.accept(visitorConnector);
         if (visitorConnector.getNode() != null || forceSearch) {
@@ -176,7 +177,8 @@ public class ModuleVisitor extends ASTVisitor {
             } catch (NullPointerException ex) {
                 ex.printStackTrace();
             }
-        } else if (ModelUtils.annotationMatches(node.getTypeName(), ModelUtils.METADATA_CATEGORY_ANNOTATION)) {
+        } else if (ModelUtils.annotationMatches(node.getTypeName(), ModelUtils.METADATA_CATEGORY_ANNOTATION)
+                || ModelUtils.annotationMatches(node.getTypeName(), ModelUtils.HANDLER)) {
             module.setName(((TypeDeclaration) node.getParent()).getName().toString());
             module.setType("@" + node.getTypeName().toString());
         } else if (ModelUtils.isAnnotationSupported(node.getTypeName())) {
