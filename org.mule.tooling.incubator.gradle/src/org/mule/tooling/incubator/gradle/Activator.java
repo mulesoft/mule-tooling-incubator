@@ -6,8 +6,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.mule.tooling.core.MuleCorePlugin;
+import org.mule.tooling.core.event.CoreEventTypes;
 import org.mule.tooling.incubator.gradle.listeners.BuildUpdatedListener;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
+import org.mule.tooling.utils.eventbus.EventBus;
+import org.mule.tooling.utils.eventbus.EventBusHelper;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -45,6 +49,11 @@ public class Activator extends AbstractUIPlugin {
 		//we'll have to live with that for now.
 		buildRefreshListener = new BuildUpdatedListener();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(buildRefreshListener);	
+		
+		
+		//register a listener for whenever the runtime changes.
+		EventBusHelper ebh = new EventBusHelper();
+		ebh.registerListener(MuleCorePlugin.getEventBus(), CoreEventTypes.ON_MULE_RUNTIME_CHANGED, new RuntimeChangedEventHandler());
 		
 	}
 
