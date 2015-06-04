@@ -44,7 +44,7 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
                 CompilationUnit unit = DevkitUtils.getConnectorClass(selectedProject);
 
                 String[] generateTestsCommand = new String[] { "compile", "-Ddevkit.studio.package.skip=true", "-Ddevkit.javadoc.check.skip=true", "-Dmaven.javadoc.skip=true",
-                        "org.mule.tools.devkit:" + "connector-automation-generator-maven-plugin:" + "connector-automation-generator",
+                        "org.mule.tools.devkit:" + "connector-automation-generator-maven-plugin:2.0.2-SNAPSHOT:" + "connector-automation-generator",
                         "-DprocessorsList=" + testdataDto.getFilteredProcessors(), "-DautomationRootPackage=" + testdataDto.getAutomationPackage(),
                         "-DconnectorClassName="+unit.getPackage().getName()+"."+unit.getTypeRoot().getElementName().replace(".java", "")};
                 commandArgs.addAll(Arrays.asList(generateTestsCommand));

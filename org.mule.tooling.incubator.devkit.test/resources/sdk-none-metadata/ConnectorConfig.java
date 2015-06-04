@@ -3,17 +3,14 @@
  * a copy of which has been included with this distribution in the LICENSE.md file.
  */
 
-package ${project.package}.config;
+package org.mule.modules.cloud.config;
 
 import org.mule.api.annotations.components.Configuration;
-#if(${project.generateDefaultBody} == true )
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
-#end
 
 @Configuration(configElementName = "config-type", friendlyName = "Configuration type config")
-public class ${project.configClassName} {
-#if(${project.generateDefaultBody} == true )
+public class ConnectorConfig {
 
     /**
      * Configurable
@@ -37,6 +34,5 @@ public class ${project.configClassName} {
     public String getReply() {
         return this.reply;
     }
-#end
 
 }

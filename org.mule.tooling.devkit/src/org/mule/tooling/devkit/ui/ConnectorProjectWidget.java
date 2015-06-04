@@ -1,8 +1,20 @@
 package org.mule.tooling.devkit.ui;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -18,7 +30,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.devkit.wizards.ProjectObserver;
 import org.mule.tooling.ui.MuleUiConstants;
 import org.mule.tooling.ui.utils.UiUtils;
 
@@ -32,6 +46,9 @@ public class ConnectorProjectWidget {
     private static final String GENERATE_EMPTY_PROJECT_LABEL = "Generate default body for @Connector";
     private static final String LOCATION_LABEL = "Location:";
 
+    private static final Pattern CONNECTOR_NAME_REGEXP = Pattern.compile("[A-Z]+[a-zA-Z0-9]+");
+    private static final Pattern VALID_NAME_REGEX = Pattern.compile("[A-Za-z]+[a-zA-Z0-9\\-_]*");
+
     private Text name;
     private Text projectName;
     private Text connectorNamespace;
@@ -41,6 +58,8 @@ public class ConnectorProjectWidget {
     private Button useDefaultValuesCheckbox;
     private Button generateEmptyProjectCheckbox;
     private boolean addEmptyProjectCheckbox = false;
+
+    private ProjectObserver notifier;
 
     public void createControl(Composite parent) {
         Group connectorGroupBox = UiUtils.createGroupWithTitle(parent, GROUP_TITLE_CONNECTOR, 3);
@@ -57,7 +76,7 @@ public class ConnectorProjectWidget {
 
             @Override
             public void modifyText(ModifyEvent e) {
-
+                dialogChanged();
             }
         };
 
@@ -94,6 +113,7 @@ public class ConnectorProjectWidget {
                 } else {
                     location.setText("");
                 }
+                dialogChanged();
             }
 
             @Override
@@ -104,6 +124,7 @@ public class ConnectorProjectWidget {
                 } else {
                     location.setText("");
                 }
+                dialogChanged();
             }
         });
 
@@ -145,6 +166,7 @@ public class ConnectorProjectWidget {
                 if (result != null) {
                     location.setText(result);
                 }
+                dialogChanged();
             }
         });
 
@@ -159,12 +181,12 @@ public class ConnectorProjectWidget {
 
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-
+                    dialogChanged();
                 }
 
                 @Override
                 public void widgetDefaultSelected(SelectionEvent e) {
-
+                    dialogChanged();
                 }
             });
         }
@@ -185,7 +207,9 @@ public class ConnectorProjectWidget {
     }
 
     public String getLocation() {
-        return location.getText();
+        if (useDefaultValuesCheckbox.getSelection())
+            return Platform.getLocation().append(getProjectName()).toOSString();
+        return Path.fromOSString(location.getText().trim()).append(this.getProjectName()).toOSString();
     }
 
     protected String getDefaultPath(String name) {
@@ -195,6 +219,7 @@ public class ConnectorProjectWidget {
 
     private void dialogChanged() {
         updateProjectComponentsEnablement();
+        notifier.broadcastChange();
     }
 
     private Text initializeTextField(Group groupBox, String labelText, String defaultValue, String tooltip, int hSpan, ModifyListener modifyListener) {
@@ -233,4 +258,119 @@ public class ConnectorProjectWidget {
     public void setAddEmptyProjectCheckbox(boolean addEmptyProjectCheckbox) {
         this.addEmptyProjectCheckbox = addEmptyProjectCheckbox;
     }
+
+    public IStatus validate() {
+        if (StringUtils.isBlank(this.getName())) {
+            return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "The Connector Name must be specified.");
+        } else if (this.getName().equals("Test")) {
+            return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "The Connector Name cannot be Test.");
+        } else if (this.getName().endsWith("Connector")) {
+            return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "There is no need for you to add the Connector word at the end.");
+        } else if (DevkitUtils.isReserved(this.getName().toLowerCase())) {
+            return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "Cannot use Java language keywords for the name");
+        } else if (!CONNECTOR_NAME_REGEXP.matcher(this.getName()).matches()) {
+            return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "The Name must start with an upper case character followed by other alphanumeric characters.");
+        }
+        if (!this.getName().equals(StringUtils.trim(this.getName()))) {
+            return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "Name cannot contain spaces.");
+        }
+        if (!VALID_NAME_REGEX.matcher(this.getConnectorNamespace()).matches()) {
+            return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "Namespace must start with a letter, and might be followed by a letter, number, _, or -.");
+        }
+        if (StringUtils.isBlank(this.location.getText())) {
+            return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "You need to specify a project location");
+        }
+
+        final String projectName = getProjectName();
+
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        IWorkspaceRoot root = workspace.getRoot();
+        // check whether project already exists
+        final IProject handle = workspace.getRoot().getProject(this.getName());
+        if (handle.exists()) {
+            return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "A project with the name [" + projectName + "] already exists in your workspace folder.");
+        }
+
+        IPath projectLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().append(projectName);
+        if (projectLocation.toFile().exists()) {
+            try {
+                // correct casing
+                String canonicalPath = projectLocation.toFile().getCanonicalPath();
+                projectLocation = new Path(canonicalPath);
+            } catch (IOException e) {
+                DevkitUIPlugin.log(e);
+            }
+
+            String existingName = projectLocation.lastSegment();
+            if (!existingName.equals(projectName)) {
+                return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "Invalid name");
+            }
+
+        }
+        final String location = this.getLocation();
+        if (!Path.EMPTY.isValidPath(location)) {
+            return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "Invalid project contents directory");
+        }
+
+        IPath projectPath = null;
+        if (!this.useDefaultValuesCheckbox.getSelection()) {
+            projectPath = Path.fromOSString(location);
+            if (!projectPath.toFile().exists()) {
+                // check non-existing external location
+                if (!canCreate(projectPath.toFile())) {
+                    return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "Cannot create project content at the given external location.");
+                }
+            }
+        }
+
+        // validate the location
+        final IStatus locationStatus = workspace.validateProjectLocation(handle, projectPath);
+        if (!locationStatus.isOK()) {
+            return locationStatus;
+        }
+
+        final IStatus nameStatus = ResourcesPlugin.getWorkspace().validateName(projectName, IResource.PROJECT);
+        if (!nameStatus.isOK()) {
+            return nameStatus;
+        }
+
+        if (root.exists(Path.fromOSString(projectName))) {
+            return new Status(IStatus.ERROR, DevkitUIPlugin.PLUGIN_ID, "A project with the name [" + projectName + "] already exists in your workspace folder.");
+        }
+        return Status.OK_STATUS;
+    }
+
+    public String getConnectorNamespace() {
+        return connectorNamespace.getText();
+    }
+
+    public boolean generateDefaultBody() {
+        boolean result = false;
+        if (generateEmptyProjectCheckbox != null) {
+            result = generateEmptyProjectCheckbox.getSelection();
+        }
+        return result;
+    }
+
+    private boolean canCreate(File file) {
+        while (!file.exists()) {
+            file = file.getParentFile();
+            if (file == null)
+                return false;
+        }
+        return file.canWrite();
+    }
+
+    public ProjectObserver getNotifier() {
+        return notifier;
+    }
+
+    public void setNotifier(ProjectObserver notifier) {
+        this.notifier = notifier;
+    }
+
+    public boolean useDefaultValues() {
+        return useDefaultValuesCheckbox.getSelection();
+    }
+
 }

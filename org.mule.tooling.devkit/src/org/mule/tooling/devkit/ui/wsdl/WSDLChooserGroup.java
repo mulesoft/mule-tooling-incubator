@@ -1,6 +1,9 @@
 package org.mule.tooling.devkit.ui.wsdl;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
@@ -29,6 +33,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.devkit.ui.SelectWSDLDialog;
+import org.mule.tooling.devkit.wizards.ProjectObserver;
 import org.mule.tooling.ui.utils.UiUtils;
 
 public class WSDLChooserGroup {
@@ -47,6 +52,7 @@ public class WSDLChooserGroup {
     private Composite buttonsWrapper;
     private ToolBar parametersToolbar;
     private Composite emptyCanvasComposite;
+    private ProjectObserver broadcaster;
 
     public void createControl(Composite parent) {
         parameters = new ArrayList<WsdlRowEntry>();
@@ -83,7 +89,16 @@ public class WSDLChooserGroup {
                 SelectWSDLDialog dialog = new SelectWSDLDialog(Display.getCurrent().getActiveShell());
                 dialog.create();
                 if (dialog.open() == Window.OK) {
-                    addParameter(dialog.getWsdlLocation());
+                    String wsdlLocation = dialog.getWsdlLocation();
+                    if (StringUtils.isNotEmpty(wsdlLocation)) {
+                        if (wsdlLocation.startsWith("http")) {
+                            if (isValidURL(wsdlLocation)) {
+                                addParameter(dialog.getWsdlLocation());
+                            }
+                        } else {
+                            addParameter(dialog.getWsdlLocation());
+                        }
+                    }
                 }
             }
         });
@@ -91,7 +106,6 @@ public class WSDLChooserGroup {
         parametersListWrapper.setContent(parametersListWrapperContent);
         parametersListWrapper.setExpandHorizontal(true);
         parametersListWrapper.setExpandVertical(true);
-        // recalculateEditorSize();
     }
 
     private void createTitle(final Composite parent) {
@@ -173,7 +187,6 @@ public class WSDLChooserGroup {
                 String displayName = Path.fromPortableString(file.getAbsolutePath()).lastSegment();
                 row.setDisplayName(displayName.substring(0, displayName.indexOf(".")));
                 parameters.add(row);
-
             }
         } else {
 
@@ -201,6 +214,7 @@ public class WSDLChooserGroup {
         for (WsdlRowEntry entry : parameters) {
             entry.validate();
         }
+        broadcaster.broadcastChange();
     }
 
     protected void recalculateEditorSize() {
@@ -270,5 +284,21 @@ public class WSDLChooserGroup {
             wsdlFiles.put(entry.getLocation(), entry.getDisplayName());
         }
         return wsdlFiles;
+    }
+
+    public void setNotifier(ProjectObserver broadcaster) {
+        this.broadcaster = broadcaster;
+    }
+
+    private boolean isValidURL(String url) {
+        try {
+            URL u = new URL(url);
+            u.toURI();
+            return true;
+        } catch (MalformedURLException e) {
+            return false;
+        } catch (URISyntaxException e) {
+            return false;
+        }
     }
 }

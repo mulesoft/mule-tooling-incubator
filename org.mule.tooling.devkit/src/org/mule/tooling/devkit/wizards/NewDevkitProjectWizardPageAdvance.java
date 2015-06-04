@@ -17,12 +17,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.mule.tooling.devkit.common.ConnectorMavenModel;
+import org.mule.tooling.devkit.builder.IModelPopulator;
+import org.mule.tooling.devkit.builder.ProjectBuilder;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.ui.MuleUiConstants;
 import org.mule.tooling.ui.utils.UiUtils;
 
-public class NewDevkitProjectWizardPageAdvance extends WizardPage {
+public class NewDevkitProjectWizardPageAdvance extends WizardPage implements IModelPopulator<ProjectBuilder> {
 
     private static String DEFAULT_USER = "mulesoft";
 
@@ -32,15 +33,14 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
     private static final String GROUP_TITLE_MAVEN_SETTINGS = "Maven Settings";
     private static final String CREATE_POM_LABEL = "Use default values";
     private final Pattern ownerName = Pattern.compile("^[\\S]+$");
-    private ConnectorMavenModel connectorModel;
 
-    protected NewDevkitProjectWizardPageAdvance(ConnectorMavenModel connectorModel) {
+    protected NewDevkitProjectWizardPageAdvance() {
         super("Advanced Options");
         setTitle(NewDevkitProjectWizard.WIZZARD_PAGE_TITTLE);
         setDescription("Advanced configuration");
-        this.connectorModel = connectorModel;
     }
 
+    private String connectorName="";
     private Text owner;
     private Text connection;
     private Text devConnection;
@@ -96,16 +96,16 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
         connection = initializeTextField(
                 gitHubGroupBox,
                 "Connection",
-                "scm:git:git://github.com:" + DEFAULT_USER + "/" + connectorModel.getConnectorName().toLowerCase() + ".git",
+                "scm:git:git://github.com:" + DEFAULT_USER + "/" + connectorName.toLowerCase() + ".git",
                 "The two connection elements convey to how one is to connect to the version control system through Maven. Where connection requires read access for Maven to be able to find the source code (for example, an update), developerConnection requires a connection that will give write access.",
                 null);
         devConnection = initializeTextField(
                 gitHubGroupBox,
                 "Dev. Connection",
-                "scm:git:git@github.com:" + DEFAULT_USER + "/" + connectorModel.getConnectorName().toLowerCase() + "-module" + ".git",
+                "scm:git:git@github.com:" + DEFAULT_USER + "/" + connectorName.toLowerCase() + "-module" + ".git",
                 "The two connection elements convey to how one is to connect to the version control system through Maven. Where connection requires read access for Maven to be able to find the source code (for example, an update), developerConnection requires a connection that will give write access.",
                 null);
-        url = initializeTextField(gitHubGroupBox, "Url", "http://github.com/" + DEFAULT_USER + "/" + connectorModel.getConnectorName().toLowerCase(),
+        url = initializeTextField(gitHubGroupBox, "Url", "http://github.com/" + DEFAULT_USER + "/" + connectorName.toLowerCase(),
                 "A publicly browsable repository. For example, via ViewCVS.", null);
 
     }
@@ -155,10 +155,10 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
 
     public void refresh() {
 
-        artifactId.setText(DevkitUtils.toConnectorName(connectorModel.getConnectorName()) + "-connector");
-        connection.setText("scm:git:git://github.com:" + owner.getText() + "/" + DevkitUtils.toConnectorName(connectorModel.getConnectorName()) + ".git");
-        devConnection.setText("scm:git:git@github.com:" + owner.getText() + "/" + DevkitUtils.toConnectorName(connectorModel.getConnectorName()) + "-connector" + ".git");
-        url.setText("http://github.com/" + owner.getText() + "/" + DevkitUtils.toConnectorName(connectorModel.getConnectorName()));
+        artifactId.setText(DevkitUtils.toConnectorName(connectorName) + "-connector");
+        connection.setText("scm:git:git://github.com:" + owner.getText() + "/" + DevkitUtils.toConnectorName(connectorName) + ".git");
+        devConnection.setText("scm:git:git@github.com:" + owner.getText() + "/" + DevkitUtils.toConnectorName(connectorName) + "-connector" + ".git");
+        url.setText("http://github.com/" + owner.getText() + "/" + DevkitUtils.toConnectorName(connectorName));
     }
 
     public boolean getAddGitHubInfo() {
@@ -193,7 +193,7 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
                 if (useDefaultValuesCheckbox.getSelection()) {
                     groupId.setText(DEFAULT_GROUP_ID);
                     version.setText(DEFAULT_VERSION);
-                    artifactId.setText(DevkitUtils.toConnectorName(connectorModel.getConnectorName()) + "-connector");
+                    artifactId.setText(DevkitUtils.toConnectorName(connectorName) + "-connector");
                 }
             }
 
@@ -204,7 +204,7 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
                 if (useDefaultValuesCheckbox.getSelection()) {
                     groupId.setText(DEFAULT_GROUP_ID);
                     version.setText(DEFAULT_VERSION);
-                    artifactId.setText(DevkitUtils.toConnectorName(connectorModel.getConnectorName()) + "-connector");
+                    artifactId.setText(DevkitUtils.toConnectorName(connectorName) + "-connector");
                 }
             }
         });
@@ -245,7 +245,7 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
     }
 
     public String getPackage() {
-        return groupId.getText() + "." + connectorModel.getConnectorName().toLowerCase();
+        return groupId.getText() + "." + connectorName.toLowerCase();
     }
 
     public String getGroupId() {
@@ -291,5 +291,20 @@ public class NewDevkitProjectWizardPageAdvance extends WizardPage {
         }
         setErrorMessage(null);
         setPageComplete(true);
+    }
+
+    @Override
+    public void populate(ProjectBuilder model) {
+        model.withVersion(getVersion()).withGroupId(getGroupId()).withArtifactId(getArtifactId()).withPackageName(getPackage()).withCategory(DevkitUtils.CATEGORY_COMMUNITY)
+                .withAddGitInformation(getAddGitHubInfo()).withGitConnection(getConnection()).withGitDevConnection(getDevConnection()).withGitUrl(getUrl())
+                .withConfigClassName("ConnectorConfig");
+    }
+
+    public String getConnectorName() {
+        return connectorName;
+    }
+
+    public void setConnectorName(String connectorName) {
+        this.connectorName = connectorName;
     }
 }

@@ -6,12 +6,12 @@ package ${project.package}.automation.testcases;
 
 import static org.junit.Assert.assertNotNull;
 
-import ${project.package}.automation.${project.connectorClassName}TestParent;
+import ${project.package}.automation.AbstractTestCase;
 import org.mule.tools.devkit.ctf.junit.RegressionTests;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-public class QueryProcessorTestCases extends ${project.connectorClassName}TestParent {
+public class QueryProcessorTestCases extends AbstractTestCase {
     
     @Test
     @Category({RegressionTests.class})

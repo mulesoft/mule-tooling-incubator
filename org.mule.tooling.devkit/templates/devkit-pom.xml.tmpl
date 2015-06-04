@@ -24,7 +24,7 @@
 #end
         <cxf.version.boolean>2.7.0</cxf.version.boolean>
 #if(${project.generateDefaultBody} == true )
-        <connector.generator.version>2.0.0-SNAPSHOT</connector.generator.version>
+        <connector.generator.version>2.0.2-SNAPSHOT</connector.generator.version>
 #end
 #end
         <category>${project.category}</category>
@@ -174,16 +174,8 @@
 #end
     </profiles>
 #end
-#if( ${project.apiType} == 'REST' || ${project.apiType} == 'SOAP')
+#if( ${project.apiType} == 'SOAP' )
     <dependencies>
-#if( ${project.apiType} == 'REST' )
-        <dependency>
-             <artifactId>mule-transport-http</artifactId>
-             <groupId>org.mule.transports</groupId>
-             <version>${mule.version}</version>
-             <scope>provided</scope>
-        </dependency>
-#end
 #if( ${project.apiType} == 'SOAP' )
         <dependency>
             <groupId>org.apache.cxf</groupId>
@@ -243,22 +235,16 @@
 #end
     </dependencies>
 #end
-    <repositories>
-        <repository>
-            <id>mulesoft-releases</id>
-            <name>MuleSoft Releases Repository</name>
-            <url>http://repository.mulesoft.org/releases/</url>
-            <layout>default</layout>
-        </repository>
 #if($devkitVersion.contains('SNAPSHOT'))
+    <repositories>
         <repository>
             <id>mulesoft-snapshots</id>
             <name>MuleSoft Snapshots Repository</name>
             <url>http://repository.mulesoft.org/snapshots/</url>
             <layout>default</layout>
         </repository>
-#end
     </repositories>
+#end
 #if( $project.addGitInformation == true )        
     <scm>
         <connection>${project.gitConnection}</connection>
