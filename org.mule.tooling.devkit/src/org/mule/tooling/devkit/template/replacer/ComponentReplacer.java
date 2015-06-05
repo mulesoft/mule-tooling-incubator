@@ -6,9 +6,9 @@ import org.apache.velocity.VelocityContext;
 
 public class ComponentReplacer extends VelocityReplacer {
 
-    private Map<String,Object> model;
+    private Map<String, Object> model;
 
-    public ComponentReplacer(Map<String,Object> model) {
+    public ComponentReplacer(Map<String, Object> model) {
         this.model = model;
 
     }
@@ -18,4 +18,7 @@ public class ComponentReplacer extends VelocityReplacer {
         context.put("project", model);
     }
 
+    public void update(String key, Object value) {
+        model.put(key, value);
+    }
 }

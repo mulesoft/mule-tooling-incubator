@@ -9,7 +9,7 @@ import ${project.package}.${project.connectorClassName};
 import org.mule.tools.devkit.ctf.mockup.ConnectorDispatcher;
 import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
 
-public class ${project.connectorClassName}TestParent {
+public abstract class AbstractTestCase {
 	
 	private ${project.connectorClassName} connector;
 	private ConnectorDispatcher<${project.connectorClassName}> dispatcher;
@@ -27,6 +27,9 @@ public class ${project.connectorClassName}TestParent {
 	@Before
 	public void init() throws Exception {
 		
+		//Initialization for single-test run
+        ConnectorTestContext.initialize(${project.connectorClassName}.class, false);
+		
 		//Context instance
 		ConnectorTestContext<${project.connectorClassName}> context = ConnectorTestContext.getInstance(${project.connectorClassName}.class);
 		
@@ -35,11 +38,6 @@ public class ${project.connectorClassName}TestParent {
 		
 		connector = dispatcher.createMockup();
 		
-		setUp();
-	}
-
-
-	protected void setUp() throws Exception{	
 	}
 
 }

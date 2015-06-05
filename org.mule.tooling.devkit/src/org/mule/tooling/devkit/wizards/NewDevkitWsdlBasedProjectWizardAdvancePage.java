@@ -1,5 +1,8 @@
 package org.mule.tooling.devkit.wizards;
 
+import java.io.File;
+
+import org.apache.commons.io.FileUtils;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -9,20 +12,23 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.mule.tooling.devkit.builder.IModelPopulator;
+import org.mule.tooling.devkit.builder.ProjectBuilder;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.ui.ConnectorIconPanel;
 
-public class NewDevkitWsdlBasedProjectWizardAdvancePage extends WizardPage {
+public class NewDevkitWsdlBasedProjectWizardAdvancePage extends WizardPage implements IModelPopulator<ProjectBuilder> {
 
     private ConnectorIconPanel iconPanel;
 
     private Button none;
     private Button httpBasic;
     private Button httpBasicAtTransport;
+    private Group securityGroup;
 
     public NewDevkitWsdlBasedProjectWizardAdvancePage() {
         super("wizardPage");
-        setTitle("Create an Anypoint SOAP Connect Project");
+        setTitle("Create an Anypoint Connector Project");
         setDescription("Define WSDL security and connector icon.");
     }
 
@@ -36,30 +42,41 @@ public class NewDevkitWsdlBasedProjectWizardAdvancePage extends WizardPage {
         layout.numColumns = 1;
         layout.verticalSpacing = 6;
 
-        setIconPanel(new ConnectorIconPanel());
-        getIconPanel().createControl(container);
+        iconPanel = new ConnectorIconPanel();
+        iconPanel.createControl(container);
 
-        Group group = new Group(container, SWT.NONE);
-        group.setText("Security");
+        securityGroup = new Group(container, SWT.NONE);
+        securityGroup.setText("Security");
 
-        none = new Button(group, SWT.RADIO);
+        none = new Button(securityGroup, SWT.RADIO);
         none.setSelection(true);
         none.setText(AuthenticationType.NONE.label());
         none.setBounds(10, 5, 75, 30);
 
-        httpBasic = new Button(group, SWT.RADIO);
+        httpBasic = new Button(securityGroup, SWT.RADIO);
         httpBasic.setText(AuthenticationType.HTTP_BASIC.label());
         httpBasic.setBounds(10, 30, 75, 30);
 
-        httpBasicAtTransport = new Button(group, SWT.RADIO);
+        httpBasicAtTransport = new Button(securityGroup, SWT.RADIO);
         httpBasicAtTransport.setText(AuthenticationType.WS_SECURITY_USERNAME_TOKEN_PROFILE.label());
         httpBasicAtTransport.setBounds(10, 55, 75, 30);
 
-        GridLayoutFactory.swtDefaults().applyTo(group);
-        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).applyTo(group);
+        GridLayoutFactory.swtDefaults().applyTo(securityGroup);
+        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).applyTo(securityGroup);
 
+        setPageComplete(true);
         setControl(container);
 
+    }
+
+    public void hideScurityGroup() {
+        securityGroup.setVisible(false);
+        setDescription("Define connector icon.");
+    }
+
+    public void showScurityGroup() {
+        securityGroup.setVisible(true);
+        setDescription("Define WSDL security and connector icon.");
     }
 
     public AuthenticationType getAuthenticationType() {
@@ -73,11 +90,14 @@ public class NewDevkitWsdlBasedProjectWizardAdvancePage extends WizardPage {
         }
     }
 
-    public ConnectorIconPanel getIconPanel() {
-        return iconPanel;
-    }
+    @Override
+    public void populate(ProjectBuilder model) {
+        final ConnectorIconPanel panel = iconPanel;
+        final File tempDir = FileUtils.getTempDirectory();
+        final String smallIcon = new File(tempDir, "small.png").getAbsolutePath();
+        final String bigIcon = new File(tempDir, "big.png").getAbsolutePath();
+        panel.saveTo(smallIcon, bigIcon);
 
-    public void setIconPanel(ConnectorIconPanel iconPanel) {
-        this.iconPanel = iconPanel;
+        model.withSmallIcon(smallIcon).withBigIcon(bigIcon);
     }
 }

@@ -1,23 +1,16 @@
 package org.mule.tooling.devkit.wizards;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.regex.Pattern;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.apache.commons.lang.StringUtils;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -41,11 +34,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.core.utils.VMUtils;
 import org.mule.tooling.devkit.DevkitImages;
-import org.mule.tooling.devkit.DevkitUIPlugin;
+import org.mule.tooling.devkit.builder.IModelPopulator;
+import org.mule.tooling.devkit.builder.ProjectBuilder;
 import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
-import org.mule.tooling.devkit.common.ConnectorMavenModel;
 import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.devkit.ui.ConnectorProjectWidget;
 import org.mule.tooling.maven.runner.SyncGetResultCallback;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
@@ -53,11 +47,8 @@ import org.mule.tooling.maven.ui.preferences.MavenPreferences;
 import org.mule.tooling.ui.MuleUiConstants;
 import org.mule.tooling.ui.utils.UiUtils;
 
-public class NewDevkitProjectWizardPage extends WizardPage {
+public class NewDevkitProjectWizardPage extends WizardPage implements Observer, IModelPopulator<ProjectBuilder> {
 
-    private static final String DEFAULT_NAME = "";
-    private static final String DEFAULT_CATEGORY = DevkitUtils.CATEGORY_COMMUNITY;
-    private static final String GROUP_TITLE_CONNECTOR = "";
     private static final String GROUP_TITLE_API = "API";
     private static final String[] SUPPORTED_AUTHENTICATION_SOAP_OPTIONS = new String[] { AuthenticationType.NONE.label() };
     private static final String[] SUPPORTED_AUTHENTICATION_REST_OPTIONS = new String[] { AuthenticationType.NONE.label(), AuthenticationType.HTTP_BASIC.label(),
@@ -68,38 +59,21 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     private static final String SOAP_COMMENT = "This will generate a connector using a cxf client for the given wsdl.";
     private static final String OTHER_COMMENT = "This will generate the scaffolding for the connector.\nIf you want to create a connector for a java client this will help you get started.";
     private static final String REST_COMMENT = "This will generate the scaffolding for the connector using @RestCall.\nIt is the easiest way to make a connector for a Rest API.";
-    private static final String PROJECT_NAME_LABEL = "Project Name:";
-    private static final String CONNECTOR_NAMESPACE_LABEL = "Namespace:";
-    private static final String USE_DEFAULT_LABEL = "Use default values";
-    private static final String GENERATE_EMPTY_PROJECT_LABEL = "Generate default body for @Connector";
-    private static final String LOCATION_LABEL = "Location:";
-
-    private Text name;
-    private Text projectName;
-    private Text connectorNamespace;
-    private Text location;
-
-    private Button useDefaultValuesCheckbox;
-    private Button generateEmptyProjectCheckbox;
-    private String connectorCategory = DEFAULT_CATEGORY;
-    private static final Pattern CONNECTOR_NAME_REGEXP = Pattern.compile("[A-Z]+[a-zA-Z0-9]+");
-    private static final Pattern VALID_NAME_REGEX = Pattern.compile("[A-Za-z]+[a-zA-Z0-9\\-_]*");
-    private ConnectorMavenModel model;
-
+    
     private Combo apiType;
     private Combo comboAuthentication;
     private Text wsdlLocation;
     private Button datasense;
     private Button query;
-    private Button browse;
 
     private boolean mavenFailure = false;
 
-    public NewDevkitProjectWizardPage(ConnectorMavenModel model) {
+    private ConnectorProjectWidget project;
+
+    public NewDevkitProjectWizardPage() {
         super("wizardPage");
         setTitle(NewDevkitProjectWizard.WIZZARD_PAGE_TITTLE);
         setDescription("Create an Anypoint Connector project.");
-        this.model = model;
     }
 
     /**
@@ -109,18 +83,16 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         Composite container = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
         container.setLayout(layout);
-        layout.numColumns = 3;
+        layout.numColumns = 1;
         layout.verticalSpacing = 6;
 
-        Group connectorGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_CONNECTOR, 3);
-        ModifyListener simple = new ModifyListener() {
+        project = new ConnectorProjectWidget();
+        project.setAddEmptyProjectCheckbox(true);
+        ProjectObserver broadcaster = new ProjectObserver();
+        broadcaster.addObserver(this);
+        project.setNotifier(broadcaster);
+        project.createControl(container);
 
-            @Override
-            public void modifyText(ModifyEvent e) {
-                dialogChanged();
-            }
-
-        };
         ModifyListener connectorNameListener = new ModifyListener() {
 
             @Override
@@ -128,115 +100,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                 updateComponentsEnablement();
             }
         };
-        name = initializeTextField(connectorGroupBox, "Connector Name: ", DEFAULT_NAME,
-                "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", 2, connectorNameListener);
 
-        name.addModifyListener(new ModifyListener() {
-
-            public void modifyText(ModifyEvent e) {
-                if (!name.getText().isEmpty()) {
-                    char character = name.getText().charAt(0);
-                    if (!Character.isUpperCase(character) && !Character.isDigit(character)) {
-                        name.setText(org.apache.commons.lang.StringUtils.capitalize(name.getText()));
-                        name.setSelection(1, 1);
-                        return;
-                    }
-                }
-                model.setConnectorName(name.getText());
-                dialogChanged();
-            }
-        });
-        name.setFocus();
-
-        useDefaultValuesCheckbox = new Button(connectorGroupBox, SWT.CHECK);
-        useDefaultValuesCheckbox.setSelection(true);
-        useDefaultValuesCheckbox.setText(" " + USE_DEFAULT_LABEL);
-        useDefaultValuesCheckbox.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
-        useDefaultValuesCheckbox.addSelectionListener(new SelectionListener() {
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                updateProjectComponentsEnablement();
-                if (useDefaultValuesCheckbox.getSelection()) {
-                    name.setText(name.getText());
-                } else {
-                    location.setText("");
-                }
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                updateProjectComponentsEnablement();
-                if (useDefaultValuesCheckbox.getSelection()) {
-                    name.setText(name.getText());
-                } else {
-                    location.setText("");
-                }
-            }
-        });
-
-        projectName = initializeTextField(connectorGroupBox, PROJECT_NAME_LABEL, DEFAULT_NAME, "Project name.", 2, simple);
-
-        name.addModifyListener(new ModifyListener() {
-
-            public void modifyText(ModifyEvent e) {
-                if (!name.getText().isEmpty() && useDefaultValuesCheckbox.getSelection()) {
-                    projectName.setText(DevkitUtils.toConnectorName(name.getText()) + "-connector");
-                    location.setText(getDefaultPath(projectName.getText()));
-                    connectorNamespace.setText(DevkitUtils.toConnectorName(getName()));
-                }
-                dialogChanged();
-            }
-        });
-
-        connectorNamespace = initializeTextField(connectorGroupBox, CONNECTOR_NAMESPACE_LABEL, DEFAULT_NAME,
-                "Namespace that will be used when your connector is added into a mule application.", 2, simple);
-
-        location = initializeTextField(connectorGroupBox, LOCATION_LABEL, ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString(),
-                "Project location in the file system.", 1, simple);
-
-        browse = new Button(connectorGroupBox, SWT.NONE);
-        browse.setText("Browse");
-        browse.setLayoutData(GridDataFactory.fillDefaults().create());
-        browse.addSelectionListener(new SelectionAdapter() {
-
-            public void widgetSelected(SelectionEvent e) {
-                DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
-                dialog.setText("Select project location");
-                String path = location.getText();
-                if (path.length() == 0) {
-                    path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPortableString();
-                }
-                dialog.setFilterPath(path);
-
-                String result = dialog.open();
-                if (result != null) {
-                    location.setText(result);
-                }
-            }
-        });
-
-        generateEmptyProjectCheckbox = new Button(connectorGroupBox, SWT.CHECK);
-        generateEmptyProjectCheckbox.setSelection(true);
-        generateEmptyProjectCheckbox.setText(" " + GENERATE_EMPTY_PROJECT_LABEL);
-        generateEmptyProjectCheckbox.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
-        generateEmptyProjectCheckbox
-                .setToolTipText("This will generate an @Connector with configurables, operations and tests.\nRecommended for users who haven't build connectors before.");
-        generateEmptyProjectCheckbox.addSelectionListener(new SelectionListener() {
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                model.setGenerateDefaultBody(generateEmptyProjectCheckbox.getSelection());
-                updateComponentsEnablement();
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                model.setGenerateDefaultBody(generateEmptyProjectCheckbox.getSelection());
-                updateComponentsEnablement();
-            }
-
-        });
         Group apiGroupBox = UiUtils.createGroupWithTitle(container, GROUP_TITLE_API, 4);
         apiType = initializeComboField(apiGroupBox, "Type: ", SUPPORTED_API_OPTIONS,
                 "This is the name of the connector. There is no need for you to add a \"Connector\" at the end of the name.", connectorNameListener, 1);
@@ -307,7 +171,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                     String result = dialog.open();
                     if (result != null) {
                         wsdlLocation.setText(result);
-                        updateStatus(null);
+                        dialogChanged();
                     }
 
                 } else {
@@ -335,7 +199,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
                             updateStatus("The selected directory does not contains a '.wsdl' file.");
                         } else {
                             wsdlLocation.setText(result);
-                            updateStatus(null);
+                            dialogChanged();
                         }
                     }
                 }
@@ -438,10 +302,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private void initialize() {
-        location.setText(getDefaultPath(""));
-        name.setText(DEFAULT_NAME);
         updateComponentsEnablement();
-        updateProjectComponentsEnablement();
     }
 
     private void dialogChanged() {
@@ -450,116 +311,32 @@ public class NewDevkitProjectWizardPage extends WizardPage {
             return;
         }
 
+        IStatus status = project.validate();
+        if (!Status.OK_STATUS.equals(status)) {
+            setPageComplete(false);
+            setErrorMessage(status.getMessage());
+            return;
+        }
+
         if (!VMUtils.isJdkJavaHome(VMUtils.getJdkJavaHome())) {
             updateStatus("The default JRE configured is not a JDK. Install or configure a JDK in order to build Devkit projects.");
             return;
         }
 
-        if (StringUtils.isBlank(this.getName())) {
-            updateStatus("The Connector Name must be specified.");
-            return;
-        } else if (this.getName().equals("Test")) {
-            updateStatus("The Connector Name cannot be Test.");
-            return;
-        } else if (this.getName().endsWith("Connector")) {
-            updateStatus("There is no need for you to add the Connector word at the end.");
-            return;
-        } else if (DevkitUtils.isReserved(this.getName().toLowerCase())) {
-            updateStatus("Cannot use Java language keywords for the name");
-            return;
-        } else if (!CONNECTOR_NAME_REGEXP.matcher(this.getName()).matches()) {
-            updateStatus("The Name must start with an upper case character followed by other alphanumeric characters.");
-            return;
-        } else if (this.getApiType().equals(ApiType.SOAP) && !isValidateFileOrFolder(this.wsdlLocation.getText())) {
+        if (this.getApiType().equals(ApiType.SOAP) && !isValidateFileOrFolder(this.wsdlLocation.getText())) {
             updateStatus("The selected wsdl location is not valid.");
             return;
         }
-        if (!this.getName().equals(StringUtils.trim(this.getName()))) {
-            updateStatus("Name cannot contain spaces.");
-            return;
-        }
-        if (!VALID_NAME_REGEX.matcher(this.getConnectorNamespace()).matches()) {
-            updateStatus("Namespace must start with a letter, and might be followed by a letter, number, _, or -.");
-            return;
-        }
-        if (StringUtils.isBlank(this.location.getText())) {
-            updateStatus("You need to specify a project location");
-            return;
-        }
 
-        final String projectName = getProjectName();
-
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        IWorkspaceRoot root = workspace.getRoot();
-        // check whether project already exists
-        final IProject handle = workspace.getRoot().getProject(this.getName());
-        if (handle.exists()) {
-            updateStatus("A project with the name [" + projectName + "] already exists in your workspace folder.");
-            return;
-        }
-
-        IPath projectLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().append(projectName);
-        if (projectLocation.toFile().exists()) {
-            try {
-                // correct casing
-                String canonicalPath = projectLocation.toFile().getCanonicalPath();
-                projectLocation = new Path(canonicalPath);
-            } catch (IOException e) {
-                DevkitUIPlugin.log(e);
-            }
-
-            String existingName = projectLocation.lastSegment();
-            if (!existingName.equals(projectName)) {
-                updateStatus("Invalid name");
-                return;
-            }
-
-        }
-        final String location = this.getLocation();
-        if (!Path.EMPTY.isValidPath(location)) {
-            updateStatus("Invalid project contents directory");
-            return;
-        }
-
-        IPath projectPath = null;
-        if (!this.useDefaultValuesCheckbox.getSelection()) {
-            projectPath = Path.fromOSString(location);
-            if (!projectPath.toFile().exists()) {
-                // check non-existing external location
-                if (!canCreate(projectPath.toFile())) {
-                    updateStatus("Cannot create project content at the given external location.");
-                    return;
-                }
-            }
-        }
-
-        // validate the location
-        final IStatus locationStatus = workspace.validateProjectLocation(handle, projectPath);
-        if (!locationStatus.isOK()) {
-            updateStatus(locationStatus.getMessage());
-            return;
-        }
-
-        final IStatus nameStatus = ResourcesPlugin.getWorkspace().validateName(projectName, IResource.PROJECT);
-        if (!nameStatus.isOK()) {
-            updateStatus(nameStatus.getMessage());
-            return;
-        }
-
-        if (root.exists(Path.fromOSString(projectName))) {
-            updateStatus("A project with the name [" + projectName + "] already exists in your workspace folder.");
-            return;
-        }
         if (this.getApiType().equals(ApiType.SOAP) && this.getWsdlFileOrDirectory().isEmpty()) {
             updateStatus("Specify a wsdl location.");
             return;
         }
-        setMessage(null);
         updateStatus(null);
     }
 
     public String getProjectName() {
-        return projectName.getText().trim();
+        return project.getProjectName();
     }
 
     private void updateStatus(String message) {
@@ -567,31 +344,8 @@ public class NewDevkitProjectWizardPage extends WizardPage {
         setPageComplete(message == null);
     }
 
-    public String getDevkitVersion() {
-        return DevkitUtils.DEVKIT_CURRENT;
-    }
-
     public String getName() {
-        return name.getText();
-    }
-
-    public String getCategory() {
-        return connectorCategory;
-    }
-
-    private Text initializeTextField(Group groupBox, String labelText, String defaultValue, String tooltip, int hSpan, ModifyListener modifyListener) {
-        Label label = new Label(groupBox, SWT.NULL);
-        label.setText(labelText);
-        label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(MuleUiConstants.LABEL_WIDTH, SWT.DEFAULT).create());
-        Text textField = new Text(groupBox, SWT.BORDER);
-        GridData gData = new GridData(GridData.FILL_HORIZONTAL);
-        gData.horizontalSpan = hSpan;
-        textField.setLayoutData(gData);
-        textField.setText(defaultValue);
-        if (modifyListener != null)
-            textField.addModifyListener(modifyListener);
-        textField.setToolTipText(tooltip);
-        return textField;
+        return project.getName();
     }
 
     private Combo initializeComboField(Group groupBox, String labelText, String[] initialValues, String tooltip, ModifyListener modifyListener, int horizontalSpan) {
@@ -609,17 +363,12 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     private void updateComponentsEnablement() {
-        boolean enabled = isBasic() && apiType.getText().equals(ApiType.GENERIC.label()) && this.generateDefaultBody();
+        boolean enabled = (comboAuthentication.getText().equals(AuthenticationType.CONNECTION_MANAGEMENT.label()) || comboAuthentication.getText().equals(
+                AuthenticationType.NONE.label()))
+                && apiType.getText().equals(ApiType.GENERIC.label()) && generateDefaultBody();
         datasense.setEnabled(enabled);
         query.setEnabled(enabled);
-        if (enabled) {
-            model.setDataSenseEnabled(datasense.getSelection());
-        }
         query.setEnabled(datasense.getSelection() && enabled);
-    }
-
-    private boolean isBasic() {
-        return comboAuthentication.getText().equals(AuthenticationType.CONNECTION_MANAGEMENT.label()) || comboAuthentication.getText().equals(AuthenticationType.NONE.label());
     }
 
     public boolean hasQuery() {
@@ -639,7 +388,7 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     public ApiType getApiType() {
-        return ApiType.fromLabel(this.apiType.getText());
+        return ApiType.fromLabel(apiType.getText());
     }
 
     private boolean isValidateFileOrFolder(String result) {
@@ -723,42 +472,38 @@ public class NewDevkitProjectWizardPage extends WizardPage {
     }
 
     public String getConnectorNamespace() {
-        return connectorNamespace.getText();
+        return project.getConnectorNamespace();
     }
 
     public String getLocation() {
-        if (useDefaultValuesCheckbox.getSelection())
-            return Platform.getLocation().append(this.getProjectName()).toOSString();
-        return Path.fromOSString(location.getText().trim()).append(this.getProjectName()).toOSString();
-    }
-
-    private void updateProjectComponentsEnablement() {
-        boolean enabled = !useDefaultValuesCheckbox.getSelection();
-        projectName.setEnabled(enabled);
-        connectorNamespace.setEnabled(enabled);
-        location.setEnabled(enabled);
-        browse.setEnabled(enabled);
-    }
-
-    protected String getDefaultPath(String name) {
-        final IPath path = Platform.getLocation().append(name);
-        return path.toOSString();
-    }
-
-    private boolean canCreate(File file) {
-        while (!file.exists()) {
-            file = file.getParentFile();
-            if (file == null)
-                return false;
-        }
-        return file.canWrite();
+        return project.getLocation();
     }
 
     public boolean usesDefaultValues() {
-        return useDefaultValuesCheckbox.getSelection();
+        return project.useDefaultValues();
     }
 
     public boolean generateDefaultBody() {
-        return generateEmptyProjectCheckbox.getSelection();
+        return project.generateDefaultBody();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        dialogChanged();
+    }
+
+    @Override
+    public void populate(ProjectBuilder model) {
+        model.withApiType(getApiType()).withGenerateDefaultBody(generateDefaultBody()).withProjectName(getProjectName()).withModuleName(getConnectorNamespace())
+                .withConnectorClassName(DevkitUtils.createConnectorNameFrom(getName())).withConnectorName(getName()).withDataSenseEnabled(isMetadaEnabled())
+                .withHasQuery(hasQuery() && isMetadaEnabled()).withWsdlPath(getWsdlFileOrDirectory()).withAuthenticationType(getAuthenticationType());
+        if (!usesDefaultValues()) {
+            model.withProjectLocation(getLocation());
+        }
+
+    }
+
+    public String getConnectorName() {
+        return project.getName();
     }
 }

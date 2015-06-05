@@ -25,7 +25,9 @@ import javax.wsdl.extensions.ExtensionRegistry;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
 
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -44,9 +46,11 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.devkit.maven.MavenRunBuilder;
 import org.mule.tooling.devkit.template.ImageWriter;
 import org.mule.tooling.devkit.template.TemplateFileWriter;
 import org.mule.tooling.devkit.template.replacer.ComponentReplacer;
@@ -210,6 +214,11 @@ public class ProjectBuilder {
     }
 
     public void build(IProject project, IProgressMonitor monitor) throws CoreException {
+        if (getApiType().equals(ApiType.SOAP)) {
+            if (!canParseWSDL(monitor, wsdlPath)) {
+                throw new IllegalArgumentException("Cannot process WSDL");
+            }
+        }
         monitor.subTask("Creating project folders.");
         createProjectFolders(project, monitor);
     }
@@ -219,10 +228,10 @@ public class ProjectBuilder {
             monitor = new NullProgressMonitor();
         }
         if (StringUtils.isEmpty(projectName)) {
-            throw new RuntimeException("Project name was not provided");
+            throw new IllegalArgumentException("Project name was not provided");
         }
         if (StringUtils.isEmpty(packageName)) {
-            throw new RuntimeException("Package name was not provided");
+            throw new IllegalArgumentException("Package name was not provided");
         }
         monitor.subTask("Creating project");
 
@@ -235,12 +244,24 @@ public class ProjectBuilder {
         List<IClasspathEntry> entries = generateProjectEntries(project, monitor);
         if (ApiType.SOAP.equals(apiType)) {
             entries.add(createEntry(project.getFolder(DevkitUtils.CXF_GENERATED_SOURCES_FOLDER), monitor));
+
         }
 
         IJavaProject javaProject = JavaCore.create(root.getProject(projectName));
         javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[] {}), monitor);
 
         createProjectFiles(monitor, project);
+
+        DevkitUtils.configureDevkitAPT(javaProject);
+
+        if (getApiType().equals(ApiType.SOAP)) {
+            MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("clean").withArg("compile").withArg("-Pconnector-generator")
+                    .withTaskName("Generating connector from WSDL...").build().run(monitor);
+
+            MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("license:format").withTaskName("Adding headers...").build().run(monitor);
+
+            javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+        }
 
         return project;
     }
@@ -255,9 +276,79 @@ public class ProjectBuilder {
 
         createGeneralFiles(project, replacer, templateFileWriter, monitor);
 
-        templateFileWriter.apply("/templates/connector_wsdl_base.tmpl", getMainTargetFilePath(), replacer);
+        createJavaProjectFiles(replacer, templateFileWriter);
 
-        templateFileWriter.apply("/templates/connector_wsdl.tmpl", getConfigFileName(), replacer);
+        createTestFiles(replacer, templateFileWriter);
+    }
+
+    private void createJavaProjectFiles(ComponentReplacer replacer, TemplateFileWriter templateFileWriter) throws CoreException {
+
+        if (!apiType.equals(ApiType.SOAP) || !this.generateDefaultBody) {
+            templateFileWriter.apply(getConnectorTemplate(), getMainTargetFilePath(), replacer);
+        }
+
+        templateFileWriter.apply(getConfigTemplate(), getConfigFileName(), replacer);
+
+        if (dataSenseEnabled) {
+            templateFileWriter.apply("/templates/connector_metadata_category.tmpl", MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + "DataSenseResolver.java",
+                    replacer);
+        }
+    }
+
+    private void createTestFiles(ComponentReplacer replacer, TemplateFileWriter templateFileWriter) throws CoreException {
+        if (generateDefaultBody) {
+            if (!(apiType.equals(ApiType.REST) || apiType.equals(ApiType.SOAP))) {
+
+                templateFileWriter.apply("/templates/connector-test-parent.tmpl", buildTestParentFilePath(packageName, "AbstractTestCase"), replacer);
+                if (!apiType.equals(ApiType.SOAP)) {
+                    templateFileWriter.apply("/templates/connector-test-regression-suite.tmpl", buildRegressionTestsFilePath(packageName, connectorClassName), replacer);
+                    templateFileWriter.apply("/templates/connector-test.tmpl", buildTestTargetFilePath(packageName, connectorClassName), replacer);
+                    if (dataSenseEnabled) {
+                        templateFileWriter.apply("/templates/connector-test-datasense.tmpl", buildDataSenseTestTargetFilePath(packageName, connectorClassName), replacer);
+                    }
+                    if (hasQuery) {
+                        templateFileWriter.apply("/templates/connector-query-test.tmpl", buildQueryTestTargetFilePath(packageName, connectorClassName), replacer);
+                    }
+                }
+
+            }
+        }
+    }
+
+    private String getConfigTemplate() {
+        String mainTemplatePath = "/templates/connector_none_abstract_main.tmpl";
+        if (apiType.equals(ApiType.WSDL)) {
+            mainTemplatePath = "/templates/connector_wsdl.tmpl";
+        } else {
+            switch (authenticationType) {
+            case CONNECTION_MANAGEMENT:
+                mainTemplatePath = "/templates/connector_connection_management.tmpl";
+                break;
+            case HTTP_BASIC:
+                mainTemplatePath = "/templates/connector_basic_http_auth.tmpl";
+                break;
+            case NONE:
+                mainTemplatePath = "/templates/connector_basic.tmpl";
+                break;
+            case OAUTH_V2:
+                mainTemplatePath = "/templates/connector_oauth.tmpl";
+                break;
+            default:
+                break;
+            }
+
+        }
+        return mainTemplatePath;
+    }
+
+    private String getConnectorTemplate() {
+        String mainTemplatePath = "/templates/connector_none_abstract_main.tmpl";
+        if (apiType.equals(ApiType.REST)) {
+            mainTemplatePath = "/templates/connector_main.tmpl";
+        } else if (apiType.equals(ApiType.WSDL)) {
+            mainTemplatePath = "/templates/connector_wsdl_base.tmpl";
+        }
+        return mainTemplatePath;
     }
 
     private void createGeneralFiles(IProject project, ComponentReplacer replacer, TemplateFileWriter templateFileWriter, IProgressMonitor monitor) throws CoreException {
@@ -267,21 +358,49 @@ public class ProjectBuilder {
         templateFileWriter.apply("/templates/LICENSE.tmpl", "LICENSE.md", new NullReplacer());
         templateFileWriter.apply(DevkitUtils.LOG4J_PATH, MAIN_RESOURCES_FOLDER + "/log4j2.xml", new NullReplacer());
 
-        templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, replacer);
         templateFileWriter.apply("/templates/example.tmpl", getExampleFileName(), replacer);
         templateFileWriter.apply("/templates/connector-test-automation-credentials.properties.tmpl", "automation-credentials.properties", replacer);
-        
+
         createIcons(project, monitor);
 
-        for (Entry<String, String> keyValuePair : wsdlFiles.entrySet()) {
+        if (apiType.equals(ApiType.SOAP)) {
+            String wsdlFileName = wsdlPath;
+            final String original = wsdlFileName;
+            templateFileWriter.apply("/templates/binding.xml.tmpl", "src/main/resources/wsdl/binding.xml", replacer);
+            File wsdlFileOrDirectory = new File(wsdlFileName);
             try {
-                if (!keyValuePair.getKey().startsWith("http")) {
-                    org.apache.commons.io.FileUtils.copyFileToDirectory(new File(keyValuePair.getKey()), project.getFolder("src/main/resources/wsdl/").getRawLocation().toFile());
+                if (wsdlFileOrDirectory.isDirectory()) {
+                    String[] files = wsdlFileOrDirectory.list(new SuffixFileFilter(".wsdl"));
+                    for (int i = 0; i < files.length; i++) {
+                        File temp = new File(files[i]);
+                        wsdlFileName = temp.getName();
+                    }
+                    org.apache.commons.io.FileUtils.copyDirectory(wsdlFileOrDirectory, project.getFolder("src/main/resources/wsdl/").getRawLocation().toFile());
+                } else {
+                    wsdlFileName = wsdlFileOrDirectory.getName();
+                    if (original.startsWith("http")) {
+                        wsdlFileName = original;
+                    } else {
+                        org.apache.commons.io.FileUtils.copyFileToDirectory(wsdlFileOrDirectory, project.getFolder("src/main/resources/wsdl/").getRawLocation().toFile());
+                    }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException("Could not copy wsdl file to local directory");
+            }
+            replacer.update("wsdlPath", wsdlFileName);
+        } else if (apiType.equals(ApiType.WSDL)) {
+            for (Entry<String, String> keyValuePair : wsdlFiles.entrySet()) {
+                try {
+                    if (!keyValuePair.getKey().startsWith("http")) {
+                        org.apache.commons.io.FileUtils.copyFileToDirectory(new File(keyValuePair.getKey()), project.getFolder("src/main/resources/wsdl/").getRawLocation()
+                                .toFile());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
+        templateFileWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, replacer);
     }
 
     private void createIcons(IProject project, IProgressMonitor monitor) {
@@ -357,10 +476,12 @@ public class ProjectBuilder {
         create(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/")), monitor);
         create(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/config"), monitor);
         create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/")), monitor);
-        create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/")+"/automation"), monitor);
-        create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/")+"/automation/testrunners"), monitor);
-        create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/")+"/automation/testcases"), monitor);
-        
+        create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation"), monitor);
+        create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation/testrunners"), monitor);
+        create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation/testcases"), monitor);
+        if (apiType.equals(ApiType.SOAP)) {
+            create(project.getFolder("src/main/resources/wsdl/"), monitor);
+        }
 
     }
 
@@ -445,8 +566,28 @@ public class ProjectBuilder {
         return TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + connectorClassName + "AddEntityTest.java";
     }
 
-    private String getConfigFileName() {
+    protected String getConfigFileName() {
         return MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + "config/" + configClassName + ".java";
+    }
+
+    protected String buildTestParentFilePath(final String packageName, String className) {
+        return TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation/" + className + ".java";
+    }
+
+    protected String buildRegressionTestsFilePath(final String packageName, String className) {
+        return TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation/testrunners/RegressionTestSuite.java";
+    }
+
+    protected String buildTestTargetFilePath(final String packageName, String className) {
+        return TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation/testcases/GreetTestCases.java";
+    }
+
+    protected String buildQueryTestTargetFilePath(final String packageName, String className) {
+        return TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation/testcases/QueryProcessorTestCases.java";
+    }
+
+    protected String buildDataSenseTestTargetFilePath(final String packageName, String className) {
+        return TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation/testcases/AddEntityTestCases.java";
     }
 
     @SuppressWarnings("rawtypes")
@@ -514,5 +655,46 @@ public class ProjectBuilder {
             }
         }
         return addressValue;
+    }
+
+    private boolean canParseWSDL(IProgressMonitor monitor, String wsdlLocation) {
+        try {
+            File wsdlFileOrDirectory = new File(wsdlLocation);
+            File wsdlFile = wsdlFileOrDirectory;
+
+            if (wsdlFileOrDirectory.isDirectory()) {
+                String[] files = wsdlFileOrDirectory.list(new SuffixFileFilter(".wsdl"));
+                for (int i = 0; i < files.length; i++) {
+                    File temp = new File(files[i]);
+                    wsdlFile = new File(wsdlFileOrDirectory, temp.getName());
+                }
+            }
+            if (wsdlFile.exists()) {
+                wsdlLocation = wsdlFile.getAbsolutePath();
+            }
+            monitor.beginTask("Parsing WSDL", 100);
+            monitor.worked(5);
+            WSDLReader wsdlReader = WSDLFactory.newInstance().newWSDLReader();
+            monitor.worked(15);
+            wsdlReader.readWSDL(wsdlLocation);
+            monitor.worked(80);
+            monitor.done();
+            return true;
+        } catch (WSDLException e) {
+            DevkitUIPlugin.getDefault().logError("Error Parsing WSDL", e);
+        }
+        return false;
+    }
+
+    public String getConnectorClassName() {
+        return connectorClassName;
+    }
+
+    public ApiType getApiType() {
+        return apiType;
+    }
+
+    public String getProjectName() {
+        return projectName;
     }
 }

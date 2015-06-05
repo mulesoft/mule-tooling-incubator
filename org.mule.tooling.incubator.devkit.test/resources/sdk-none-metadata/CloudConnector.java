@@ -3,45 +3,28 @@
  * a copy of which has been included with this distribution in the LICENSE.md file.
  */
 
-package ${project.package};
+package org.mule.modules.cloud;
 
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
-#if(${project.generateDefaultBody} == true )
 import org.mule.api.annotations.Configurable;
-#end
-#if(${project.dataSenseEnabled} == true )
 
-#if(${project.hasQuery} == true )
 import java.util.ArrayList;
 import java.util.List;
-#end
 import java.util.Map;
 import org.mule.api.annotations.param.MetaDataKeyParam;
 import org.mule.api.annotations.MetaDataScope;
-#end
 
 import org.mule.api.annotations.Processor;
-#if($project.authenticationType == 'OAUTH_V2')
-import org.mule.api.annotations.oauth.OAuthProtected;
-import org.mule.api.annotations.ReconnectOn;
-#end
 
-#if(${project.hasQuery} == true)
 import org.mule.api.annotations.Query;
-#end
-#if(${project.generateDefaultBody} == true )
 import org.mule.api.annotations.param.Default;
-#end
 
-import ${project.package}.config.${project.configClassName};
+import org.mule.modules.cloud.config.ConnectorConfig;
 
-@Connector(name="${project.moduleName}", friendlyName="${project.connectorName}")
-#if(${project.dataSenseEnabled} == true )
+@Connector(name="cloud", friendlyName="Cloud")
 @MetaDataScope( DataSenseResolver.class )
-#end
-public class ${project.connectorClassName} {
-#if(${project.generateDefaultBody} == true )
+public class CloudConnector {
     
     /**
      * Configurable
@@ -49,43 +32,31 @@ public class ${project.connectorClassName} {
     @Configurable
     @Default("Hello")
     private String greeting;
-#end
 
     @Config
-    ${project.configClassName} config;
+    ConnectorConfig config;
 
-#if(${project.generateDefaultBody} == true )
     /**
      * Custom processor
      *
-     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:greet}
+     * {@sample.xml ../../../doc/cloud-connector.xml.sample cloud:greet}
      *
      * @param friend Content to be processed
      * @return Some string
-#if($project.authenticationType == 'OAUTH_V2' )
-     * @throws Exception Comment for Exception     
-#end
      */
     @Processor
-#if($project.authenticationType == 'OAUTH_V2' )
-    @OAuthProtected
-    @ReconnectOn(exceptions = { Exception.class })
-    public String greet(@Default("friend") String friend) throws Exception {
-#else
     public String greet(String friend) {
-#end
         /*
          * MESSAGE PROCESSOR CODE GOES HERE
          */
         return greeting + " " + friend + ". " + config.getReply();
     }
 
-#if(${project.hasQuery} == true )
     
     /**
      * Description for query
      *
-     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:query-processor}
+     * {@sample.xml ../../../doc/cloud-connector.xml.sample cloud:query-processor}
      *
      *  @param query The dsql query
      *  @return List of elements that match the criteria
@@ -99,12 +70,10 @@ public class ${project.connectorClassName} {
         return new ArrayList<Object>();
     }
 
-#end
-#if(${project.dataSenseEnabled} == true )
     /**
      * DataSense processor
      *
-     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:add-entity}
+     * {@sample.xml ../../../doc/cloud-connector.xml.sample cloud:add-entity}
 
      * @param key Key to be used to populate the entity
      * @param entity Map that represents the entity
@@ -118,7 +87,6 @@ public class ${project.connectorClassName} {
         return entity;
     }
 
-#end
     /**
      * Set property
      *
@@ -134,21 +102,12 @@ public class ${project.connectorClassName} {
     public String getGreeting() {
         return this.greeting;
     }
-#else
-    /**
-     * Dummy operation to avoid compilation issues since @Connector need at least on @Processor, @Transformer or @Source
-     */
-    @Processor
-    public void foo() {
-        // TODO REMOVE THIS
-    }
-#end
 
-    public ${project.configClassName} getConfig() {
+    public ConnectorConfig getConfig() {
         return config;
     }
 
-    public void setConfig(${project.configClassName} config) {
+    public void setConfig(ConnectorConfig config) {
         this.config = config;
     }
 

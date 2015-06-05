@@ -1,4 +1,4 @@
-package org.mule.tooling.incubator.devkit.test;
+package org.mule.tooling.incubator.devkit.test.soap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -25,7 +25,7 @@ import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.DevkitUtils;
 
-public class NewDevKitWsdlBasedWSAuthenticationProjectTest {
+public class NewDevKitWsdlBasedNoneConnectProjectTest {
 
     IProject project;
 
@@ -40,7 +40,7 @@ public class NewDevKitWsdlBasedWSAuthenticationProjectTest {
             project = builder.withGroupId("org.mule.modules").withArtifactId("cloud-connector").withConnectorClassName("CloudConnector").withConfigClassName("ConnectorConfig")
                     .withVersion("1.0.0-SNAPSHOT").withCategory(DevkitUtils.CATEGORY_COMMUNITY).withApiType(ApiType.WSDL).withProjectName("cloud-connector")
                     .withConnectorName("Cloud").withPackageName(packageName).withModuleName("cloud").withGitUrl("http://github.com/mulesoft/cloud").withWsdlFiles(wsdlFiles)
-                    .withAuthenticationType(AuthenticationType.WS_SECURITY_USERNAME_TOKEN_PROFILE).build(monitor);
+                    .withAuthenticationType(AuthenticationType.NONE).build(monitor);
             assertNotNull("Project was not created", project);
             verifyFolder(project, DevkitUtils.MAIN_JAVA_FOLDER);
             verifyFolder(project, DevkitUtils.TEST_JAVA_FOLDER);
@@ -49,8 +49,11 @@ public class NewDevKitWsdlBasedWSAuthenticationProjectTest {
             verifyFolder(project, DevkitUtils.MAIN_RESOURCES_FOLDER);
             verifyFolder(project, DevkitUtils.TEST_RESOURCES_FOLDER);
             verifyFolder(project, DevkitUtils.ICONS_FOLDER);
-            verifyFolder(project, MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/"));
-            verifyFolder(project, MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + "config");
+            
+            String packageAsPath = packageName.replaceAll("\\.", "/");
+            
+            verifyFolder(project, MAIN_JAVA_FOLDER + "/" + packageAsPath);
+            verifyFolder(project, MAIN_JAVA_FOLDER + "/" + packageAsPath + "/" + "config");
 
             verifyFile(project, DevkitUtils.ICONS_FOLDER, "cloud-connector-24x16.png");
             verifyFile(project, DevkitUtils.ICONS_FOLDER, "cloud-connector-48x32.png");
@@ -68,14 +71,14 @@ public class NewDevKitWsdlBasedWSAuthenticationProjectTest {
                     FileUtils.readFileToString(project.getFolder(MAIN_RESOURCES_FOLDER + "/wsdl").getFile("enterprise.wsdl").getLocation().toFile(), "utf-8"));
 
             // Check @Connector content
-            assertEquals("Connector files differ!", FileUtils.readFileToString(new File("resources/wsdl-ws-security/WsdlWSConnector.txt"), "utf-8"), FileUtils.readFileToString(
-                    project.getFolder(MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/")).getFile("CloudConnector.java").getLocation().toFile(), "utf-8"));
+            assertEquals("Connector files differ!", FileUtils.readFileToString(new File("resources/wsdl-none/WsdlConnector.txt"), "utf-8"), FileUtils.readFileToString(
+                    project.getFolder(MAIN_JAVA_FOLDER + "/" + packageAsPath).getFile("CloudConnector.java").getLocation().toFile(), "utf-8"));
 
-            // Check @Connector content
+            // Check @WsdlProvider content
             assertEquals(
                     "WsdlProvider files differ!",
-                    FileUtils.readFileToString(new File("resources/wsdl-ws-security/WsdlWSConnectorConfig.txt"), "utf-8"),
-                    FileUtils.readFileToString(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/config").getFile("ConnectorConfig.java")
+                    FileUtils.readFileToString(new File("resources/wsdl-none/WsdlConnectorConfig.txt"), "utf-8"),
+                    FileUtils.readFileToString(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageAsPath + "/config").getFile("ConnectorConfig.java")
                             .getLocation().toFile(), "utf-8"));
 
         } catch (CoreException e) {

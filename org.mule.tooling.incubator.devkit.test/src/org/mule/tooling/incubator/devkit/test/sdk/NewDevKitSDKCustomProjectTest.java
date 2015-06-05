@@ -1,16 +1,13 @@
-package org.mule.tooling.incubator.devkit.test;
+package org.mule.tooling.incubator.devkit.test.sdk;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mule.tooling.devkit.common.DevkitUtils.MAIN_JAVA_FOLDER;
-import static org.mule.tooling.devkit.common.DevkitUtils.MAIN_RESOURCES_FOLDER;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IProject;
@@ -25,7 +22,7 @@ import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.DevkitUtils;
 
-public class NewDevKitWsdlBasedHttpBasicProjectTest {
+public class NewDevKitSDKCustomProjectTest {
 
     IProject project;
 
@@ -35,12 +32,11 @@ public class NewDevKitWsdlBasedHttpBasicProjectTest {
         ProjectBuilder builder = ProjectBuilderFactory.newInstance();
         try {
             String packageName = "org.mule.modules.cloud";
-            Map<String, String> wsdlFiles = new HashMap<String, String>();
-            wsdlFiles.put(new File("resources/enterprise.wsdl").getAbsolutePath(), "Salesforce API");
+            
             project = builder.withGroupId("org.mule.modules").withArtifactId("cloud-connector").withConnectorClassName("CloudConnector").withConfigClassName("ConnectorConfig")
-                    .withVersion("1.0.0-SNAPSHOT").withCategory(DevkitUtils.CATEGORY_COMMUNITY).withApiType(ApiType.WSDL).withProjectName("cloud-connector")
-                    .withConnectorName("Cloud").withPackageName(packageName).withModuleName("cloud").withGitUrl("http://github.com/mulesoft/cloud").withWsdlFiles(wsdlFiles)
-                    .withAuthenticationType(AuthenticationType.HTTP_BASIC).build(monitor);
+                    .withVersion("1.0.0-SNAPSHOT").withCategory(DevkitUtils.CATEGORY_COMMUNITY).withApiType(ApiType.GENERIC).withProjectName("cloud-connector")
+                    .withConnectorName("Cloud").withPackageName(packageName).withModuleName("cloud").withGitUrl("http://github.com/mulesoft/cloud")
+                    .withAuthenticationType(AuthenticationType.CONNECTION_MANAGEMENT).build(monitor);
             assertNotNull("Project was not created", project);
             verifyFolder(project, DevkitUtils.MAIN_JAVA_FOLDER);
             verifyFolder(project, DevkitUtils.TEST_JAVA_FOLDER);
@@ -49,8 +45,11 @@ public class NewDevKitWsdlBasedHttpBasicProjectTest {
             verifyFolder(project, DevkitUtils.MAIN_RESOURCES_FOLDER);
             verifyFolder(project, DevkitUtils.TEST_RESOURCES_FOLDER);
             verifyFolder(project, DevkitUtils.ICONS_FOLDER);
-            verifyFolder(project, MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/"));
-            verifyFolder(project, MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + "config");
+            
+            String packageAsPath = packageName.replaceAll("\\.", "/");
+            
+            verifyFolder(project, MAIN_JAVA_FOLDER + "/" + packageAsPath);
+            verifyFolder(project, MAIN_JAVA_FOLDER + "/" + packageAsPath + "/" + "config");
 
             verifyFile(project, DevkitUtils.ICONS_FOLDER, "cloud-connector-24x16.png");
             verifyFile(project, DevkitUtils.ICONS_FOLDER, "cloud-connector-48x32.png");
@@ -63,19 +62,15 @@ public class NewDevKitWsdlBasedHttpBasicProjectTest {
             assertEquals("REAME.md files differ!", FileUtils.readFileToString(new File("resources/README.txt"), "utf-8"),
                     FileUtils.readFileToString(project.getFile("README.md").getLocation().toFile(), "utf-8"));
 
-            // Check WSDL File was copied
-            assertEquals("WSDL files differ!", FileUtils.readFileToString(new File("resources/enterprise.wsdl"), "utf-8"),
-                    FileUtils.readFileToString(project.getFolder(MAIN_RESOURCES_FOLDER + "/wsdl").getFile("enterprise.wsdl").getLocation().toFile(), "utf-8"));
-
             // Check @Connector content
-            assertEquals("Connector files differ!", FileUtils.readFileToString(new File("resources/wsdl-http-basic/WsdlHttpBasicConnector.txt"), "utf-8"), FileUtils.readFileToString(
-                    project.getFolder(MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/")).getFile("CloudConnector.java").getLocation().toFile(), "utf-8"));
+            assertEquals("Connector files differ!", FileUtils.readFileToString(new File("resources/sdk-custom/CloudConnector.java"), "utf-8"), FileUtils.readFileToString(
+                    project.getFolder(MAIN_JAVA_FOLDER + "/" + packageAsPath).getFile("CloudConnector.java").getLocation().toFile(), "utf-8"));
 
-            // Check @Connector content
+            // Check @Config content
             assertEquals(
-                    "WsdlProvider files differ!",
-                    FileUtils.readFileToString(new File("resources/wsdl-http-basic/WsdlHttpBasicConnectorConfig.txt"), "utf-8"),
-                    FileUtils.readFileToString(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/config").getFile("ConnectorConfig.java")
+                    "Config files differ!",
+                    FileUtils.readFileToString(new File("resources/sdk-custom/ConnectorConfig.java"), "utf-8"),
+                    FileUtils.readFileToString(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageAsPath + "/config").getFile("ConnectorConfig.java")
                             .getLocation().toFile(), "utf-8"));
 
         } catch (CoreException e) {

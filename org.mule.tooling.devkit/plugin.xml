@@ -24,15 +24,6 @@
             name="Anypoint Connector Component"
             project="false">
       </wizard>
-	  <wizard
-            category="org.mule.tooling.ui.muleWizards"
-            class="org.mule.tooling.devkit.wizards.NewDevkitWsdlBasedProjectWizard"
-            icon="icons/icon.png"
-            id="org.mule.tooling.devkit.wizards.NewDevkitWsdlBasedProjectWizard"
-            name="Anypoint SOAP Connect Project"
-            hasPages="true"
-            project="true">
-      </wizard>
 	  </extension>
 	  <extension	
         point="org.eclipse.ui.perspectives">
@@ -47,13 +38,10 @@
 	      <perspectiveExtension
 	            targetID="*">
 	            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard" />
-	            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard"/>
-	            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitWsdlBasedProjectWizard"/>		
+	            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard"/>		
 	      </perspectiveExtension>
 	      <perspectiveExtension targetID="org.mule.tooling.devkit.perspective">
 				<newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard">
-				</newWizardShortcut>
-				<newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitWsdlBasedProjectWizard">
 				</newWizardShortcut>
 				<newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard">
 				</newWizardShortcut>
