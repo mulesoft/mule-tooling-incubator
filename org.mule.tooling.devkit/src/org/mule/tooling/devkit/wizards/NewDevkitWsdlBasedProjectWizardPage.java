@@ -49,6 +49,7 @@ public class NewDevkitWsdlBasedProjectWizardPage extends WizardPage implements O
         group.setNotifier(broadcaster);
         group.createControl(container);
         setControl(container);
+        project.setFocus();
     }
 
     public String getProjectName() {

@@ -373,4 +373,7 @@ public class ConnectorProjectWidget {
         return useDefaultValuesCheckbox.getSelection();
     }
 
+    public void setFocus() {
+        name.setFocus();
+    }
 }
