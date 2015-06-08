@@ -3,6 +3,7 @@ package org.mule.tooling.devkit.popup.actions;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.jar.JarFile;
 
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
@@ -117,15 +119,25 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             String location = pluginDir.toURI().toString();
 
             Bundle bundle = Platform.getBundle(synmbolicName);
-
+            boolean wasAnUpdated = false;
             if (bundle != null) {
                 bundle.update();
+                wasAnUpdated = true;
             } else {
                 bundle = bundleContext.installBundle(location);
             }
 
             bundle.start();
+            final String title = wasAnUpdated ? "Updated" : "Installed";
+            final String symbalicName = bundle.getSymbolicName();
+            Display.getDefault().asyncExec(new Runnable() {
 
+                @Override
+                public void run() {
+                    MessageDialog.openInformation(null, MessageFormat.format("{0} [{1}] succesfully.", title, symbalicName),
+                            MessageFormat.format("The connector was succesfully {0}.", title.toLowerCase()));
+                }
+            });
         } catch (BundleException e) {
             DevkitUIPlugin.getDefault().logError(e.getMessage(), e);
         }
@@ -142,7 +154,6 @@ public class InstallOrUpdateConnector extends AbstractHandler {
 
             String eclipseHome = System.getProperty("eclipse.home.location");
             URI fileUri = URI.create(eclipseHome);
-            fileUri.getPath();
             File dropins = new File(fileUri.getPath(), "dropins");
 
             if (!dropins.exists()) {
