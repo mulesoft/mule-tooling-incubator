@@ -5,15 +5,15 @@
 
 package org.mule.modules.cloud.config;
 
-import org.mule.api.annotations.ws.WsdlTransportResolver;
+import org.mule.api.annotations.ws.WsdlTransport;
 import org.mule.devkit.api.ws.transport.WsdlTransport;
 import org.mule.devkit.api.ws.transport.HttpBasicWsdlTransport;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.display.Password;
 import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.components.WsdlProvider;
-import org.mule.api.annotations.ws.WsdlServiceAddressResolver;
-import org.mule.api.annotations.ws.WsdlServiceDefinitionRetriever;
+import org.mule.api.annotations.ws.WsdlServiceEndpoint;
+import org.mule.api.annotations.ws.WsdlServiceRetriever;
 import org.mule.devkit.api.ws.definition.DefaultServiceDefinition;
 import org.mule.devkit.api.ws.definition.ServiceDefinition;
 import org.mule.api.annotations.param.Default;
@@ -37,7 +37,7 @@ public class ConnectorConfig {
     @Placement(order = 3)
     private String address;
 
-    @WsdlServiceDefinitionRetriever
+    @WsdlServiceRetriever
     public ServiceDefinition getServiceDefinition() {
            return new DefaultServiceDefinition(
                 "SforceService_Soap",
@@ -47,12 +47,12 @@ public class ConnectorConfig {
                 "Soap");
     }
 
-    @WsdlServiceAddressResolver
+    @WsdlServiceEndpoint
     public String getServiceAddress(ServiceDefinition definition) {
          return address;
     }
 
-    @WsdlTransportResolver
+    @WsdlTransport
     public WsdlTransport resolveTransport(ServiceDefinition serviceDefinition) {
         return new HttpBasicWsdlTransport(getUsername(), getPassword());
     }
