@@ -1,8 +1,5 @@
 package org.mule.tooling.devkit;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -10,13 +7,11 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.devkit.builder.DevkitNature;
 
@@ -24,10 +19,12 @@ public class ProjectResourcesHandler implements IResourceChangeListener {
 
     @Override
     public void resourceChanged(IResourceChangeEvent event) {
-        final IResource closingProject = event.getResource();
+        final IResource resource = event.getResource();
         try {
-            if (closingProject.getProject().hasNature(DevkitNature.NATURE_ID)) {
-                getDirtyEditors(closingProject.getProject());
+            if (resource instanceof IProject) {
+                if (resource.getProject().hasNature(DevkitNature.NATURE_ID)) {
+                    getDirtyEditors(resource.getProject());
+                }
             }
         } catch (CoreException e) {
             // Nothing to do
