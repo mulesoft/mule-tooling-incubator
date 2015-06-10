@@ -1,12 +1,18 @@
 package org.mule.tooling.devkit.export;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -101,6 +107,7 @@ public class DevkitExportPage extends WizardPage {
 
         });
         projects.setInput(ResourcesPlugin.getWorkspace());
+
         Label outputFileName = new Label(exportGroup, SWT.NULL);
         outputFileName.setText("Zip file:");
         outputFileName.setToolTipText("The name for the archive that will be generated.");
@@ -135,7 +142,7 @@ public class DevkitExportPage extends WizardPage {
 
         try {
             if (project != null && project.hasNature(DevkitNature.NATURE_ID)) {
-                setErrorMessage("The selected project doesn't seems to be a Devkit Project");
+                setErrorMessage("The selected project doesn't seems to be a DevKit Project");
                 setPageComplete(false);
             }
         } catch (CoreException e) {
@@ -261,18 +268,40 @@ public class DevkitExportPage extends WizardPage {
     }
 
     private void updatePageComplete() {
-        this.setPageComplete(project != null);
-        if (project != null) {
-            this.setErrorMessage(null);
-        }
-        if (StringUtils.isBlank(name.getText())) {
-            setErrorMessage("Specify where you want to create the Update Site.");
-        }
+        if (project == null) {
+            setErrorMessage("You need to select a DevKit Project.");
+        } else {
+            setErrorMessage(null);
+            if (!hasValidPom(project)) {
+                setErrorMessage("Packaging in pom.xml was not [mule-module].");
+            } else if (StringUtils.isBlank(name.getText())) {
+                setErrorMessage("Specify where you want to create the Update Site.");
+            } else {
 
-        File tempFile = new File(name.getText());
-        if (tempFile.getParent() == null) {
-            setErrorMessage("Cannot save file in the root directory. Selected a different folder.");
+                File tempFile = new File(name.getText());
+                if (tempFile.getParent() == null) {
+                    setErrorMessage("Cannot save file in the root directory. Selected a different folder.");
+                }
+            }
         }
         setPageComplete(StringUtils.isBlank(this.getErrorMessage()));
     }
+
+    private boolean hasValidPom(IProject project) {
+        try {
+            IFile pomFile = project.getFile("pom.xml");
+            if (pomFile != null) {
+                MavenXpp3Reader mavenXpp3Reader = new MavenXpp3Reader();
+                Reader pomInputStream = new InputStreamReader(new FileInputStream(pomFile.getRawLocation().toFile()));
+                Model model = mavenXpp3Reader.read(pomInputStream);
+                return "mule-module".equals(model.getPackaging());
+            }
+        } catch (XmlPullParserException e) {
+            // ignore
+        } catch (IOException e) {
+            // ignore
+        }
+        return false;
+    }
+
 }
