@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -273,7 +274,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
         }
 
         Object[] checkedElements = projectTreeViewer.getCheckedElements();
-        boolean complete = checkedElements != null && checkedElements.length > 0;
+        boolean complete = checkedElements != null && checkedElements.length > 0 && StringUtils.isEmpty(getErrorMessage());
         if (complete) {
             Object[] elements = projectTreeViewer.getCheckedElements();
             for (int i = 0; i < elements.length; i++) {
@@ -333,7 +334,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
                                 IJavaProject javaProject = JavaCore.create(root.getProject(folder.getName()));
                                 ProjectBuilder generator = ProjectBuilderFactory.newInstance();
 
-                                List<IClasspathEntry> classpathEntries = generator.generateProjectEntries(project,monitor);
+                                List<IClasspathEntry> classpathEntries = generator.generateProjectEntries(project, monitor);
                                 javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[] {}), monitor);
                                 if (mavenProject.getPackaging() != null && mavenProject.getPackaging().equals("mule-module")) {
                                     DevkitUtils.configureDevkitAPT(javaProject);
@@ -584,6 +585,17 @@ public class ConnectorImportWizzardPage extends WizardPage {
         ScanProject job = new ScanProject("Scaningn project", rootDirectoryCombo.getText(), root);
         try {
             job.runInWorkspace(null);
+            if (root.getModules().size() == 1) {
+                if (root.getModules().get(0).hasChilds()) {
+                    setErrorMessage("Multi Module projects are not supported.");
+                    setPageComplete(false);
+                } else {
+                    setErrorMessage(null);
+                    setPageComplete(true);
+                }
+            } else {
+                setErrorMessage(null);
+            }
             projectTreeViewer.setInput(root);
             projectTreeViewer.refresh();
             projectTreeViewer.expandAll();

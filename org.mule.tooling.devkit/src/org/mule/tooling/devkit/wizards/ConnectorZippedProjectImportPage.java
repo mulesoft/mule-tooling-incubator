@@ -41,6 +41,7 @@ import org.mule.tooling.devkit.builder.DevkitNature;
 import org.mule.tooling.devkit.builder.ProjectBuilder;
 import org.mule.tooling.devkit.builder.ProjectBuilderFactory;
 import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.devkit.maven.MavenUtils;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
 import org.mule.tooling.maven.runner.SyncGetResultCallback;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
@@ -218,15 +219,22 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
 
         if (!hasExpectedProjectStructure(tempExpandedZipFile)) {
             // If the user wants to continue we will just create a project with the devkit nature in worst case scenario.
-            if (!MessageDialog.open(MessageDialog.CONFIRM, getShell(), "Warning", "The project you are trying to import has an invalid folder structure. \nContinue anyway?",
-                    SWT.NONE)) {
-                return false;
-            }
+            MessageDialog.openError(getShell(), "The selected project is not supported",
+                    "Check it has a pom.xml and the packaging is [mule-module].\n\nMulti Module projects are not supported.");
+            return false;
         }
         File[] files = tempExpandedZipFile.listFiles();
         // Check if the zip has just 1 folder, and the poin is inside of it
         if (files.length == 1 && files[0].isDirectory()) {
             tempExpandedZipFile = files[0];
+        }
+        // weird mac scenario
+        if (files.length == 2) {
+            if (files[0].isDirectory() && "__MACOSX".equals(files[1].getName())) {
+                tempExpandedZipFile = files[0];
+            } else if (files[1].isDirectory() && "__MACOSX".equals(files[0].getName())) {
+                tempExpandedZipFile = files[1];
+            }
         }
         final File tempExpanded = tempExpandedZipFile;
 
@@ -244,7 +252,7 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
                         IJavaProject javaProject = JavaCore.create(root.getProject(projectName));
                         ProjectBuilder generator = ProjectBuilderFactory.newInstance();
 
-                        List<IClasspathEntry> classpathEntries = generator.generateProjectEntries(project,monitor);
+                        List<IClasspathEntry> classpathEntries = generator.generateProjectEntries(project, monitor);
                         javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[] {}), monitor);
 
                         try {
@@ -274,11 +282,20 @@ public class ConnectorZippedProjectImportPage extends WizardPage {
     private boolean hasExpectedProjectStructure(File tempExpandedZipFile) {
 
         File[] files = tempExpandedZipFile.listFiles();
-        // Check if the zip has just 1 folder, and the poin is inside of it
+        // Check if the zip has just 1 folder, and the pom is inside of it
         if (files.length == 1 && files[0].isDirectory()) {
             tempExpandedZipFile = files[0];
         }
-        return new File(tempExpandedZipFile, "pom.xml").exists();
+        // weird mac scenario
+        if (files.length == 2) {
+            if (files[0].isDirectory() && "__MACOSX".equals(files[1].getName())) {
+                tempExpandedZipFile = files[0];
+            } else if (files[1].isDirectory() && "__MACOSX".equals(files[0].getName())) {
+                tempExpandedZipFile = files[1];
+            }
+        }
+        File pomFile = new File(tempExpandedZipFile, "pom.xml");
+        return pomFile.exists() && MavenUtils.hasValidPom(pomFile);
     }
 
     private IProject createProject(String artifactId, IProgressMonitor monitor, IWorkspaceRoot root, File folder) throws CoreException {

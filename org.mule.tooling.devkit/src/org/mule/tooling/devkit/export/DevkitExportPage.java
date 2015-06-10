@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
 import org.mule.tooling.devkit.builder.DevkitNature;
 import org.mule.tooling.devkit.maven.MavenRunBuilder;
+import org.mule.tooling.devkit.maven.MavenUtils;
 import org.mule.tooling.ui.utils.SaveModifiedResourcesDialog;
 import org.mule.tooling.ui.utils.UiUtils;
 
@@ -271,37 +272,24 @@ public class DevkitExportPage extends WizardPage {
         if (project == null) {
             setErrorMessage("You need to select a DevKit Project.");
         } else {
-            setErrorMessage(null);
-            if (!hasValidPom(project)) {
-                setErrorMessage("Packaging in pom.xml was not [mule-module].");
-            } else if (StringUtils.isBlank(name.getText())) {
-                setErrorMessage("Specify where you want to create the Update Site.");
+            if (project.getFile("pom.xml") == null) {
+                setErrorMessage("The selected project doesn't have a pom.xml file.");
             } else {
+                setErrorMessage(null);
+                if (!MavenUtils.hasValidPom(project.getFile("pom.xml").getRawLocation().toFile())) {
+                    setErrorMessage("Packaging in pom.xml was not [mule-module].");
+                } else if (StringUtils.isBlank(name.getText())) {
+                    setErrorMessage("Specify where you want to create the Update Site.");
+                } else {
 
-                File tempFile = new File(name.getText());
-                if (tempFile.getParent() == null) {
-                    setErrorMessage("Cannot save file in the root directory. Selected a different folder.");
+                    File tempFile = new File(name.getText());
+                    if (tempFile.getParent() == null) {
+                        setErrorMessage("Cannot save file in the root directory. Selected a different folder.");
+                    }
                 }
             }
         }
         setPageComplete(StringUtils.isBlank(this.getErrorMessage()));
-    }
-
-    private boolean hasValidPom(IProject project) {
-        try {
-            IFile pomFile = project.getFile("pom.xml");
-            if (pomFile != null) {
-                MavenXpp3Reader mavenXpp3Reader = new MavenXpp3Reader();
-                Reader pomInputStream = new InputStreamReader(new FileInputStream(pomFile.getRawLocation().toFile()));
-                Model model = mavenXpp3Reader.read(pomInputStream);
-                return "mule-module".equals(model.getPackaging());
-            }
-        } catch (XmlPullParserException e) {
-            // ignore
-        } catch (IOException e) {
-            // ignore
-        }
-        return false;
     }
 
 }
