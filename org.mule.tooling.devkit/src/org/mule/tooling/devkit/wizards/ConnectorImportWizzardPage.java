@@ -529,7 +529,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
         final File folder = mavenProject.getProjectRoot();
         for (int index = 0; index < projects.length; index++) {
-            if (projects[index].getLocation().toFile().equals(folder)) {
+            if (projects[index].getLocation().toFile().equals(folder) || mavenProject.getArtifactId().equals(projects[index].getName())) {
                 return true;
             }
         }
