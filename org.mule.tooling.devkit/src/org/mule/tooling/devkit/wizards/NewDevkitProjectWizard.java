@@ -152,8 +152,10 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                         projectBuild.run();
 
                     }
-                    openConnectorClass(builder.getConnectorClassName(), javaProject.getProject());
                     javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+
+                    openConnectorClass(builder.getConnectorClassName(), javaProject.getProject());
+                    
                     wasCreated = true;
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
@@ -243,7 +245,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
     private void openConnectorClass(final String connectorClassName, final IProject project) {
 
-        Display.getDefault().syncExec(new Runnable() {
+        Display.getDefault().asyncExec(new Runnable() {
 
             public void run() {
                 try {
