@@ -34,9 +34,10 @@ public class MavenOutputToMonitorRedirectorThread extends Thread {
 
     public void run() {
         BufferedReader bufferedReader = null;
-        monitor.beginTask(taskName, PROGRESS_UPPER_LIMIT);
-        monitor.setTaskName(taskName);
         try {
+            monitor.beginTask(taskName, PROGRESS_UPPER_LIMIT);
+            monitor.setTaskName(taskName);
+
             InputStreamReader inputStreamReader = new InputStreamReader(sourceStream);
             bufferedReader = new BufferedReader(inputStreamReader);
 
@@ -67,11 +68,12 @@ public class MavenOutputToMonitorRedirectorThread extends Thread {
             if (!this.isInterrupted() && !monitor.isCanceled()) {
                 try {
                     monitor.setTaskName("");
-                    monitor.done();
+
                 } catch (Exception ex) {
 
                 }
             }
+            monitor.done();
             IOUtils.closeQuietly(bufferedReader);
         }
     }

@@ -12,15 +12,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class ImageWriter {
 
-    private IProgressMonitor monitor;
     private IProject project;
 
-    public ImageWriter(IProject project, IProgressMonitor monitor) {
+    public ImageWriter(IProject project) {
         this.project = project;
-        this.monitor = monitor;
     }
 
-    public void apply(final String templatePath, final String resultPath) {
+    public void apply(final String templatePath, final String resultPath, IProgressMonitor monitor) {
         try {
             monitor.beginTask("Creating file " + resultPath, 100);
             File f2 = new File(project.getProject().getFile(resultPath).getLocationURI());
@@ -37,15 +35,18 @@ public class ImageWriter {
             while ((len = in.read(buf)) > 0) {
                 out.write(buf, 0, len);
             }
+            monitor.worked(30);
             in.close();
             out.flush();
             out.close();
-            monitor.worked(30);
+            monitor.worked(70);
 
         } catch (FileNotFoundException ex) {
             System.out.println(ex.getMessage());
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        } finally {
+            monitor.done();
         }
     }
 }

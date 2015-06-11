@@ -113,4 +113,9 @@ public class DevkitUIPlugin extends AbstractUIPlugin implements IStartup {
     public void earlyStartup() {
         scheduleResetPerspectiveOnUpdateJob();
     }
+
+    public static void log(String message) {
+        log(new Status(IStatus.ERROR, getPluginId(), 0x1001, message, null));
+
+    }
 }

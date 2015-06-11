@@ -128,6 +128,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException {
                 try {
+                    monitor.beginTask("Creating Anypoint Connector Project", 1000);
                     builder.build(monitor);
 
                     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -155,7 +156,7 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                     javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
                     openConnectorClass(builder.getConnectorClassName(), javaProject.getProject());
-                    
+
                     wasCreated = true;
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
