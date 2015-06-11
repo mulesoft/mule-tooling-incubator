@@ -86,7 +86,7 @@ public class ConnectorIconPanel {
         GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(false, false).applyTo(iconGroup);
 
         Label label = new Label(iconGroup, SWT.NULL);
-        label.setText("Palette Icon");
+        label.setText("Canvas Icon");
         label.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).hint(SWT.DEFAULT, SWT.DEFAULT).create());
 
         bigIcon = new Canvas(iconGroup, SWT.NONE);
@@ -126,7 +126,7 @@ public class ConnectorIconPanel {
         GridLayoutFactory.swtDefaults().numColumns(1).applyTo(iconGroup);
         GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(false, false).applyTo(iconGroup);
         label = new Label(iconGroup, SWT.NULL);
-        label.setText("Canvas Icon");
+        label.setText("Palette Icon");
         label.setLayoutData(GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.CENTER).grab(false, false).hint(SWT.DEFAULT, SWT.DEFAULT).create());
 
         smallIcon = new Canvas(iconGroup, SWT.NONE);

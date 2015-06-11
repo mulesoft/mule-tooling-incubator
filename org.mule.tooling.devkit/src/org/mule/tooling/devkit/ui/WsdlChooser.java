@@ -36,7 +36,7 @@ public class WsdlChooser {
         Composite container = new Composite(parent, SWT.NULL);
         GridLayoutFactory.swtDefaults().numColumns(4).applyTo(container);
         GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).span(4, 1).applyTo(container);
-        Group apiGroupBox = UiUtils.createGroupWithTitle(container, "Wsdl Configuration", 3);
+        Group apiGroupBox = UiUtils.createGroupWithTitle(container, "WSDL Location", 3);
 
         Composite compositeRadio = new Composite(apiGroupBox, SWT.NULL);
         GridLayoutFactory.fillDefaults().numColumns(2).margins(5, 5).applyTo(compositeRadio);
