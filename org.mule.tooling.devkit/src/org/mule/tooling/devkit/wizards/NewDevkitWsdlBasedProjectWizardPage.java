@@ -76,7 +76,7 @@ public class NewDevkitWsdlBasedProjectWizardPage extends WizardPage implements O
             setPageComplete(false);
             setErrorMessage(status.getMessage());
         } else {
-            setPageComplete(!group.getWsdlFiles().isEmpty());
+            setPageComplete(!group.hasErrors());
             setErrorMessage(null);
         }
     }

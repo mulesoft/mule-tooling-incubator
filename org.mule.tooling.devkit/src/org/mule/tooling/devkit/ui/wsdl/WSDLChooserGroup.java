@@ -58,22 +58,19 @@ public class WSDLChooserGroup {
         parameters = new ArrayList<WsdlRowEntry>();
 
         parametersGroup = UiUtils.createGroupWithTitle(parent, "", 2);
-        GridLayoutFactory.swtDefaults().numColumns(1).applyTo(parametersGroup);
-        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).applyTo(parametersGroup);
+        GridLayoutFactory.fillDefaults().applyTo(parametersGroup);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(parametersGroup);
 
         createTitle(parametersGroup);
 
         parametersListWrapper = new ScrolledComposite(parametersGroup, SWT.V_SCROLL);
-        GridLayoutFactory.swtDefaults().numColumns(1).applyTo(parametersListWrapper);
-        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).applyTo(parametersListWrapper);
-
         GridLayoutFactory.fillDefaults().applyTo(parametersListWrapper);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(parametersListWrapper);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(parametersListWrapper);
 
         parametersListWrapperContent = new Composite(parametersListWrapper, SWT.FILL);
 
-        GridLayoutFactory.swtDefaults().numColumns(1).applyTo(parametersListWrapperContent);
-        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, true).applyTo(parametersListWrapperContent);
+        GridLayoutFactory.fillDefaults().applyTo(parametersListWrapperContent);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(parametersListWrapperContent);
         createEmptyCanvasInformation();
 
         buttonsWrapper = new Composite(parametersGroup, SWT.NONE);
@@ -106,6 +103,7 @@ public class WSDLChooserGroup {
         parametersListWrapper.setContent(parametersListWrapperContent);
         parametersListWrapper.setExpandHorizontal(true);
         parametersListWrapper.setExpandVertical(true);
+        recalculateEditorSize();
     }
 
     private void createTitle(final Composite parent) {
@@ -179,8 +177,13 @@ public class WSDLChooserGroup {
 
         if (wsdlFile.isDirectory()) {
             Collection<File> files = FileUtils.listFiles(wsdlFile, new String[] { "wsdl" }, false);
+            if (!files.isEmpty()) {
+                if (parameters.isEmpty()) {
+                    emptyCanvasComposite.dispose();
+                }
+            }
             for (File file : files) {
-                WsdlRowEntry row = new WsdlRowEntry(parametersListWrapperContent);
+                WsdlRowEntry row = new WsdlRowEntry(parametersListWrapperContent, broadcaster);
                 row.createControl();
                 createParameterToolbar(row);
                 row.setLocation(file.getAbsolutePath());
@@ -190,7 +193,7 @@ public class WSDLChooserGroup {
             }
         } else {
 
-            WsdlRowEntry row = new WsdlRowEntry(parametersListWrapperContent);
+            WsdlRowEntry row = new WsdlRowEntry(parametersListWrapperContent, broadcaster);
             if (parameters.isEmpty()) {
                 emptyCanvasComposite.dispose();
             }
@@ -218,14 +221,9 @@ public class WSDLChooserGroup {
     }
 
     protected void recalculateEditorSize() {
-        Composite parent = parametersGroup.getParent().getParent();
-        parent.layout(true, true);
-        parent.setRedraw(true);
-        if (parent instanceof ScrolledComposite) {
-            ScrolledComposite cm = (ScrolledComposite) parent;
-            Point computeSize = cm.computeSize(-1, -1);
-            cm.setMinSize(computeSize.x, computeSize.y);
-        }
+        final Point panelSize = parametersListWrapperContent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+        parametersListWrapper.setMinSize(SWT.DEFAULT, panelSize.y);
+        parametersListWrapper.layout(true, true);
     }
 
     protected String getEditorTitle() {
@@ -300,5 +298,13 @@ public class WSDLChooserGroup {
         } catch (URISyntaxException e) {
             return false;
         }
+    }
+
+    public boolean hasErrors() {
+        boolean hasErrors = false;
+        for (WsdlRowEntry entry : parameters) {
+            hasErrors |= entry.hasErrors();
+        }
+        return hasErrors;
     }
 }
