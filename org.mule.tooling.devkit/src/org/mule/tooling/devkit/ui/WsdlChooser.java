@@ -9,6 +9,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -47,12 +48,41 @@ public class WsdlChooser {
         fromFileRadioButton.setSelection(true);
         fromFileRadioButton.setToolTipText("It will import the selected root WSDL from a file or URL");
         fromFileRadioButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1, 1));
+        fromFileRadioButton.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                wsdlLocation.setText("http://");
+                wsdlLocation.setMessage("");
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                wsdlLocation.setText("http://");
+                wsdlLocation.setMessage("");
+            }
+        });
 
         if (mode == ALL) {
             final Button fromFolderRadioButton = new Button(compositeRadio, SWT.RADIO);
             fromFolderRadioButton.setText("From folder");
             fromFolderRadioButton.setToolTipText("It will import all the root WSDL files and their dependencies");
             fromFolderRadioButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1, 1));
+            fromFolderRadioButton.addSelectionListener(new SelectionListener() {
+
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    wsdlLocation.setText("");
+                    wsdlLocation.setMessage("Select a folder containing WSDL files");
+                }
+
+                @Override
+                public void widgetDefaultSelected(SelectionEvent e) {
+                    wsdlLocation.setText("");
+                    wsdlLocation.setMessage("Select a folder containing WSDL files");
+                }
+            });
+
         }
 
         wsdlLocation = new Text(apiGroupBox, SWT.BORDER);

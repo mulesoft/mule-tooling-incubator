@@ -94,10 +94,13 @@ public class ConnectorIconPanel {
         bigIcon.addPaintListener(new PaintListener() {
 
             public void paintControl(PaintEvent e) {
+                Image flowBackground = getFlowBackgroundImage();
+                Rectangle flowBounds = flowBackground.getBounds();
+                e.gc.drawImage(flowBackground, 0, 0, flowBounds.width, flowBounds.height, 0, 0, 80, 80);
                 Image background = getConnectorImage();
                 Image icon = getConnectorIcon();
                 Rectangle bounds = background.getBounds();
-                e.gc.drawImage(background, 0, 0, bounds.width, bounds.height, 0, 0, BIG_ICON_WIDTH, 32);
+                e.gc.drawImage(background, 0, 0, bounds.width, bounds.height, 5, 25, BIG_ICON_WIDTH, 32);
                 if (icon == null) {
                     Font font = new Font(e.display, "Arial", 8, SWT.BOLD | SWT.ITALIC);
                     e.gc.setForeground(new Color(e.display, 47, 153, 185));
@@ -106,7 +109,7 @@ public class ConnectorIconPanel {
                     int averageWidth = metrics.getAverageCharWidth();
                     int labelLength = MAX_NAME_LENGTH < getConnectorName().length() ? MAX_NAME_LENGTH : getConnectorName().length();
                     String name = getConnectorName().substring(0, labelLength);
-                    e.gc.drawText(name, (47 - averageWidth * name.length()) / 2, (32 - metrics.getHeight()) / 2, true);
+                    e.gc.drawText(name, 5 + (47 - averageWidth * name.length()) / 2, 25 + (32 - metrics.getHeight()) / 2, true);
                     font.dispose();
                 } else {
                     Rectangle iconBounds = icon.getBounds();
@@ -115,7 +118,7 @@ public class ConnectorIconPanel {
                         data.transparentPixel = data.palette.getPixel(data.palette.getRGB(data.getPixel(0, 0)));
                     }
                     final Image transparentIdeaImage = new Image(e.display, data);
-                    e.gc.drawImage(transparentIdeaImage, 0, 0, iconBounds.width, iconBounds.height, 9, 1, 30, 30);
+                    e.gc.drawImage(transparentIdeaImage, 0, 0, iconBounds.width, iconBounds.height, 5 + 9, 25 + 1, 30, 30);
                     icon.dispose();
                     transparentIdeaImage.dispose();
                 }
@@ -134,10 +137,13 @@ public class ConnectorIconPanel {
         smallIcon.addPaintListener(new PaintListener() {
 
             public void paintControl(PaintEvent e) {
+                Image paletteBackground = getPaletteBackgroundImage();
+                Rectangle flowBounds = paletteBackground.getBounds();
+                e.gc.drawImage(paletteBackground, 0, 0, flowBounds.width, flowBounds.height, 0, 0, flowBounds.width / 2, flowBounds.height / 2);
                 Image background = getConnectorImage();
                 Image icon = getConnectorIcon();
                 Rectangle bounds = background.getBounds();
-                e.gc.drawImage(background, 0, 0, bounds.width, bounds.height, 0, 0, SMALL_ICON_WIDTH, 16);
+                e.gc.drawImage(background, 0, 0, bounds.width, bounds.height, 18, 27, SMALL_ICON_WIDTH, 16);
                 if (icon == null) {
                     Font font = new Font(e.display, "Arial", 4, SWT.BOLD | SWT.ITALIC);
                     e.gc.setForeground(new Color(e.display, 47, 153, 185));
@@ -146,7 +152,7 @@ public class ConnectorIconPanel {
                     int averageWidth = metrics.getAverageCharWidth();
                     int labelLength = MAX_NAME_LENGTH < getConnectorName().length() ? MAX_NAME_LENGTH : getConnectorName().length();
                     String name = getConnectorName().substring(0, labelLength);
-                    e.gc.drawText(name, (23 - averageWidth * name.length()) / 2, (16 - metrics.getHeight()) / 2, true);
+                    e.gc.drawText(name, 18 + (23 - averageWidth * name.length()) / 2, 27 + (16 - metrics.getHeight()) / 2, true);
                     font.dispose();
                 } else {
                     Rectangle iconBounds = icon.getBounds();
@@ -155,13 +161,14 @@ public class ConnectorIconPanel {
                         data.transparentPixel = data.palette.getPixel(data.palette.getRGB(data.getPixel(0, 0)));
                     }
                     final Image transparentIdeaImage = new Image(e.display, data);
-                    e.gc.drawImage(transparentIdeaImage, 0, 0, iconBounds.width, iconBounds.height, 5, 1, 14, 14);
+                    e.gc.drawImage(transparentIdeaImage, 0, 0, iconBounds.width, iconBounds.height, 18 + 5, 27 + 1, 14, 14);
                     icon.dispose();
                     transparentIdeaImage.dispose();
                 }
             }
-        });
 
+        });
+        GridDataFactory.fillDefaults().applyTo(smallIcon);
         Button reset = new Button(group, SWT.NONE);
         reset.setText("Reset");
         reset.addSelectionListener(new SelectionAdapter() {
@@ -205,6 +212,14 @@ public class ConnectorIconPanel {
 
     protected Image getConnectorImage() {
         return DevkitImages.getManagedImage("", "connector-48x32.png");
+    }
+
+    protected Image getFlowBackgroundImage() {
+        return DevkitImages.getManagedImage("", "flow-container.png");
+    }
+
+    protected Image getPaletteBackgroundImage() {
+        return DevkitImages.getManagedImage("", "palette.png");
     }
 
     protected Image getConnectorIcon() {
