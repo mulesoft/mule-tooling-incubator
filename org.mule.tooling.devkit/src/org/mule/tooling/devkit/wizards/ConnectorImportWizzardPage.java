@@ -283,7 +283,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
                     final MavenInfo mavenProject = (MavenInfo) element;
                     if (existsInWorkspace(mavenProject)) {
                         projectTreeViewer.setChecked(element, false);
-                        setMessage("Project " + mavenProject.getArtifactId() + " is already in the workspace", IMessageProvider.WARNING);
+                        setMessage("Project " + mavenProject.getProjectRoot().getName() + " is already in the workspace", IMessageProvider.WARNING);
                         complete = false;
                     }
                 }
@@ -377,23 +377,12 @@ public class ConnectorImportWizzardPage extends WizardPage {
     private IProjectDescription getProjectDescription(IWorkspaceRoot root, String artifactId, File folder) throws CoreException {
 
         File projectDescriptionFile = new File(folder, ".project");
-        IProjectDescription currentDescription = null;
-        ICommand[] commands = null;
         int commandsLength = 0;
         if (projectDescriptionFile.exists()) {
-            currentDescription = root.getWorkspace().loadProjectDescription(Path.fromOSString(new File(folder, ".project").getAbsolutePath()));
-            commands = currentDescription.getBuildSpec();
-            commandsLength = commands.length;
-            for (int i = 0; i < commands.length; ++i) {
-                if (commands[i].getBuilderName().equals(DevkitBuilder.BUILDER_ID)) {
-                    return currentDescription;
-                }
-            }
+            projectDescriptionFile.delete();
         }
         ICommand[] newCommands = new ICommand[commandsLength + 1];
-        if (commands != null) {
-            System.arraycopy(commands, 0, newCommands, 0, commandsLength);
-        }
+
         IProjectDescription projectDescription = root.getWorkspace().newProjectDescription(artifactId);
         projectDescription.setNatureIds(new String[] { JavaCore.NATURE_ID, DevkitNature.NATURE_ID });
 
@@ -529,7 +518,8 @@ public class ConnectorImportWizzardPage extends WizardPage {
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
         final File folder = mavenProject.getProjectRoot();
         for (int index = 0; index < projects.length; index++) {
-            if (projects[index].getLocation().toFile().equals(folder) || mavenProject.getArtifactId().equals(projects[index].getName())) {
+            IProject project = projects[index];
+            if (project.getLocation().toFile().equals(folder) || folder.getName().equals(project.getLocation().lastSegment())) {
                 return true;
             }
         }
