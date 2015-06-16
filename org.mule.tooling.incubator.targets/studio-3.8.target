@@ -99,5 +99,12 @@
 <unit id="org.mule.tooling.extension.server.3.6.1.feature.group" version="0.0.0"/>
 <repository location="http://tooling-runtimes.s3.amazonaws.com/icefall/repository/"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.raml.editor.feature.feature.group" version="0.0.0"/>
+<unit id="org.mule.tooling.apikit.feature.feature.group" version="0.0.0"/>
+<unit id="org.mule.tooling.apikit.feature.3.6.0.feature.group" version="0.0.0"/>
+<unit id="org.mule.tooling.apikit.feature.3.7.0.feature.group" version="0.0.0"/>
+<repository location="http://apikit-nightly.s3.amazonaws.com/joy"/>
+</location>
 </locations>
 </target>
