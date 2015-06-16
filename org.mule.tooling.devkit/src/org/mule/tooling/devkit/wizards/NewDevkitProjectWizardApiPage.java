@@ -30,18 +30,18 @@ public class NewDevkitProjectWizardApiPage extends WizardPage {
         GridLayoutFactory.fillDefaults().numColumns(2).spacing(6, 6).applyTo(container);
 
         // Group mavenGroupBox = UiUtils.createGroupWithTitle(container, "Connector Type", 2);
-        sdk = initButton(container, "SDK", SWT.RADIO);
+        sdk = initButton(container, "SDK Based", SWT.RADIO);
         sdk.setImage(DevkitImages.getManagedImage("", "cloud-tools.png"));
         sdk.setSelection(true);
 
         Label textField = new Label(container, SWT.WRAP);
-        textField.setText("Choose this option for an Anypoint Connector project that will consume either an SDK or a CXF/Jersey client.");
+        textField.setText("Choose this option for an Anypoint Connector project that will consume either an SDK or an Apache CXF/Jersey client.");
         GridDataFactory.swtDefaults().grab(true, false).hint(300, SWT.DEFAULT).applyTo(textField);
 
         Label separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
         GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.FILL).span(2, 1).applyTo(separator);
 
-        soap = initButton(container, "SOAP", SWT.RADIO);
+        soap = initButton(container, "SOAP Connect", SWT.RADIO);
         soap.setImage(DevkitImages.getManagedImage("", "cloud-envelope-open.png"));
 
         Label soapText = new Label(container, SWT.WRAP);

@@ -278,7 +278,7 @@
                 </command>
                 <command commandId="org.mule.tooling.devkit.popup.actions.Uninstall"
                          label="Uninstall"
-                         icon="icons/uninstall.gif"
+                         icon="icons/uninstall.png"
                          style="push">
                 </command>
             </menu>
@@ -460,7 +460,7 @@
 				</command>
 				<command commandId="org.mule.tooling.devkit.popup.actions.Uninstall"
                          tooltip="Uninstall"
-                         icon="icons/uninstall.gif">
+                         icon="icons/uninstall.png">
 				</command>
             </toolbar>
       </menuContribution>
