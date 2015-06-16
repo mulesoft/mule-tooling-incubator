@@ -18,11 +18,6 @@ import org.mule.api.annotations.rest.RestUriParam;
 
 import org.mule.modules.cloud.config.ConnectorConfig;
 
-/**
- * Anypoint Connector
- *
- * @author MuleSoft, Inc.
- */
 @Connector(name="cloud", friendlyName="Cloud")
 public abstract class CloudConnector {
 
