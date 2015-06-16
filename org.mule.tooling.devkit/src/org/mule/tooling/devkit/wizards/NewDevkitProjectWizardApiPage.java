@@ -12,13 +12,13 @@ import org.mule.tooling.devkit.DevkitImages;
 
 public class NewDevkitProjectWizardApiPage extends WizardPage {
 
-    private Button jdk;
+    private Button sdk;
     private Button soap;
 
     public NewDevkitProjectWizardApiPage() {
         super("apiWizardPage");
         setTitle(NewDevkitProjectWizard.WIZZARD_PAGE_TITTLE);
-        setDescription("Create an Anypoint Connector project.");
+        setDescription("Select an Anypoint Connector project type.");
     }
 
     /**
@@ -30,29 +30,28 @@ public class NewDevkitProjectWizardApiPage extends WizardPage {
         GridLayoutFactory.fillDefaults().numColumns(2).spacing(6, 6).applyTo(container);
 
         // Group mavenGroupBox = UiUtils.createGroupWithTitle(container, "Connector Type", 2);
-        jdk = initButton(container, "JDK", SWT.RADIO);
-        jdk.setImage(DevkitImages.getManagedImage("", "cloud-tools.png"));
-        jdk.setSelection(true);
+        sdk = initButton(container, "SDK Based", SWT.RADIO);
+        sdk.setImage(DevkitImages.getManagedImage("", "cloud-tools.png"));
+        sdk.setSelection(true);
 
         Label textField = new Label(container, SWT.WRAP);
-        textField
-                .setText("Create an Anypoint Connector project using an SDK. Choose this options if you have an SDK or want to create a client using CXF or Jersey.");
+        textField.setText("Choose this option for an Anypoint Connector project that will consume either an SDK or an Apache CXF/Jersey client.");
         GridDataFactory.swtDefaults().grab(true, false).hint(300, SWT.DEFAULT).applyTo(textField);
 
         Label separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
         GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.FILL).span(2, 1).applyTo(separator);
 
-        soap = initButton(container, "SOAP", SWT.RADIO);
+        soap = initButton(container, "SOAP Connect", SWT.RADIO);
         soap.setImage(DevkitImages.getManagedImage("", "cloud-envelope-open.png"));
 
         Label soapText = new Label(container, SWT.WRAP);
-        soapText.setText("Create an Anypoint Connector project using SOAP Connect feature. Choose this options if you have one or more WSDLs files want to use .");
+        soapText.setText("Choose this option for an Anypoint Connector project that will consume WSDL files throught the SOAP Connect feature.");
         GridDataFactory.swtDefaults().grab(true, false).hint(300, SWT.DEFAULT).applyTo(soapText);
 
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).applyTo(container);
 
         setPageComplete(true);
-        
+
         setControl(container);
     }
 
@@ -66,7 +65,7 @@ public class NewDevkitProjectWizardApiPage extends WizardPage {
     }
 
     public String getConnectorType() {
-        if (jdk.getSelection()) {
+        if (sdk.getSelection()) {
             return "JDK";
         }
         return "SOAP";

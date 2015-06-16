@@ -157,6 +157,9 @@
         <command id="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand"
 			name="Generate Tests">
         </command>
+        <command id="org.mule.tooling.devkit.popup.actions.Uninstall"
+			name="Uninstall">
+        </command>
     </extension>
 	<extension point="org.eclipse.core.expressions.propertyTesters">
 		<propertyTester
@@ -165,6 +168,13 @@
 			namespace="org.mule.tooling.devkit"
 			properties="enabled"
 			class="org.mule.tooling.devkit.popup.actions.JavadocCheckPropertyTester">
+		</propertyTester>
+		<propertyTester
+			id="org.mule.tooling.devkit.connector.installed.tester"
+			type="org.eclipse.core.resources.IProject"
+			namespace="org.mule.tooling.devkit"
+			properties="isConnectorInstalled"
+			class="org.mule.tooling.devkit.popup.actions.IsConnectorInstalledPropertyTester">
 		</propertyTester>
 	</extension>
     <extension point="org.eclipse.ui.menus">
@@ -266,6 +276,11 @@
                         </with>
                     </visibleWhen>
                 </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.Uninstall"
+                         label="Uninstall"
+                         icon="icons/uninstall.png"
+                         style="push">
+                </command>
             </menu>
         </menuContribution>
     </extension>
@@ -356,6 +371,17 @@
                 <count value="1"></count>
 			</with>
 	   </definition>
+	   <definition id="org.mule.tooling.devkit.isConnectorInstalled">
+			<with variable="selection">
+                <iterate >
+                    <adapt type="org.eclipse.core.resources.IProject">
+             			<test property="org.mule.tooling.devkit.isConnectorInstalled" forcePluginActivation="true">
+                        </test>
+     				</adapt>
+                </iterate>
+                <count value="1"></count>
+			</with>
+	   </definition>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -395,6 +421,12 @@
 	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
          	</activeWhen>
          </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.Uninstall"
+			class="org.mule.tooling.devkit.popup.actions.Uninstall">
+         	<activeWhen>
+         		<reference definitionId="org.mule.tooling.devkit.isConnectorInstalled"/>
+         	</activeWhen>
+         </handler>
 	</extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -425,6 +457,10 @@
                 <command commandId="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
                          tooltip="Enable/Disable Javadoc check"
                          icon="icons/javadoc.gif">
+				</command>
+				<command commandId="org.mule.tooling.devkit.popup.actions.Uninstall"
+                         tooltip="Uninstall"
+                         icon="icons/uninstall.png">
 				</command>
             </toolbar>
       </menuContribution>

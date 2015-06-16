@@ -1,14 +1,18 @@
 package org.mule.tooling.devkit.maven;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
@@ -60,5 +64,21 @@ public class MavenUtils {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static boolean hasValidPom(File pomFile) {
+        try {
+            if (pomFile != null) {
+                MavenXpp3Reader mavenXpp3Reader = new MavenXpp3Reader();
+                Reader pomInputStream = new InputStreamReader(new FileInputStream(pomFile));
+                Model model = mavenXpp3Reader.read(pomInputStream);
+                return "mule-module".equals(model.getPackaging());
+            }
+        } catch (XmlPullParserException e) {
+            // ignore
+        } catch (IOException e) {
+            // ignore
+        }
+        return false;
     }
 }

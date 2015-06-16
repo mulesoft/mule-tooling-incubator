@@ -1,5 +1,8 @@
 package org.mule.tooling.devkit;
 
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -17,10 +20,13 @@ public class DevkitUIPlugin extends AbstractUIPlugin implements IStartup {
     public static final String PLUGIN_ID = "org.mule.tooling.devkit";
     private static final String PREFERENCES_CURRENT_UI_PLUGIN_VERSION = "devkit_ui_preference_current_ui_plugin_version";
     private static DevkitUIPlugin plugin;
+    private IResourceChangeListener resourceListener;
 
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+        resourceListener = new ProjectResourcesHandler();
+        ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.PRE_DELETE);
     }
 
     protected void scheduleResetPerspectiveOnUpdateJob() {
@@ -39,7 +45,9 @@ public class DevkitUIPlugin extends AbstractUIPlugin implements IStartup {
 
     public void stop(BundleContext context) throws Exception {
         plugin = null;
+        ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
         super.stop(context);
+
     }
 
     public static DevkitUIPlugin getDefault() {
@@ -57,6 +65,11 @@ public class DevkitUIPlugin extends AbstractUIPlugin implements IStartup {
 
     public void logError(String message) {
         this.getLog().log(new Status(Status.ERROR, PLUGIN_ID, message));
+
+    }
+
+    public void logWarning(String message) {
+        this.getLog().log(new Status(Status.WARNING, PLUGIN_ID, message));
 
     }
 
@@ -99,5 +112,10 @@ public class DevkitUIPlugin extends AbstractUIPlugin implements IStartup {
     @Override
     public void earlyStartup() {
         scheduleResetPerspectiveOnUpdateJob();
+    }
+
+    public static void log(String message) {
+        log(new Status(IStatus.ERROR, getPluginId(), 0x1001, message, null));
+
     }
 }

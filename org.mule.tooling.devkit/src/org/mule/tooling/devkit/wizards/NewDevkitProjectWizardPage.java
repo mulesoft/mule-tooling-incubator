@@ -271,6 +271,7 @@ public class NewDevkitProjectWizardPage extends WizardPage implements Observer, 
         setControl(container);
         initialize();
         testMaven();
+        project.setFocus();
     }
 
     private void addDatasense(Composite container) {

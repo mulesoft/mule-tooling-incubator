@@ -43,7 +43,8 @@ Require-Bundle: org.mule.tooling.runtime;bundle-version="[5.0.0,6.0.0)",
  org.apache.commons.lang,
  javax.wsdl,
  org.apache.maven.model;bundle-version="3.0.4",
- org.codehaus.plexus.utils;bundle-version="3.0.8"
+ org.codehaus.plexus.utils;bundle-version="3.0.8",
+ org.eclipse.xsd
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.mule.tooling.devkit.builder,

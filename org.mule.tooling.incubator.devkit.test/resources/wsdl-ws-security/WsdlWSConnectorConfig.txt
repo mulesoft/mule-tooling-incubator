@@ -8,7 +8,7 @@ package org.mule.modules.cloud.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mule.api.annotations.ws.WsdlSecurityStrategyResolver;
+import org.mule.api.annotations.ws.WsdlSecurity;
 import org.mule.devkit.api.ws.authentication.WsdlSecurityStrategy;
 import org.mule.devkit.api.ws.authentication.WsdlUsernameToken;
 import org.mule.module.ws.security.PasswordType;
@@ -16,8 +16,8 @@ import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.display.Password;
 import org.mule.api.annotations.display.Placement;
 import org.mule.api.annotations.components.WsdlProvider;
-import org.mule.api.annotations.ws.WsdlServiceAddressResolver;
-import org.mule.api.annotations.ws.WsdlServiceDefinitionRetriever;
+import org.mule.api.annotations.ws.WsdlServiceEndpoint;
+import org.mule.api.annotations.ws.WsdlServiceRetriever;
 import org.mule.devkit.api.ws.definition.DefaultServiceDefinition;
 import org.mule.devkit.api.ws.definition.ServiceDefinition;
 import org.mule.api.annotations.param.Default;
@@ -41,7 +41,7 @@ public class ConnectorConfig {
     @Placement(order = 3)
     private String address;
 
-    @WsdlServiceDefinitionRetriever
+    @WsdlServiceRetriever
     public ServiceDefinition getServiceDefinition() {
            return new DefaultServiceDefinition(
                 "SforceService_Soap",
@@ -51,12 +51,12 @@ public class ConnectorConfig {
                 "Soap");
     }
 
-    @WsdlServiceAddressResolver
+    @WsdlServiceEndpoint
     public String getServiceAddress(ServiceDefinition definition) {
          return address;
     }
 
-    @WsdlSecurityStrategyResolver
+    @WsdlSecurity
     public List<WsdlSecurityStrategy> getWsdlSecurityResolver(ServiceDefinition definition) {
         List<WsdlSecurityStrategy> result = new ArrayList<WsdlSecurityStrategy>();
         result.add(new WsdlUsernameToken(getUsername(),  getPassword(), PasswordType.TEXT, true, true));

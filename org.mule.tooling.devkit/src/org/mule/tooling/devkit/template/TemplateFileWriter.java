@@ -20,14 +20,12 @@ import org.mule.tooling.devkit.template.replacer.Replacer;
 public class TemplateFileWriter {
 
     private IProject project;
-    private IProgressMonitor monitor;
 
-    public TemplateFileWriter(IProject project, IProgressMonitor monitor) {
+    public TemplateFileWriter(IProject project) {
         this.project = project;
-        this.monitor = monitor;
     }
 
-    public void apply(final String templatePath, final String resultPath, Replacer replacer) throws CoreException {
+    public void apply(final String templatePath, final String resultPath, Replacer replacer, IProgressMonitor monitor) throws CoreException {
         final IFile fileToCreate = project.getProject().getFile(resultPath);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -35,7 +33,7 @@ public class TemplateFileWriter {
         Reader reader = null;
 
         try {
-            monitor.beginTask("Creating file " + resultPath, 100);
+            monitor.beginTask("Creating file " + resultPath, 10);
 
             InputStream pomTemplateResource;
 
@@ -48,12 +46,12 @@ public class TemplateFileWriter {
 
             writer.flush();
 
-            monitor.worked(30);
+            monitor.worked(3);
 
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 
-            fileToCreate.create(byteArrayInputStream, false, new SubProgressMonitor(monitor, 40));
-            fileToCreate.setDerived(false, new SubProgressMonitor(monitor, 30));
+            fileToCreate.create(byteArrayInputStream, false, new SubProgressMonitor(monitor, 4));
+            fileToCreate.setDerived(false, new SubProgressMonitor(monitor, 3));
 
         } catch (Exception e) {
             DevkitUIPlugin.getDefault().logError("Failed to generate file", e);

@@ -65,4 +65,8 @@ public class LabelledText extends Composite {
     public void addModifyListener(ModifyListener listener) {
         textControl.addModifyListener(listener);
     }
+    
+    public boolean hasError(){
+        return errorDecoration.isVisible();
+    }
 }

@@ -8,7 +8,7 @@
     <packaging>mule-module</packaging>
     <name>Mule ${project.connectorName} Anypoint Connector</name>
 
-#set( $devkitVersion = '3.7.0-M1-SNAPSHOT' )
+#set( $devkitVersion = '3.7.0-SNAPSHOT' )
     <parent>
         <groupId>org.mule.tools.devkit</groupId>
         <artifactId>mule-devkit-parent</artifactId>
@@ -71,7 +71,7 @@
                         <version>${cxf.version}</version>
                         <executions>
                             <execution>
-                                <phase>clean</phase> <!-- This is so it work with the Devkit -->
+                                <phase>validate</phase> <!-- This is so it work with the Devkit -->
                                 <goals>
                                     <goal>wsdl2java</goal>
                                 </goals>

@@ -29,16 +29,10 @@ import org.mule.api.annotations.rest.RestCall;
 import org.mule.api.annotations.rest.RestUriParam;
 #if(${project.hasQuery} == true)
 import org.mule.api.annotations.Query;
-
 #end
 
 import ${project.package}.config.${project.configClassName};
 
-/**
- * Anypoint Connector
- *
- * @author MuleSoft, Inc.
- */
 @Connector(name="${project.moduleName}", friendlyName="${project.connectorName}")
 public abstract class ${project.connectorClassName} {
 #if(${project.generateDefaultBody} == true )

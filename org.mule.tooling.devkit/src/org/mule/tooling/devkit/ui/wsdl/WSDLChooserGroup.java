@@ -33,17 +33,19 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.devkit.ui.SelectWSDLDialog;
+import org.mule.tooling.devkit.ui.WsdlChooser;
 import org.mule.tooling.devkit.wizards.ProjectObserver;
+import org.mule.tooling.ui.MuleImages;
 import org.mule.tooling.ui.utils.UiUtils;
 
 public class WSDLChooserGroup {
 
     private static final String EDITOR_TITLE = "WSDL Files";
-    private static final String DELETE_ALL_CONFIRMATION_DIALOG_QUESTION = "Are you sure you want to delete all WSDL's?";
-    private static final String DELETE_ALL_CONFIRMATION_DIALOG_TITLE = "Remove all WSDL's";
+    private static final String DELETE_ALL_CONFIRMATION_DIALOG_QUESTION = "Are you sure you want to delete all WSDLs?";
+    private static final String DELETE_ALL_CONFIRMATION_DIALOG_TITLE = "Remove all WSDLs";
 
     private static final String ADD_PARAMETER_BUTTON_LABEL = "Add WSDL";
-    private static final String EMPTY_PARAMETERS_NOTIFICATION = "Click in the button below to add a WSDL";
+    private static final String EMPTY_PARAMETERS_NOTIFICATION = "Click the button below to add a WSDL";
 
     private ScrolledComposite parametersListWrapper;
     private Composite parametersListWrapperContent;
@@ -58,22 +60,19 @@ public class WSDLChooserGroup {
         parameters = new ArrayList<WsdlRowEntry>();
 
         parametersGroup = UiUtils.createGroupWithTitle(parent, "", 2);
-        GridLayoutFactory.swtDefaults().numColumns(1).applyTo(parametersGroup);
-        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).applyTo(parametersGroup);
+        GridLayoutFactory.fillDefaults().applyTo(parametersGroup);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(parametersGroup);
 
         createTitle(parametersGroup);
 
         parametersListWrapper = new ScrolledComposite(parametersGroup, SWT.V_SCROLL);
-        GridLayoutFactory.swtDefaults().numColumns(1).applyTo(parametersListWrapper);
-        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).applyTo(parametersListWrapper);
-
         GridLayoutFactory.fillDefaults().applyTo(parametersListWrapper);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(parametersListWrapper);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(parametersListWrapper);
 
         parametersListWrapperContent = new Composite(parametersListWrapper, SWT.FILL);
 
-        GridLayoutFactory.swtDefaults().numColumns(1).applyTo(parametersListWrapperContent);
-        GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, true).applyTo(parametersListWrapperContent);
+        GridLayoutFactory.fillDefaults().applyTo(parametersListWrapperContent);
+        GridDataFactory.fillDefaults().grab(true, true).applyTo(parametersListWrapperContent);
         createEmptyCanvasInformation();
 
         buttonsWrapper = new Composite(parametersGroup, SWT.NONE);
@@ -106,6 +105,7 @@ public class WSDLChooserGroup {
         parametersListWrapper.setContent(parametersListWrapperContent);
         parametersListWrapper.setExpandHorizontal(true);
         parametersListWrapper.setExpandVertical(true);
+        recalculateEditorSize();
     }
 
     private void createTitle(final Composite parent) {
@@ -179,8 +179,13 @@ public class WSDLChooserGroup {
 
         if (wsdlFile.isDirectory()) {
             Collection<File> files = FileUtils.listFiles(wsdlFile, new String[] { "wsdl" }, false);
+            if (!files.isEmpty()) {
+                if (parameters.isEmpty()) {
+                    emptyCanvasComposite.dispose();
+                }
+            }
             for (File file : files) {
-                WsdlRowEntry row = new WsdlRowEntry(parametersListWrapperContent);
+                WsdlRowEntry row = new WsdlRowEntry(parametersListWrapperContent, broadcaster);
                 row.createControl();
                 createParameterToolbar(row);
                 row.setLocation(file.getAbsolutePath());
@@ -190,7 +195,7 @@ public class WSDLChooserGroup {
             }
         } else {
 
-            WsdlRowEntry row = new WsdlRowEntry(parametersListWrapperContent);
+            WsdlRowEntry row = new WsdlRowEntry(parametersListWrapperContent, broadcaster);
             if (parameters.isEmpty()) {
                 emptyCanvasComposite.dispose();
             }
@@ -218,14 +223,9 @@ public class WSDLChooserGroup {
     }
 
     protected void recalculateEditorSize() {
-        Composite parent = parametersGroup.getParent().getParent();
-        parent.layout(true, true);
-        parent.setRedraw(true);
-        if (parent instanceof ScrolledComposite) {
-            ScrolledComposite cm = (ScrolledComposite) parent;
-            Point computeSize = cm.computeSize(-1, -1);
-            cm.setMinSize(computeSize.x, computeSize.y);
-        }
+        final Point panelSize = parametersListWrapperContent.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+        parametersListWrapper.setMinSize(SWT.DEFAULT, panelSize.y);
+        parametersListWrapper.layout(true, true);
     }
 
     protected String getEditorTitle() {
@@ -251,6 +251,7 @@ public class WSDLChooserGroup {
     private ToolBar createParameterToolbar(final WsdlRowEntry entry) {
         ToolBar toolbar = new ToolBar(entry.getControl(), SWT.NONE);
         ToolBarManager parametersToolbarManager = new ToolBarManager(toolbar);
+        parametersToolbarManager.add(new EditAction(entry));
         parametersToolbarManager.add(new RemoveParameterAction(entry));
         parametersToolbarManager.update(true);
         return toolbar;
@@ -278,6 +279,36 @@ public class WSDLChooserGroup {
         }
     }
 
+    private class EditAction extends Action {
+
+        WsdlRowEntry entry;
+
+        public EditAction(WsdlRowEntry entry) {
+            setImageDescriptor(MuleImages.DESC_EDIT);
+            setText("edit");
+            this.entry = entry;
+        }
+
+        @Override
+        public void run() {
+            SelectWSDLDialog dialog = new SelectWSDLDialog(Display.getCurrent().getActiveShell(), WsdlChooser.FILE_OR_URL);
+            dialog.create();
+            dialog.setWsdlLocation(entry.getLocation());
+            if (dialog.open() == Window.OK) {
+                String wsdlLocation = dialog.getWsdlLocation();
+                if (StringUtils.isNotEmpty(wsdlLocation)) {
+                    entry.setLocation(dialog.getWsdlLocation());
+                    String displayName = Path.fromPortableString(wsdlLocation).lastSegment();
+                    if (displayName.indexOf("?") != -1) {
+                        entry.setDisplayName(displayName.substring(0, displayName.indexOf("?")));
+                    } else {
+                        entry.setDisplayName(displayName.substring(0, displayName.indexOf(".")));
+                    }
+                }
+            }
+        }
+    }
+
     public Map<String, String> getWsdlFiles() {
         Map<String, String> wsdlFiles = new HashMap<String, String>();
         for (WsdlRowEntry entry : this.parameters) {
@@ -300,5 +331,13 @@ public class WSDLChooserGroup {
         } catch (URISyntaxException e) {
             return false;
         }
+    }
+
+    public boolean hasErrors() {
+        boolean hasErrors = false;
+        for (WsdlRowEntry entry : parameters) {
+            hasErrors |= entry.hasErrors();
+        }
+        return hasErrors;
     }
 }

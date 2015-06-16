@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -273,7 +274,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
         }
 
         Object[] checkedElements = projectTreeViewer.getCheckedElements();
-        boolean complete = checkedElements != null && checkedElements.length > 0;
+        boolean complete = checkedElements != null && checkedElements.length > 0 && StringUtils.isEmpty(getErrorMessage());
         if (complete) {
             Object[] elements = projectTreeViewer.getCheckedElements();
             for (int i = 0; i < elements.length; i++) {
@@ -282,7 +283,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
                     final MavenInfo mavenProject = (MavenInfo) element;
                     if (existsInWorkspace(mavenProject)) {
                         projectTreeViewer.setChecked(element, false);
-                        setMessage("Project " + mavenProject.getArtifactId() + " is already in the workspace", IMessageProvider.WARNING);
+                        setMessage("Project " + mavenProject.getProjectRoot().getName() + " is already in the workspace", IMessageProvider.WARNING);
                         complete = false;
                     }
                 }
@@ -333,7 +334,7 @@ public class ConnectorImportWizzardPage extends WizardPage {
                                 IJavaProject javaProject = JavaCore.create(root.getProject(folder.getName()));
                                 ProjectBuilder generator = ProjectBuilderFactory.newInstance();
 
-                                List<IClasspathEntry> classpathEntries = generator.generateProjectEntries(project,monitor);
+                                List<IClasspathEntry> classpathEntries = generator.generateProjectEntries(project, monitor);
                                 javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[] {}), monitor);
                                 if (mavenProject.getPackaging() != null && mavenProject.getPackaging().equals("mule-module")) {
                                     DevkitUtils.configureDevkitAPT(javaProject);
@@ -376,23 +377,12 @@ public class ConnectorImportWizzardPage extends WizardPage {
     private IProjectDescription getProjectDescription(IWorkspaceRoot root, String artifactId, File folder) throws CoreException {
 
         File projectDescriptionFile = new File(folder, ".project");
-        IProjectDescription currentDescription = null;
-        ICommand[] commands = null;
         int commandsLength = 0;
         if (projectDescriptionFile.exists()) {
-            currentDescription = root.getWorkspace().loadProjectDescription(Path.fromOSString(new File(folder, ".project").getAbsolutePath()));
-            commands = currentDescription.getBuildSpec();
-            commandsLength = commands.length;
-            for (int i = 0; i < commands.length; ++i) {
-                if (commands[i].getBuilderName().equals(DevkitBuilder.BUILDER_ID)) {
-                    return currentDescription;
-                }
-            }
+            projectDescriptionFile.delete();
         }
         ICommand[] newCommands = new ICommand[commandsLength + 1];
-        if (commands != null) {
-            System.arraycopy(commands, 0, newCommands, 0, commandsLength);
-        }
+
         IProjectDescription projectDescription = root.getWorkspace().newProjectDescription(artifactId);
         projectDescription.setNatureIds(new String[] { JavaCore.NATURE_ID, DevkitNature.NATURE_ID });
 
@@ -528,7 +518,8 @@ public class ConnectorImportWizzardPage extends WizardPage {
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
         final File folder = mavenProject.getProjectRoot();
         for (int index = 0; index < projects.length; index++) {
-            if (projects[index].getLocation().toFile().equals(folder)) {
+            IProject project = projects[index];
+            if (project.getLocation().toFile().equals(folder) || folder.getName().equals(project.getLocation().lastSegment())) {
                 return true;
             }
         }
@@ -584,6 +575,17 @@ public class ConnectorImportWizzardPage extends WizardPage {
         ScanProject job = new ScanProject("Scaningn project", rootDirectoryCombo.getText(), root);
         try {
             job.runInWorkspace(null);
+            if (root.getModules().size() == 1) {
+                if (root.getModules().get(0).hasChilds()) {
+                    setErrorMessage("Multi Module projects are not supported.");
+                    setPageComplete(false);
+                } else {
+                    setErrorMessage(null);
+                    setPageComplete(true);
+                }
+            } else {
+                setErrorMessage(null);
+            }
             projectTreeViewer.setInput(root);
             projectTreeViewer.refresh();
             projectTreeViewer.expandAll();

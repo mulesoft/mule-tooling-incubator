@@ -9,6 +9,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -21,14 +22,23 @@ import org.mule.tooling.ui.utils.UiUtils;
 
 public class WsdlChooser {
 
+    public static int ALL = 0;
+    public static int FILE_OR_URL = 1 << 0;
+
     private Text wsdlLocation;
 
+    private int mode;
+
+    public WsdlChooser(int mode) {
+        this.mode = mode;
+    }
+
     public void createControl(Composite parent) {
-        Composite container = new Composite(parent,SWT.NULL);
+        Composite container = new Composite(parent, SWT.NULL);
         GridLayoutFactory.swtDefaults().numColumns(4).applyTo(container);
         GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).span(4, 1).applyTo(container);
-        Group apiGroupBox = UiUtils.createGroupWithTitle(container, "Wsdl Configuration", 3);
-        
+        Group apiGroupBox = UiUtils.createGroupWithTitle(container, "WSDL Location", 3);
+
         Composite compositeRadio = new Composite(apiGroupBox, SWT.NULL);
         GridLayoutFactory.fillDefaults().numColumns(2).margins(5, 5).applyTo(compositeRadio);
         GridDataFactory.fillDefaults().span(2, 1).align(GridData.FILL, SWT.CENTER).applyTo(compositeRadio);
@@ -38,18 +48,49 @@ public class WsdlChooser {
         fromFileRadioButton.setSelection(true);
         fromFileRadioButton.setToolTipText("It will import the selected root WSDL from a file or URL");
         fromFileRadioButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1, 1));
+        fromFileRadioButton.addSelectionListener(new SelectionListener() {
 
-        final Button fromFolderRadioButton = new Button(compositeRadio, SWT.RADIO);
-        fromFolderRadioButton.setText("From folder");
-        fromFolderRadioButton.setToolTipText("It will import all the root WSDL files and their dependencies");
-        fromFolderRadioButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1, 1));
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                wsdlLocation.setText("http://");
+                wsdlLocation.setMessage("");
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                wsdlLocation.setText("http://");
+                wsdlLocation.setMessage("");
+            }
+        });
+
+        if (mode == ALL) {
+            final Button fromFolderRadioButton = new Button(compositeRadio, SWT.RADIO);
+            fromFolderRadioButton.setText("From folder");
+            fromFolderRadioButton.setToolTipText("It will import all the root WSDL files and their dependencies");
+            fromFolderRadioButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 1, 1));
+            fromFolderRadioButton.addSelectionListener(new SelectionListener() {
+
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    wsdlLocation.setText("");
+                    wsdlLocation.setMessage("Select a folder containing WSDL files");
+                }
+
+                @Override
+                public void widgetDefaultSelected(SelectionEvent e) {
+                    wsdlLocation.setText("");
+                    wsdlLocation.setMessage("Select a folder containing WSDL files");
+                }
+            });
+
+        }
 
         wsdlLocation = new Text(apiGroupBox, SWT.BORDER);
         GridData gData = new GridData(GridData.FILL_HORIZONTAL);
         gData.horizontalSpan = 2;
         wsdlLocation.setLayoutData(gData);
         wsdlLocation.setText("http://");
-        
+
         final Button buttonPickFile = new Button(apiGroupBox, SWT.NONE);
         buttonPickFile.setText("...");
         buttonPickFile.setLayoutData(GridDataFactory.fillDefaults().create());
@@ -103,6 +144,10 @@ public class WsdlChooser {
             }
         });
 
+    }
+
+    public void setWsdlPath(String currentLocation) {
+        wsdlLocation.setText(currentLocation);
     }
 
     public String getWsdlPath() {
