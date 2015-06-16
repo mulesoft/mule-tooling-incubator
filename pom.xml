@@ -33,6 +33,8 @@
         <module>org.mule.tooling.incubator.updatesite</module>
         <module>org.mule.tooling.incubator.test.parent</module>
         <module>org.mule.tooling.incubator.devkit.test</module>
+        <module>org.mule.tooling.incubator.utils</module>
+        <module>org.mule.tooling.incubator.utils.extension</module>
     </modules>
     <profiles>
         <profile>
