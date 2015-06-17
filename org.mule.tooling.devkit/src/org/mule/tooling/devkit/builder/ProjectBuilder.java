@@ -38,6 +38,7 @@ import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.ICommand;
@@ -99,7 +100,6 @@ public class ProjectBuilder {
     private boolean generateDefaultBody = true;
     private String bigIcon = "";
     private String smallIcon = "";
-
     private IProject currentProject;
 
     private Map<String, String> wsdlFiles = new HashMap<String, String>();
@@ -298,9 +298,10 @@ public class ProjectBuilder {
             Map<String, Object> projectMap = new HashMap<String, Object>();
             ComponentReplacer replacer = new ComponentReplacer(projectMap);
 
-            populateModel(projectMap, monitor);
-
             TemplateFileWriter templateFileWriter = new TemplateFileWriter(project);
+
+            populateModel(projectMap, templateFileWriter, project,monitor);
+
             monitor.beginTask("Creating project files", 1000);
             createGeneralFiles(project, replacer, templateFileWriter, monitor);
 
@@ -433,7 +434,7 @@ public class ProjectBuilder {
                                 .toFile());
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    //do nothing for now
                 }
             }
         }
@@ -458,7 +459,7 @@ public class ProjectBuilder {
         }
     }
 
-    private void populateModel(Map<String, Object> projectMap, IProgressMonitor monitor) {
+    private void populateModel(Map<String, Object> projectMap, TemplateFileWriter templateFileWriter, IProject project, IProgressMonitor monitor) {
         projectMap.put("apiType", apiType);
         projectMap.put("authenticationType", authenticationType);
         projectMap.put("version", version);
@@ -482,7 +483,7 @@ public class ProjectBuilder {
         projectMap.put("projectLocation", projectLocation);
         projectMap.put("generateDefaultBody", generateDefaultBody);
         try {
-            projectMap.put("serviceDefinitions", this.getServiceDefinitions(monitor));
+            projectMap.put("serviceDefinitions", this.getServiceDefinitions(templateFileWriter, project, monitor));
         } catch (WSDLException e) {
             e.printStackTrace();
         }
@@ -518,7 +519,7 @@ public class ProjectBuilder {
             create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation"), monitor);
             create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation/testrunners"), monitor);
             create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation/testcases"), monitor);
-            if (apiType.equals(ApiType.SOAP)) {
+            if (apiType.equals(ApiType.SOAP)||apiType.equals(ApiType.WSDL)) {
                 create(project.getFolder(SRC_MAIN_RESOURCES_WSDL_BASE_PATH), monitor);
             }
         } finally {
@@ -632,9 +633,22 @@ public class ProjectBuilder {
     }
 
     @SuppressWarnings("rawtypes")
-    private List<ServiceDefinition> getServiceDefinitions(IProgressMonitor monitor) throws WSDLException {
+    private List<ServiceDefinition> getServiceDefinitions(TemplateFileWriter templateFileWriter, IProject project, IProgressMonitor monitor) throws WSDLException {
         WSDLFactory factory;
         List<ServiceDefinition> deff = new ArrayList<ServiceDefinition>();
+        if (wsdlFiles.isEmpty()) {
+            try {
+                createEntry(currentProject.getFolder(SRC_MAIN_RESOURCES_WSDL_BASE_PATH),monitor);
+                File destination = currentProject.getFolder(SRC_MAIN_RESOURCES_WSDL_BASE_PATH).getRawLocation().toFile();
+                File helloWordlWSDL = new File(destination,"hello_soap12.wsdl");
+                templateFileWriter.apply("/templates/hello_soap12.wsdl", SRC_MAIN_RESOURCES_WSDL_BASE_PATH+"/hello_soap12.wsdl", new NullReplacer(), new SubProgressMonitor(monitor, 10,
+                        SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+                wsdlFiles.put(helloWordlWSDL.getAbsolutePath(), "Hello World");
+            } catch (CoreException e) {
+                e.printStackTrace();
+            } 
+
+        }
         factory = WSDLFactory.newInstance();
 
         ExtensionRegistry registry = factory.newPopulatedExtensionRegistry();

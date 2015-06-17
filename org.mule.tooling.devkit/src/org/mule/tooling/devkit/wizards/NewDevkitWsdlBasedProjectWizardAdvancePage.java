@@ -99,5 +99,8 @@ public class NewDevkitWsdlBasedProjectWizardAdvancePage extends WizardPage imple
         panel.saveTo(smallIcon, bigIcon);
 
         model.withSmallIcon(smallIcon).withBigIcon(bigIcon);
+
+        model.withAuthenticationType(getAuthenticationType());
+
     }
 }

@@ -7,8 +7,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import javax.wsdl.extensions.ExtensionRegistry;
+import javax.wsdl.factory.WSDLFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -178,23 +182,17 @@ public class WSDLChooserGroup {
         File wsdlFile = new File(wsdlValue);
 
         if (wsdlFile.isDirectory()) {
-            Collection<File> files = FileUtils.listFiles(wsdlFile, new String[] { "wsdl" }, false);
-            if (!files.isEmpty()) {
-                if (parameters.isEmpty()) {
-                    emptyCanvasComposite.dispose();
-                }
-            }
-            for (File file : files) {
-                WsdlRowEntry row = new WsdlRowEntry(parametersListWrapperContent, broadcaster);
-                row.createControl();
-                createParameterToolbar(row);
-                row.setLocation(file.getAbsolutePath());
-                String displayName = Path.fromPortableString(file.getAbsolutePath()).lastSegment();
-                row.setDisplayName(displayName.substring(0, displayName.indexOf(".")));
-                parameters.add(row);
-            }
+            addWsdlFilesFromDirectory(wsdlFile);
         } else {
+            addWsdlFileFromFileOrUrl(wsdlValue);
+        }
+        parametersToolbar.setEnabled(true);
+        recalculateEditorSize();
+        validate();
+    }
 
+    private void addWsdlFileFromFileOrUrl(String wsdlValue) {
+        if (isValidateWsdl(wsdlValue)) {
             WsdlRowEntry row = new WsdlRowEntry(parametersListWrapperContent, broadcaster);
             if (parameters.isEmpty()) {
                 emptyCanvasComposite.dispose();
@@ -210,9 +208,32 @@ public class WSDLChooserGroup {
             }
             parameters.add(row);
         }
-        parametersToolbar.setEnabled(true);
-        recalculateEditorSize();
-        validate();
+    }
+
+    private void addWsdlFilesFromDirectory(File wsdlFile) {
+        Collection<File> files = FileUtils.listFiles(wsdlFile, new String[] { "wsdl" }, false);
+        Collection<File> validWsdl = new HashSet<File>();
+        if (!files.isEmpty()) {
+            for (File wsdl : files) {
+                if (isValidateWsdl(wsdl.getAbsolutePath())) {
+                    validWsdl.add(wsdl);
+                }
+            }
+            if (!validWsdl.isEmpty()) {
+                if (parameters.isEmpty()) {
+                    emptyCanvasComposite.dispose();
+                }
+                for (File file : validWsdl) {
+                    WsdlRowEntry row = new WsdlRowEntry(parametersListWrapperContent, broadcaster);
+                    row.createControl();
+                    createParameterToolbar(row);
+                    row.setLocation(file.getAbsolutePath());
+                    String displayName = Path.fromPortableString(file.getAbsolutePath()).lastSegment();
+                    row.setDisplayName(displayName.substring(0, displayName.indexOf(".")));
+                    parameters.add(row);
+                }
+            }
+        }
     }
 
     private void validate() {
@@ -339,5 +360,21 @@ public class WSDLChooserGroup {
             hasErrors |= entry.hasErrors();
         }
         return hasErrors;
+    }
+
+    public boolean isValidateWsdl(String wsdllocation) {
+        try {
+            WSDLFactory factory = WSDLFactory.newInstance();
+            ExtensionRegistry registry = factory.newPopulatedExtensionRegistry();
+            javax.wsdl.xml.WSDLReader wsdlReader = factory.newWSDLReader();
+            wsdlReader.setFeature("javax.wsdl.verbose", false);
+            wsdlReader.setFeature("javax.wsdl.importDocuments", true);
+            wsdlReader.setExtensionRegistry(registry);
+            wsdlReader.readWSDL(wsdllocation);
+            return true;
+        } catch (Exception ex) {
+            MessageDialog.openError(null, "Invalid WSDL", "Failed to parse wsdl [" + wsdllocation + "].\n\n" + ex.getMessage());
+            return false;
+        }
     }
 }
