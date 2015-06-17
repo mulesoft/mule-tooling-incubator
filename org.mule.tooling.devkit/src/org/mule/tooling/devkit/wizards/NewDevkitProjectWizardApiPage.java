@@ -7,13 +7,19 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.mule.tooling.devkit.DevkitImages;
+import org.mule.tooling.maven.runner.SyncGetResultCallback;
+import org.mule.tooling.maven.ui.MavenUIPlugin;
+import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
+import org.mule.tooling.maven.ui.preferences.MavenPreferences;
 
 public class NewDevkitProjectWizardApiPage extends WizardPage {
 
     private Button sdk;
     private Button soap;
+    private boolean mavenFailure;
 
     public NewDevkitProjectWizardApiPage() {
         super("apiWizardPage");
@@ -50,9 +56,9 @@ public class NewDevkitProjectWizardApiPage extends WizardPage {
 
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).applyTo(container);
 
-        setPageComplete(true);
-
         setControl(container);
+
+        testMaven();
     }
 
     private Button initButton(Composite mavenGroupBox, String title, int buttonType) {
@@ -62,6 +68,36 @@ public class NewDevkitProjectWizardApiPage extends WizardPage {
         cbCreatePomCheckbox.setLayoutData(GridDataFactory.swtDefaults().create());
         cbCreatePomCheckbox.setSelection(false);
         return cbCreatePomCheckbox;
+    }
+
+    protected void testMaven() {
+        mavenFailure = false;
+        MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
+        final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
+        mavenInstallationTester.test(new SyncGetResultCallback() {
+
+            @Override
+            public void finished(final int result) {
+                super.finished(result);
+                Display.getDefault().asyncExec(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        onTestFinished(result);
+                    }
+                });
+            }
+        });
+    }
+
+    void onTestFinished(final int result) {
+        mavenFailure = result != 0;
+        if (mavenFailure) {
+            setErrorMessage("Maven home is not properly configured. Check your maven preferences.");
+        } else {
+            setErrorMessage(null);
+        }
+        setPageComplete(!mavenFailure);
     }
 
     public String getConnectorType() {
