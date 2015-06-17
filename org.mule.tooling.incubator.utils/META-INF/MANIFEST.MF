@@ -11,7 +11,6 @@ Require-Bundle: org.eclipse.ui,
  org.mule.tooling.ui;bundle-version="[5.0.0,6.0.0)",
  org.mule.tooling.utils;bundle-version="[5.0.0,6.0.0)",
  org.mule.tooling.ui.modules.core;bundle-version="[5.0.0,6.0.0)",
- org.codehaus.groovy;bundle-version="2.0.7",
  org.eclipse.core.resources
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
