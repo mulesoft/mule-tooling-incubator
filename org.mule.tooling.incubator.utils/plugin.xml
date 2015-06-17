@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.mule.tooling.incubator.utils.log4jconvert"
+            nameFilter="log4j.properties"
+            objectClass="org.eclipse.core.resources.IResource">
+         <visibility>
+            <objectState
+                  name="projectNature"
+                  value="org.mule.tooling.core.muleNature">
+            </objectState></visibility>
+         <action
+               class="org.mule.tooling.incubator.utils.log4jconverter.MigrateLog4jAction"
+               id="org.mule.tooling.incubator.utils.migratelog4j.action"
+               label="Migrate to Log4j2"
+               menubarPath="additions">
+         </action>
+      </objectContribution>
+   </extension>
+</plugin>
