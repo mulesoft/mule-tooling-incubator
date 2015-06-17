@@ -3,19 +3,16 @@
       id="org.mule.tooling.incubator.utils.extension"
       label="Anypoint Studio Utils Extension"
       version="1.0.0.qualifier"
-      provider-name="MuleSoft Inc.">
+      provider-name="MuleSoft Inc."
+      exclusive="true">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="http://www.mulesoft.org/">
+       Anypoint Studio Utils Plugin.
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright url="http://www.mulesoft.org">
+      Copyright 2012 Mulesoft Inc.
    </copyright>
-
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
-   </license>
 
    <plugin
          id="org.mule.tooling.incubator.utils"
