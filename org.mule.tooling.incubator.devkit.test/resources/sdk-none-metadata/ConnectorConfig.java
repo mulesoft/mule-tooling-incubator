@@ -13,23 +13,46 @@ import org.mule.api.annotations.param.Default;
 public class ConnectorConfig {
 
     /**
-     * Configurable
+     * Greeting message
+     */
+    @Configurable
+    @Default("Hello")
+    private String greeting;
+
+    /**
+     * Reply message
      */
     @Configurable
     @Default("How are you?")
     private String reply;
 
     /**
-     * Set config property
+     * Set greeting message
      *
-     * @param reply my config property
+     * @param greeting the greeting message
+     */
+    public void setGreeting(String greeting) {
+        this.greeting = greeting;
+    }
+
+    /**
+     * Get greeting message
+     */
+    public String getGreeting() {
+        return this.greeting;
+    }
+
+    /**
+     * Set reply
+     *
+     * @param reply the reply
      */
     public void setReply(String reply) {
         this.reply = reply;
     }
 
     /**
-     * Get property
+     * Get reply
      */
     public String getReply() {
         return this.reply;

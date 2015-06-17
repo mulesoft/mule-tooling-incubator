@@ -4,10 +4,9 @@
  */
 
 package org.mule.modules.cloud;
+
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
-import org.mule.api.annotations.Configurable;
-import org.mule.api.annotations.param.Default;
 import org.mule.api.annotations.Processor;
 
 import java.io.IOException;
@@ -20,13 +19,6 @@ import org.mule.modules.cloud.config.ConnectorConfig;
 
 @Connector(name="cloud", friendlyName="Cloud")
 public abstract class CloudConnector {
-
-    /**
-     * Greeting message
-     */
-    @Configurable
-    @Default("Hello")
-    private String greeting;
 
     @Config
     ConnectorConfig config;   
@@ -53,19 +45,4 @@ public abstract class CloudConnector {
         this.config = config;
     }
 
-    /**
-     * Set greeting message
-     *
-     * @param greeting the message
-     */
-    public void setGreeting(String greeting) {
-        this.greeting = greeting;
-    }
-
-    /**
-     * Get greeting message
-     */
-    public String getGreeting() {
-        return this.greeting;
-    }
 }

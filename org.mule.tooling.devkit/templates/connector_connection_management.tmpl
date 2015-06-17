@@ -19,14 +19,17 @@ import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
 #end
 
-/**
- * Connection Management Config
- *
- * @author MuleSoft, Inc.
- */
 @ConnectionManagement(configElementName = "config-type", friendlyName = "Connection Management type config")
 public class ${project.configClassName} {
 #if(${project.generateDefaultBody} == true )
+    
+    /**
+     * Greeting message
+     */
+    @Configurable
+    @Default("Hello")
+    private String greeting;
+
     /**
      * Reply message
      */
@@ -80,6 +83,22 @@ public class ${project.configClassName} {
 
 #if(${project.generateDefaultBody} == true )
     /**
+     * Set greeting message
+     *
+     * @param greeting the greeting message
+     */
+    public void setGreeting(String greeting) {
+        this.greeting = greeting;
+    }
+
+    /**
+     * Get greeting message
+     */
+    public String getGreeting() {
+        return this.greeting;
+    }
+
+    /**
      * Set reply message
      *
      * @param reply The reply message 
@@ -94,5 +113,6 @@ public class ${project.configClassName} {
     public String getReply() {
         return this.reply;
     }
+    
 #end
 }

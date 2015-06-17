@@ -5,30 +5,25 @@
 
 package ${project.package};
 
-import org.mule.api.annotations.Config;
-import org.mule.api.annotations.Connector;
-#if(${project.generateDefaultBody} == true )
-import org.mule.api.annotations.Configurable;
-#end
 #if(${project.dataSenseEnabled} == true )
-
+import java.util.Map;
 #if(${project.hasQuery} == true )
 import java.util.ArrayList;
 import java.util.List;
+
+import org.mule.api.annotations.Query;
 #end
-import java.util.Map;
+#end
+import org.mule.api.annotations.Config;
+import org.mule.api.annotations.Connector;
+#if(${project.dataSenseEnabled} == true )
 import org.mule.api.annotations.param.MetaDataKeyParam;
 import org.mule.api.annotations.MetaDataScope;
 #end
-
 import org.mule.api.annotations.Processor;
 #if($project.authenticationType == 'OAUTH_V2')
 import org.mule.api.annotations.oauth.OAuthProtected;
 import org.mule.api.annotations.ReconnectOn;
-#end
-
-#if(${project.hasQuery} == true)
-import org.mule.api.annotations.Query;
 #end
 #if(${project.generateDefaultBody} == true )
 import org.mule.api.annotations.param.Default;
@@ -41,15 +36,6 @@ import ${project.package}.config.${project.configClassName};
 @MetaDataScope( DataSenseResolver.class )
 #end
 public class ${project.connectorClassName} {
-#if(${project.generateDefaultBody} == true )
-    
-    /**
-     * Configurable
-     */
-    @Configurable
-    @Default("Hello")
-    private String greeting;
-#end
 
     @Config
     ${project.configClassName} config;
@@ -60,8 +46,8 @@ public class ${project.connectorClassName} {
      *
      * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:greet}
      *
-     * @param friend Content to be processed
-     * @return Some string
+     * @param friend Name to be used to generate a greeting message.
+     * @return A greeting message
 #if($project.authenticationType == 'OAUTH_V2' )
      * @throws Exception Comment for Exception     
 #end
@@ -77,7 +63,7 @@ public class ${project.connectorClassName} {
         /*
          * MESSAGE PROCESSOR CODE GOES HERE
          */
-        return greeting + " " + friend + ". " + config.getReply();
+        return config.getGreeting() + " " + friend + ". " + config.getReply();
     }
 
 #if(${project.hasQuery} == true )
@@ -119,21 +105,6 @@ public class ${project.connectorClassName} {
     }
 
 #end
-    /**
-     * Set property
-     *
-     * @param greeting My property
-     */
-    public void setGreeting(String greeting) {
-        this.greeting = greeting;
-    }
-
-    /**
-     * Get property
-     */
-    public String getGreeting() {
-        return this.greeting;
-    }
 #else
     /**
      * Dummy operation to avoid compilation issues since @Connector need at least on @Processor, @Transformer or @Source

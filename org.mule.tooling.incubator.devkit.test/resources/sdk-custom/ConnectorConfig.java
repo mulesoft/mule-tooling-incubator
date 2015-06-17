@@ -17,13 +17,16 @@ import org.mule.api.annotations.display.Password;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
 
-/**
- * Connection Management Config
- *
- * @author MuleSoft, Inc.
- */
 @ConnectionManagement(configElementName = "config-type", friendlyName = "Connection Management type config")
 public class ConnectorConfig {
+    
+    /**
+     * Greeting message
+     */
+    @Configurable
+    @Default("Hello")
+    private String greeting;
+
     /**
      * Reply message
      */
@@ -75,6 +78,22 @@ public class ConnectorConfig {
     }
 
     /**
+     * Set greeting message
+     *
+     * @param greeting the greeting message
+     */
+    public void setGreeting(String greeting) {
+        this.greeting = greeting;
+    }
+
+    /**
+     * Get greeting message
+     */
+    public String getGreeting() {
+        return this.greeting;
+    }
+
+    /**
      * Set reply message
      *
      * @param reply The reply message 
@@ -89,4 +108,5 @@ public class ConnectorConfig {
     public String getReply() {
         return this.reply;
     }
+    
 }

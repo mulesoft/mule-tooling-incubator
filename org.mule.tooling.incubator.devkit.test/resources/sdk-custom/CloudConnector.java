@@ -7,23 +7,13 @@ package org.mule.modules.cloud;
 
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
-import org.mule.api.annotations.Configurable;
-
 import org.mule.api.annotations.Processor;
-
 import org.mule.api.annotations.param.Default;
 
 import org.mule.modules.cloud.config.ConnectorConfig;
 
 @Connector(name="cloud", friendlyName="Cloud")
 public class CloudConnector {
-    
-    /**
-     * Configurable
-     */
-    @Configurable
-    @Default("Hello")
-    private String greeting;
 
     @Config
     ConnectorConfig config;
@@ -33,32 +23,17 @@ public class CloudConnector {
      *
      * {@sample.xml ../../../doc/cloud-connector.xml.sample cloud:greet}
      *
-     * @param friend Content to be processed
-     * @return Some string
+     * @param friend Name to be used to generate a greeting message.
+     * @return A greeting message
      */
     @Processor
     public String greet(String friend) {
         /*
          * MESSAGE PROCESSOR CODE GOES HERE
          */
-        return greeting + " " + friend + ". " + config.getReply();
+        return config.getGreeting() + " " + friend + ". " + config.getReply();
     }
 
-    /**
-     * Set property
-     *
-     * @param greeting My property
-     */
-    public void setGreeting(String greeting) {
-        this.greeting = greeting;
-    }
-
-    /**
-     * Get property
-     */
-    public String getGreeting() {
-        return this.greeting;
-    }
 
     public ConnectorConfig getConfig() {
         return config;

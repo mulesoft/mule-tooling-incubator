@@ -13,19 +13,21 @@ import org.mule.api.annotations.oauth.OAuthConsumerSecret;
 import org.mule.api.annotations.oauth.OAuthPostAuthorization;
 import org.mule.api.annotations.param.Default;
 
-/**
- * OAuth2 Connection Config
- *
- * @author MuleSoft, Inc.
- */
 @OAuth2( configElementName = "config-type", friendlyName="OAuth2 Configuration", authorizationUrl = "https://api.myconnector.com/uas/oauth/authorize", 
 accessTokenUrl = "https://api.myconnector.com/uas/oauth/accessToken", 
 accessTokenRegex = "\"access_token\":\"([^&]+?)\"",
 expirationRegex = "\"expires_in\":([^&]+?),", 
 refreshTokenRegex = "\"refresh_token\":\"([^&]+?)\"" )
-public class ${project.configClassName}
-{
+public class ${project.configClassName} {
 #if(${project.generateDefaultBody} == true )    
+    
+    /**
+     * Greeting message
+     */
+    @Configurable
+    @Default("Hello")
+    private String greeting;
+
     /**
      * Configurable
      */
@@ -58,6 +60,22 @@ public class ${project.configClassName}
     @OAuthPostAuthorization
     public void postAuthorize() {
         //This method is called after authorization finishes. Remove if not required 
+    }
+    
+    /**
+     * Set greeting message
+     *
+     * @param greeting the greeting message
+     */
+    public void setGreeting(String greeting) {
+        this.greeting = greeting;
+    }
+
+    /**
+     * Get greeting message
+     */
+    public String getGreeting() {
+        return this.greeting;
     }
 
     /**

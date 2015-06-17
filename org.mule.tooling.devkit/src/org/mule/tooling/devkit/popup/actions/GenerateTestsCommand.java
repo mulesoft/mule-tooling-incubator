@@ -19,6 +19,8 @@ import org.mule.tooling.devkit.wizards.GenerateTestWizard;
 
 public class GenerateTestsCommand extends AbstractMavenCommandRunner {
 
+    private static final String CONNECTOR_AUTOMATION_GENERATOR_VERSION = "2.0.2";
+
     private static final String FUNCTIONAL_FILES_DIALOG_TITLE = "Functional files";
     private static final String INTEROP_FILES_DIALOG_TITLE = "Interop files";
     private static final String TEST_FLOWS_XML = "automation-test-flows.xml";
@@ -44,9 +46,9 @@ public class GenerateTestsCommand extends AbstractMavenCommandRunner {
                 CompilationUnit unit = DevkitUtils.getConnectorClass(selectedProject);
 
                 String[] generateTestsCommand = new String[] { "compile", "-Ddevkit.studio.package.skip=true", "-Ddevkit.javadoc.check.skip=true", "-Dmaven.javadoc.skip=true",
-                        "org.mule.tools.devkit:" + "connector-automation-generator-maven-plugin:2.0.2-SNAPSHOT:" + "connector-automation-generator",
+                        "org.mule.tools.devkit:" + "connector-automation-generator-maven-plugin:" + CONNECTOR_AUTOMATION_GENERATOR_VERSION + ":connector-automation-generator",
                         "-DprocessorsList=" + testdataDto.getFilteredProcessors(), "-DautomationRootPackage=" + testdataDto.getAutomationPackage(),
-                        "-DconnectorClassName="+unit.getPackage().getName()+"."+unit.getTypeRoot().getElementName().replace(".java", "")};
+                        "-DconnectorClassName=" + unit.getPackage().getName() + "." + unit.getTypeRoot().getElementName().replace(".java", "") };
                 commandArgs.addAll(Arrays.asList(generateTestsCommand));
                 final String[] command = new String[commandArgs.size()];
                 commandArgs.toArray(command);
