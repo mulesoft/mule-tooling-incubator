@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -33,7 +35,10 @@ public class MigrateLog4jAction implements IObjectActionDelegate {
 			
 			
 			//if everything is successful, rename the original file.
-			selectedFile.move(new Path("log4j.properties.old"), true, null);
+			selectedFile.move(new Path("log4j.properties.old"), true, new NullProgressMonitor());
+			
+			//refresh the project.
+			selectedFile.getProject().refreshLocal(IProject.DEPTH_INFINITE, new NullProgressMonitor());
 			
 		} catch (Exception ex) {
 			ex.printStackTrace();
