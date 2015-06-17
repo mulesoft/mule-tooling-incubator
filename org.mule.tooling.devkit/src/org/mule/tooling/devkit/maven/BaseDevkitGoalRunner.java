@@ -7,7 +7,9 @@ import java.io.PipedOutputStream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.MessageConsole;
@@ -50,7 +52,19 @@ public class BaseDevkitGoalRunner {
     }
 
     public int run(IProgressMonitor monitor) {
-        return run(project.getProject().getFile("pom.xml"), monitor);
+        try {
+            return run(project.getProject().getFile("pom.xml"), monitor);
+        } catch (MavenRuntimeException ex) {
+            final String message = ex.getMessage() + ".\n" + (ex.getCause() != null ? ex.getCause().getMessage() : "");
+            Display.getDefault().asyncExec(new Runnable() {
+
+                @Override
+                public void run() {
+                    MessageDialog.openError(null, "Error when executing maven goal", message);
+                }
+            });
+            return -1;
+        }
     }
 
     public int run(IFile pomFile, IProgressMonitor monitor) {
@@ -81,7 +95,7 @@ public class BaseDevkitGoalRunner {
                 }
             }
             stopOutputThreads();
-            if(result==SyncGetResultCallback.STILL_NOT_FINISHED){
+            if (result == SyncGetResultCallback.STILL_NOT_FINISHED) {
                 return CANCELED;
             }
             return result;
