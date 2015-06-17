@@ -30,11 +30,11 @@
         <module>org.mule.tooling.incubator.replay.extension</module>
         <module>org.mule.tooling.incubator.maven.ui.contribution</module>
         <module>org.mule.tooling.incubator.maven.extension</module>
+        <module>org.mule.tooling.incubator.utils</module>
+        <module>org.mule.tooling.incubator.utils.extension</module>
         <module>org.mule.tooling.incubator.updatesite</module>
         <module>org.mule.tooling.incubator.test.parent</module>
         <module>org.mule.tooling.incubator.devkit.test</module>
-        <module>org.mule.tooling.incubator.utils</module>
-        <module>org.mule.tooling.incubator.utils.extension</module>
     </modules>
     <profiles>
         <profile>
