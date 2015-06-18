@@ -100,7 +100,9 @@ public class NewDevkitWsdlBasedProjectWizardAdvancePage extends WizardPage imple
 
         model.withSmallIcon(smallIcon).withBigIcon(bigIcon);
 
-        model.withAuthenticationType(getAuthenticationType());
+        if (securityGroup.isVisible()) {
+            model.withAuthenticationType(getAuthenticationType());
+        }
 
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 #end
 
 #if( $project.authenticationType == 'HTTP_BASIC' )
-import org.mule.api.annotations.ws.WsdlTransport;
+import org.mule.api.annotations.ws.WsdlTransportRetriever;
 import org.mule.devkit.api.ws.transport.WsdlTransport;
 import org.mule.devkit.api.ws.transport.HttpBasicWsdlTransport;
 #elseif( $project.authenticationType == 'WS_SECURITY_USERNAME_TOKEN_PROFILE' )
@@ -123,7 +123,7 @@ public class ${project.configClassName} {
 #end
 
 #if( $project.authenticationType == 'HTTP_BASIC' )
-    @WsdlTransport
+    @WsdlTransportRetriever
     public WsdlTransport resolveTransport(ServiceDefinition serviceDefinition) {
         return new HttpBasicWsdlTransport(getUsername(), getPassword());
     }

@@ -5,7 +5,7 @@
 
 package org.mule.modules.cloud.config;
 
-import org.mule.api.annotations.ws.WsdlTransport;
+import org.mule.api.annotations.ws.WsdlTransportRetriever;
 import org.mule.devkit.api.ws.transport.WsdlTransport;
 import org.mule.devkit.api.ws.transport.HttpBasicWsdlTransport;
 import org.mule.api.annotations.Configurable;
@@ -52,7 +52,7 @@ public class ConnectorConfig {
          return address;
     }
 
-    @WsdlTransport
+    @WsdlTransportRetriever
     public WsdlTransport resolveTransport(ServiceDefinition serviceDefinition) {
         return new HttpBasicWsdlTransport(getUsername(), getPassword());
     }
