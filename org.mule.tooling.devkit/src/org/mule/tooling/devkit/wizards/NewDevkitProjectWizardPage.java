@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -40,10 +39,6 @@ import org.mule.tooling.devkit.common.ApiType;
 import org.mule.tooling.devkit.common.AuthenticationType;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.ui.ConnectorProjectWidget;
-import org.mule.tooling.maven.runner.SyncGetResultCallback;
-import org.mule.tooling.maven.ui.MavenUIPlugin;
-import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
-import org.mule.tooling.maven.ui.preferences.MavenPreferences;
 import org.mule.tooling.ui.MuleUiConstants;
 import org.mule.tooling.ui.utils.UiUtils;
 
@@ -65,8 +60,6 @@ public class NewDevkitProjectWizardPage extends WizardPage implements Observer, 
     private Text wsdlLocation;
     private Button datasense;
     private Button query;
-
-    private boolean mavenFailure = false;
 
     private ConnectorProjectWidget project;
 
@@ -270,7 +263,6 @@ public class NewDevkitProjectWizardPage extends WizardPage implements Observer, 
 
         setControl(container);
         initialize();
-        testMaven();
         project.setFocus();
     }
 
@@ -307,10 +299,6 @@ public class NewDevkitProjectWizardPage extends WizardPage implements Observer, 
     }
 
     private void dialogChanged() {
-        if (mavenFailure) {
-            updateStatus("Maven home is not properly configured. Check your maven preferences.");
-            return;
-        }
 
         IStatus status = project.validate();
         if (!Status.OK_STATUS.equals(status)) {
@@ -433,31 +421,6 @@ public class NewDevkitProjectWizardPage extends WizardPage implements Observer, 
         if (comboAuthentication.getText().equals(AuthenticationType.OAUTH_V2.label()))
             return "OAuth V2, the next evolution of the OAuth protocol, provides a method for Mule applications to access server resources on behalf of a resource owner without sharing their credentials.";
         return "No tip";
-    }
-
-    protected void testMaven() {
-        mavenFailure = false;
-        MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
-        final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
-        mavenInstallationTester.test(new SyncGetResultCallback() {
-
-            @Override
-            public void finished(final int result) {
-                super.finished(result);
-                Display.getDefault().asyncExec(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        onTestFinished(result);
-                    }
-                });
-            }
-        });
-    }
-
-    void onTestFinished(final int result) {
-        mavenFailure = result != 0;
-        this.dialogChanged();
     }
 
     private boolean isValidURL(String url) {

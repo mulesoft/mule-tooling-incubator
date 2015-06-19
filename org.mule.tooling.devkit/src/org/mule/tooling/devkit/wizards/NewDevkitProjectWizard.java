@@ -35,6 +35,7 @@ import org.mule.tooling.devkit.builder.ProjectBuilderFactory;
 import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
 import org.mule.tooling.devkit.maven.MavenRunBuilder;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
+import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.wizards.ConfigureMavenWizardPage;
 
 public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard implements INewWizard {
@@ -62,10 +63,10 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
 
     @Override
     public void addPages() {
-        // if (!MavenUIPlugin.getDefault().getPreferences().isGlobalMavenSupportEnabled()) {
-        // configureMavenPage = new ConfigureMavenWizardPage();
-        // addPage(configureMavenPage);
-        // }
+        if (!MavenUIPlugin.getDefault().getPreferences().isGlobalMavenSupportEnabled()) {
+            configureMavenPage = new ConfigureMavenWizardPage();
+            addPage(configureMavenPage);
+        }
         apiPage = new NewDevkitProjectWizardApiPage();
         page = new NewDevkitProjectWizardPage();
         advancePage = new NewDevkitProjectWizardPageAdvance();
