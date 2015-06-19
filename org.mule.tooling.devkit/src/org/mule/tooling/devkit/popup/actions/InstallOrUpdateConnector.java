@@ -139,11 +139,19 @@ public class InstallOrUpdateConnector extends AbstractHandler {
 
                 @Override
                 public void run() {
-                    MessageDialog.openInformation(null, MessageFormat.format("{0} [{1}] succesfully.", title, symbalicName),
-                            MessageFormat.format("The connector was succesfully {0}.", title.toLowerCase()));
+                    MessageDialog.openInformation(null, MessageFormat.format("{0} succesfully.", title, symbalicName),
+                            MessageFormat.format("The connector [[{1}]] was succesfully {0}.", title.toLowerCase(), symbalicName));
                 }
             });
         } catch (BundleException e) {
+            final String error = e.getMessage();
+            Display.getDefault().asyncExec(new Runnable() {
+
+                @Override
+                public void run() {
+                    MessageDialog.openError(null, "Failed to install connector.", error);
+                }
+            });
             DevkitUIPlugin.getDefault().logError(MessageFormat.format("Could not install connector at [{0}].\nError: {1}", location, e.getMessage()), e);
         }
     }

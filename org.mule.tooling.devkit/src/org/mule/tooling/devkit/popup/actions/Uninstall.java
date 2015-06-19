@@ -3,6 +3,7 @@ package org.mule.tooling.devkit.popup.actions;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -41,7 +43,11 @@ import org.mule.tooling.core.utils.BundleJarFileInspector;
 import org.mule.tooling.core.utils.BundleManifestReader;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.devkit.common.URLUtil;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 public class Uninstall extends AbstractHandler {
 
@@ -49,9 +55,8 @@ public class Uninstall extends AbstractHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
         final IJavaProject selectedProject = getSelectedJavaProject(event);
         if (selectedProject != null) {
-            String eclipseHome = System.getProperty("eclipse.home.location");
-            URI fileUri = URI.create(eclipseHome);
-            final File dropins = new File(fileUri.getPath(), "dropins");
+            File eclipseHome = getEclipseHome();
+            final File dropins = new File(eclipseHome, "dropins");
 
             if (dropins.exists()) {
                 IFolder folder = selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER).getFolder("plugins");
@@ -190,4 +195,29 @@ public class Uninstall extends AbstractHandler {
         metadataManager.removeRepository(uri);
     }
 
+    private File getEclipseHome() {
+        Location eclipseHome = getService(DevkitUIPlugin.getDefault().getBundle().getBundleContext(), Location.ECLIPSE_HOME_FILTER);
+        if (eclipseHome == null || !eclipseHome.isSet())
+            return null;
+        URL url = eclipseHome.getURL();
+        if (url == null)
+            return null;
+        return URLUtil.toFile(url);
+    }
+
+    private Location getService(BundleContext context, String filter) {
+        Collection<ServiceReference<Location>> references;
+        try {
+            references = context.getServiceReferences(Location.class, filter);
+        } catch (InvalidSyntaxException e) {
+            // TODO Auto-generated catch block
+            return null;
+        }
+        if (references.isEmpty())
+            return null;
+        final ServiceReference<Location> ref = references.iterator().next();
+        Location result = context.getService(ref);
+        context.ungetService(ref);
+        return result;
+    }
 }
