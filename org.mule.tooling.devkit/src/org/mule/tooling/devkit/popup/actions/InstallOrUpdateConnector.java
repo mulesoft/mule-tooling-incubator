@@ -3,6 +3,7 @@ package org.mule.tooling.devkit.popup.actions;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.jar.JarFile;
@@ -28,6 +29,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.mule.tooling.core.MuleCorePlugin;
@@ -38,11 +40,14 @@ import org.mule.tooling.core.utils.BundleJarFileInspector;
 import org.mule.tooling.core.utils.BundleManifestReader;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.DevkitUtils;
+import org.mule.tooling.devkit.common.URLUtil;
 import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
 import org.mule.tooling.devkit.maven.MavenRunBuilder;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 public class InstallOrUpdateConnector extends AbstractHandler {
 
@@ -113,10 +118,10 @@ public class InstallOrUpdateConnector extends AbstractHandler {
     }
 
     private void installOrUpdateBundle(File pluginDir, String synmbolicName) {
+        String location = pluginDir.getAbsolutePath();
         try {
 
             BundleContext bundleContext = DevkitUIPlugin.getDefault().getBundle().getBundleContext();
-            String location = pluginDir.toURI().toString();
 
             Bundle bundle = Platform.getBundle(synmbolicName);
             boolean wasAnUpdated = false;
@@ -139,7 +144,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                 }
             });
         } catch (BundleException e) {
-            DevkitUIPlugin.getDefault().logError(e.getMessage(), e);
+            DevkitUIPlugin.getDefault().logError(MessageFormat.format("Could not install connector at [{0}].\nError: {1}", location, e.getMessage()), e);
         }
     }
 
@@ -152,15 +157,18 @@ public class InstallOrUpdateConnector extends AbstractHandler {
         IStatus status = Status.OK_STATUS;
         try {
 
-            String eclipseHome = System.getProperty("eclipse.home.location");
-            URI fileUri = URI.create(eclipseHome);
-            File dropins = new File(fileUri.getPath(), "dropins");
+            File eclipseHome = getEclipseHome();
+            File dropins = new File(eclipseHome, "dropins");
 
             if (!dropins.exists()) {
-                dropins.mkdir();
+                if (!dropins.mkdir()) {
+                    return new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR, "Could not create dropins folder at [" + dropins.getAbsolutePath()
+                            + "]", null);
+                }
             }
+
             unzipPluginOnDropinsFolder(selectedProject, monitor, dropins);
-            reloadPalette();
+
         } catch (IllegalStateException e) {
             status = new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR, "No installable was found at repository: " + uri, e);
         } catch (IOException e) {
@@ -182,9 +190,10 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                 FileUtils.deleteDirectory(dropinPluginFolder);
             }
 
-            DevkitUtils.unzipToFolder(pluginJarFile, dropinPluginFolder);
-
-            installOrUpdateBundle(dropinPluginFolder, manifestReader.getSymbolicName());
+            if (DevkitUtils.unzipToFolder(pluginJarFile, dropinPluginFolder)) {
+                installOrUpdateBundle(dropinPluginFolder, manifestReader.getSymbolicName());
+                reloadPalette();
+            }
 
         }
     }
@@ -211,5 +220,31 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                 }
             }
         });
+    }
+
+    private File getEclipseHome() {
+        Location eclipseHome = getService(DevkitUIPlugin.getDefault().getBundle().getBundleContext(), Location.ECLIPSE_HOME_FILTER);
+        if (eclipseHome == null || !eclipseHome.isSet())
+            return null;
+        URL url = eclipseHome.getURL();
+        if (url == null)
+            return null;
+        return URLUtil.toFile(url);
+    }
+
+    private Location getService(BundleContext context, String filter) {
+        Collection<ServiceReference<Location>> references;
+        try {
+            references = context.getServiceReferences(Location.class, filter);
+        } catch (InvalidSyntaxException e) {
+            // TODO Auto-generated catch block
+            return null;
+        }
+        if (references.isEmpty())
+            return null;
+        final ServiceReference<Location> ref = references.iterator().next();
+        Location result = context.getService(ref);
+        context.ungetService(ref);
+        return result;
     }
 }

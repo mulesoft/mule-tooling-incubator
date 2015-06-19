@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOUtils;
@@ -80,7 +81,7 @@ public class DevkitUtils {
     public static final String POM_TEMPLATE_PATH = "/templates/devkit-pom.xml.tmpl";
     public static final String UPDATE_SITE_FOLDER = "/target/update-site/";
     public static final String LOG4J_PATH = "/templates/devkit-log4j2.xml.tmpl";
-    
+
     public static final String CATEGORY_COMMUNITY = "Community";
     public static final String CATEGORY_STANDARD = "Standard";
     public static final String connectorCategories[] = { CATEGORY_COMMUNITY, CATEGORY_STANDARD };
@@ -387,10 +388,23 @@ public class DevkitUtils {
         description.setNatureIds(newIds);
         project.setDescription(description, null);
     }
-    
-    public static void unzipToFolder(File zipFile, File destination) throws IOException {
-        ZipFile zip = new ZipFile(zipFile);
+
+    /**
+     * Unzip the provided zip/jar file into the destination folder.
+     * 
+     * @param zipFile
+     *            A Zip or Jar File
+     * @param destination
+     *            the folder where you want to unzip the provided file.ƒ
+     * @return True is it was able to unzip the file, false otherwise
+     * @throws ZipException
+     * @throws IOException
+     */
+    public static boolean unzipToFolder(File zipFile, File destination) throws ZipException, IOException {
+        boolean unziped = false;
+        ZipFile zip = null;
         try {
+            zip = new ZipFile(zipFile);
             Enumeration<? extends ZipEntry> e = zip.entries();
             while (e.hasMoreElements()) {
                 ZipEntry entry = e.nextElement();
@@ -414,8 +428,10 @@ public class DevkitUtils {
 
                 }
             }
+            unziped = true;
         } finally {
-            zip.close();
+            IOUtils.closeQuietly(zip);
         }
+        return unziped;
     }
 }

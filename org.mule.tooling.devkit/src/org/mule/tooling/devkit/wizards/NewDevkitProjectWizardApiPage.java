@@ -41,7 +41,7 @@ public class NewDevkitProjectWizardApiPage extends WizardPage {
         sdk.setSelection(true);
 
         Label textField = new Label(container, SWT.WRAP);
-        textField.setText("Choose this option for an Anypoint Connector project that will consume either an SDK or an Apache CXF/Jersey client.");
+        textField.setText("To build a connector using Java library,  Apache CXF (WSDL) or Jersey client (REST API), choose this option.");
         GridDataFactory.swtDefaults().grab(true, false).hint(300, SWT.DEFAULT).applyTo(textField);
 
         Label separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -51,7 +51,7 @@ public class NewDevkitProjectWizardApiPage extends WizardPage {
         soap.setImage(DevkitImages.getManagedImage("", "cloud-envelope-open.png"));
 
         Label soapText = new Label(container, SWT.WRAP);
-        soapText.setText("Choose this option for an Anypoint Connector project that will consume WSDL files throught the SOAP Connect feature.");
+        soapText.setText("To package multiple WSDL files and API versions into a connector with minimum coding, choose this option.");
         GridDataFactory.swtDefaults().grab(true, false).hint(300, SWT.DEFAULT).applyTo(soapText);
 
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).applyTo(container);
