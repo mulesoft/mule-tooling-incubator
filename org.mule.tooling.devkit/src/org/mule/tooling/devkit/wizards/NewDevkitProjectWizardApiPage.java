@@ -31,7 +31,7 @@ public class NewDevkitProjectWizardApiPage extends WizardPage {
 
         // Group mavenGroupBox = UiUtils.createGroupWithTitle(container, "Connector Type", 2);
         sdk = initButton(container, "SDK Based", SWT.RADIO);
-        sdk.setImage(DevkitImages.getManagedImage("", "cloud-tools.png"));
+        sdk.setImage(DevkitImages.getManagedImage("", "api_sdk.png"));
         sdk.setSelection(true);
 
         Label textField = new Label(container, SWT.WRAP);
@@ -42,7 +42,7 @@ public class NewDevkitProjectWizardApiPage extends WizardPage {
         GridDataFactory.swtDefaults().grab(true, false).align(SWT.FILL, SWT.FILL).span(2, 1).applyTo(separator);
 
         soap = initButton(container, "SOAP Connect", SWT.RADIO);
-        soap.setImage(DevkitImages.getManagedImage("", "cloud-envelope-open.png"));
+        soap.setImage(DevkitImages.getManagedImage("", "api_soap.png"));
 
         Label soapText = new Label(container, SWT.WRAP);
         soapText.setText("To package multiple WSDL files and API versions into a connector with minimum coding, choose this option.");

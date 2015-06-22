@@ -318,9 +318,9 @@ public class ProjectBuilder {
             templateFileWriter.apply(getConnectorTemplate(), getMainTargetFilePath(), replacer, new SubProgressMonitor(monitor, 10,
                     SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
         }
-
-        templateFileWriter.apply(getConfigTemplate(), getConfigFileName(), replacer, new SubProgressMonitor(monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-
+        if (!apiType.equals(ApiType.SOAP) || !this.generateDefaultBody) {
+            templateFileWriter.apply(getConfigTemplate(), getConfigFileName(), replacer, new SubProgressMonitor(monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+        }
         if (dataSenseEnabled) {
             templateFileWriter.apply("/templates/connector_metadata_category.tmpl", MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + "DataSenseResolver.java",
                     replacer, new SubProgressMonitor(monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
