@@ -110,8 +110,8 @@ public class Uninstall extends AbstractHandler {
 
                                                             @Override
                                                             public void run() {
-                                                                MessageDialog.openInformation(null, "Uninstalled [" + symbolicName + "]",
-                                                                        "Anypoint Studio needs to restart for the changes to take effect.");
+                                                                MessageDialog.openInformation(null, "Uninstalled [" + selectedProject.getProject().getName() + "]", "Uninstalled ["
+                                                                        + symbolicName + "]. Anypoint Studio needs to restart for the changes to take effect.");
                                                                 if (PlatformUI.getWorkbench().isClosing())
                                                                     return;
                                                                 PlatformUI.getWorkbench().restart();
