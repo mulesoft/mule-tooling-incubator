@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.mule.tooling.incubator.gradle
+Bundle-SymbolicName: org.mule.tooling.incubator.utils;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.mule.tooling.incubator.utils.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.mule.tooling.core;bundle-version="[5.0.0,6.0.0)",
+ org.mule.tooling.maven;bundle-version="[5.0.0,6.0.0)",
+ org.mule.tooling.ui;bundle-version="[5.0.0,6.0.0)",
+ org.mule.tooling.utils;bundle-version="[5.0.0,6.0.0)",
+ org.mule.tooling.ui.modules.core;bundle-version="[5.0.0,6.0.0)",
+ org.eclipse.core.resources
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy

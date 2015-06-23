@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension point="org.eclipse.ui.menus">
+        <menuContribution
+                locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+				<command commandId="org.mule.tooling.incubator.utils.log4jconverter.MigrateLog4jAction"
+                         label="Migrate to Log4j2"
+                         style="push">
+                         <visibleWhen>
+		                    <with variable="activeMenuSelection">
+		                        <iterate >
+			                        <adapt type="org.eclipse.core.resources.IResource">
+				             			<test property="org.eclipse.core.resources.name"
+				                   				value="log4j.properties">
+				             			</test>
+			         				</adapt>
+		                        </iterate>
+		                        <count value="1"></count>
+		                    </with>
+                		</visibleWhen>
+                </command>
+        </menuContribution>
+  	</extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.mule.tooling.incubator.utils.log4jconverter.MigrateLog4jAction"
+            commandId="org.mule.tooling.incubator.utils.log4jconverter.MigrateLog4jAction">
+      </handler>
+   </extension> 
+</plugin>
