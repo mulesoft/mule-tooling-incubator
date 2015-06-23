@@ -40,6 +40,7 @@ public class ConnectorIconPanel {
     private Canvas smallIcon;
     private String imagePath = "";
     private Text connectorNameText;
+    private Image backgroundImage;
 
     public void updateStatus() {
         try {
@@ -64,25 +65,11 @@ public class ConnectorIconPanel {
 
         addLabelGroup(group);
 
-        Button selectIcon = new Button(group, SWT.NONE);
-        selectIcon.setText("Select Icon");
-        selectIcon.addSelectionListener(new SelectionAdapter() {
+        addIconsChoosers(group);
 
-            public void widgetSelected(SelectionEvent e) {
-                FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell(), SWT.OPEN);
-                dialog.setText("Select Icon");
-                dialog.setFilterExtensions(new String[] { "*.png;*.gif;*.jpg;*.tiff", "*.*" });
-                String result = dialog.open();
-                if (result != null) {
-                    imagePath = result;
-                    updateStatus();
-                }
-            }
-        });
-        GridDataFactory.swtDefaults().grab(false, false).applyTo(selectIcon);
 
         Composite iconGroup = new Composite(group, SWT.NONE);
-        GridLayoutFactory.swtDefaults().numColumns(1).applyTo(iconGroup);
+        GridLayoutFactory.swtDefaults().applyTo(iconGroup);
         GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(false, false).applyTo(iconGroup);
 
         Label label = new Label(iconGroup, SWT.NULL);
@@ -174,12 +161,59 @@ public class ConnectorIconPanel {
         reset.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
+                if(backgroundImage!=null){
+                    backgroundImage.dispose();
+                    backgroundImage=null;
+                }
                 imagePath = null;
                 connectorNameText.setText("Connector");
             }
         });
         GridDataFactory.swtDefaults().grab(false, false).applyTo(reset);
         updateStatus();
+    }
+
+    private void addIconsChoosers(Group group) {
+        Composite buttonsGroup = new Composite(group, SWT.NONE);
+        GridLayoutFactory.swtDefaults().applyTo(buttonsGroup);
+        GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(false, false).applyTo(buttonsGroup);
+        
+        Button backgroundIcon = new Button(buttonsGroup, SWT.NONE);
+        backgroundIcon.setText("Select Background");
+        backgroundIcon.addSelectionListener(new SelectionAdapter() {
+
+            public void widgetSelected(SelectionEvent e) {
+                FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell(), SWT.OPEN);
+                dialog.setText("Select Background");
+                dialog.setFilterExtensions(new String[] { "*.png;*.gif;*.jpg;*.tiff", "*.*" });
+                String result = dialog.open();
+                if (result != null) {
+                    if(backgroundImage!=null){
+                        backgroundImage.dispose();
+                    }
+                    backgroundImage = new Image(Display.getDefault(), result);
+                    updateStatus();
+                }
+            }
+        });
+        GridDataFactory.swtDefaults().grab(false, false).applyTo(backgroundIcon);
+        
+        Button selectIcon = new Button(buttonsGroup, SWT.NONE);
+        selectIcon.setText("Select Icon");
+        selectIcon.addSelectionListener(new SelectionAdapter() {
+
+            public void widgetSelected(SelectionEvent e) {
+                FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell(), SWT.OPEN);
+                dialog.setText("Select Icon");
+                dialog.setFilterExtensions(new String[] { "*.png;*.gif;*.jpg;*.tiff", "*.*" });
+                String result = dialog.open();
+                if (result != null) {
+                    imagePath = result;
+                    updateStatus();
+                }
+            }
+        });
+        GridDataFactory.swtDefaults().grab(false, false).applyTo(selectIcon);
     }
 
     private void addLabelGroup(Group group) {
@@ -211,6 +245,9 @@ public class ConnectorIconPanel {
     }
 
     protected Image getConnectorImage() {
+        if (backgroundImage != null) {
+            return backgroundImage;
+        }
         return DevkitImages.getManagedImage("", "connector-48x32.png");
     }
 

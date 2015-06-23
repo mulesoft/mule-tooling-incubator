@@ -10,7 +10,6 @@ import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.oauth.OAuthProtected;
 import org.mule.api.annotations.ReconnectOn;
-import org.mule.api.annotations.param.Default;
 
 import org.mule.modules.cloud.config.ConnectorConfig;
 
@@ -32,7 +31,7 @@ public class CloudConnector {
     @Processor
     @OAuthProtected
     @ReconnectOn(exceptions = { Exception.class })
-    public String greet(@Default("friend") String friend) throws Exception {
+    public String greet(String friend) throws Exception {
         /*
          * MESSAGE PROCESSOR CODE GOES HERE
          */

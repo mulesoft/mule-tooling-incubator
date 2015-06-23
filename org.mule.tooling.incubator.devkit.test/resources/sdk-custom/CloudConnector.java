@@ -8,7 +8,6 @@ package org.mule.modules.cloud;
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
-import org.mule.api.annotations.param.Default;
 
 import org.mule.modules.cloud.config.ConnectorConfig;
 

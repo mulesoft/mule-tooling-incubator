@@ -25,7 +25,7 @@ import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.oauth.OAuthProtected;
 import org.mule.api.annotations.ReconnectOn;
 #end
-#if(${project.generateDefaultBody} == true )
+#if(${project.dataSenseEnabled} == true )
 import org.mule.api.annotations.param.Default;
 #end
 
@@ -56,7 +56,7 @@ public class ${project.connectorClassName} {
 #if($project.authenticationType == 'OAUTH_V2' )
     @OAuthProtected
     @ReconnectOn(exceptions = { Exception.class })
-    public String greet(@Default("friend") String friend) throws Exception {
+    public String greet(String friend) throws Exception {
 #else
     public String greet(String friend) {
 #end
