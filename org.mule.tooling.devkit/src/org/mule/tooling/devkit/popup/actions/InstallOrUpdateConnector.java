@@ -140,7 +140,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                 @Override
                 public void run() {
                     MessageDialog.openInformation(null, MessageFormat.format("{0} succesfully.", title, symbalicName),
-                            MessageFormat.format("The connector [[{1}]] was succesfully {0}.", title.toLowerCase(), symbalicName));
+                            MessageFormat.format("The connector [{1}] was succesfully {0}.", title.toLowerCase(), symbalicName));
                 }
             });
         } catch (BundleException e) {
