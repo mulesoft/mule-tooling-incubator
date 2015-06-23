@@ -21,12 +21,35 @@
                 		</visibleWhen>
                 </command>
         </menuContribution>
+        <menuContribution
+                locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+				<command commandId="org.mule.tooling.incubator.utils.placeholder.PlaceholderExtractorHandler"
+                         label="Populate from project properties..."
+                         style="push">
+                         <visibleWhen>
+		                    <with variable="activeMenuSelection">
+		                        <iterate >
+			                        <adapt type="org.eclipse.core.resources.IResource">
+				             			<test property="org.eclipse.core.resources.name"
+				                   				value="*.properties">
+				             			</test>
+			         				</adapt>
+		                        </iterate>
+		                        <count value="1"></count>
+		                    </with>
+                		</visibleWhen>
+                </command>
+        </menuContribution>
   	</extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
             class="org.mule.tooling.incubator.utils.log4jconverter.MigrateLog4jAction"
             commandId="org.mule.tooling.incubator.utils.log4jconverter.MigrateLog4jAction">
+      </handler>
+      <handler
+            class="org.mule.tooling.incubator.utils.placeholder.PlaceholderExtractorHandler"
+            commandId="org.mule.tooling.incubator.utils.placeholder.PlaceholderExtractorHandler">
       </handler>
    </extension> 
 </plugin>

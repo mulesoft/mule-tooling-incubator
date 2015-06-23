@@ -13,17 +13,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 public class MigrateLog4jAction extends AbstractHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		
-		IFile selectedFile = (IFile) ((IStructuredSelection) window.getSelectionService().getSelection()).getFirstElement();
+		IFile selectedFile = (IFile) ((IStructuredSelection) HandlerUtil.getCurrentSelection(event)).getFirstElement();
 		
 		if (selectedFile == null) {
 			return null;
