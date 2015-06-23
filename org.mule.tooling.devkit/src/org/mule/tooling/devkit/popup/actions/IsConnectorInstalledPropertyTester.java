@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.mule.tooling.core.utils.BundleJarFileInspector;
 import org.mule.tooling.core.utils.BundleManifestReader;
+import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.osgi.framework.Bundle;
 
@@ -31,22 +32,23 @@ public class IsConnectorInstalledPropertyTester extends PropertyTester {
 
             final IJavaProject selectedProject = JavaCore.create((IProject) receiver);
 
-            if (selectedProject != null && selectedProject.isOpen()) {
+            if (selectedProject != null && selectedProject.getProject().isAccessible()) {
                 IFolder folder = selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER).getFolder("plugins");
                 if (folder.exists()) {
                     Collection<File> files = FileUtils.listFiles(folder.getLocation().toFile(), new String[] { "jar" }, false);
-                    for (File pluginJarFile : files) {
+                    if (!files.isEmpty()) {
+                        for (File pluginJarFile : files) {
 
-                        BundleManifestReader manifestReader;
-                        try {
-                            manifestReader = geManifestFromJar(pluginJarFile);
-                            Bundle bundle = Platform.getBundle(manifestReader.getSymbolicName());
-                            if (bundle != null) {
-                                return bundle.getState() != Bundle.UNINSTALLED;
+                            BundleManifestReader manifestReader;
+                            try {
+                                manifestReader = geManifestFromJar(pluginJarFile);
+                                Bundle bundle = Platform.getBundle(manifestReader.getSymbolicName());
+                                if (bundle != null) {
+                                    return bundle.getState() != Bundle.UNINSTALLED;
+                                }
+                            } catch (IOException e) {
+                                DevkitUIPlugin.getDefault().logError("Unexpected error", e);
                             }
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
                         }
                     }
                 }

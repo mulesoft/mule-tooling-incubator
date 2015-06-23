@@ -103,24 +103,25 @@ public class Uninstall extends AbstractHandler {
 
                                                 @Override
                                                 public void done(IJobChangeEvent event) {
-                                                    try {
-                                                        FileUtils.deleteDirectory(new File(dropins, symbolicName));
-                                                        removeRepository(agent, uri);
-                                                        Display.getDefault().asyncExec(new Runnable() {
 
-                                                            @Override
-                                                            public void run() {
-                                                                MessageDialog.openInformation(null, "Uninstalled [" + selectedProject.getProject().getName() + "]", "Uninstalled ["
-                                                                        + symbolicName + "]. Anypoint Studio needs to restart for the changes to take effect.");
-                                                                if (PlatformUI.getWorkbench().isClosing())
-                                                                    return;
-                                                                PlatformUI.getWorkbench().restart();
+                                                    Display.getDefault().asyncExec(new Runnable() {
+
+                                                        @Override
+                                                        public void run() {
+                                                            MessageDialog.openInformation(null, "Uninstalled [" + selectedProject.getProject().getName() + "]", "Uninstalled ["
+                                                                    + symbolicName + "]. Anypoint Studio needs to restart for the changes to take effect.");
+                                                            if (PlatformUI.getWorkbench().isClosing())
+                                                                return;
+                                                            PlatformUI.getWorkbench().restart();
+                                                            try {
+                                                                FileUtils.deleteDirectory(new File(dropins, symbolicName));
+                                                                removeRepository(agent, uri);
+                                                            } catch (IOException e) {
+                                                                // ignore
                                                             }
-                                                        });
 
-                                                    } catch (IOException e) {
-
-                                                    }
+                                                        }
+                                                    });
                                                 }
 
                                                 @Override
