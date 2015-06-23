@@ -2,7 +2,9 @@ package org.mule.tooling.devkit.popup.actions;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -23,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -117,10 +120,12 @@ public class InstallOrUpdateConnector extends AbstractHandler {
         return builder.build().run(monitor);
     }
 
-    private void installOrUpdateBundle(File pluginDir, String synmbolicName) {
+    private void installOrUpdateBundle(File pluginDir, String synmbolicName) throws MalformedURLException, URISyntaxException {
         String location = pluginDir.getAbsolutePath();
         try {
-
+            //Deal with equinox bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=184620
+            location = URIUtil.toURL(pluginDir.toURI()).toString();
+            location = location.replace("%20", " ");
             BundleContext bundleContext = DevkitUIPlugin.getDefault().getBundle().getBundleContext();
 
             Bundle bundle = Platform.getBundle(synmbolicName);
@@ -131,6 +136,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             } else {
                 bundle = bundleContext.installBundle(location);
             }
+            DevkitUIPlugin.getDefault().logError(MessageFormat.format("Location [{0}].", location, bundle.getLocation()));
 
             bundle.start();
             final String title = wasAnUpdated ? "Updated" : "Installed";
@@ -181,11 +187,13 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             status = new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR, "No installable was found at repository: " + uri, e);
         } catch (IOException e) {
             status = new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR, "No installable was found at repository: " + uri, e);
+        } catch (URISyntaxException e) {
+            status = new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR, "No installable was found at repository: " + uri, e);
         }
         return status;
     }
 
-    private void unzipPluginOnDropinsFolder(final IJavaProject selectedProject, final IProgressMonitor monitor, File dropins) throws IOException {
+    private void unzipPluginOnDropinsFolder(final IJavaProject selectedProject, final IProgressMonitor monitor, File dropins) throws IOException, URISyntaxException {
         Collection<File> files = FileUtils.listFiles(selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER).getFolder("plugins").getLocation().toFile(),
                 new String[] { "jar" }, false);
         for (File pluginJarFile : files) {
