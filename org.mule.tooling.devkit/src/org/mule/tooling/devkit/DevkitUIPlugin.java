@@ -65,14 +65,16 @@ public class DevkitUIPlugin extends AbstractUIPlugin implements IStartup {
 
     public void logError(String message) {
         this.getLog().log(new Status(Status.ERROR, PLUGIN_ID, message));
-
     }
 
     public void logWarning(String message) {
         this.getLog().log(new Status(Status.WARNING, PLUGIN_ID, message));
-
     }
 
+    public void logInfo(String message) {
+        this.getLog().log(new Status(Status.INFO, PLUGIN_ID, message));
+    }
+    
     /**
      * Open an error dialog on the given shell.
      * 
