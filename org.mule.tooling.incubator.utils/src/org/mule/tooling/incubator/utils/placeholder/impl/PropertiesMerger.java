@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
@@ -14,13 +15,14 @@ public class PropertiesMerger {
 	
 	private final File outputFile;
 	private final Set<String> inputKeys;
+	private final HashMap<String, String> defaults;
 	private Set<String> deletedKeys;
 	private Set<String> createdKeys;
 	
-	public PropertiesMerger(File outputFile, Set<String> inputKeys) {
-		super();
+	public PropertiesMerger(File outputFile, Set<String> inputKeys, HashMap<String, String> defaults) {
 		this.outputFile = outputFile;
 		this.inputKeys = inputKeys;
+		this.defaults = defaults == null ? new HashMap<String, String>() : defaults;
 	}
 	
 	
@@ -57,12 +59,13 @@ public class PropertiesMerger {
 			
 			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			
-			String comment = "# Content addition timestamp: " + df.format(new Date()) + "\n";
+			String comment = "\n# Content addition timestamp: " + df.format(new Date()) + "\n";
 			bw.write(comment);
 			
 			
 			for(String key : updateProps) {
-				String line = key + "=?\n";
+				String value = defaults.containsKey(key) ? defaults.get(key) : "?";
+				String line = key + "=" + value + "\n";
 				bw.write(line);
 			}
 			

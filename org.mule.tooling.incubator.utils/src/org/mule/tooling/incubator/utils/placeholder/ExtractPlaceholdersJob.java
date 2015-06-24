@@ -65,7 +65,7 @@ public class ExtractPlaceholdersJob extends WorkspaceJob {
     	PropertiesCollector collector = new PropertiesCollector(configFiles);
     	Set<String> keys = collector.collectKeys();
     	
-    	PropertiesMerger merger = new PropertiesMerger(targetFile.getLocation().toFile(), keys);    	
+    	PropertiesMerger merger = new PropertiesMerger(targetFile.getLocation().toFile(), keys, collector.getDefaultValues());    	
     	merger.doMerge();
     	
     	
