@@ -68,10 +68,6 @@ import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.maven.MavenInfo;
 import org.mule.tooling.devkit.maven.ScanProject;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
-import org.mule.tooling.maven.runner.SyncGetResultCallback;
-import org.mule.tooling.maven.ui.MavenUIPlugin;
-import org.mule.tooling.maven.ui.actions.MavenInstallationTester;
-import org.mule.tooling.maven.ui.preferences.MavenPreferences;
 
 /**
  * Page for importing a Mule project from a Folder.
@@ -99,8 +95,6 @@ public class ConnectorImportWizzardPage extends WizardPage {
 
     /** dialog settings to store input history */
     protected IDialogSettings dialogSettings;
-
-    private boolean mavenFailure = false;
 
     public ConnectorImportWizzardPage() {
         super(PAGE_ID);
@@ -220,7 +214,6 @@ public class ConnectorImportWizzardPage extends WizardPage {
         projectTreeViewer.setInput(root);
         projectTreeViewer.refresh();
         projectTreeViewer.expandAll();
-        testMaven();
         setPageComplete(false);
     }
 
@@ -267,11 +260,6 @@ public class ConnectorImportWizzardPage extends WizardPage {
      * Update the indicator for whether the page is complete.
      */
     protected void updatePageComplete() {
-        if (mavenFailure) {
-            setErrorMessage("Maven home is not properly configured. Check your maven preferences.");
-            setPageComplete(false);
-            return;
-        }
 
         Object[] checkedElements = projectTreeViewer.getCheckedElements();
         boolean complete = checkedElements != null && checkedElements.length > 0 && StringUtils.isEmpty(getErrorMessage());
@@ -395,32 +383,6 @@ public class ConnectorImportWizzardPage extends WizardPage {
         projectDescription.setLocation(Path.fromOSString(folder.getAbsolutePath()));
 
         return projectDescription;
-    }
-
-    protected void testMaven() {
-        mavenFailure = false;
-        MavenPreferences preferencesAccessor = MavenUIPlugin.getDefault().getPreferences();
-        final MavenInstallationTester mavenInstallationTester = new MavenInstallationTester(preferencesAccessor.getMavenInstallationHome());
-        mavenInstallationTester.test(new SyncGetResultCallback() {
-
-            @Override
-            public void finished(final int result) {
-                super.finished(result);
-                Display.getDefault().asyncExec(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        onTestFinished(result);
-                    }
-                });
-            }
-        });
-
-    }
-
-    void onTestFinished(final int result) {
-        mavenFailure = result != 0;
-        updatePageComplete();
     }
 
     private boolean runInContainer(final IRunnableWithProgress work) {

@@ -82,14 +82,14 @@ public class StudioAnnotationProcessor extends AnnotationProcessor {
             }
             return true;
         }
-        // If the variabe is defined and the value is true we try to check the version.
+        // If the variable is defined and the value is true we try to check the version.
         String enabledDevKitCheckVersion = processingEnv.getOptions().get(ENABLED_DEVKIT_CHECK_VERSION);
         if (!StringUtils.isBlank(enabledDevKitCheckVersion)) {
             if (Boolean.valueOf(enabledDevKitCheckVersion)) {
                 // If the version is not compatible, ignore the APT run.
                 if (!isDevKitVersionSupported()) {
                     processingEnv.getMessager().printMessage(Kind.WARNING,
-                            "This version of the plugin will only",
+                            "To enable the IDE error highlighting in this plugin version, your connectors needs to use DevKit version ["+SUPPORTED_VERSION+"]",
                             env.getRootElements().iterator().next());
                     return true;
                 }
@@ -165,5 +165,10 @@ public class StudioAnnotationProcessor extends AnnotationProcessor {
         } catch (NoClassDefFoundError ex) {
             Activator.log(ex);
         }
+    }
+    
+    @Override
+    public void dispose(){
+        //Do nothing
     }
 }

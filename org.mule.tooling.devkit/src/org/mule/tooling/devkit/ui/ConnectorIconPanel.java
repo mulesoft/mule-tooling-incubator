@@ -58,7 +58,7 @@ public class ConnectorIconPanel {
 
     public void createControl(Composite parent) {
         Group group = new Group(parent, SWT.NONE);
-        group.setText("Connector Image");
+        group.setText("Connector Icons");
 
         GridLayoutFactory.swtDefaults().numColumns(3).applyTo(group);
         GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).hint(SWT.DEFAULT, SWT.DEFAULT).grab(true, false).span(2, 1).applyTo(group);
@@ -199,12 +199,12 @@ public class ConnectorIconPanel {
         GridDataFactory.swtDefaults().grab(false, false).applyTo(backgroundIcon);
         
         Button selectIcon = new Button(buttonsGroup, SWT.NONE);
-        selectIcon.setText("Select Icon");
+        selectIcon.setText("Select Logo");
         selectIcon.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
                 FileDialog dialog = new FileDialog(Display.getDefault().getActiveShell(), SWT.OPEN);
-                dialog.setText("Select Icon");
+                dialog.setText("Select Logo");
                 dialog.setFilterExtensions(new String[] { "*.png;*.gif;*.jpg;*.tiff", "*.*" });
                 String result = dialog.open();
                 if (result != null) {

@@ -27,32 +27,38 @@ public class IsConnectorInstalledPropertyTester extends PropertyTester {
 
     @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+        //Exception cannot be thrown at 
+        try {
+            if ((receiver instanceof IProject) && property.equals(IS_INSTALLED)) {
 
-        if ((receiver instanceof IProject) && property.equals(IS_INSTALLED)) {
+                final IJavaProject selectedProject = JavaCore.create((IProject) receiver);
 
-            final IJavaProject selectedProject = JavaCore.create((IProject) receiver);
+                if (selectedProject != null && selectedProject.getProject().isAccessible()) {
+                    IFolder folder = selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER).getFolder("plugins");
+                    if (folder.exists()) {
+                        if (folder.getRawLocation().toFile().isDirectory()) {
+                            Collection<File> files = FileUtils.listFiles(folder.getRawLocation().toFile(), new String[] { "jar" }, false);
+                            if (!files.isEmpty()) {
+                                for (File pluginJarFile : files) {
 
-            if (selectedProject != null && selectedProject.getProject().isAccessible()) {
-                IFolder folder = selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER).getFolder("plugins");
-                if (folder.exists()) {
-                    Collection<File> files = FileUtils.listFiles(folder.getLocation().toFile(), new String[] { "jar" }, false);
-                    if (!files.isEmpty()) {
-                        for (File pluginJarFile : files) {
-
-                            BundleManifestReader manifestReader;
-                            try {
-                                manifestReader = geManifestFromJar(pluginJarFile);
-                                Bundle bundle = Platform.getBundle(manifestReader.getSymbolicName());
-                                if (bundle != null) {
-                                    return bundle.getState() != Bundle.UNINSTALLED;
+                                    BundleManifestReader manifestReader;
+                                    try {
+                                        manifestReader = geManifestFromJar(pluginJarFile);
+                                        Bundle bundle = Platform.getBundle(manifestReader.getSymbolicName());
+                                        if (bundle != null) {
+                                            return bundle.getState() != Bundle.UNINSTALLED;
+                                        }
+                                    } catch (IOException e) {
+                                        DevkitUIPlugin.getDefault().logError("Unexpected error", e);
+                                    }
                                 }
-                            } catch (IOException e) {
-                                DevkitUIPlugin.getDefault().logError("Unexpected error", e);
                             }
                         }
                     }
                 }
             }
+        } catch (Exception ex) {
+            DevkitUIPlugin.getDefault().logError("Unexpected error", ex);
         }
         return false;
     }

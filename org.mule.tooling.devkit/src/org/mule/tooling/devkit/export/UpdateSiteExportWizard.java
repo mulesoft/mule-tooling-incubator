@@ -5,10 +5,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.mule.tooling.devkit.DevkitUIPlugin;
+import org.mule.tooling.maven.ui.MavenUIPlugin;
+import org.mule.tooling.maven.ui.wizards.ConfigureMavenWizardPage;
 
 public class UpdateSiteExportWizard extends Wizard implements IExportWizard {
 
@@ -20,7 +23,8 @@ public class UpdateSiteExportWizard extends Wizard implements IExportWizard {
 
     /** Project export page */
     private DevkitExportPage mainPage;
-
+    private ConfigureMavenWizardPage configureMavenPage;
+    
     public UpdateSiteExportWizard() {
         super();
         setNeedsProgressMonitor(true);
@@ -34,11 +38,22 @@ public class UpdateSiteExportWizard extends Wizard implements IExportWizard {
     }
 
     public void addPages() {
-        super.addPages();
+        if (!MavenUIPlugin.getDefault().getPreferences().isGlobalMavenSupportEnabled()) {
+            configureMavenPage = new ConfigureMavenWizardPage();
+            addPage(configureMavenPage);
+        }
         mainPage = new DevkitExportPage(selected);
         addPage(mainPage);
     }
 
+    @Override
+    public IWizardPage getNextPage(IWizardPage page) {
+        if (page instanceof ConfigureMavenWizardPage) {
+            configureMavenPage.nextPressed();
+        }
+        return super.getNextPage(page);
+    }
+    
     /*
      * (non-Javadoc)
      * 

@@ -136,7 +136,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             } else {
                 bundle = bundleContext.installBundle(location);
             }
-            DevkitUIPlugin.getDefault().logError(MessageFormat.format("Location [{0}].", location, bundle.getLocation()));
+            DevkitUIPlugin.getDefault().logError(MessageFormat.format("Location [{0}]", location, bundle.getLocation()));
 
             bundle.start();
             final String title = wasAnUpdated ? "Updated" : "Installed";
@@ -145,7 +145,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
 
                 @Override
                 public void run() {
-                    MessageDialog.openInformation(null, MessageFormat.format("{0} succesfully.", title, symbalicName),
+                    MessageDialog.openInformation(null, MessageFormat.format("{0} succesfully", title, symbalicName),
                             MessageFormat.format("The connector [{1}] was succesfully {0}.", title.toLowerCase(), symbalicName));
                 }
             });

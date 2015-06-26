@@ -1,18 +1,12 @@
 package org.mule.tooling.devkit.export;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,6 +20,7 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -96,6 +91,7 @@ public class DevkitExportPage extends WizardPage {
         projects.getCombo().setLayoutData(projectGridData);
         projects.setLabelProvider(new ProjectLabelProvider());
         projects.setContentProvider(new ProjectNatureBaseContentProvider(DevkitNature.NATURE_ID));
+
         projects.addSelectionChangedListener(new ISelectionChangedListener() {
 
             public void selectionChanged(SelectionChangedEvent event) {
@@ -142,9 +138,12 @@ public class DevkitExportPage extends WizardPage {
         setControl(control);
 
         try {
-            if (project != null && project.hasNature(DevkitNature.NATURE_ID)) {
-                setErrorMessage("The selected project doesn't seems to be a DevKit Project");
+            if (project == null || (project != null && !project.hasNature(DevkitNature.NATURE_ID))) {
+                project = null;
+                setErrorMessage("There is no DevKit project selected");
                 setPageComplete(false);
+            } else {
+                projects.setSelection(new StructuredSelection(project));
             }
         } catch (CoreException e) {
 
