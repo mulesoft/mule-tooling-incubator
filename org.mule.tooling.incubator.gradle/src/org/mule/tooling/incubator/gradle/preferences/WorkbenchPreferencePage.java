@@ -26,7 +26,7 @@ public class WorkbenchPreferencePage extends FieldEditorPreferencePage implement
     DirectoryFieldEditor gradleHomeField;
     private boolean shouldUseGradleHome;
     
-    private static String[][] AVAILABLE_VERSIONS = {{"2.2.1 (Recommended)", "2.2.1"},{"2.1", "2.1"},{"2.0", "2.0"}, {"1.12", "1.12"}, {"Custom", GradlePluginConstants.USE_GRADLE_HOME_VERSION_VALUE}};
+    private static String[][] AVAILABLE_VERSIONS = {{"2.4 (Recommended)", "2.4"}, {"2.3", "2.3"}, {"2.2.1", "2.2.1"}, {"Custom", GradlePluginConstants.USE_GRADLE_HOME_VERSION_VALUE}};
     
     /**
      * Note: values are set here for convenience.
