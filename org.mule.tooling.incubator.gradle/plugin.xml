@@ -75,79 +75,6 @@
       </perspectiveExtension>
    </extension>
    <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            adaptable="false"
-            id="org.mule.tooling.incubator.gradle.resourceMenuContribution"
-            nameFilter="build.gradle"
-            objectClass="org.eclipse.core.resources.IResource">
-         <visibility>
-            <objectState
-                  name="projectNature"
-                  value="org.mule.tooling.core.muleNature">
-            </objectState></visibility>
-         <menu
-               icon="icons/gradle16x16.png"
-               id="org.mule.tooling.incubator.gradle.menu"
-               label="Gradle Support in Studio"
-               path="additions">
-            <separator
-                  name="group">
-            </separator>
-         </menu>
-         <action
-               class="org.mule.tooling.incubator.gradle.actions.SynchronizeProjectAction"
-               id="org.mule.tooling.incubator.gradle.updateDeps"
-               label="Synchronize Project"
-               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
-         </action>
-      </objectContribution>
-      <objectContribution
-            adaptable="false"
-            id="org.mule.tooling.incubator.gradle.projectMenuContribution"
-            objectClass="org.eclipse.jdt.core.IJavaProject">
-         <visibility>
-            <objectState
-                  name="projectNature"
-                  value="org.mule.tooling.core.muleNature">
-            </objectState></visibility>
-         <menu
-               icon="icons/gradle16x16.png"
-               id="org.mule.tooling.incubator.gradle.menu"
-               label="Gradle Support in Studio"
-               path="additions">
-            <separator
-                  name="group">
-            </separator>
-         </menu>
-<!--         <action
-               class="org.mule.tooling.incubator.gradle.actions.TestAction"
-               id="org.mule.tooling.incubator.gradle.testAction"
-               label="Test Action"
-               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
-         </action> -->
-         <action
-               class="org.mule.tooling.incubator.gradle.actions.SynchronizeProjectAction"
-               id="org.mule.tooling.incubator.gradle.updateDeps"
-               label="Synchronize Project"
-               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
-         </action>
-         <action
-               class="org.mule.tooling.incubator.gradle.actions.ShowTasksViewAction"
-               id="org.mule.tooling.incubator.gradle.showTasksView"
-               label="Run Tasks..."
-               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
-         </action>
-         <action
-               class="org.mule.tooling.incubator.gradle.actions.InstallGradleWrapperAction"
-               id="org.mule.tooling.incubator.gradle.installGradleWrapper"
-               label="Install or Update Gradle Wrapper"
-               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
-         </action>
-         
-      </objectContribution>
-   </extension>
-   <extension
          point="org.eclipse.ui.editors">
       <editor
             class="org.mule.tooling.incubator.gradle.editors.GradleBuildEditor"
@@ -168,7 +95,6 @@
       </participant>
    </extension>
    
-   <!-- Begin migration of the menus -->
    <extension
          point="org.eclipse.ui.menus">
          <menuContribution
@@ -177,9 +103,31 @@
                      label="Gradle Support in Studio"
                      icon="icons/gradle16x16.png">
                      <command
+                           commandId="org.mule.tooling.incubator.gradle.synchronizeProject"
+                           label="Synchronize Project">
+                     </command>
+                     <command
+                           commandId="org.mule.tooling.incubator.gradle.showTasks"
+                           label="Run Tasks...">
+                     </command>
+                     <command
                            commandId="org.mule.tooling.incubator.gradle.runTests"
                            label="Run Unit Tests With Gradle">
                      </command>
+                     <command
+                           commandId="org.mule.tooling.incubator.gradle.installWrapper"
+                           label="Install or Update Gradle Wrapper">
+                     </command>
+                     <visibleWhen>
+                     	<iterate >
+                        <adapt type="org.eclipse.core.resources.IProject">
+	             			<test property="org.eclipse.core.resources.projectNature"
+	                   				value="org.mule.tooling.core.muleNature">
+	             			</test>
+         				</adapt>
+                        </iterate>
+                        <count value="1"></count>
+                     </visibleWhen>
                </menu>
          </menuContribution>         
          
@@ -190,6 +138,18 @@
          <handler
                commandId="org.mule.tooling.incubator.gradle.runTests"
                class="org.mule.tooling.incubator.gradle.handlers.RunTestsHandler">
+         </handler>
+         <handler
+               commandId="org.mule.tooling.incubator.gradle.installWrapper"
+               class="org.mule.tooling.incubator.gradle.handlers.InstallWrapperHandler">
+         </handler>
+         <handler
+               commandId="org.mule.tooling.incubator.gradle.showTasks"
+               class="org.mule.tooling.incubator.gradle.handlers.ShowTasksViewHandler">
+         </handler>
+         <handler
+               commandId="org.mule.tooling.incubator.gradle.synchronizeProject"
+               class="org.mule.tooling.incubator.gradle.handlers.SynchronizeProjectHandler">
          </handler>
    </extension>
    
