@@ -56,6 +56,7 @@ public abstract class GradleBuildJob extends WorkspaceJob {
 			}
 			
 			project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			handleCompletion();
 			return Status.OK_STATUS;
 		} catch (Exception ex) {
 			handleException(ex);
@@ -103,5 +104,12 @@ public abstract class GradleBuildJob extends WorkspaceJob {
 	
 	
 	protected abstract void handleException(Exception ex);
+	
+	/**
+	 * Handle the completion of the task, empty and optional implementation.
+	 */
+	protected void handleCompletion() {
+		
+	}
 	
 }
