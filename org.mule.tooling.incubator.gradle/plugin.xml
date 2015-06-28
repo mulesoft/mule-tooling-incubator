@@ -138,19 +138,55 @@
          <handler
                commandId="org.mule.tooling.incubator.gradle.runTests"
                class="org.mule.tooling.incubator.gradle.handlers.RunTestsHandler">
+               <enabledWhen>
+					<reference definitionId="org.mule.tooling.incubator.gradle.isGradleProject" />
+               </enabledWhen>
          </handler>
          <handler
                commandId="org.mule.tooling.incubator.gradle.installWrapper"
                class="org.mule.tooling.incubator.gradle.handlers.InstallWrapperHandler">
+               <enabledWhen>
+					<reference definitionId="org.mule.tooling.incubator.gradle.isGradleProject" />
+               </enabledWhen>
          </handler>
          <handler
                commandId="org.mule.tooling.incubator.gradle.showTasks"
                class="org.mule.tooling.incubator.gradle.handlers.ShowTasksViewHandler">
+               <enabledWhen>
+					<reference definitionId="org.mule.tooling.incubator.gradle.isGradleProject" />
+               </enabledWhen>               
          </handler>
          <handler
                commandId="org.mule.tooling.incubator.gradle.synchronizeProject"
                class="org.mule.tooling.incubator.gradle.handlers.SynchronizeProjectHandler">
+               <enabledWhen>
+					<reference definitionId="org.mule.tooling.incubator.gradle.isGradleProject" />
+               </enabledWhen>
          </handler>
+         
+   </extension>
+   
+   	<extension point="org.eclipse.core.expressions.propertyTesters">
+		<propertyTester
+			id="org.mule.tooling.incubator.gradle.projectTypeTester"
+			type="org.eclipse.core.resources.IProject"
+			namespace="org.mule.tooling.incubator.gradle"
+			properties="gradleProject"
+			class="org.mule.tooling.incubator.gradle.GradleProjectPropertyTester">
+		</propertyTester>
+	</extension>
+   
+   <extension point="org.eclipse.core.expressions.definitions">
+       <definition id="org.mule.tooling.incubator.gradle.isGradleProject">
+           <iterate>
+	       		<adapt
+	               type="org.eclipse.core.resources.IProject">
+	               <test
+	                     property="org.mule.tooling.incubator.gradle.gradleProject" value="true">
+	               </test>
+	       		</adapt>
+            </iterate>
+       </definition>
    </extension>
    
 </plugin>
