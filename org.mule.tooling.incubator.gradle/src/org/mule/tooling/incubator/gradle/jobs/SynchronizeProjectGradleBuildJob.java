@@ -218,6 +218,11 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 				
 				IResource buildFile = javaProject.getProject().getFile(GradlePluginConstants.MAIN_BUILD_FILE);
 				
+				//the build file might not be phisically present
+				if (!buildFile.exists()) {
+					return Status.OK_STATUS;
+				}
+				
 				//markers should be removed regardless there are orphan nodes or not.
 				removeMarkers(buildFile);
 				
