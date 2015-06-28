@@ -14,7 +14,10 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.gradle.tooling.BuildCancelledException;
 import org.gradle.tooling.BuildLauncher;
+import org.gradle.tooling.CancellationTokenSource;
+import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.GradleRunner;
@@ -31,6 +34,7 @@ public abstract class GradleBuildJob extends WorkspaceJob {
 	protected IProject project;
 	private String[] tasks;
 	private String[] arguments;
+	private CancellationTokenSource cancelTokenSource;
 	
 	public GradleBuildJob(String name, IProject project, String... tasks) {
 		super(name);
@@ -47,7 +51,9 @@ public abstract class GradleBuildJob extends WorkspaceJob {
 		try {
 			File projectPath = project.getLocation().toFile().getAbsoluteFile();
 			projConnection = GradlePluginUtils.buildConnectionForProject(projectPath).connect();
-			BuildLauncher build = projConnection.newBuild().forTasks(tasks);
+			cancelTokenSource = GradleConnector.newCancellationTokenSource();
+			BuildLauncher build = projConnection.newBuild().forTasks(tasks).withCancellationToken(cancelTokenSource.token());
+			
 			
 			if (arguments != null) {
 				GradleRunner.run(build, monitor, arguments);
@@ -58,6 +64,9 @@ public abstract class GradleBuildJob extends WorkspaceJob {
 			project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 			handleCompletion();
 			return Status.OK_STATUS;
+		} catch (BuildCancelledException ex) {
+			//the build job was simply cancelled.
+			return Status.CANCEL_STATUS;
 		} catch (Exception ex) {
 			handleException(ex);
 			return Status.CANCEL_STATUS;
@@ -112,4 +121,8 @@ public abstract class GradleBuildJob extends WorkspaceJob {
 		
 	}
 	
+	@Override
+	protected void canceling() {
+		cancelTokenSource.cancel();
+	}
 }

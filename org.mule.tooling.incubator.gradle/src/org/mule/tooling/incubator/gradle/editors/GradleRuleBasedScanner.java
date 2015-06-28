@@ -39,9 +39,9 @@ public class GradleRuleBasedScanner extends RuleBasedScanner {
 		"return", "short", "static", "switch", "throw", "throws" , "true", "try", "volatile", "while" };
 	
 	private static final String[] DSL_KEYWORDS = {"apply", "connector", "buildscript", "dependencies", 
-	    "classpath", "cloudhub", "compile", "ivy", "maven", "mmc", "module", "modules", "mule", "plugin",
-	    "project", "providedCompile", "providedRuntime", "providedTestCompile", "providedTestRuntime", 
-	    "repositories", "runtime", "testCompile", "testRuntime", "transports", "url"};
+	    "classpath", "cloudhub", "compile", "eeModules", "eeTransports", "ivy", "maven", "mmc", "module", 
+	    "modules", "mule", "plugin", "project", "providedCompile", "providedRuntime", "providedTestCompile",
+	    "providedTestRuntime", "repositories", "runtime", "testCompile", "testRuntime", "transports", "url"};
 	
 	
 	public GradleRuleBasedScanner() {

@@ -118,7 +118,7 @@ public class GradlePluginUtils {
 	 */
 	public static GradleConnector buildConnectionForProject(File projectLocation) {
 		GradleConnector connector = GradleConnector.newConnector().forProjectDirectory(projectLocation);
-        configureGradleRuntime(connector, Activator.getDefault().getPreferenceStore());
+		configureGradleRuntime(connector, Activator.getDefault().getPreferenceStore());
 		return connector;
 	}
 	
