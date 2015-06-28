@@ -3,6 +3,8 @@ package org.mule.tooling.incubator.gradle.content;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.ast.CodeVisitorSupport;
 import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MapExpression;
@@ -74,7 +76,7 @@ public class StudioGradleEnabledContentDescriber implements ITextContentDescribe
             if (PLUGIN_KEY_NAME.equals(expression.getKeyExpression().getText())) {
                 String value = expression.getValueExpression().getText();
                 
-                foundplugin = STUDIO.getPluginAlias().equals(value) || STUDIO.getPluginClassName().equals(value);                
+                foundplugin = checkPlugin(value, STUDIO) || checkPlugin(value, GradleMulePlugin.STUDIO_LEGACY) || checkPlugin(value, GradleMulePlugin.STUDIO_DOMAIN);                
             }
         }
         
@@ -134,6 +136,8 @@ public class StudioGradleEnabledContentDescriber implements ITextContentDescribe
         return IContentDescriber.INDETERMINATE;
     }
 
-
+    protected static boolean checkPlugin(String value, GradleMulePlugin matches) {    	
+    	return StringUtils.equals(value, matches.getPluginAlias()) || StringUtils.equals(value, matches.getPluginClassName());    	
+    }
 
 }

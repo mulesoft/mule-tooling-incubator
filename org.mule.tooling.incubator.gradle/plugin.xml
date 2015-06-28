@@ -119,15 +119,12 @@
                            label="Install or Update Gradle Wrapper">
                      </command>
                      <visibleWhen>
-                     	<iterate >
-                        <adapt type="org.eclipse.core.resources.IProject">
-	             			<test property="org.eclipse.core.resources.projectNature"
-	                   				value="org.mule.tooling.core.muleNature">
-	             			</test>
-         				</adapt>
-                        </iterate>
-                        <count value="1"></count>
+						<and>
+							<reference definitionId="org.mule.tooling.incubator.gradle.isGradleProject" />
+							<count value="1" />
+						</and>
                      </visibleWhen>
+                     
                </menu>
          </menuContribution>         
          
@@ -178,14 +175,20 @@
    
    <extension point="org.eclipse.core.expressions.definitions">
        <definition id="org.mule.tooling.incubator.gradle.isGradleProject">
-           <iterate>
-	       		<adapt
-	               type="org.eclipse.core.resources.IProject">
-	               <test
-	                     property="org.mule.tooling.incubator.gradle.gradleProject" value="true">
-	               </test>
-	       		</adapt>
-            </iterate>
+           <and>
+	           <iterate>
+		       		<adapt
+		               type="org.eclipse.core.resources.IProject">
+		               <and>
+			               <test
+			                     property="org.mule.tooling.incubator.gradle.gradleProject" value="true">
+			               </test>
+			               <test property="org.eclipse.core.resources.projectNature" value="org.mule.tooling.core.muleNature" />
+		               </and>
+		       		</adapt>
+	            </iterate>
+	            <count value="1" />
+            </and>
        </definition>
    </extension>
    
