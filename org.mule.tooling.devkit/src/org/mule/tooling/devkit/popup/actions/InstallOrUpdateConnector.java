@@ -33,7 +33,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.event.MuleModuleManagerRestartedEvent;
@@ -123,7 +125,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
     private void installOrUpdateBundle(File pluginDir, String synmbolicName) throws MalformedURLException, URISyntaxException {
         String location = pluginDir.getAbsolutePath();
         try {
-            //Deal with equinox bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=184620
+            // Deal with equinox bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=184620
             location = URIUtil.toURL(pluginDir.toURI()).toString();
             location = location.replace("%20", " ");
             BundleContext bundleContext = DevkitUIPlugin.getDefault().getBundle().getBundleContext();
@@ -136,7 +138,6 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             } else {
                 bundle = bundleContext.installBundle(location);
             }
-            DevkitUIPlugin.getDefault().logError(MessageFormat.format("Location [{0}]", location, bundle.getLocation()));
 
             bundle.start();
             final String title = wasAnUpdated ? "Updated" : "Installed";
@@ -145,7 +146,12 @@ public class InstallOrUpdateConnector extends AbstractHandler {
 
                 @Override
                 public void run() {
-                    MessageDialog.openInformation(null, MessageFormat.format("{0} succesfully", title, symbalicName),
+                    Shell parent = new Shell();
+                    parent.setSize(500, 500);
+                    Rectangle screenSize = Display.getDefault().getPrimaryMonitor().getBounds();
+                    parent.setLocation((screenSize.width - parent.getBounds().width) / 2, (screenSize.height - parent.getBounds().height) / 2);
+                    
+                    MessageDialog.openInformation(parent, MessageFormat.format("{0} succesfully", title, symbalicName),
                             MessageFormat.format("The connector [{1}] was succesfully {0}.", title.toLowerCase(), symbalicName));
                 }
             });
