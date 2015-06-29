@@ -151,8 +151,8 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                     Rectangle screenSize = Display.getDefault().getPrimaryMonitor().getBounds();
                     parent.setLocation((screenSize.width - parent.getBounds().width) / 2, (screenSize.height - parent.getBounds().height) / 2);
                     
-                    MessageDialog.openInformation(parent, MessageFormat.format("{0} succesfully", title, symbalicName),
-                            MessageFormat.format("The connector [{1}] was succesfully {0}.", title.toLowerCase(), symbalicName));
+                    MessageDialog.openInformation(parent, MessageFormat.format("{0} successfully", title, symbalicName),
+                            MessageFormat.format("The connector [{1}] was successfully {0}.", title.toLowerCase(), symbalicName));
                 }
             });
         } catch (BundleException e) {
