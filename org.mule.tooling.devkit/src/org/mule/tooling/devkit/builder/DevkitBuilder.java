@@ -56,6 +56,7 @@ public class DevkitBuilder extends IncrementalProjectBuilder {
                 fullBuild(monitor);
             } else {
                 incrementalBuild(delta, monitor);
+                getProject().build(CLEAN_BUILD, monitor);
             }
         }
         return null;
@@ -64,7 +65,7 @@ public class DevkitBuilder extends IncrementalProjectBuilder {
     protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
 
         deleteMuleTargetFolder(monitor);
-        
+
         try {
             getProject().accept(new SampleResourceVisitor(monitor));
         } catch (CoreException e) {

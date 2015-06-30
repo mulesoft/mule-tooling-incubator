@@ -4,7 +4,7 @@ import org.mule.api.annotations.components.Configuration;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
 
-@Configuration(configElementName = "config-type", friendlyName = "Configuration type config")
+@Configuration(friendlyName = "Configuration type config")
 public class ConnectorConfig {
 
     /**

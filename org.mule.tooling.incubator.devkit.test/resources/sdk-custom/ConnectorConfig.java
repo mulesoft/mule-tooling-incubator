@@ -12,7 +12,7 @@ import org.mule.api.annotations.display.Password;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.param.Default;
 
-@ConnectionManagement(configElementName = "config-type", friendlyName = "Connection Management type config")
+@ConnectionManagement(friendlyName = "Connection Management type config")
 public class ConnectorConfig {
     
     /**

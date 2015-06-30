@@ -8,7 +8,7 @@ import org.mule.devkit.api.ws.definition.DefaultServiceDefinition;
 import org.mule.devkit.api.ws.definition.ServiceDefinition;
 import org.mule.api.annotations.param.Default;
 
-@WsdlProvider(configElementName = "config-type", friendlyName = "Config")
+@WsdlProvider(friendlyName = "Config")
 public class ConnectorConfig {
 
     @Configurable

@@ -5,7 +5,7 @@ import org.mule.api.annotations.components.HttpBasicAuth;
 import org.mule.api.annotations.rest.BasicAuthPassword;
 import org.mule.api.annotations.rest.BasicAuthUsername;
 
-@HttpBasicAuth( configElementName = "config-type", headerName="Authorization", friendlyName = "HttpBasicAuth")
+@HttpBasicAuth( headerName="Authorization", friendlyName = "HttpBasicAuth")
 public class ${project.configClassName}{
 	
 	@Configurable
