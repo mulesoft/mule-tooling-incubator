@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -49,7 +50,13 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.builder.DevkitNature;
@@ -290,7 +297,15 @@ public class DevkitUtils {
     }
 
     public static boolean existsUnsavedChanges(IProject project) {
-        List<IEditorPart> dirtyEditors = UiUtils.getDirtyEditors(project.getProject());
+        @SuppressWarnings("unchecked")
+        List<IEditorPart> dirtyEditors = Collections.EMPTY_LIST;
+
+        if (project != null) {
+            UiUtils.getDirtyEditors(project.getProject());
+        } else {
+            dirtyEditors = getWorkspaceDirtyEditors();
+        }
+
         if (dirtyEditors.isEmpty())
             return false;
         SaveModifiedResourcesDialog dialog = new SaveModifiedResourcesDialog(Display.getDefault().getActiveShell());
@@ -298,6 +313,26 @@ public class DevkitUtils {
         if (dialog.open(Display.getDefault().getActiveShell(), dirtyEditors))
             return false;
         return true;
+    }
+
+    public static List<IEditorPart> getWorkspaceDirtyEditors() {
+        List<IEditorPart> result = new ArrayList<IEditorPart>(0);
+        IWorkbench workbench = PlatformUI.getWorkbench();
+        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+        for (int i = 0; i < windows.length; i++) {
+            IWorkbenchPage[] pages = windows[i].getPages();
+            for (int x = 0; x < pages.length; x++) {
+                IEditorPart[] editors = pages[x].getDirtyEditors();
+                for (int z = 0; z < editors.length; z++) {
+                    IEditorPart ep = editors[z];
+                    IEditorInput input = ep.getEditorInput();
+                    if (input instanceof IFileEditorInput) {
+                        result.add(ep);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     public static String toConnectorName(String camelCaseName) {
