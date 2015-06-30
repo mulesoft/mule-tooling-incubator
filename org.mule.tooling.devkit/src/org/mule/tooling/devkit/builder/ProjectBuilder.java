@@ -284,8 +284,6 @@ public class ProjectBuilder {
             MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("clean").withArg("compile").withArg("-Pconnector-generator")
                     .withTaskName("Generating connector from WSDL...").build().run(monitor);
 
-            MavenRunBuilder.newMavenRunBuilder().withProject(javaProject).withArg("license:format").withTaskName("Adding headers...").build().run(monitor);
-
             javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
         }
 
