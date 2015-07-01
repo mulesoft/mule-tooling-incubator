@@ -159,25 +159,26 @@
 	<build>
 		<plugins>
 			<plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-clean-plugin</artifactId>
+	            <version>2.4.1</version>
+	            <configuration>
+	                <filesets>
+	                    <fileset>
+	                        <directory>${lib-dir}</directory>
+	                        <includes>
+	                            <include>**/*</include>
+	                        </includes>
+	                        <followSymlinks>false</followSymlinks>
+	                    </fileset>
+	                </filesets>
+	            </configuration>
+	        </plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>2.4</version>
 				<executions>
-					<execution>
-						<id>clean-dependencies</id>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<phase>clean</phase>
-						<configuration>
-							<pom>dependenciesPom.xml</pom>
-							<goals>
-								<goal>clean</goal>
-							</goals>
-							<streamLogs>true</streamLogs>
-							<disableReports>true</disableReports>
-						</configuration>
-					</execution>
 					<execution>
 						<id>download-maven-dependencies</id>
 						<phase>validate</phase>
