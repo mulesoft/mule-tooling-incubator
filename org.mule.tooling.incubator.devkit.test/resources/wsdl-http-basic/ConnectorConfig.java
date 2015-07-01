@@ -52,11 +52,11 @@ public class ConnectorConfig {
         return new HttpBasicWsdlTransport(getUsername(), getPassword());
     }
 
-    public String getAddress() {
+    public String getEndpoint() {
         return endpoint;
     }
 
-    public void setAddress(String endpoint) {
+    public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
     }
 

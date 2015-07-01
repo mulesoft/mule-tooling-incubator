@@ -58,11 +58,11 @@ public class ConnectorConfig {
         return result;
     }
 
-    public String getAddress() {
+    public String getEndpoint() {
         return endpoint;
     }
 
-    public void setAddress(String endpoint) {
+    public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
     }
 
