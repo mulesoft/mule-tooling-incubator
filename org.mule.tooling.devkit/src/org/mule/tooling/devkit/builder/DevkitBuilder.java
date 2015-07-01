@@ -56,7 +56,6 @@ public class DevkitBuilder extends IncrementalProjectBuilder {
                 fullBuild(monitor);
             } else {
                 incrementalBuild(delta, monitor);
-                getProject().build(CLEAN_BUILD, monitor);
             }
         }
         return null;
