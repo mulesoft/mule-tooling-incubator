@@ -297,7 +297,7 @@ public class ProjectBuilder {
 
             TemplateFileWriter templateFileWriter = new TemplateFileWriter(project);
 
-            populateModel(projectMap, templateFileWriter, project,monitor);
+            populateModel(projectMap, templateFileWriter, project, monitor);
 
             monitor.beginTask("Creating project files", 1000);
             createGeneralFiles(project, replacer, templateFileWriter, monitor);
@@ -317,7 +317,9 @@ public class ProjectBuilder {
                     SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
         }
         if (!apiType.equals(ApiType.SOAP) || !this.generateDefaultBody) {
-            templateFileWriter.apply(getConfigTemplate(), getConfigFileName(), replacer, new SubProgressMonitor(monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+            if (!apiType.equals(ApiType.REST)) {
+                templateFileWriter.apply(getConfigTemplate(), getConfigFileName(), replacer, new SubProgressMonitor(monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+            }
         }
         if (dataSenseEnabled) {
             templateFileWriter.apply("/templates/connector_metadata_category.tmpl", MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/" + "DataSenseResolver.java",
@@ -431,7 +433,7 @@ public class ProjectBuilder {
                                 .toFile());
                     }
                 } catch (IOException e) {
-                    //do nothing for now
+                    // do nothing for now
                 }
             }
         }
@@ -511,12 +513,14 @@ public class ProjectBuilder {
             create(project.getFolder(MAIN_RESOURCES_FOLDER), monitor);
             create(project.getFolder(TEST_RESOURCES_FOLDER), monitor);
             create(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/")), monitor);
-            create(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/config"), monitor);
+            if (!apiType.equals(ApiType.REST)) {
+                create(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/config"), monitor);
+            }
             create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/")), monitor);
             create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation"), monitor);
             create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation/testrunners"), monitor);
             create(project.getFolder(TEST_JAVA_FOLDER + "/" + packageName.replaceAll("\\.", "/") + "/automation/testcases"), monitor);
-            if (apiType.equals(ApiType.SOAP)||apiType.equals(ApiType.WSDL)) {
+            if (apiType.equals(ApiType.SOAP) || apiType.equals(ApiType.WSDL)) {
                 create(project.getFolder(SRC_MAIN_RESOURCES_WSDL_BASE_PATH), monitor);
             }
         } finally {
@@ -635,15 +639,15 @@ public class ProjectBuilder {
         List<ServiceDefinition> deff = new ArrayList<ServiceDefinition>();
         if (wsdlFiles.isEmpty()) {
             try {
-                createEntry(currentProject.getFolder(SRC_MAIN_RESOURCES_WSDL_BASE_PATH),monitor);
+                createEntry(currentProject.getFolder(SRC_MAIN_RESOURCES_WSDL_BASE_PATH), monitor);
                 File destination = currentProject.getFolder(SRC_MAIN_RESOURCES_WSDL_BASE_PATH).getRawLocation().toFile();
-                File helloWordlWSDL = new File(destination,"hello_soap12.wsdl");
-                templateFileWriter.apply("/templates/hello_soap12.wsdl", SRC_MAIN_RESOURCES_WSDL_BASE_PATH+"/hello_soap12.wsdl", new NullReplacer(), new SubProgressMonitor(monitor, 10,
-                        SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+                File helloWordlWSDL = new File(destination, "hello_soap12.wsdl");
+                templateFileWriter.apply("/templates/hello_soap12.wsdl", SRC_MAIN_RESOURCES_WSDL_BASE_PATH + "/hello_soap12.wsdl", new NullReplacer(), new SubProgressMonitor(
+                        monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
                 wsdlFiles.put(helloWordlWSDL.getAbsolutePath(), "Hello World");
             } catch (CoreException e) {
                 e.printStackTrace();
-            } 
+            }
 
         }
         factory = WSDLFactory.newInstance();
