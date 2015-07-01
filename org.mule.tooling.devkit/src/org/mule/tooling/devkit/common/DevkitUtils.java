@@ -12,6 +12,12 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
+import java.util.Map.Entry;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -57,6 +63,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.mule.tooling.core.utils.BundleManifestReader;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.builder.DevkitNature;
@@ -468,5 +475,38 @@ public class DevkitUtils {
             IOUtils.closeQuietly(zip);
         }
         return unziped;
+    }
+
+    private static Manifest getManifest(JarFile jarFile) throws IOException {
+        InputStream input = null;
+        try {
+
+            input = jarFile.getInputStream(searchForEntry(jarFile, "META-INF/MANIFEST.MF"));
+
+            return new Manifest(input);
+        } finally {
+            IOUtils.closeQuietly(input);
+        }
+    }
+
+    public static String getSymbolicName(File pluginJarFile) throws IOException {
+        Manifest manifest = getManifest(new JarFile(pluginJarFile));
+        Attributes manifestAttributes = manifest.getMainAttributes();
+        Object attribute = manifestAttributes.get(new Attributes.Name("Bundle-SymbolicName"));
+        if(attribute==null){
+            throw new IllegalArgumentException("The manifest doesn'");
+        }
+        return attribute.toString().split(";")[0];
+    }
+
+    private static JarEntry searchForEntry(JarFile jarFile, String searchTermRegex) throws IOException {
+        Enumeration<JarEntry> entries = jarFile.entries();
+        while (entries.hasMoreElements()) {
+            JarEntry jarEntry = entries.nextElement();
+            if (jarEntry.getName().matches(searchTermRegex)) {
+                return jarEntry;
+            }
+        }
+        throw new IOException(String.format("The search term %s could not be found", searchTermRegex));
     }
 }

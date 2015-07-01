@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.jar.JarFile;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.commands.AbstractHandler;
@@ -20,7 +19,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -39,8 +38,6 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.mule.tooling.core.utils.BundleJarFileInspector;
-import org.mule.tooling.core.utils.BundleManifestReader;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.common.URLUtil;
@@ -66,8 +63,8 @@ public class Uninstall extends AbstractHandler {
                         File pluginJarFile = files.iterator().next();
 
                         try {
-                            BundleManifestReader manifestReader = geManifestFromJar(pluginJarFile);
-                            final Bundle bundle = Platform.getBundle(manifestReader.getSymbolicName());
+                            String bundleSymbolicName = DevkitUtils.getSymbolicName(pluginJarFile);
+                            final Bundle bundle = Platform.getBundle(bundleSymbolicName);
                             if (bundle != null && (bundle.getState() != Bundle.UNINSTALLED)) {
                                 NullProgressMonitor monitor = new NullProgressMonitor();
                                 final List<IInstallableUnit> list = new ArrayList<IInstallableUnit>();
@@ -89,17 +86,7 @@ public class Uninstall extends AbstractHandler {
                                         IStatus result = op.resolveModal(monitor);
                                         if (result.isOK()) {
                                             ProvisioningJob uninstallJob = op.getProvisioningJob(monitor);
-                                            uninstallJob.addJobChangeListener(new IJobChangeListener() {
-
-                                                @Override
-                                                public void aboutToRun(IJobChangeEvent event) {
-
-                                                }
-
-                                                @Override
-                                                public void awake(IJobChangeEvent event) {
-
-                                                }
+                                            uninstallJob.addJobChangeListener(new JobChangeAdapter() {
 
                                                 @Override
                                                 public void done(IJobChangeEvent event) {
@@ -124,20 +111,6 @@ public class Uninstall extends AbstractHandler {
                                                     });
                                                 }
 
-                                                @Override
-                                                public void running(IJobChangeEvent event) {
-
-                                                }
-
-                                                @Override
-                                                public void scheduled(IJobChangeEvent event) {
-
-                                                }
-
-                                                @Override
-                                                public void sleeping(IJobChangeEvent event) {
-
-                                                }
                                             });
                                             uninstallJob.schedule();
                                         } else {
@@ -166,11 +139,6 @@ public class Uninstall extends AbstractHandler {
             }
         }
         return null;
-    }
-
-    private BundleManifestReader geManifestFromJar(File pluginJar) throws IOException {
-        return new BundleJarFileInspector(new JarFile(pluginJar)).getManifest();
-
     }
 
     private IQueryResult<IInstallableUnit> getInstallableUnits(IProvisioningAgent provisioningAgent, URI uri, String bundleId) {

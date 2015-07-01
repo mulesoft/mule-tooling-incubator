@@ -8,7 +8,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.jar.JarFile;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.commands.AbstractHandler;
@@ -41,8 +40,6 @@ import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.event.MuleModuleManagerRestartedEvent;
 import org.mule.tooling.core.module.ModuleContributionManager;
 import org.mule.tooling.core.runtime.server.MuleServerManager;
-import org.mule.tooling.core.utils.BundleJarFileInspector;
-import org.mule.tooling.core.utils.BundleManifestReader;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.DevkitUtils;
 import org.mule.tooling.devkit.common.URLUtil;
@@ -150,9 +147,10 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                     parent.setSize(500, 500);
                     Rectangle screenSize = Display.getDefault().getPrimaryMonitor().getBounds();
                     parent.setLocation((screenSize.width - parent.getBounds().width) / 2, (screenSize.height - parent.getBounds().height) / 2);
-                    
+
                     MessageDialog.openInformation(parent, MessageFormat.format("{0} successfully", title, symbalicName),
                             MessageFormat.format("The connector [{1}] was successfully {0}.", title.toLowerCase(), symbalicName));
+                    parent.dispose();
                 }
             });
         } catch (BundleException e) {
@@ -166,11 +164,6 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             });
             DevkitUIPlugin.getDefault().logError(MessageFormat.format("Could not install connector at [{0}].\nError: {1}", location, e.getMessage()), e);
         }
-    }
-
-    private BundleManifestReader geManifestFromJar(File pluginJar) throws IOException {
-        return new BundleJarFileInspector(new JarFile(pluginJar)).getManifest();
-
     }
 
     private IStatus installAtDropinsFolder(final IJavaProject selectedProject, final IProgressMonitor monitor, final URI uri) {
@@ -204,16 +197,15 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                 new String[] { "jar" }, false);
         for (File pluginJarFile : files) {
 
-            BundleManifestReader manifestReader = geManifestFromJar(pluginJarFile);
-
-            File dropinPluginFolder = new File(dropins, manifestReader.getSymbolicName());
+            String bundleSymbolicName = DevkitUtils.getSymbolicName(pluginJarFile);
+            File dropinPluginFolder = new File(dropins, bundleSymbolicName);
 
             if (dropinPluginFolder.exists()) {
                 FileUtils.deleteDirectory(dropinPluginFolder);
             }
 
             if (DevkitUtils.unzipToFolder(pluginJarFile, dropinPluginFolder)) {
-                installOrUpdateBundle(dropinPluginFolder, manifestReader.getSymbolicName());
+                installOrUpdateBundle(dropinPluginFolder, bundleSymbolicName);
                 reloadPalette();
             }
 
