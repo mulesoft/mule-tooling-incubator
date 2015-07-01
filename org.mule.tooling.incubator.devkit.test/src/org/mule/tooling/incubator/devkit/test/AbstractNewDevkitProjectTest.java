@@ -16,21 +16,20 @@ import org.junit.AfterClass;
 import org.junit.Test;
 import org.mule.tooling.devkit.common.DevkitUtils;
 
-
 public abstract class AbstractNewDevkitProjectTest {
 
     protected static IProject project;
     protected static String packageName;
     protected static String packageAsPath;
-    
-    public void initProject(){
-        if(project==null || !project.exists()){
+
+    public void initProject() {
+        if (project == null || !project.exists()) {
             packageName = "org.mule.modules.cloud";
             packageAsPath = packageName.replaceAll("\\.", "/");
             doBuildProject();
         }
     }
-    
+
     protected abstract void doBuildProject();
 
     protected void verifyFolder(IProject project, String folderName) {
@@ -48,7 +47,6 @@ public abstract class AbstractNewDevkitProjectTest {
         initProject();
         assertNotNull("Project was not created", project);
     }
-    
 
     @Test
     public void verifyBasicFoldersAndFiles() throws IOException {
@@ -62,7 +60,9 @@ public abstract class AbstractNewDevkitProjectTest {
         verifyFolder(project, DevkitUtils.ICONS_FOLDER);
 
         verifyFolder(project, MAIN_JAVA_FOLDER + "/" + packageAsPath);
-        verifyFolder(project, MAIN_JAVA_FOLDER + "/" + packageAsPath + "/" + "config");
+        if (hasConfig()) {
+            verifyFolder(project, MAIN_JAVA_FOLDER + "/" + packageAsPath + "/" + "config");
+        }
 
         verifyFile(project, DevkitUtils.ICONS_FOLDER, "cloud-connector-24x16.png");
         verifyFile(project, DevkitUtils.ICONS_FOLDER, "cloud-connector-48x32.png");
@@ -81,7 +81,7 @@ public abstract class AbstractNewDevkitProjectTest {
     public void verifyConnector() throws IOException {
         initProject();
         // Check @Connector content
-        assertEquals("Connector files differ!", FileUtils.readFileToString(new File("resources/"+getVerificationFolder()+"/CloudConnector.java"), "utf-8"),
+        assertEquals("Connector files differ!", FileUtils.readFileToString(new File("resources/" + getVerificationFolder() + "/CloudConnector.java"), "utf-8"),
                 FileUtils.readFileToString(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageAsPath).getFile("CloudConnector.java").getLocation().toFile(), "utf-8"));
     }
 
@@ -89,12 +89,19 @@ public abstract class AbstractNewDevkitProjectTest {
 
     @Test
     public void verifyConfiguration() throws IOException {
-        initProject();
-        // Check @Config content
-        assertEquals("Config files differ!", FileUtils.readFileToString(new File("resources/" + getVerificationFolder() + "/ConnectorConfig.java"), "utf-8"),
-                FileUtils.readFileToString(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageAsPath + "/config").getFile("ConnectorConfig.java").getLocation().toFile(), "utf-8"));
+        if (hasConfig()) {
+            initProject();
+            // Check @Config content
+            assertEquals("Config files differ!", FileUtils.readFileToString(new File("resources/" + getVerificationFolder() + "/ConnectorConfig.java"), "utf-8"),
+                    FileUtils.readFileToString(project.getFolder(MAIN_JAVA_FOLDER + "/" + packageAsPath + "/config").getFile("ConnectorConfig.java").getLocation().toFile(),
+                            "utf-8"));
+        }
     }
-    
+
+    protected boolean hasConfig() {
+        return true;
+    }
+
     @AfterClass
     public static void tearDown() {
         try {

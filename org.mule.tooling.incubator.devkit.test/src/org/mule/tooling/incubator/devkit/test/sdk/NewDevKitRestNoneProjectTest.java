@@ -33,4 +33,8 @@ public class NewDevKitRestNoneProjectTest extends AbstractNewDevkitProjectTest {
         return "rest-none";
     }
 
+    @Override
+    protected boolean hasConfig() {
+        return false;
+    }
 }
