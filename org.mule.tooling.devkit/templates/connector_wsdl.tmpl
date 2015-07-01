@@ -53,11 +53,11 @@ public class ${project.configClassName} {
 #if( $isSingleWsdl )
 
     @Configurable
-    @Default("${project.serviceDefinitions.get(0).address}")
+    @Default("${project.serviceDefinitions.get(0).endpoint}")
 #if( $isAuthEnabled )
     @Placement(order = 3)
 #end
-    private String address;
+    private String endpoint;
 #end
 
 ## Start WsdlServiceRetriever method generation.
@@ -94,23 +94,23 @@ public class ${project.configClassName} {
 
 #if( $isSingleWsdl )
     @WsdlServiceEndpoint
-    public String getServiceAddress(ServiceDefinition definition) {
-         return address;
+    public String getServiceEndpoint(ServiceDefinition definition) {
+         return endpoint;
     }
 #else
     @WsdlServiceEndpoint
-    public String getServiceAddress(ServiceDefinition definition) {
+    public String getServiceEndpoint(ServiceDefinition definition) {
         String result;
         final String id = definition.getId();
         switch(id){
     #foreach ( $serviceDef in $project.serviceDefinitions )
             case "${serviceDef.id}": {
-                result = "${serviceDef.address}";
+                result = "${serviceDef.endpoint}";
                 break;
             }
     #end
             default: {
-                throw new IllegalArgumentException(id + " address could not be resolved.");
+                throw new IllegalArgumentException(id + " endpoint could not be resolved.");
             }
         }
         return result;
@@ -132,12 +132,12 @@ public class ${project.configClassName} {
 #end
 #if($isSingleWsdl)
 
-    public String getAddress() {
-        return address;
+    public String getEndpoint() {
+        return endpoint;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
     }
 #end
 #if( $isAuthEnabled )

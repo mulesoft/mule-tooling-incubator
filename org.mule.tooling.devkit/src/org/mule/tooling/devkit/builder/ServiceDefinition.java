@@ -44,17 +44,17 @@ public class ServiceDefinition {
         this.servicePort = servicePort;
     }
 
-    public String getAddress() {
-        return address;
+    public String getEndpoint() {
+        return endpoint;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
     }
 
     public String display;
     public String location;
     public String serviceName;
     public String servicePort;
-    public String address;
+    private String endpoint;
 }

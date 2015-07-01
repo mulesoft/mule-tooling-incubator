@@ -13,7 +13,7 @@ public class ConnectorConfig {
 
     @Configurable
     @Default("https://login.salesforce.com/services/Soap/c/22.0")
-    private String address;
+    private String endpoint;
 
     @WsdlServiceRetriever
     public ServiceDefinition getServiceDefinition() {
@@ -27,16 +27,16 @@ public class ConnectorConfig {
 
     @WsdlServiceEndpoint
     public String getServiceAddress(ServiceDefinition definition) {
-         return address;
+         return endpoint;
     }
 
 
     public String getAddress() {
-        return address;
+        return endpoint;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setAddress(String endpoint) {
+        this.endpoint = endpoint;
     }
 
 }

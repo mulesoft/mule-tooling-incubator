@@ -674,7 +674,7 @@ public class ProjectBuilder {
                         String addressValue = getPortAddress(portItem);
                         ServiceDefinition serviceDefinition = new ServiceDefinition();
                         serviceDefinition.setId(name + "_" + portName);
-                        serviceDefinition.setAddress(addressValue);
+                        serviceDefinition.setEndpoint(addressValue);
                         serviceDefinition.setServiceName(name);
                         serviceDefinition.setServicePort(portName);
                         serviceDefinition.setDisplay(hasMultiplePorts ? wsdlFile.getValue() + " (" + portName + ")" : wsdlFile.getValue());
