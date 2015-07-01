@@ -47,7 +47,7 @@ public class ConnectorConfig {
     }
 
     @WsdlServiceEndpoint
-    public String getServiceAddress(ServiceDefinition definition) {
+    public String getServiceEndpoint(ServiceDefinition definition) {
          return endpoint;
     }
 
