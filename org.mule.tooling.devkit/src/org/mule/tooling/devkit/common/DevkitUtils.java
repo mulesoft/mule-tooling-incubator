@@ -494,7 +494,7 @@ public class DevkitUtils {
         Attributes manifestAttributes = manifest.getMainAttributes();
         Object attribute = manifestAttributes.get(new Attributes.Name("Bundle-SymbolicName"));
         if(attribute==null){
-            throw new IllegalArgumentException("The manifest doesn'");
+            throw new IllegalArgumentException("The manifest doesn't have a Bundle-SymbolicName");
         }
         return attribute.toString().split(";")[0];
     }
@@ -508,5 +508,15 @@ public class DevkitUtils {
             }
         }
         throw new IOException(String.format("The search term %s could not be found", searchTermRegex));
+    }
+
+    public static String getName(File pluginJarFile) throws IOException {
+        Manifest manifest = getManifest(new JarFile(pluginJarFile));
+        Attributes manifestAttributes = manifest.getMainAttributes();
+        Object attribute = manifestAttributes.get(new Attributes.Name("Bundle-Name"));
+        if(attribute==null){
+            throw new IllegalArgumentException("The manifest doesn't have a Bundle-Name");
+        }
+        return attribute.toString().split(";")[0];
     }
 }

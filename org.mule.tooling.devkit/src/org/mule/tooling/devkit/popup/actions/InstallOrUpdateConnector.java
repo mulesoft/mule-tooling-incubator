@@ -119,7 +119,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
         return builder.build().run(monitor);
     }
 
-    private void installOrUpdateBundle(File pluginDir, String synmbolicName) throws MalformedURLException, URISyntaxException {
+    private void installOrUpdateBundle(File pluginDir, final String symbolicName, final String name) throws MalformedURLException, URISyntaxException {
         String location = pluginDir.getAbsolutePath();
         try {
             // Deal with equinox bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=184620
@@ -127,11 +127,29 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             location = location.replace("%20", " ");
             BundleContext bundleContext = DevkitUIPlugin.getDefault().getBundle().getBundleContext();
 
-            Bundle bundle = Platform.getBundle(synmbolicName);
+            Bundle bundle = Platform.getBundle(symbolicName);
             boolean wasAnUpdated = false;
             if (bundle != null) {
+                if(!location.equals(bundle.getLocation())){
+                    Display.getDefault().asyncExec(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Shell parent = new Shell();
+                            parent.setSize(500, 500);
+                            Rectangle screenSize = Display.getDefault().getPrimaryMonitor().getBounds();
+                            parent.setLocation((screenSize.width - parent.getBounds().width) / 2, (screenSize.height - parent.getBounds().height) / 2);
+
+                            MessageDialog.openInformation(parent,"Uninstall required",
+                                    MessageFormat.format("The connector [{0}] needs to be unsintalled first.", name));
+                            parent.dispose();
+                        }
+                    }); 
+                    return;
+                }else{
+                bundle.getLocation();
                 bundle.update();
-                wasAnUpdated = true;
+                wasAnUpdated = true;}
             } else {
                 bundle = bundleContext.installBundle(location);
             }
@@ -139,20 +157,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             bundle.start();
             final String title = wasAnUpdated ? "Updated" : "Installed";
             final String symbalicName = bundle.getSymbolicName();
-            Display.getDefault().asyncExec(new Runnable() {
-
-                @Override
-                public void run() {
-                    Shell parent = new Shell();
-                    parent.setSize(500, 500);
-                    Rectangle screenSize = Display.getDefault().getPrimaryMonitor().getBounds();
-                    parent.setLocation((screenSize.width - parent.getBounds().width) / 2, (screenSize.height - parent.getBounds().height) / 2);
-
-                    MessageDialog.openInformation(parent, MessageFormat.format("{0} successfully", title, symbalicName),
-                            MessageFormat.format("The connector [{1}] was successfully {0}.", title.toLowerCase(), symbalicName));
-                    parent.dispose();
-                }
-            });
+            showSuccessMessageDialog(title, symbalicName);
         } catch (BundleException e) {
             final String error = e.getMessage();
             Display.getDefault().asyncExec(new Runnable() {
@@ -164,6 +169,23 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             });
             DevkitUIPlugin.getDefault().logError(MessageFormat.format("Could not install connector at [{0}].\nError: {1}", location, e.getMessage()), e);
         }
+    }
+
+    private void showSuccessMessageDialog(final String title, final String symbolicName) {
+        Display.getDefault().asyncExec(new Runnable() {
+
+            @Override
+            public void run() {
+                Shell parent = new Shell();
+                parent.setSize(500, 500);
+                Rectangle screenSize = Display.getDefault().getPrimaryMonitor().getBounds();
+                parent.setLocation((screenSize.width - parent.getBounds().width) / 2, (screenSize.height - parent.getBounds().height) / 2);
+
+                MessageDialog.openInformation(parent, MessageFormat.format("{0} successfully", title, symbolicName),
+                        MessageFormat.format("The connector [{1}] was successfully {0}.", title.toLowerCase(), symbolicName));
+                parent.dispose();
+            }
+        });
     }
 
     private IStatus installAtDropinsFolder(final IJavaProject selectedProject, final IProgressMonitor monitor, final URI uri) {
@@ -198,6 +220,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
         for (File pluginJarFile : files) {
 
             String bundleSymbolicName = DevkitUtils.getSymbolicName(pluginJarFile);
+            String name = DevkitUtils.getName(pluginJarFile);
             File dropinPluginFolder = new File(dropins, bundleSymbolicName);
 
             if (dropinPluginFolder.exists()) {
@@ -205,7 +228,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             }
 
             if (DevkitUtils.unzipToFolder(pluginJarFile, dropinPluginFolder)) {
-                installOrUpdateBundle(dropinPluginFolder, bundleSymbolicName);
+                installOrUpdateBundle(dropinPluginFolder, bundleSymbolicName,name);
                 reloadPalette();
             }
 
