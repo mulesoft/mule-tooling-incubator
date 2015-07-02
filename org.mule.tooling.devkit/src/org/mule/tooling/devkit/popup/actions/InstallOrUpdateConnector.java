@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Collection;
 
@@ -31,7 +30,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -42,14 +40,11 @@ import org.mule.tooling.core.module.ModuleContributionManager;
 import org.mule.tooling.core.runtime.server.MuleServerManager;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.common.DevkitUtils;
-import org.mule.tooling.devkit.common.URLUtil;
 import org.mule.tooling.devkit.maven.BaseDevkitGoalRunner;
 import org.mule.tooling.devkit.maven.MavenRunBuilder;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 
 public class InstallOrUpdateConnector extends AbstractHandler {
 
@@ -130,26 +125,8 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             Bundle bundle = Platform.getBundle(symbolicName);
             boolean wasAnUpdated = false;
             if (bundle != null) {
-                if(!location.equals(bundle.getLocation())){
-                    Display.getDefault().asyncExec(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            Shell parent = new Shell();
-                            parent.setSize(500, 500);
-                            Rectangle screenSize = Display.getDefault().getPrimaryMonitor().getBounds();
-                            parent.setLocation((screenSize.width - parent.getBounds().width) / 2, (screenSize.height - parent.getBounds().height) / 2);
-
-                            MessageDialog.openInformation(parent,"Uninstall required",
-                                    MessageFormat.format("The connector [{0}] needs to be unsintalled first.", name));
-                            parent.dispose();
-                        }
-                    }); 
-                    return;
-                }else{
-                bundle.getLocation();
                 bundle.update();
-                wasAnUpdated = true;}
+                wasAnUpdated = true;
             } else {
                 bundle = bundleContext.installBundle(location);
             }
@@ -192,8 +169,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
         IStatus status = Status.OK_STATUS;
         try {
 
-            File eclipseHome = getEclipseHome();
-            File dropins = new File(eclipseHome, "dropins");
+            File dropins = DevkitUtils.getDropinsFolder();
 
             if (!dropins.exists()) {
                 if (!dropins.mkdir()) {
@@ -201,8 +177,12 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                             + "]", null);
                 }
             }
-
-            unzipPluginOnDropinsFolder(selectedProject, monitor, dropins);
+            IsConnectorInstalledPropertyTester tester = new IsConnectorInstalledPropertyTester();
+            if (!tester.test(selectedProject, IsConnectorInstalledPropertyTester.IS_INSTALLED, null, null)) {
+                unzipPluginOnDropinsFolder(selectedProject, monitor, dropins);
+            } else {
+                showUninstallRequiredDialog(selectedProject);
+            }
 
         } catch (IllegalStateException e) {
             status = new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR, "No installable was found at repository: " + uri, e);
@@ -212,6 +192,27 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             status = new OperationStatus(Status.ERROR, DevkitUIPlugin.PLUGIN_ID, OperationStatus.ERROR, "No installable was found at repository: " + uri, e);
         }
         return status;
+    }
+
+    private void showUninstallRequiredDialog(final IJavaProject selectedProject) throws IOException {
+        Collection<File> files = FileUtils.listFiles(selectedProject.getProject().getFolder(DevkitUtils.UPDATE_SITE_FOLDER).getFolder("plugins").getLocation().toFile(),
+                new String[] { "jar" }, false);
+        for (File pluginJarFile : files) {
+            final String name = DevkitUtils.getName(pluginJarFile);
+            Display.getDefault().asyncExec(new Runnable() {
+
+                @Override
+                public void run() {
+                    Shell parent = new Shell();
+                    parent.setSize(500, 500);
+                    Rectangle screenSize = Display.getDefault().getPrimaryMonitor().getBounds();
+                    parent.setLocation((screenSize.width - parent.getBounds().width) / 2, (screenSize.height - parent.getBounds().height) / 2);
+
+                    MessageDialog.openInformation(parent, "Uninstall required", MessageFormat.format("The connector [{0}] needs to be unsintalled first.", name));
+                    parent.dispose();
+                }
+            });
+        }
     }
 
     private void unzipPluginOnDropinsFolder(final IJavaProject selectedProject, final IProgressMonitor monitor, File dropins) throws IOException, URISyntaxException {
@@ -228,7 +229,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
             }
 
             if (DevkitUtils.unzipToFolder(pluginJarFile, dropinPluginFolder)) {
-                installOrUpdateBundle(dropinPluginFolder, bundleSymbolicName,name);
+                installOrUpdateBundle(dropinPluginFolder, bundleSymbolicName, name);
                 reloadPalette();
             }
 
@@ -259,29 +260,4 @@ public class InstallOrUpdateConnector extends AbstractHandler {
         });
     }
 
-    private File getEclipseHome() {
-        Location eclipseHome = getService(DevkitUIPlugin.getDefault().getBundle().getBundleContext(), Location.ECLIPSE_HOME_FILTER);
-        if (eclipseHome == null || !eclipseHome.isSet())
-            return null;
-        URL url = eclipseHome.getURL();
-        if (url == null)
-            return null;
-        return URLUtil.toFile(url);
-    }
-
-    private Location getService(BundleContext context, String filter) {
-        Collection<ServiceReference<Location>> references;
-        try {
-            references = context.getServiceReferences(Location.class, filter);
-        } catch (InvalidSyntaxException e) {
-            // TODO Auto-generated catch block
-            return null;
-        }
-        if (references.isEmpty())
-            return null;
-        final ServiceReference<Location> ref = references.iterator().next();
-        Location result = context.getService(ref);
-        context.ungetService(ref);
-        return result;
-    }
 }

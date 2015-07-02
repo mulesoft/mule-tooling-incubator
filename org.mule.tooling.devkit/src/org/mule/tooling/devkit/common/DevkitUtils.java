@@ -6,14 +6,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
-import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -53,6 +53,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -63,7 +64,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.mule.tooling.core.utils.BundleManifestReader;
 import org.mule.tooling.devkit.ASTUtils;
 import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.builder.DevkitNature;
@@ -73,6 +73,9 @@ import org.mule.tooling.devkit.quickfix.LocateModuleNameVisitor;
 import org.mule.tooling.ui.utils.SaveModifiedResourcesDialog;
 import org.mule.tooling.ui.utils.UiUtils;
 import org.mule.tooling.utils.SilentRunner;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 @SuppressWarnings("restriction")
 public class DevkitUtils {
@@ -493,7 +496,7 @@ public class DevkitUtils {
         Manifest manifest = getManifest(new JarFile(pluginJarFile));
         Attributes manifestAttributes = manifest.getMainAttributes();
         Object attribute = manifestAttributes.get(new Attributes.Name("Bundle-SymbolicName"));
-        if(attribute==null){
+        if (attribute == null) {
             throw new IllegalArgumentException("The manifest doesn't have a Bundle-SymbolicName");
         }
         return attribute.toString().split(";")[0];
@@ -514,9 +517,43 @@ public class DevkitUtils {
         Manifest manifest = getManifest(new JarFile(pluginJarFile));
         Attributes manifestAttributes = manifest.getMainAttributes();
         Object attribute = manifestAttributes.get(new Attributes.Name("Bundle-Name"));
-        if(attribute==null){
+        if (attribute == null) {
             throw new IllegalArgumentException("The manifest doesn't have a Bundle-Name");
         }
         return attribute.toString().split(";")[0];
+    }
+
+    public static File getDropinsFolder() {
+        File eclipseHome = DevkitUtils.getEclipseHome();
+        if (eclipseHome != null) {
+            return new File(eclipseHome, "dropins");
+        }
+        return null;
+    }
+
+    public static File getEclipseHome() {
+        Location eclipseHome = getService(DevkitUIPlugin.getDefault().getBundle().getBundleContext(), Location.ECLIPSE_HOME_FILTER);
+        if (eclipseHome == null || !eclipseHome.isSet())
+            return null;
+        URL url = eclipseHome.getURL();
+        if (url == null)
+            return null;
+        return URLUtil.toFile(url);
+    }
+
+    private static Location getService(BundleContext context, String filter) {
+        Collection<ServiceReference<Location>> references;
+        try {
+            references = context.getServiceReferences(Location.class, filter);
+        } catch (InvalidSyntaxException e) {
+            // TODO Auto-generated catch block
+            return null;
+        }
+        if (references.isEmpty())
+            return null;
+        final ServiceReference<Location> ref = references.iterator().next();
+        Location result = context.getService(ref);
+        context.ungetService(ref);
+        return result;
     }
 }

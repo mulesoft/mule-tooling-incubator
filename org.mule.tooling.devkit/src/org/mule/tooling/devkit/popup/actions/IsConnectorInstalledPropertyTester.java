@@ -17,14 +17,14 @@ import org.osgi.framework.Bundle;
 
 public class IsConnectorInstalledPropertyTester extends PropertyTester {
 
-    private static final String IS_INSTALLED = "isConnectorInstalled";
+    public static final String IS_INSTALLED = "isConnectorInstalled";
 
     public IsConnectorInstalledPropertyTester() {
     }
 
     @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-        //Exception cannot be thrown at 
+        // Exception cannot be thrown at
         try {
             if ((receiver instanceof IProject) && property.equals(IS_INSTALLED)) {
 
@@ -41,7 +41,13 @@ public class IsConnectorInstalledPropertyTester extends PropertyTester {
                                     try {
                                         Bundle bundle = Platform.getBundle(DevkitUtils.getSymbolicName(pluginJarFile));
                                         if (bundle != null) {
-                                            return bundle.getState() != Bundle.UNINSTALLED;
+                                            if (bundle.getState() != Bundle.UNINSTALLED) {
+                                                String symbolicName = bundle.getSymbolicName();
+                                                File dropinPluginFolder = new File(DevkitUtils.getDropinsFolder(), symbolicName);
+                                                if (dropinPluginFolder != null) {
+                                                    return dropinPluginFolder.exists();
+                                                }
+                                            }
                                         }
                                     } catch (IOException e) {
                                         DevkitUIPlugin.getDefault().logError("Unexpected error", e);
