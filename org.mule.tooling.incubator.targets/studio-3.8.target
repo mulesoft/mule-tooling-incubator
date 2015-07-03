@@ -41,7 +41,7 @@
 <unit id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.ecf.filetransfer.ssl.feature.feature.group" version="0.0.0"/>
 <unit id="org.eclipse.e4.rcp.feature.group" version="0.0.0"/>
-<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.2.0-SNAPSHOT/orbit-5.2.0-SNAPSHOT.zip-unzip/"/>
+<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit/org/mule/tooling/orbit/5.2.0/orbit-5.2.0.zip-unzip/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="com.sun.jersey" version="0.0.0"/>
@@ -66,11 +66,11 @@
 <unit id="javax.ws.rs" version="0.0.0"/>
 <unit id="com.google.gson" version="0.0.0"/>
 <unit id="org.apache.xalan" version="0.0.0"/>
-<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.2.0-SNAPSHOT/orbit-5.2.0-SNAPSHOT.zip-unzip/"/>
+<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit/org/mule/tooling/orbit/5.2.0/orbit-5.2.0.zip-unzip/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.codehaus.groovy" version="2.0.7.xx-201407142131-e42-RELEASE"/>
-<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.2.0-SNAPSHOT/orbit-5.2.0-SNAPSHOT.zip-unzip/"/>
+<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit/org/mule/tooling/orbit/5.2.0/orbit-5.2.0.zip-unzip/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.mule.tooling.branding" version="0.0.0"/>
@@ -89,7 +89,7 @@
 <unit id="org.codehaus.plexus.utils" version="3.0.8"/>
 <unit id="org.codehaus.plexus.component-annotations" version="1.6.0"/>
 <unit id="junit" version="3.8.1"/>
-<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit-snapshots/org/mule/tooling/orbit/5.2.0-SNAPSHOT/orbit-5.2.0-SNAPSHOT.zip-unzip/"/>
+<repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit/org/mule/tooling/orbit/5.2.0/orbit-5.2.0.zip-unzip/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.mule.tooling.extension.server.3.6.1.ee.feature.group" version="0.0.0"/>
