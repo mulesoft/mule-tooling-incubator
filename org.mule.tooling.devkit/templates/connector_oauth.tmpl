@@ -8,7 +8,7 @@ import org.mule.api.annotations.oauth.OAuthConsumerSecret;
 import org.mule.api.annotations.oauth.OAuthPostAuthorization;
 import org.mule.api.annotations.param.Default;
 
-@OAuth2( friendlyName="OAuth2 Configuration", authorizationUrl = "https://api.myconnector.com/uas/oauth/authorize", 
+@OAuth2( friendlyName="OAuth 2.0", authorizationUrl = "https://api.myconnector.com/uas/oauth/authorize", 
 accessTokenUrl = "https://api.myconnector.com/uas/oauth/accessToken", 
 accessTokenRegex = "\"access_token\":\"([^&]+?)\"",
 expirationRegex = "\"expires_in\":([^&]+?),", 
