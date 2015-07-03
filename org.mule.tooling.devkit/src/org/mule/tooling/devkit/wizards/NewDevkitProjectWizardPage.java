@@ -268,7 +268,7 @@ public class NewDevkitProjectWizardPage extends WizardPage implements Observer, 
 
     private void addDatasense(Composite container) {
         Group mavenGroupBox = UiUtils.createGroupWithTitle(container, "DataSense", 2);
-        datasense = initButton(mavenGroupBox, "Add DataSense methods", SWT.CHECK);
+        datasense = initButton(mavenGroupBox, "Add DataSense Methods", SWT.CHECK);
         query = initButton(mavenGroupBox, "Add DataSense Query Method", SWT.CHECK);
         mavenGroupBox.layout();
     }
