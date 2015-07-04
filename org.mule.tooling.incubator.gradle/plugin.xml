@@ -30,6 +30,24 @@
             project="true">
       </wizard>
    </extension>
+   
+   <extension
+   		point="org.mule.tooling.ui.wizardpagepart">
+   		<wizardpagepart
+   			class="org.mule.tooling.incubator.gradle.wizard.CreateDomainBuildGradleWizardPageExtension">
+   			   <targetWizardPage
+                     id="org.mule.tooling.ui.mulenewdomain" level="9">
+               </targetWizardPage>
+   		</wizardpagepart>
+   		<wizardpagepart
+   			class="org.mule.tooling.incubator.gradle.wizard.CreateProjectBuildGradleWizardPageExtension">
+   			   <targetWizardPage
+                     id="org.mule.tooling.ui.mulenewproject" level="9">
+               </targetWizardPage>
+   		</wizardpagepart>
+   	</extension>
+   
+   
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
