@@ -32,6 +32,7 @@ import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.GradleTask;
+import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.incubator.gradle.model.StudioDependencies;
 import org.mule.tooling.incubator.gradle.model.StudioDependency;
 import org.mule.tooling.incubator.gradle.parser.GradleMuleBuildModelProvider;
@@ -286,6 +287,11 @@ public class GradlePluginUtils {
             return true;
         }
         IPath filePath = file.getLocation();
+        
+        if (filePath == null) {
+        	return false;
+        }
+        
         IPath worskpacePath = project.getWorkspace().getRoot().getRawLocation();
         //if not, iterate over the parents.
         for(int i = filePath.segmentCount(); i > 0 ; i--) {
@@ -362,6 +368,47 @@ public class GradlePluginUtils {
     	model.put("pluginName", forPlugin.getPluginAlias());
     	
     	fileWriter.apply("/templates/general-build.gradle.tmpl", GradlePluginConstants.MAIN_BUILD_FILE, new VelocityReplacer(model));
+    }
+    
+    public static void clearContainers(IMuleProject project, IProgressMonitor monitor) throws JavaModelException {
+    	if (project == null) {
+    		return;
+    	}
+    	
+    	IJavaProject jp = project.getJavaProject();
+    	
+    	ArrayList<IClasspathEntry> cleared = new ArrayList<>(Arrays.asList(jp.getRawClasspath()));
+    	
+    	for(IClasspathEntry entry : jp.getRawClasspath()) {
+    		if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+    			cleared.remove(entry);
+    		}
+    	}
+    	
+    	jp.setRawClasspath(cleared.toArray(new IClasspathEntry[0]), monitor);
+    }
+    
+    public static void clearTestSources(IMuleProject project, IProgressMonitor monitor) throws JavaModelException {
+    	if (project == null) {
+    		return;
+    	}
+    	
+    	IJavaProject jp = project.getJavaProject();
+    	
+    	ArrayList<IClasspathEntry> cleared = new ArrayList<>(Arrays.asList(jp.getRawClasspath()));
+    	
+    	for(IClasspathEntry entry : jp.getRawClasspath()) {
+    		if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE) {
+    			continue;
+    		}
+    		
+    		if (entry.getPath().toString().contains("src/test/java") || entry.getPath().toString().contains("src/test/resources")) {
+    			cleared.remove(entry);
+    		}
+    		
+    	}
+    	
+    	jp.setRawClasspath(cleared.toArray(new IClasspathEntry[0]), monitor);    	
     }
     
 }

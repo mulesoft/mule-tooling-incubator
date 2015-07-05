@@ -16,6 +16,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.core.MuleCorePlugin;
@@ -23,6 +24,7 @@ import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.runtime.server.ServerDefinition;
 import org.mule.tooling.incubator.gradle.Activator;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
+import org.mule.tooling.incubator.gradle.jobs.SynchronizeProjectGradleBuildJob;
 import org.mule.tooling.incubator.gradle.model.GradleProject;
 import org.mule.tooling.incubator.gradle.parser.GradleMulePlugin;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
@@ -137,6 +139,18 @@ public class CreateBuildGradleWizardPageExtension implements WizardPagePartExten
 		try {
 			GradleProject gradleProject = new GradleProject(null, selectedServer.getVersion(), null, selectedServer.isEnterpriseRuntime(), null, null, pluginVersion);
 			GradlePluginUtils.createBuildFile(projectType, muleProject.getProjectFile().getProject(), gradleProject, monitor);
+			GradlePluginUtils.clearContainers(muleProject, monitor);
+			GradlePluginUtils.clearTestSources(muleProject, monitor);
+			
+			//trigger the update action.
+			SynchronizeProjectGradleBuildJob synchronizeProj = new SynchronizeProjectGradleBuildJob(muleProject.getProjectFile().getProject()) {				
+				@Override
+				protected void handleException(Exception ex) {
+					displayErrorInProperThread(Display.getDefault().getActiveShell(), "Synchronization Error", "Could not run synchronization task: " + ex.getCause().getMessage());
+				}
+			};
+			
+			synchronizeProj.doSchedule();			
 		} catch (Exception ex) {
 			MuleCorePlugin.logError("Could not create build.gradle file", ex);
 		} finally {
