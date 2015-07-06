@@ -137,7 +137,7 @@ public class CreateBuildGradleWizardPageExtension implements WizardPagePartExten
 		
 		
 		try {
-			GradleProject gradleProject = new GradleProject(null, selectedServer.getVersion(), null, selectedServer.isEnterpriseRuntime(), null, null, pluginVersion);
+			GradleProject gradleProject = new GradleProject(null, selectedServer.getVersion(), null, selectedServer.isEnterpriseRuntime(), repoUser.getText(), repoPassword.getText(), pluginVersion);
 			GradlePluginUtils.createBuildFile(projectType, muleProject.getProjectFile().getProject(), gradleProject, monitor);
 			GradlePluginUtils.clearContainers(muleProject, monitor);
 			GradlePluginUtils.clearTestSources(muleProject, monitor);

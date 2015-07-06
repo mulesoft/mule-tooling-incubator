@@ -40,7 +40,7 @@ public class GradleRuleBasedScanner extends RuleBasedScanner {
 	
 	private static final String[] DSL_KEYWORDS = {"apply", "connector", "buildscript", "dependencies", 
 	    "classpath", "cloudhub", "compile", "eeModules", "eeTransports", "ivy", "maven", "mmc", "module", 
-	    "modules", "mule", "plugin", "project", "providedCompile", "providedRuntime", "providedTestCompile",
+	    "modules", "mule", "plugin", "plugins", "project", "providedCompile", "providedRuntime", "providedTestCompile",
 	    "providedTestRuntime", "repositories", "runtime", "testCompile", "testRuntime", "transports", "url"};
 	
 	

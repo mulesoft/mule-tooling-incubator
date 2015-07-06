@@ -1,19 +1,6 @@
-buildscript {
-    dependencies {
-        classpath group: 'org.mulesoft.build', name: 'mule-gradle-plugin', version: '${model.project.pluginVersion}'
-    }
-
-    repositories {
-        mavenLocal() //TODO - REMOVE
-        maven {
-            url 'http://repository.mulesoft.org/releases'
-        }
-    }
+plugins {
+  id "${model.pluginName}" version "${model.project.pluginVersion}"
 }
-
-apply plugin: '${model.pluginName}'
-
-mule.version = '${model.project.runtimeVersion}'
 
 #if ($model.project.groupId)
 group = '${model.project.groupId}'
@@ -22,8 +9,11 @@ group = '${model.project.groupId}'
 version = '${model.project.version}'
 #end
 
-mule.muleEnterprise = ${model.project.muleEnterprise}
-#if($project.muleEnterprise == true)
-mule.enterpriseRepoUsername = "${model.project.repoUser}"
-mule.enterpriseRepoPassword = "${model.project.repoPassword}"
+mule {
+	version = '${model.project.runtimeVersion}'
+	muleEnterprise = ${model.project.muleEnterprise}
+#if($model.project.muleEnterprise == true)
+	enterpriseRepoUsername = "${model.project.repoUser}"
+	enterpriseRepoPassword = "${model.project.repoPassword}"
 #end
+}
