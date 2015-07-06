@@ -2,7 +2,6 @@ package org.mule.tooling.devkit.popup.actions;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
@@ -114,7 +113,7 @@ public class InstallOrUpdateConnector extends AbstractHandler {
         return builder.build().run(monitor);
     }
 
-    private void installOrUpdateBundle(File pluginDir, final String symbolicName, final String name) throws MalformedURLException, URISyntaxException {
+    private void installOrUpdateBundle(File pluginDir, final String symbolicName, final String name) throws URISyntaxException, IOException {
         String location = pluginDir.getAbsolutePath();
         try {
             // Deal with equinox bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=184620
@@ -208,7 +207,8 @@ public class InstallOrUpdateConnector extends AbstractHandler {
                     Rectangle screenSize = Display.getDefault().getPrimaryMonitor().getBounds();
                     parent.setLocation((screenSize.width - parent.getBounds().width) / 2, (screenSize.height - parent.getBounds().height) / 2);
 
-                    MessageDialog.openInformation(parent, "Uninstall required", MessageFormat.format("The connector [{0}] needs to be unsintalled first.", name));
+                    MessageDialog.openInformation(parent, "Uninstall required",
+                            MessageFormat.format("The connector [{0}] needs to be unsintalled first.\n Go to [Help -> Installation Details] and uninstall the connector", name));
                     parent.dispose();
                 }
             });
@@ -226,6 +226,18 @@ public class InstallOrUpdateConnector extends AbstractHandler {
 
             if (dropinPluginFolder.exists()) {
                 FileUtils.deleteDirectory(dropinPluginFolder);
+            } else {
+                // Check if is is installed and in that case, request uninstall since it was not installed using the dropins folder.
+                String location = dropinPluginFolder.getAbsolutePath();
+                // Deal with equinox bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=184620
+                location = URIUtil.toURL(dropinPluginFolder.toURI()).toString();
+                location = location.replace("%20", " ");
+
+                Bundle bundle = Platform.getBundle(bundleSymbolicName);
+                if (bundle != null && bundle.getState() != Bundle.UNINSTALLED) {
+                    showUninstallRequiredDialog(selectedProject);
+                    return;
+                }
             }
 
             if (DevkitUtils.unzipToFolder(pluginJarFile, dropinPluginFolder)) {
