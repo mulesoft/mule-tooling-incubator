@@ -10,7 +10,7 @@
 
 	<properties>
 		<lib-dir>lib</lib-dir>
-		<devkit-version>3.7.0-SNAPSHOT</devkit-version>
+		<devkit-version>3.7.0</devkit-version>
 	</properties>
 
 	<description>This pom exists because of the limitation on including dependencies when building with Tycho.

@@ -19,7 +19,7 @@ import org.mule.tooling.devkit.wizards.GenerateTestWizard;
 
 public class GenerateTestsCommand extends AbstractMavenCommandRunner {
 
-    private static final String CONNECTOR_AUTOMATION_GENERATOR_VERSION = "2.0.4-SNAPSHOT";
+    private static final String CONNECTOR_AUTOMATION_GENERATOR_VERSION = "2.0.4";
 
     private static final String FUNCTIONAL_FILES_DIALOG_TITLE = "Functional files";
     private static final String INTEROP_FILES_DIALOG_TITLE = "Interop files";

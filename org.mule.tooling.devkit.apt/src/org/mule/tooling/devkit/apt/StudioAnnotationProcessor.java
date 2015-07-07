@@ -38,7 +38,7 @@ import org.mule.tooling.devkit.apt.plugin.StudioPluginScanner;
 public class StudioAnnotationProcessor extends AnnotationProcessor {
 
     public static final String ENABLED_DEVKIT_CHECK_VERSION = "enabledDevKitCheckVersion";
-    private static final String SUPPORTED_VERSION = "3.7.0-SNAPSHOT";
+    private static final String SUPPORTED_VERSION = "3.7.0";
 
     @Override
     public void init(ProcessingEnvironment env) {
@@ -127,9 +127,9 @@ public class StudioAnnotationProcessor extends AnnotationProcessor {
     }
 
     /**
-     * 
+     *
      * Only show the error if the user is building something is not a connector or if the element being built is a @Connector using a component
-     * 
+     *
      */
     private boolean needsToDisplayBuildTooltip(Set<? extends TypeElement> annotations, RoundEnvironment env) {
         // Since we are building connectors with Connection Strategies this will
@@ -166,7 +166,7 @@ public class StudioAnnotationProcessor extends AnnotationProcessor {
             Activator.log(ex);
         }
     }
-    
+
     @Override
     public void dispose(){
         //Do nothing

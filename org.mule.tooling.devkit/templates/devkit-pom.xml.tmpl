@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-        
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>${project.groupId}</groupId>
     <artifactId>${project.artifactId}</artifactId>
@@ -8,7 +8,7 @@
     <packaging>mule-module</packaging>
     <name>Mule ${project.connectorName} Anypoint Connector</name>
 
-#set( $devkitVersion = '3.7.0-SNAPSHOT' )
+#set( $devkitVersion = '3.7.0' )
     <parent>
         <groupId>org.mule.tools.devkit</groupId>
         <artifactId>mule-devkit-parent</artifactId>
@@ -112,7 +112,7 @@
                 </plugins>
             </build>
         </profile>
-#if(${project.generateDefaultBody} == true )        
+#if(${project.generateDefaultBody} == true )
         <!-- USE THIS PROFILE ONLY TO GENERATE THE BASE CODE -->
         <profile>
             <id>connector-generator</id>
@@ -245,7 +245,7 @@
         </repository>
     </repositories>
 #end
-#if( $project.addGitInformation == true )        
+#if( $project.addGitInformation == true )
     <scm>
         <connection>${project.gitConnection}</connection>
         <developerConnection>${project.gitDevConnection}</developerConnection>
