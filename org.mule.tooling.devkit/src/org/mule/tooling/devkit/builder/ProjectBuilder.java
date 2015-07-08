@@ -637,59 +637,61 @@ public class ProjectBuilder {
     private List<ServiceDefinition> getServiceDefinitions(TemplateFileWriter templateFileWriter, IProject project, IProgressMonitor monitor) throws WSDLException {
         WSDLFactory factory;
         List<ServiceDefinition> deff = new ArrayList<ServiceDefinition>();
-        if (wsdlFiles.isEmpty()) {
-            try {
-                createEntry(currentProject.getFolder(SRC_MAIN_RESOURCES_WSDL_BASE_PATH), monitor);
-                File destination = currentProject.getFolder(SRC_MAIN_RESOURCES_WSDL_BASE_PATH).getRawLocation().toFile();
-                File helloWordlWSDL = new File(destination, "hello_soap12.wsdl");
-                templateFileWriter.apply("/templates/hello_soap12.wsdl", SRC_MAIN_RESOURCES_WSDL_BASE_PATH + "/hello_soap12.wsdl", new NullReplacer(), new SubProgressMonitor(
-                        monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-                wsdlFiles.put(helloWordlWSDL.getAbsolutePath(), "Hello World");
-            } catch (CoreException e) {
-                e.printStackTrace();
-            }
-
-        }
-        factory = WSDLFactory.newInstance();
-
-        ExtensionRegistry registry = factory.newPopulatedExtensionRegistry();
-        javax.wsdl.xml.WSDLReader wsdlReader = factory.newWSDLReader();
-        wsdlReader.setFeature("javax.wsdl.verbose", false);
-        wsdlReader.setFeature("javax.wsdl.importDocuments", true);
-        wsdlReader.setExtensionRegistry(registry);
-        for (Entry<String, String> wsdlFile : wsdlFiles.entrySet()) {
-            try {
-                monitor.setTaskName("Parsing: " + wsdlFile.getKey());
-                javax.wsdl.Definition definition = wsdlReader.readWSDL(wsdlFile.getKey());
-                copySchemas(definition, wsdlReader);
-                Map services = definition.getAllServices();
-                for (Object serviceDef : services.values()) {
-                    javax.wsdl.Service serviceItem = (javax.wsdl.Service) serviceDef;
-                    String name = serviceItem.getQName().getLocalPart();
-                    Map portsMap = serviceItem.getPorts();
-                    boolean hasMultiplePorts = portsMap.values().size() > 1;
-                    for (Object portDef : portsMap.values()) {
-                        javax.wsdl.Port portItem = (javax.wsdl.Port) portDef;
-                        String portName = portItem.getName();
-                        String addressValue = getPortAddress(portItem);
-                        ServiceDefinition serviceDefinition = new ServiceDefinition();
-                        serviceDefinition.setId(name + "_" + portName);
-                        serviceDefinition.setEndpoint(addressValue);
-                        serviceDefinition.setServiceName(name);
-                        serviceDefinition.setServicePort(portName);
-                        serviceDefinition.setDisplay(hasMultiplePorts ? wsdlFile.getValue() + " (" + portName + ")" : wsdlFile.getValue());
-                        if (wsdlFile.getKey().startsWith("http")) {
-                            serviceDefinition.setLocation(wsdlFile.getKey());
-                        } else {
-                            serviceDefinition.setLocation("wsdl/" + Path.fromOSString(wsdlFile.getKey()).lastSegment());
-                        }
-                        deff.add(serviceDefinition);
-                    }
+        if (apiType.equals(ApiType.WSDL)) {
+            if (wsdlFiles.isEmpty()) {
+                try {
+                    createEntry(currentProject.getFolder(SRC_MAIN_RESOURCES_WSDL_BASE_PATH), monitor);
+                    File destination = currentProject.getFolder(SRC_MAIN_RESOURCES_WSDL_BASE_PATH).getRawLocation().toFile();
+                    File helloWordlWSDL = new File(destination, "hello_soap12.wsdl");
+                    templateFileWriter.apply("/templates/hello_soap12.wsdl", SRC_MAIN_RESOURCES_WSDL_BASE_PATH + "/hello_soap12.wsdl", new NullReplacer(), new SubProgressMonitor(
+                            monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+                    wsdlFiles.put(helloWordlWSDL.getAbsolutePath(), "Hello World");
+                } catch (CoreException e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception ex) {
-                DevkitUIPlugin.log(ex);
-            } finally {
-                monitor.worked(1);
+
+            }
+            factory = WSDLFactory.newInstance();
+
+            ExtensionRegistry registry = factory.newPopulatedExtensionRegistry();
+            javax.wsdl.xml.WSDLReader wsdlReader = factory.newWSDLReader();
+            wsdlReader.setFeature("javax.wsdl.verbose", false);
+            wsdlReader.setFeature("javax.wsdl.importDocuments", true);
+            wsdlReader.setExtensionRegistry(registry);
+            for (Entry<String, String> wsdlFile : wsdlFiles.entrySet()) {
+                try {
+                    monitor.setTaskName("Parsing: " + wsdlFile.getKey());
+                    javax.wsdl.Definition definition = wsdlReader.readWSDL(wsdlFile.getKey());
+                    copySchemas(definition, wsdlReader);
+                    Map services = definition.getAllServices();
+                    for (Object serviceDef : services.values()) {
+                        javax.wsdl.Service serviceItem = (javax.wsdl.Service) serviceDef;
+                        String name = serviceItem.getQName().getLocalPart();
+                        Map portsMap = serviceItem.getPorts();
+                        boolean hasMultiplePorts = portsMap.values().size() > 1;
+                        for (Object portDef : portsMap.values()) {
+                            javax.wsdl.Port portItem = (javax.wsdl.Port) portDef;
+                            String portName = portItem.getName();
+                            String addressValue = getPortAddress(portItem);
+                            ServiceDefinition serviceDefinition = new ServiceDefinition();
+                            serviceDefinition.setId(name + "_" + portName);
+                            serviceDefinition.setEndpoint(addressValue);
+                            serviceDefinition.setServiceName(name);
+                            serviceDefinition.setServicePort(portName);
+                            serviceDefinition.setDisplay(hasMultiplePorts ? wsdlFile.getValue() + " (" + portName + ")" : wsdlFile.getValue());
+                            if (wsdlFile.getKey().startsWith("http")) {
+                                serviceDefinition.setLocation(wsdlFile.getKey());
+                            } else {
+                                serviceDefinition.setLocation("wsdl/" + Path.fromOSString(wsdlFile.getKey()).lastSegment());
+                            }
+                            deff.add(serviceDefinition);
+                        }
+                    }
+                } catch (Exception ex) {
+                    DevkitUIPlugin.log(ex);
+                } finally {
+                    monitor.worked(1);
+                }
             }
         }
         return deff;
