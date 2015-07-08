@@ -1,5 +1,6 @@
 package org.mule.tooling.incubator.gradle.parser.ast;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -7,6 +8,7 @@ import java.util.List;
 
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.CodeVisitorSupport;
+import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MapExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
@@ -39,7 +41,7 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
     public static enum STATE {
         apply, mule, components, connector, module, plugin, dependencies, buildscript,
         compile, runtime, providedCompile, providedRuntime, testCompile, testRuntime,
-        providedTestCompile, providedTestRuntime
+        providedTestCompile, providedTestRuntime, plugins, id, version
     }
     
     public static enum KNOWN_OBJECT {
@@ -47,7 +49,9 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
     }
     
     private static LinkedList<STATE> currentContextStack = new LinkedList<STATE>();
-
+    
+    private static final LinkedList<STATE> pluginContextStack = new LinkedList<>(Arrays.asList(STATE.id, STATE.version, STATE.plugins));
+    
     @Override
     public void visitMethodCallExpression(MethodCallExpression call) {
         boolean contextApplied = applyCurrentContext(call.getMethodAsString(), call); 
@@ -207,6 +211,30 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
     @Override
     public ASTNode getDependenciesNode() {
         return dependenciesNode;
+    }
+    
+    
+    @Override
+    public void visitArgumentlistExpression(final ArgumentListExpression ale) {
+    	
+    	if (currentContextStack.equals(pluginContextStack) && !ale.getExpressions().isEmpty()) {
+    		String id = ale.getExpression(0).getText();
+    		GradleMulePlugin plugin = GradleMulePlugin.getByPluginId(id);
+    		
+    		if (plugin != null) {
+    			//to satisfy the contract
+    			ScriptMap map = new ScriptMap() {
+    				@Override
+    				public ASTNode getSourceNode() {
+    					return ale;
+    				}
+    			};
+    			appliedMulePlugins.put(plugin, map);    			
+    		}
+    		
+    	}
+    	
+    	super.visitArgumentlistExpression(ale);
     }
     
 }

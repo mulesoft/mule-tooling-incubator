@@ -45,7 +45,6 @@ public class PluginsSyntaxDescriberVisitor extends CodeVisitorSupport {
     	}
     	
     	if (PLUGIN_METHOD_NAME.equals(methodName) && versionContext) {
-    		System.out.println("Version context: " + versionContext);
     		pluginContext = true;
     		super.visitMethodCallExpression(call);
     		pluginContext = false;
