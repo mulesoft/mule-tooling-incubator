@@ -8,7 +8,8 @@
     <packaging>mule-module</packaging>
     <name>Mule ${project.connectorName} Anypoint Connector</name>
 
-#set( $devkitVersion = '3.7.0-SNAPSHOT' )
+#set( $devkitVersion = '3.7.1-SNAPSHOT' )
+#set( $connectorGeneratorVersion = '2.0.5-SNAPSHOT' )
     <parent>
         <groupId>org.mule.tools.devkit</groupId>
         <artifactId>mule-devkit-parent</artifactId>
@@ -24,7 +25,7 @@
 #end
         <cxf.version.boolean>2.7.0</cxf.version.boolean>
 #if(${project.generateDefaultBody} == true )
-        <connector.generator.version>2.0.4-SNAPSHOT</connector.generator.version>
+        <connector.generator.version>${connectorGeneratorVersion}</connector.generator.version>
 #end
 #end
         <category>${project.category}</category>

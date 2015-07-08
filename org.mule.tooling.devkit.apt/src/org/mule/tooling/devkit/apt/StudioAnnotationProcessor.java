@@ -38,7 +38,7 @@ import org.mule.tooling.devkit.apt.plugin.StudioPluginScanner;
 public class StudioAnnotationProcessor extends AnnotationProcessor {
 
     public static final String ENABLED_DEVKIT_CHECK_VERSION = "enabledDevKitCheckVersion";
-    private static final String SUPPORTED_VERSION = "3.7.0-SNAPSHOT";
+    private static final String SUPPORTED_VERSION = "3.7.1-SNAPSHOT";
 
     @Override
     public void init(ProcessingEnvironment env) {

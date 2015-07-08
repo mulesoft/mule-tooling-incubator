@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.mule.tooling.devkit
 Bundle-SymbolicName: org.mule.tooling.devkit;singleton:=true
-Bundle-Version: 1.0.5.qualifier
+Bundle-Version: 1.0.6.qualifier
 Bundle-Activator: org.mule.tooling.devkit.DevkitUIPlugin
 Require-Bundle: org.mule.tooling.runtime;bundle-version="[5.0.0,6.0.0)",
  org.eclipse.ui,
@@ -47,9 +47,8 @@ Require-Bundle: org.mule.tooling.runtime;bundle-version="[5.0.0,6.0.0)",
  org.eclipse.xsd
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: org.mule.tooling.devkit.builder,
- org.mule.tooling.devkit.common,
- org.mule.tooling.devkit.template
+Export-Package: org.mule.tooling.devkit.builder,org.mule.tooling.devki
+ t.common,org.mule.tooling.devkit.template
 Bundle-ClassPath: .,
  lib/httpclient.jar,
  lib/httpcore.jar,

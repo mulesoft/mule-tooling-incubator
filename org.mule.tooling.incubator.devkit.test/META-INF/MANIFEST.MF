@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: DevKit Incubators Test
 Bundle-SymbolicName: org.mule.tooling.incubator.devkit.test
-Bundle-Version: 1.0.5.qualifier
+Bundle-Version: 1.0.6.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.mockito,
