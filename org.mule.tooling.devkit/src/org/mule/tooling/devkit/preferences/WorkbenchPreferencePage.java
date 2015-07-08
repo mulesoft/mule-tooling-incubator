@@ -9,6 +9,7 @@ import org.mule.tooling.devkit.DevkitUIPlugin;
 public class WorkbenchPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
     public static String DEVKIT_DEBUG_MODE = "devkit.debug.mode";
+    public static String INSTALL_AFTER_CREATE = "devkit.install.after.create";
 
     public WorkbenchPreferencePage() {
         super(GRID);
@@ -23,6 +24,7 @@ public class WorkbenchPreferencePage extends FieldEditorPreferencePage implement
     @Override
     protected void createFieldEditors() {
         addField(new BooleanFieldEditor(DEVKIT_DEBUG_MODE, "Run Goals In Debug Mode", getFieldEditorParent()));
+        addField(new BooleanFieldEditor(INSTALL_AFTER_CREATE, "Install Connectors after creating them", getFieldEditorParent()));
     }
 
 }

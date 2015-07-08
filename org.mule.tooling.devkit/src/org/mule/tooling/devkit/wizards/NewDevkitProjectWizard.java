@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -29,12 +30,15 @@ import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.mule.tooling.devkit.DevkitImages;
+import org.mule.tooling.devkit.DevkitUIPlugin;
 import org.mule.tooling.devkit.builder.IModelPopulator;
 import org.mule.tooling.devkit.builder.ProjectBuilder;
 import org.mule.tooling.devkit.builder.ProjectBuilderFactory;
 import org.mule.tooling.devkit.builder.ProjectSubsetBuildAction;
+import org.mule.tooling.devkit.internal.lifecycle.InstallOrUpdateJob;
 import org.mule.tooling.devkit.maven.MavenRunBuilder;
 import org.mule.tooling.devkit.maven.UpdateProjectClasspathWorkspaceJob;
+import org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.mule.tooling.maven.ui.wizards.ConfigureMavenWizardPage;
 
@@ -157,7 +161,12 @@ public class NewDevkitProjectWizard extends AbstractDevkitProjectWizzard impleme
                     javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
                     openConnectorClass(builder.getConnectorClassName(), javaProject.getProject());
-
+                    IPreferenceStore pref = DevkitUIPlugin.getDefault().getPreferenceStore();
+                    boolean shouldInstall = pref.getBoolean(org.mule.tooling.devkit.preferences.WorkbenchPreferencePage.INSTALL_AFTER_CREATE);
+                    if (shouldInstall) {
+                        InstallOrUpdateJob installJob = new InstallOrUpdateJob(javaProject);
+                        installJob.runInWorkspace(monitor);
+                    }
                     wasCreated = true;
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e);
