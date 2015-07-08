@@ -10,7 +10,6 @@ import org.mule.tooling.incubator.gradle.views.TestsReportView;
 
 public class RunUnitTestsJob extends GradleBuildJob {
 	
-	private static final String TEST_REPORT_BROWSER_ID = "org.mule.tooling.incubator.gradle.reportBrowser";
 	private IWorkbenchPage displayResultsPage;
 	
 	public RunUnitTestsJob(IProject project, IWorkbenchPage page) {

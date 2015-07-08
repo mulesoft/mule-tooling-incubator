@@ -1,12 +1,9 @@
 package org.mule.tooling.incubator.gradle.editors.completion;
 
-import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.mule.tooling.incubator.gradle.editors.completion.model.SimplifiedDependencyPojo;
 import org.mule.tooling.incubator.gradle.parser.DSLMethodAndMap;
-import org.mule.tooling.incubator.gradle.parser.ScriptParsingUtils;
 
 
 public class DependenciesCompletionStrategy extends BaseDSLCompletionStrategy {

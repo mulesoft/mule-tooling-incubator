@@ -224,7 +224,10 @@ public class GradleScriptASTVisitor extends CodeVisitorSupport implements Gradle
     		if (plugin != null) {
     			//to satisfy the contract
     			ScriptMap map = new ScriptMap() {
-    				@Override
+    				
+    				private static final long serialVersionUID = 1L;
+
+					@Override
     				public ASTNode getSourceNode() {
     					return ale;
     				}

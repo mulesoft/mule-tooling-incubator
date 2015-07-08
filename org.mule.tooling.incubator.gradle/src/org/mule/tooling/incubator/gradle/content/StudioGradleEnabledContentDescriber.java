@@ -4,18 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.groovy.ast.CodeVisitorSupport;
-import org.codehaus.groovy.ast.expr.MapEntryExpression;
-import org.codehaus.groovy.ast.expr.MapExpression;
-import org.codehaus.groovy.ast.expr.MethodCallExpression;
-import org.codehaus.groovy.ast.expr.PropertyExpression;
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescriber;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.ITextContentDescriber;
-import org.mule.tooling.incubator.gradle.parser.GradleMulePlugin;
 import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTParser;
 
 
