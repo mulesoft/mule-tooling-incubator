@@ -235,16 +235,22 @@
 #end
     </dependencies>
 #end
-#if($devkitVersion.contains('SNAPSHOT'))
     <repositories>
+        <repository>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Releases Repository</name>
+            <url>http://repository.mulesoft.org/releases/</url>
+            <layout>default</layout>
+        </repository>
+#if($devkitVersion.contains('SNAPSHOT'))
         <repository>
             <id>mulesoft-snapshots</id>
             <name>MuleSoft Snapshots Repository</name>
             <url>http://repository.mulesoft.org/snapshots/</url>
             <layout>default</layout>
         </repository>
-    </repositories>
 #end
+    </repositories>
 #if( $project.addGitInformation == true )
     <scm>
         <connection>${project.gitConnection}</connection>
