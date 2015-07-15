@@ -75,7 +75,7 @@ import org.mule.tooling.incubator.maven.ui.MavenImages;
 import org.mule.tooling.incubator.maven.ui.actions.LifeCycleJob;
 import org.mule.tooling.incubator.maven.ui.internal.ProjectModelCache;
 import org.mule.tooling.incubator.maven.ui.launch.MavenLaunchShortcut;
-
+import org.mule.tooling.maven.MavenPlugin;
 import org.mule.tooling.maven.ui.MavenUIPlugin;
 import org.xml.sax.SAXException;
 
@@ -249,8 +249,7 @@ public class LaunchView extends ViewPart implements IResourceChangeListener {
 
     private void getMavenProjects() {
         config.clear();
-        MavenUIPlugin mavenUiPlugin = MavenUIPlugin.getDefault();
-        String m2repo = mavenUiPlugin.getM2repoPath();
+        String m2repo = MavenPlugin.getM2repoPath();
         if (!m2repo.isEmpty()) {
             File settingsFile = new File(new File(m2repo).getParentFile(), "settings.xml");
             SettingsXpp3Reader reader = new SettingsXpp3Reader();
