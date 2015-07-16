@@ -1,6 +1,5 @@
-package ${project.package};
+package org.mule.modules.cloud;
 
-#if($project.authenticationType == 'OAUTH_V2')
 import org.mule.api.annotations.oauth.OAuth2;
 import org.mule.api.annotations.oauth.OAuthAccessToken;
 import org.mule.api.annotations.oauth.OAuthConsumerKey;
@@ -9,7 +8,6 @@ import org.mule.api.annotations.oauth.OAuthPostAuthorization;
 import org.mule.api.annotations.oauth.OAuthProtected;
 
 import org.mule.api.annotations.Configurable;
-#end
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Processor;
 
@@ -19,16 +17,13 @@ import org.mule.api.annotations.rest.HttpMethod;
 import org.mule.api.annotations.rest.RestCall;
 import org.mule.api.annotations.rest.RestUriParam;
 
-#if($project.authenticationType == 'OAUTH_V2')    
 @OAuth2( friendlyName="OAuth 2.0", authorizationUrl = "https://api.myconnector.com/uas/oauth/authorize", 
 accessTokenUrl = "https://api.myconnector.com/uas/oauth/accessToken", 
 accessTokenRegex = "\"access_token\":\"([^&]+?)\"",
 expirationRegex = "\"expires_in\":([^&]+?),", 
 refreshTokenRegex = "\"refresh_token\":\"([^&]+?)\"" )
-#end
-@Connector(name="${project.moduleName}", friendlyName="${project.connectorName}")
-public abstract class ${project.connectorClassName} {
-#if($project.authenticationType == 'OAUTH_V2')
+@Connector(name="cloud", friendlyName="Cloud")
+public abstract class CloudConnector {
 
   /**
      * The OAuth access token
@@ -49,35 +44,21 @@ public abstract class ${project.connectorClassName} {
     @Configurable
     @OAuthConsumerSecret
     private String consumerSecret;
-#end
 
-#if(${project.generateDefaultBody} == true )
     /**
      * Custom processor
      *
-     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:greet}
+     * {@sample.xml ../../../doc/cloud-connector.xml.sample cloud:greet}
      *
      * @param friend Name of a friend we want to greet
      * @return The greeting and reply to the selected friend.
      * @throws IOException Comment for Exception
      */
     @Processor
-#if($project.authenticationType == 'OAUTH_V2')    
     @OAuthProtected
-#end
     @ReconnectOn(exceptions = { Exception.class })
     @RestCall(uri="https://myapiurl/{friend}", method=HttpMethod.GET)
     public abstract void greet(@RestUriParam("friend") String friend) throws IOException;  
-#else
-    /**
-     * Dummy operation to prevent compilation errors.
-     */
-    @Processor
-    @ReconnectOn(exceptions = { Exception.class })
-    @RestCall(uri="https://foo/{param}", method=HttpMethod.GET)
-    public abstract void greet(@RestUriParam("param") String param) throws IOException;  
-#end
-#if($project.authenticationType == 'OAUTH_V2')
 
     @OAuthPostAuthorization
     public void postAuthorize() {
@@ -132,6 +113,5 @@ public abstract class ${project.connectorClassName} {
     public String getConsumerSecret() {
         return this.consumerSecret;
     }
-#end
 
 }
