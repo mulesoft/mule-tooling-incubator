@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -17,6 +18,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -30,11 +32,15 @@ import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.GradleTask;
+import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.incubator.gradle.model.StudioDependencies;
 import org.mule.tooling.incubator.gradle.model.StudioDependency;
 import org.mule.tooling.incubator.gradle.parser.GradleMuleBuildModelProvider;
+import org.mule.tooling.incubator.gradle.parser.GradleMulePlugin;
 import org.mule.tooling.incubator.gradle.parser.ast.ScriptDependency;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
+import org.mule.tooling.incubator.gradle.template.TemplateFileWriter;
+import org.mule.tooling.incubator.gradle.template.VelocityReplacer;
 import org.mule.tooling.maven.dependency.MavenDependency;
 
 /**
@@ -118,7 +124,7 @@ public class GradlePluginUtils {
 	 */
 	public static GradleConnector buildConnectionForProject(File projectLocation) {
 		GradleConnector connector = GradleConnector.newConnector().forProjectDirectory(projectLocation);
-        configureGradleRuntime(connector, Activator.getDefault().getPreferenceStore());
+		configureGradleRuntime(connector, Activator.getDefault().getPreferenceStore());
 		return connector;
 	}
 	
@@ -281,6 +287,11 @@ public class GradlePluginUtils {
             return true;
         }
         IPath filePath = file.getLocation();
+        
+        if (filePath == null) {
+        	return false;
+        }
+        
         IPath worskpacePath = project.getWorkspace().getRoot().getRawLocation();
         //if not, iterate over the parents.
         for(int i = filePath.segmentCount(); i > 0 ; i--) {
@@ -348,4 +359,56 @@ public class GradlePluginUtils {
         //partial match, we're missing classifier and extension.
         return true;        
     }
+    
+    public static void createBuildFile(GradleMulePlugin forPlugin, IProject project, org.mule.tooling.incubator.gradle.model.GradleProject gradleProject, IProgressMonitor monitor) throws CoreException {
+    	TemplateFileWriter fileWriter = new TemplateFileWriter(project, monitor);
+        
+    	HashMap<String, Object> model = new HashMap<String, Object>();
+    	model.put("project",  gradleProject);
+    	model.put("pluginName", forPlugin.getPluginAlias());
+    	
+    	fileWriter.apply("/templates/general-build.gradle.tmpl", GradlePluginConstants.MAIN_BUILD_FILE, new VelocityReplacer(model));
+    }
+    
+    public static void clearContainers(IMuleProject project, IProgressMonitor monitor) throws JavaModelException {
+    	if (project == null) {
+    		return;
+    	}
+    	
+    	IJavaProject jp = project.getJavaProject();
+    	
+    	ArrayList<IClasspathEntry> cleared = new ArrayList<>(Arrays.asList(jp.getRawClasspath()));
+    	
+    	for(IClasspathEntry entry : jp.getRawClasspath()) {
+    		if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+    			cleared.remove(entry);
+    		}
+    	}
+    	
+    	jp.setRawClasspath(cleared.toArray(new IClasspathEntry[0]), monitor);
+    }
+    
+    public static void clearTestSources(IMuleProject project, IProgressMonitor monitor) throws JavaModelException {
+    	if (project == null) {
+    		return;
+    	}
+    	
+    	IJavaProject jp = project.getJavaProject();
+    	
+    	ArrayList<IClasspathEntry> cleared = new ArrayList<>(Arrays.asList(jp.getRawClasspath()));
+    	
+    	for(IClasspathEntry entry : jp.getRawClasspath()) {
+    		if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE) {
+    			continue;
+    		}
+    		
+    		if (entry.getPath().toString().contains("src/test/java") || entry.getPath().toString().contains("src/test/resources")) {
+    			cleared.remove(entry);
+    		}
+    		
+    	}
+    	
+    	jp.setRawClasspath(cleared.toArray(new IClasspathEntry[0]), monitor);    	
+    }
+    
 }

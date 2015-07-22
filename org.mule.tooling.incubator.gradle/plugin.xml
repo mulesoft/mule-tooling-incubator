@@ -30,6 +30,24 @@
             project="true">
       </wizard>
    </extension>
+   
+   <extension
+   		point="org.mule.tooling.ui.wizardpagepart">
+   		<wizardpagepart
+   			class="org.mule.tooling.incubator.gradle.wizard.CreateDomainBuildGradleWizardPageExtension">
+   			   <targetWizardPage
+                     id="org.mule.tooling.ui.mulenewdomain" level="9">
+               </targetWizardPage>
+   		</wizardpagepart>
+   		<wizardpagepart
+   			class="org.mule.tooling.incubator.gradle.wizard.CreateProjectBuildGradleWizardPageExtension">
+   			   <targetWizardPage
+                     id="org.mule.tooling.ui.mulenewproject" level="9">
+               </targetWizardPage>
+   		</wizardpagepart>
+   	</extension>
+   
+   
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -52,6 +70,13 @@
             id="org.mule.tooling.gradle.views.TasksView"
             name="Gradle Tasks View">
       </view>
+      <view
+      		category="org.mule.tooling.gradle"
+      		class="org.mule.tooling.incubator.gradle.views.TestsReportView"
+      		icon="icons/gradle16x16.png"
+      		id="org.mule.tooling.incubator.gradle.reportBrowser"
+      		name="Gradle Tests Report">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -66,79 +91,6 @@
                id="org.mule.tooling.incubator.gradle.wizard">
          </newWizardShortcut>
       </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            adaptable="false"
-            id="org.mule.tooling.incubator.gradle.resourceMenuContribution"
-            nameFilter="build.gradle"
-            objectClass="org.eclipse.core.resources.IResource">
-         <visibility>
-            <objectState
-                  name="projectNature"
-                  value="org.mule.tooling.core.muleNature">
-            </objectState></visibility>
-         <menu
-               icon="icons/gradle16x16.png"
-               id="org.mule.tooling.incubator.gradle.menu"
-               label="Gradle Support in Studio"
-               path="additions">
-            <separator
-                  name="group">
-            </separator>
-         </menu>
-         <action
-               class="org.mule.tooling.incubator.gradle.actions.SynchronizeProjectAction"
-               id="org.mule.tooling.incubator.gradle.updateDeps"
-               label="Synchronize Project"
-               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
-         </action>
-      </objectContribution>
-      <objectContribution
-            adaptable="false"
-            id="org.mule.tooling.incubator.gradle.projectMenuContribution"
-            objectClass="org.eclipse.jdt.core.IJavaProject">
-         <visibility>
-            <objectState
-                  name="projectNature"
-                  value="org.mule.tooling.core.muleNature">
-            </objectState></visibility>
-         <menu
-               icon="icons/gradle16x16.png"
-               id="org.mule.tooling.incubator.gradle.menu"
-               label="Gradle Support in Studio"
-               path="additions">
-            <separator
-                  name="group">
-            </separator>
-         </menu>
-<!--         <action
-               class="org.mule.tooling.incubator.gradle.actions.TestAction"
-               id="org.mule.tooling.incubator.gradle.testAction"
-               label="Test Action"
-               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
-         </action> -->
-         <action
-               class="org.mule.tooling.incubator.gradle.actions.SynchronizeProjectAction"
-               id="org.mule.tooling.incubator.gradle.updateDeps"
-               label="Synchronize Project"
-               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
-         </action>
-         <action
-               class="org.mule.tooling.incubator.gradle.actions.ShowTasksViewAction"
-               id="org.mule.tooling.incubator.gradle.showTasksView"
-               label="Run Tasks..."
-               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
-         </action>
-         <action
-               class="org.mule.tooling.incubator.gradle.actions.InstallGradleWrapperAction"
-               id="org.mule.tooling.incubator.gradle.installGradleWrapper"
-               label="Install or Update Gradle Wrapper"
-               menubarPath="org.mule.tooling.incubator.gradle.menu/group">
-         </action>
-         
-      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -160,5 +112,102 @@
             contentTypeId="org.mule.tooling.gradle.muleStudioGradleFile">
       </participant>
    </extension>
-
+   
+   <extension
+         point="org.eclipse.ui.menus">
+         <menuContribution
+               locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+               <menu
+                     label="Gradle Support in Studio"
+                     icon="icons/gradle16x16.png">
+                     <command
+                           commandId="org.mule.tooling.incubator.gradle.synchronizeProject"
+                           label="Synchronize Project">
+                     </command>
+                     <command
+                           commandId="org.mule.tooling.incubator.gradle.showTasks"
+                           label="Run Tasks...">
+                     </command>
+                     <command
+                           commandId="org.mule.tooling.incubator.gradle.runTests"
+                           label="Run Unit Tests With Gradle">
+                     </command>
+                     <command
+                           commandId="org.mule.tooling.incubator.gradle.installWrapper"
+                           label="Install or Update Gradle Wrapper">
+                     </command>
+                     <visibleWhen>
+						<and>
+							<reference definitionId="org.mule.tooling.incubator.gradle.isGradleProject" />
+							<count value="1" />
+						</and>
+                     </visibleWhen>
+                     
+               </menu>
+         </menuContribution>         
+         
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.handlers">
+         <handler
+               commandId="org.mule.tooling.incubator.gradle.runTests"
+               class="org.mule.tooling.incubator.gradle.handlers.RunTestsHandler">
+               <enabledWhen>
+					<reference definitionId="org.mule.tooling.incubator.gradle.isGradleProject" />
+               </enabledWhen>
+         </handler>
+         <handler
+               commandId="org.mule.tooling.incubator.gradle.installWrapper"
+               class="org.mule.tooling.incubator.gradle.handlers.InstallWrapperHandler">
+               <enabledWhen>
+					<reference definitionId="org.mule.tooling.incubator.gradle.isGradleProject" />
+               </enabledWhen>
+         </handler>
+         <handler
+               commandId="org.mule.tooling.incubator.gradle.showTasks"
+               class="org.mule.tooling.incubator.gradle.handlers.ShowTasksViewHandler">
+               <enabledWhen>
+					<reference definitionId="org.mule.tooling.incubator.gradle.isGradleProject" />
+               </enabledWhen>               
+         </handler>
+         <handler
+               commandId="org.mule.tooling.incubator.gradle.synchronizeProject"
+               class="org.mule.tooling.incubator.gradle.handlers.SynchronizeProjectHandler">
+               <enabledWhen>
+					<reference definitionId="org.mule.tooling.incubator.gradle.isGradleProject" />
+               </enabledWhen>
+         </handler>
+         
+   </extension>
+   
+   	<extension point="org.eclipse.core.expressions.propertyTesters">
+		<propertyTester
+			id="org.mule.tooling.incubator.gradle.projectTypeTester"
+			type="org.eclipse.core.resources.IProject"
+			namespace="org.mule.tooling.incubator.gradle"
+			properties="gradleProject"
+			class="org.mule.tooling.incubator.gradle.GradleProjectPropertyTester">
+		</propertyTester>
+	</extension>
+   
+   <extension point="org.eclipse.core.expressions.definitions">
+       <definition id="org.mule.tooling.incubator.gradle.isGradleProject">
+           <and>
+	           <iterate>
+		       		<adapt
+		               type="org.eclipse.core.resources.IProject">
+		               <and>
+			               <test
+			                     property="org.mule.tooling.incubator.gradle.gradleProject" value="true">
+			               </test>
+			               <test property="org.eclipse.core.resources.projectNature" value="org.mule.tooling.core.muleNature" />
+		               </and>
+		       		</adapt>
+	            </iterate>
+	            <count value="1" />
+            </and>
+       </definition>
+   </extension>
+   
 </plugin>

@@ -26,7 +26,7 @@ public class TemplateFileWriter {
     }
 
     public void apply(final String templatePath, final String resultPath, Replacer replacer) throws CoreException {
-        final IFile pomFile = project.getProject().getFile(resultPath);
+        final IFile targetFile = project.getProject().getFile(resultPath);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Writer writer = null;
@@ -50,8 +50,8 @@ public class TemplateFileWriter {
 
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 
-            pomFile.create(byteArrayInputStream, false, new SubProgressMonitor(monitor, 40));
-            pomFile.setDerived(false, new SubProgressMonitor(monitor, 30));
+            targetFile.create(byteArrayInputStream, false, new SubProgressMonitor(monitor, 40));
+            targetFile.setDerived(false, new SubProgressMonitor(monitor, 30));
 
         } catch (Exception e) {
             e.printStackTrace();

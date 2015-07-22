@@ -29,6 +29,7 @@ import org.mule.tooling.core.MuleRuntime;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.module.ExternalContributionMuleModule;
 import org.mule.tooling.core.module.ModuleContributionManager;
+import org.mule.tooling.core.utils.CoreUtils;
 import org.mule.tooling.incubator.gradle.GradlePluginConstants;
 import org.mule.tooling.incubator.gradle.GradlePluginUtils;
 import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTParser;
@@ -50,7 +51,21 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 	private Set<String> orphanPlugins;
 	
 	public SynchronizeProjectGradleBuildJob(IProject project, String... additionalTasks) {
-		super(TASK_DESCRIPTION, project, (String[]) ArrayUtils.addAll(new String[] {"studio"}, additionalTasks));
+		super(TASK_DESCRIPTION, project, generateTask(project, additionalTasks));
+	}
+	
+	private static String[] generateTask(IProject project, String[] additionalTasks) {
+		
+		String taskName = "studio";
+		
+		try {
+		if (CoreUtils.hasMuleDomainNature(project)) {
+			taskName = ":" + taskName;
+		}
+		} catch (Exception ex) {
+			MuleCorePlugin.logError("Exception creating Synchronize task", ex);
+		}
+		return (String[]) ArrayUtils.addAll(new String[] {taskName}, additionalTasks);
 	}
 	
 	@Override
@@ -202,6 +217,11 @@ public abstract class SynchronizeProjectGradleBuildJob extends GradleBuildJob {
 				GradlePluginUtils.removeZipLibrariesFromProject(javaProject, new NullProgressMonitor());
 				
 				IResource buildFile = javaProject.getProject().getFile(GradlePluginConstants.MAIN_BUILD_FILE);
+				
+				//the build file might not be phisically present
+				if (!buildFile.exists()) {
+					return Status.OK_STATUS;
+				}
 				
 				//markers should be removed regardless there are orphan nodes or not.
 				removeMarkers(buildFile);

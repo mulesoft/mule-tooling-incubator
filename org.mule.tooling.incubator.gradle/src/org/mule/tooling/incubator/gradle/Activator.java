@@ -10,7 +10,6 @@ import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.event.CoreEventTypes;
 import org.mule.tooling.incubator.gradle.listeners.BuildUpdatedListener;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
-import org.mule.tooling.utils.eventbus.EventBus;
 import org.mule.tooling.utils.eventbus.EventBusHelper;
 import org.osgi.framework.BundleContext;
 

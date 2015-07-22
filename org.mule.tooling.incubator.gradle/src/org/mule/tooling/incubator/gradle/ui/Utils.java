@@ -1,8 +1,6 @@
 package org.mule.tooling.incubator.gradle.ui;
 
 import java.util.Collection;
-import java.util.Set;
-
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.layout.GridDataFactory;

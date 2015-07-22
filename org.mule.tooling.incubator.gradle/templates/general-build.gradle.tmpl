@@ -1,0 +1,19 @@
+plugins {
+  id "${model.pluginName}" version "${model.project.pluginVersion}"
+}
+
+#if ($model.project.groupId)
+group = '${model.project.groupId}'
+#end
+#if ($model.project.version)
+version = '${model.project.version}'
+#end
+
+mule {
+	version = '${model.project.runtimeVersion}'
+	muleEnterprise = ${model.project.muleEnterprise}
+#if($model.project.muleEnterprise == true)
+	enterpriseRepoUsername = "${model.project.repoUser}"
+	enterpriseRepoPassword = "${model.project.repoPassword}"
+#end
+}

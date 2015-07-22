@@ -74,6 +74,10 @@ public class GradleBuildEditor extends FormEditor implements IResourceChangeList
 			return;
 		}
 		
+		if (CoreUtils.hasMuleDomainNature(input.getFile().getProject())) {
+			return;
+		}
+		
 		if (!chekStudioPluginPresent(input.getFile().getProject())) {
 			return;
 		}

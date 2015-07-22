@@ -5,13 +5,13 @@ public class GradlePluginConstants {
 	/**
 	 * The default plugin version to use with the templates. 
 	 */
-	public static final String DEFAULT_PLUGIN_VERSION = "1.1.1";
+	public static final String DEFAULT_PLUGIN_VERSION = "1.2.2";
 	
 	
 	/**
 	 * This is the version of gradle that will get downloaded in case of no installation is provided.
 	 */
-	public static final String RECOMMENDED_GRADLE_VERSION = "2.2.1";
+	public static final String RECOMMENDED_GRADLE_VERSION = "2.4";
 	
 	
 	/**

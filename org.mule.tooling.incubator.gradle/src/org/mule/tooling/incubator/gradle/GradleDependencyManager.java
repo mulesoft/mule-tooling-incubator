@@ -4,7 +4,6 @@ import org.mule.tooling.core.dependencymanagement.EclipseDependencyManager;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.module.ExternalContributionMuleModule;
 import org.mule.tooling.incubator.gradle.jobs.AddDependencyToProjectJob;
-import org.mule.tooling.incubator.gradle.jobs.RemoveDependencyFromProjectJob;
 import org.mule.tooling.model.messageflow.MessageFlowNode;
 
 
