@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.mule.tooling.utils.SilentRunner;
+import org.mule.tooling.utils.SilentRunner.VoidCallable;
 
 public class ToggleJavadocCheckCommand extends AbstractHandler {
 
@@ -38,15 +39,11 @@ public class ToggleJavadocCheckCommand extends AbstractHandler {
 
                         @Override
                         public void run() {
-                            SilentRunner.run(new Runnable() {
+                            SilentRunner.run(new VoidCallable() {
 
                                 @Override
-                                public void run() {
-                                    try {
-                                        selectedProject.getProject().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-                                    } catch (CoreException e) {
-                                        e.printStackTrace();
-                                    }
+                                public void doCall() throws Exception {
+                                    selectedProject.getProject().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
                                 }
                             });
                         }

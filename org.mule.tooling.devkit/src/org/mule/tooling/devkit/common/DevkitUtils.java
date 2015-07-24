@@ -73,6 +73,7 @@ import org.mule.tooling.devkit.quickfix.LocateModuleNameVisitor;
 import org.mule.tooling.ui.utils.SaveModifiedResourcesDialog;
 import org.mule.tooling.ui.utils.UiUtils;
 import org.mule.tooling.utils.SilentRunner;
+import org.mule.tooling.utils.SilentRunner.VoidCallable;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -144,23 +145,16 @@ public class DevkitUtils {
 
                     @Override
                     public void run() {
-                        SilentRunner.run(new Runnable() {
+                        SilentRunner.run(new VoidCallable() {
 
                             @Override
-                            public void run() {
-                                try {
-                                    file.getParent().refreshLocal(IResource.DEPTH_ONE, null);
-                                    if (file.exists()) {
-                                        DefaultHelpUI.showInWorkbenchBrowser(file.getLocationURI().toURL().toString(), true);
-                                    } else {
-                                        MessageDialog.openError(null, "Error while generating javadoc", "Unable to generate the documentation. Check the console for errors.");
-                                    }
-                                } catch (MalformedURLException e) {
-                                    throw new RuntimeException(e);
-                                } catch (CoreException e) {
-                                    throw new RuntimeException(e);
+                            public void doCall() throws Exception {
+                                file.getParent().refreshLocal(IResource.DEPTH_ONE, null);
+                                if (file.exists()) {
+                                    DefaultHelpUI.showInWorkbenchBrowser(file.getLocationURI().toURL().toString(), true);
+                                } else {
+                                    MessageDialog.openError(null, "Error while generating javadoc", "Unable to generate the documentation. Check the console for errors.");
                                 }
-
                             }
                         });
                     }
