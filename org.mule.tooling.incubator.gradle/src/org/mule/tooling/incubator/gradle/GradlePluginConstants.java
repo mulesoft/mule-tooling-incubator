@@ -5,7 +5,7 @@ public class GradlePluginConstants {
 	/**
 	 * The default plugin version to use with the templates. 
 	 */
-	public static final String DEFAULT_PLUGIN_VERSION = "1.2.2";
+	public static final String DEFAULT_PLUGIN_VERSION = "2.0-RC";
 	
 	
 	/**
