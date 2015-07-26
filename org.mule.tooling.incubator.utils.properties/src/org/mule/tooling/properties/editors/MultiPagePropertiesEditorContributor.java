@@ -9,6 +9,11 @@
 
 package org.mule.tooling.properties.editors;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -22,6 +27,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.mule.tooling.properties.actions.AddPropertyAction;
 import org.mule.tooling.properties.actions.DeletePropertyAction;
+import org.mule.tooling.properties.utils.UIUtils;
 
 /**
  * Manages the installation/deinstallation of global actions for multi-page
@@ -35,6 +41,8 @@ public class MultiPagePropertiesEditorContributor extends
 	private AddPropertyAction addPropertyAction;
 	private DeletePropertyAction deletePropertyAction;
 	
+	private List<Action> contributedActions = new ArrayList<Action>();
+	
 
 	/**
 	 * Creates a multi-page contributor.
@@ -42,7 +50,7 @@ public class MultiPagePropertiesEditorContributor extends
 	public MultiPagePropertiesEditorContributor() {
 		super();
 		createActions();
-		
+		createActionContributions();
 	}
 
 	/**
@@ -124,21 +132,21 @@ public class MultiPagePropertiesEditorContributor extends
 
 			@Override
 			public IPropertiesEditor getPropertiesEditor() {
-
-				return (IPropertiesEditor) (activeEditorPart instanceof IPropertiesEditor ? activeEditorPart
-						: null);
+				return getCurrentEditor();
 			}
 
 		};
 		addPropertyAction = new AddPropertyAction(provider);
 		deletePropertyAction = new DeletePropertyAction(provider);
-		//encryptAction = new EncryptPropertyAction(provider);
 		
-		
-
 	}
 	
-	
+	/**
+	 * Create the actions contributed by others.
+	 */
+	public void createActionContributions() {
+		contributedActions.addAll(UIUtils.getContributedToolbarButtons(this));
+	}
 
 
 
@@ -155,6 +163,12 @@ public class MultiPagePropertiesEditorContributor extends
 		manager.add(addPropertyAction);
 		manager.add(deletePropertyAction);
 		// manager.add(editPropertyAction);
+		
+		
+		for(Action action : contributedActions) {
+			manager.add(action);
+		}
+		
 	}
 
 	@Override
@@ -165,5 +179,10 @@ public class MultiPagePropertiesEditorContributor extends
 		
 		
 	}
-
+	
+	public IPropertiesEditor getCurrentEditor() {
+		return (IPropertiesEditor) (activeEditorPart instanceof IPropertiesEditor ? activeEditorPart
+				: null);
+	}
+	
 }

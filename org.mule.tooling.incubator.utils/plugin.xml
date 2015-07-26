@@ -51,5 +51,12 @@
             class="org.mule.tooling.incubator.utils.placeholder.PlaceholderExtractorHandler"
             commandId="org.mule.tooling.incubator.utils.placeholder.PlaceholderExtractorHandler">
       </handler>
+   </extension>
+   <extension
+         point="org.mule.tooling.incubator.utils.properties.editortoolbar">
+      <button
+            text="Test Button"
+            tooltip="This is a test button for the toolbar">
+      </button>
    </extension> 
 </plugin>

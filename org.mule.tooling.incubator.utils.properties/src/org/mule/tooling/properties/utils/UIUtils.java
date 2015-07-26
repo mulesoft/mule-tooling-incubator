@@ -14,21 +14,30 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.mule.tooling.properties.Activator;
+import org.mule.tooling.properties.actions.ContributedAction;
+import org.mule.tooling.properties.editors.IPropertiesEditor;
+import org.mule.tooling.properties.editors.MultiPagePropertiesEditorContributor;
 
 public class UIUtils {
 
 	public static ImageDescriptor IMG_ENCRYPT = AbstractUIPlugin
 			.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
 					"icons/encrypted-icon-16x16.gif");
-
+	
+	public static final String EDITOR_TOOLBARS_EXTENSION_ID = "org.mule.tooling.incubator.utils.properties.editortoolbar";
+	
+	
 	/**
 	 * Shows JFace ErrorDialog but improved by constructing full stack trace in
 	 * detail area.
@@ -59,4 +68,20 @@ public class UIUtils {
 		ErrorDialog.openError(Display.getCurrent().getActiveShell(), title,
 				msg, ms);
 	}
+	
+	
+	public static List<Action> getContributedToolbarButtons(MultiPagePropertiesEditorContributor editor) {
+		
+		
+		List<Action> ret = new ArrayList<Action>();
+		
+		IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(EDITOR_TOOLBARS_EXTENSION_ID);
+		
+		for(IConfigurationElement config : configs) {
+			ret.add(new ContributedAction(config, editor));
+		}
+		
+		return ret;
+	}
+	
 }

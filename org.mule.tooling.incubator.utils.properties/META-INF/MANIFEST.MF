@@ -3,16 +3,19 @@ Bundle-ManifestVersion: 2
 Bundle-Name: org.mule.tooling.incubator.utils.properties
 Bundle-SymbolicName: org.mule.tooling.incubator.utils.properties;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.mule.tooling.incubator.utils.properties.Activator
+Bundle-Activator: org.mule.tooling.properties.Activator
 Bundle-Vendor: MuleSoft Inc.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.ui.ide, 
+Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.ui.workbench,
  org.eclipse.jface,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.jdt.ui,
  org.eclipse.jface.text,
- org.eclipse.ui.editors
+ org.eclipse.ui.editors,
+ org.eclipse.e4.core.di
+Export-Package: org.mule.tooling.properties.editors,
+ org.mule.tooling.properties.extension
