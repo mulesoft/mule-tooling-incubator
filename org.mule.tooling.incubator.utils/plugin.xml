@@ -55,8 +55,9 @@
    <extension
          point="org.mule.tooling.incubator.utils.properties.editortoolbar">
       <button
-            text="Test Button"
-            tooltip="This is a test button for the toolbar">
+            class="org.mule.tooling.incubator.utils.placeholder.RefreshPropertiesAction"
+            text="Update from Project"
+            tooltip="Update this properties file with properties found in the project.">
       </button>
    </extension> 
 </plugin>

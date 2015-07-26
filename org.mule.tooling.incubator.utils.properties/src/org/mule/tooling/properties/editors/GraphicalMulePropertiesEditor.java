@@ -16,6 +16,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,18 +35,22 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.FileEditorInput;
 import org.mule.tooling.properties.actions.EditPropertyAction;
 import org.mule.tooling.properties.model.CommentedProperties;
 
 public class GraphicalMulePropertiesEditor extends EditorPart implements
-		IPropertiesEditor {
+		IPropertiesEditor, IResourceChangeListener {
 
 	private TableViewer tableViewer;
 	private CommentedProperties model = new CommentedProperties();
@@ -49,8 +58,15 @@ public class GraphicalMulePropertiesEditor extends EditorPart implements
 	
 	public GraphicalMulePropertiesEditor() {
 		super();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
-
+	
+	@Override
+	public void dispose() {
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		super.dispose();
+	}
+	
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		setClean();
@@ -269,6 +285,36 @@ public class GraphicalMulePropertiesEditor extends EditorPart implements
 		tableViewer.refresh();
 		setDirty();
 		
+	}
+
+	@Override
+	public void resourceChanged(final IResourceChangeEvent event) {
+		if(event.getType() != IResourceChangeEvent.POST_CHANGE){
+			return;
+		}
+			
+		try {
+			final IFile currentFile = ((IFileEditorInput) getEditorInput()).getFile();
+			event.getDelta().accept(new IResourceDeltaVisitor() {
+				
+				@Override
+				public boolean visit(IResourceDelta delta) throws CoreException {
+					
+					if(currentFile.equals(delta.getResource())) {
+						Display.getDefault().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								updatePartControl(getEditorInput());						
+							}
+						});
+					}
+					return true;
+				}
+			});
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }

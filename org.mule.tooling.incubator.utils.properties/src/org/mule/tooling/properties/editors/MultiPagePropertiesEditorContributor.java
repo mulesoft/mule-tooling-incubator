@@ -12,7 +12,6 @@ package org.mule.tooling.properties.editors;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -173,16 +172,16 @@ public class MultiPagePropertiesEditorContributor extends
 
 	@Override
 	public void setActiveEditor(IEditorPart part) {
-
-		super.setActiveEditor(part);
-		
-		
-		
+		super.setActiveEditor(part);		
 	}
 	
 	public IPropertiesEditor getCurrentEditor() {
 		return (IPropertiesEditor) (activeEditorPart instanceof IPropertiesEditor ? activeEditorPart
 				: null);
+	}
+
+	public IEditorPart getActiveEditor() {
+		return activeEditorPart;
 	}
 	
 }

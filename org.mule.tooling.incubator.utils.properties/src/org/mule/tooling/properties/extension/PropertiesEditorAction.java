@@ -1,14 +1,14 @@
 package org.mule.tooling.properties.extension;
 
-import org.mule.tooling.properties.editors.IPropertiesEditor;
+import org.eclipse.ui.IEditorPart;
 import org.mule.tooling.properties.editors.MultiPagePropertiesEditorContributor;
 
 public abstract class PropertiesEditorAction {
 	
 	private MultiPagePropertiesEditorContributor editor;
 
-	public IPropertiesEditor getEditor() {
-		return editor.getCurrentEditor();
+	public IEditorPart getEditor() {
+		return editor.getActiveEditor();
 	}
 
 	public void setEditor(MultiPagePropertiesEditorContributor editor) {

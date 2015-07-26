@@ -3,7 +3,6 @@ package org.mule.tooling.properties.actions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.Action;
-import org.mule.tooling.properties.editors.IPropertiesEditor;
 import org.mule.tooling.properties.editors.MultiPagePropertiesEditorContributor;
 import org.mule.tooling.properties.extension.PropertiesEditorAction;
 

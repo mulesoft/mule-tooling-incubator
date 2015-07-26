@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.mule.tooling.properties.Activator;
 import org.mule.tooling.properties.actions.ContributedAction;
-import org.mule.tooling.properties.editors.IPropertiesEditor;
 import org.mule.tooling.properties.editors.MultiPagePropertiesEditorContributor;
 
 public class UIUtils {
