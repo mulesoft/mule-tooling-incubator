@@ -9,6 +9,7 @@
 
 package org.mule.tooling.properties.editors;
 
+import java.util.Collection;
 import java.util.Map;
 
 public interface IPropertiesEditor {
@@ -20,5 +21,7 @@ public interface IPropertiesEditor {
 	Map.Entry getSelectedProperty();
 
 	void updateProperty(String key, Object value);
+	
+	Collection<String> buildKeySuggestions();
 	
 }

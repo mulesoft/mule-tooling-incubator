@@ -13,6 +13,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IFile;
@@ -47,7 +51,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.mule.tooling.properties.actions.EditPropertyAction;
+import org.mule.tooling.properties.extension.PropertyKeySuggestion;
 import org.mule.tooling.properties.model.CommentedProperties;
+import org.mule.tooling.properties.utils.UIUtils;
 
 public class GraphicalMulePropertiesEditor extends EditorPart implements
 		IPropertiesEditor, IResourceChangeListener {
@@ -315,6 +321,23 @@ public class GraphicalMulePropertiesEditor extends EditorPart implements
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	@Override
+	public Collection<String> buildKeySuggestions() {
+		final IFile currentFile = ((IFileEditorInput) getEditorInput()).getFile();
+		
+		List<PropertyKeySuggestion> suggestions = UIUtils.getContributedSuggestions(currentFile);
+		
+		List<String> ret = new ArrayList<String>();
+		
+		for (PropertyKeySuggestion suggestion : suggestions) {
+			ret.add(suggestion.getSuggestion());
+		}
+		
+		Collections.sort(ret);
+		
+		return ret;
 	}
 
 }

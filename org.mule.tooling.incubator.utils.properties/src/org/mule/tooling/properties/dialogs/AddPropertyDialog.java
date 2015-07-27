@@ -12,6 +12,8 @@
  */
 package org.mule.tooling.properties.dialogs;
 
+import java.util.Collection;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -26,6 +28,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.mule.tooling.properties.editors.IPropertiesEditorAccessor;
+import org.mule.tooling.properties.extension.PropertyKeySuggestion;
+import org.mule.tooling.properties.utils.UIUtils;
 
 
 
@@ -41,11 +45,11 @@ public class AddPropertyDialog extends TitleAreaDialog {
 	private String key;
 	private Button encrypt;
 	private IPropertiesEditorAccessor holder;
-
+	
 	public AddPropertyDialog(Shell parentShell,
 			IPropertiesEditorAccessor provider) {
 		super(parentShell);
-		this.holder = provider;
+		this.holder = provider; 
 	}
 
 	@Override
@@ -72,7 +76,9 @@ public class AddPropertyDialog extends TitleAreaDialog {
 				.align(SWT.FILL, SWT.CENTER).grab(true, false);
 		keyText = new Text(textPanel, SWT.BORDER);
 		textDataFactory.applyTo(keyText);
-
+		
+		UIUtils.initializeAutoCompleteField(keyText, holder.getPropertiesEditor().buildKeySuggestions());
+		
 		Label label1 = new Label(textPanel, SWT.NONE);
 		label1.setText("Value:");
 		labelDataFactory.applyTo(label1);

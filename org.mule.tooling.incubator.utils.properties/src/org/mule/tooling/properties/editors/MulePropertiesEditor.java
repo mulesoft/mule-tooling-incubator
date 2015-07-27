@@ -11,6 +11,7 @@ package org.mule.tooling.properties.editors;
 
 import org.eclipse.jdt.internal.ui.propertiesfileeditor.PropertiesFileEditor;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -34,5 +35,11 @@ public class MulePropertiesEditor extends PropertiesFileEditor implements IPrope
 		setPartName("Text editor");
 	}
 	
-
+	@Override
+	protected void setSourceViewerConfiguration(
+			SourceViewerConfiguration configuration) {
+		configuration = new MulePropertiesFileSourceViewerConfiguration(getPreferenceStore(), this);
+		super.setSourceViewerConfiguration(configuration);
+	}
+	
 }

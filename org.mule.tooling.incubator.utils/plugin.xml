@@ -59,5 +59,11 @@
             text="Update from Project"
             tooltip="Update this properties file with properties found in the project.">
       </button>
+   </extension>
+   <extension
+         point="org.mule.tooling.incubator.utils.properties.keycompletion">
+      <completionContributor
+            class="org.mule.tooling.incubator.utils.placeholder.PropertyKeysContributor">
+      </completionContributor>
    </extension> 
 </plugin>
