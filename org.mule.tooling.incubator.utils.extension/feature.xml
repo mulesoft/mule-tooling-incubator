@@ -7,7 +7,7 @@
       exclusive="true">
 
    <description url="http://www.mulesoft.org/">
-       Anypoint Studio Utils Plugin.
+      Anypoint Studio Utils Plugin.
    </description>
 
    <copyright url="http://www.mulesoft.org">
@@ -16,6 +16,13 @@
 
    <plugin
          id="org.mule.tooling.incubator.utils"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.mule.tooling.incubator.utils.properties"
          download-size="0"
          install-size="0"
          version="0.0.0"
