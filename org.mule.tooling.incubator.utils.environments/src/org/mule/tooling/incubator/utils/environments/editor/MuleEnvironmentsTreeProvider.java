@@ -5,6 +5,8 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.incubator.utils.environments.model.PropertyKeyTreeNode;
 
 public class MuleEnvironmentsTreeProvider implements ITreeContentProvider, ILabelProvider {
@@ -36,7 +38,8 @@ public class MuleEnvironmentsTreeProvider implements ITreeContentProvider, ILabe
 
 	@Override
 	public Image getImage(Object element) {
-		return null;
+		
+		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 	}
 
 	@Override
