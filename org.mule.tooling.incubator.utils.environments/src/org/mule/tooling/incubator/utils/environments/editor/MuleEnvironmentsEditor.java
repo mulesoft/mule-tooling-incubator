@@ -2,11 +2,13 @@ package org.mule.tooling.incubator.utils.environments.editor;
 
 
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -106,10 +108,35 @@ public class MuleEnvironmentsEditor extends FormPage implements ISelectionChange
 	
 	public void refreshValues() {
 		treePart.setKeyModel(configuration.buildCombinedKeySet());
+		String selectedKey = treePart.getSelectedKey();
+		configsPart.setCurrentConfiguration(configuration.elementsForKey(selectedKey));
 	}
 
 	public void addEnvironment(String resultingKey) {
-		System.out.println("Called actually the method to add an environment");
+		try {
+			if (configuration.canAddEnvironments()) {
+				configuration.createNewEnvironment(resultingKey);
+				refreshValues();
+				setDirty(true);
+			} else {
+				MessageDialog md = new MessageDialog(
+				          Display.getDefault().getActiveShell(),
+						  "Cannot Create Environment", null, 
+					      "The current file name does not respond to an appropriate pattern, new environments cannot be added.",
+					      MessageDialog.INFORMATION,
+					      new String[] {"Ok"}, 0);
+				md.open();				
+			}
+		} catch (Exception ex) {
+			MessageDialog md = new MessageDialog(
+			          Display.getDefault().getActiveShell(),
+					  "Cannot Create Environment", null, 
+				      ex.getMessage(),
+				      MessageDialog.ERROR,
+				      new String[] {"Ok"}, 0);
+			
+			md.open();			
+		}
 	}
 	
 }

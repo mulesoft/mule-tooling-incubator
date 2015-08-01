@@ -9,10 +9,16 @@ import java.util.TreeMap;
 
 public class EnvironmentsConfiguration {
 	
+	private final String environmentsPrefix;
+	private final boolean malformed;
 	private HashMap<String, Properties> environmentsConfiguration;
+	private Set<String> newEnvironments;
 	
-	public EnvironmentsConfiguration() {
+	public EnvironmentsConfiguration(String environmentsPrefix, boolean malformed) {
+		this.environmentsPrefix = environmentsPrefix;
+		this.malformed = malformed;
 		environmentsConfiguration = new HashMap<String, Properties>();
+		newEnvironments = new HashSet<String>();
 	}
 	
 	public void addEnvironment(String name, Properties values) {
@@ -78,4 +84,36 @@ public class EnvironmentsConfiguration {
 		return environmentsConfiguration;
 	}
 	
+	public void createNewEnvironment(String suffix) {
+		if (malformed) {
+			return;
+		}
+		
+		String propsFileName = buildFileName(suffix);
+		
+		if (environmentsConfiguration.containsKey(propsFileName)) {
+			throw new IllegalStateException("The environment already has settings for the given suffix: " + suffix);
+		}
+		
+		Properties props = new Properties();
+		environmentsConfiguration.put(propsFileName, props);
+		newEnvironments.add(propsFileName);
+		
+	}
+	
+	private String buildFileName(String suffix) {
+		return environmentsPrefix + "-"+ suffix + ".properties";
+	}
+
+	public boolean canAddEnvironments() {
+		return !malformed;
+	}
+
+	public Set<String> getNewEnvironments() {
+		return newEnvironments;
+	}
+
+	public void clearNewEnvironments() {
+		newEnvironments.clear();
+	}
 }

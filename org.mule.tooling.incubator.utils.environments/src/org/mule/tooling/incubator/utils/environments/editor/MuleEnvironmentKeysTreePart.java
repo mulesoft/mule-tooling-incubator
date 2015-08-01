@@ -3,6 +3,7 @@ package org.mule.tooling.incubator.utils.environments.editor;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -42,6 +43,13 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		
 		createTree(panel);
 		
+		createPopupMenu();
+		
+		toolkit.paintBordersFor(panel);
+		section.setClient(panel);
+	}
+
+	private void createPopupMenu() {
 		Menu popupMenu = new Menu(keysViewer.getControl());
 		
 		MenuItem createKeyCommand = new MenuItem(popupMenu, SWT.NONE);
@@ -81,6 +89,7 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 				}
 				keyModel.storeKey(key);
 				keysViewer.refresh();
+				selectKey(key);
 			}
 			
 			@Override
@@ -89,9 +98,6 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		});
 		
 		keysViewer.getControl().setMenu(popupMenu);
-		
-		toolkit.paintBordersFor(panel);
-		section.setClient(panel);
 	}
 
 	private void createTree(Composite panel) {
@@ -111,6 +117,26 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		this.keyModel = keyModel;
 		keysViewer.setInput(keyModel);
 	}
+
+	public String getSelectedKey() {
+		TreeSelection selection = (TreeSelection) keysViewer.getSelection();
+		
+		if (selection.getFirstElement() == null) {
+			return "";
+		}
+		
+		PropertyKeyTreeNode node = (PropertyKeyTreeNode) selection.getFirstElement();		
+		return node.buildCompleteKey();
+	}
 	
+	public void selectKey(String key) {
+		PropertyKeyTreeNode node = keyModel.findItem(key);
+		if (node == null) {
+			System.out.println("Could not find key: " + key);
+			return;
+		}
+		
+		keysViewer.setSelection(new StructuredSelection(node));
+	}
 	
 }

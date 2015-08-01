@@ -97,6 +97,26 @@ public class PropertyKeyTreeNode {
 	public boolean isLeaf() {
 		return !children.isEmpty();
 	}
+	
+	public PropertyKeyTreeNode findItem(String key) {
+		if (StringUtils.isEmpty(key)) {
+			return null;
+		}
+		
+		if (!key.contains(".")) {
+			return children.get(key);
+		}
+		
+		int dotIndex = key.indexOf('.');
+		
+		String childKey = key.substring(0, dotIndex);
+		
+		if (children.containsKey(childKey)) {
+			return children.get(childKey).findItem(key.substring(dotIndex + 1));
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public int hashCode() {

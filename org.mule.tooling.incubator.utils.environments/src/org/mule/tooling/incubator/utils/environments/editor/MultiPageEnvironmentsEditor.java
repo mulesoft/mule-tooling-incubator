@@ -3,12 +3,15 @@ package org.mule.tooling.incubator.utils.environments.editor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -46,7 +49,7 @@ public class MultiPageEnvironmentsEditor extends FormEditor {
 		File[] files = dir.toFile().listFiles();
 
 		//this is the root node
-		envConfig = new EnvironmentsConfiguration();
+		envConfig = new EnvironmentsConfiguration(fileName, fileName.endsWith(".properties"));
 		
 		for(File props : files) {
 			if (props.getName().startsWith(fileName) && props.getName().endsWith(".properties")) {
@@ -95,13 +98,39 @@ public class MultiPageEnvironmentsEditor extends FormEditor {
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		try {
+			createNewFilesIfNeeded(monitor);
 			doSaveModel(monitor);
 			editor.setDirty(false);
 			editor.refreshValues();
 		} catch (Exception ex) {
-			//TODO - display dialog
+			MessageDialog md = new MessageDialog(
+			          Display.getDefault().getActiveShell(),
+					  "Error while saving files", null, 
+				      "Could not perform save, reason: " + ex.getMessage(),
+				      MessageDialog.ERROR,
+				      new String[] {"Ok"}, 0);
+			md.open();
+			
+			//TODO - LOG
+			ex.printStackTrace();
 		}
 		
+	}
+
+	private void createNewFilesIfNeeded(IProgressMonitor monitor) throws IOException {
+		
+		IFileEditorInput input = (IFileEditorInput) getEditorInput();
+		IPath dir = input.getFile().getLocation().removeLastSegments(1);
+		
+		for(String fn : envConfig.getNewEnvironments()) {
+			IPath ne = dir.append(fn);
+			File f = ne.toFile();
+			if (!f.createNewFile()) {
+				throw new IllegalStateException("Could not create additional environment file!");
+			}
+		}
+		//we have taken care of creating them
+		envConfig.clearNewEnvironments();
 	}
 
 	private void doSaveModel(IProgressMonitor monitor) throws Exception {
