@@ -3,9 +3,9 @@ package org.mule.tooling.incubator.utils.environments.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class EnvironmentsConfiguration {
 	
@@ -19,15 +19,21 @@ public class EnvironmentsConfiguration {
 		environmentsConfiguration.put(name, values);
 	}
 	
-	public List<EnvironmentSettingElement> elementsForKey(String key) {
-		ArrayList<EnvironmentSettingElement> ret = new ArrayList<EnvironmentSettingElement>(environmentsConfiguration.size());
+	public EnvironmentsSetting elementsForKey(String key) {
+		
+		TreeMap<String, String> values = new TreeMap<String, String>();
 		
 		for(String envName : environmentsConfiguration.keySet()) {
 			Properties props = environmentsConfiguration.get(envName);
-			ret.add(new EnvironmentSettingElement(key, props.getProperty(key, ""), envName));
+			
+			String value = props.getProperty(key, null);
+			if (value != null) {
+				values.put(envName, value);
+			}
+			
 		}
 		
-		return ret;
+		return new EnvironmentsSetting(key, !values.isEmpty(), values, new ArrayList<String>(environmentsConfiguration.keySet()));
 	}
 	
 	public PropertyKeyTreeNode buildCombinedKeySet() {
@@ -48,17 +54,24 @@ public class EnvironmentsConfiguration {
 		return node;
 	}
 
-	public void updateConfigParts(List<EnvironmentSettingElement> currentConfiguration) {
-		for(EnvironmentSettingElement elm : currentConfiguration) {
-			Properties p = environmentsConfiguration.get(elm.getEnvironment());
+	public void updateConfigParts(EnvironmentsSetting setting) {
+		
+
+		for(String envName : setting.getEnvironmentNames()) {
+			Properties p = environmentsConfiguration.get(envName);
 			if (p == null) {
-				System.out.println("Need to define what to do in this siutation");
-				return;
+				System.out.println("TODO - define what to do for new environment");
+				continue;
 			}
-			if (p.containsKey(elm.getKey())) {
-				p.setProperty(elm.getKey(), elm.getValue());
+			
+			if (setting.isPresent()) {
+				p.setProperty(setting.getKey(), setting.getSettings().get(envName));
+			} else {
+				p.remove(setting.getKey());
 			}
+			
 		}
+		
 	}
 
 	public HashMap<String, Properties> getEnvironmentsConfiguration() {

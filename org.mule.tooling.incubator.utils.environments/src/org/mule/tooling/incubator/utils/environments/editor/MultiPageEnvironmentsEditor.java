@@ -12,9 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.part.MultiPageEditorPart;
 import org.mule.tooling.incubator.utils.environments.model.EnvironmentsConfiguration;
-import org.mule.tooling.incubator.utils.environments.model.PropertyKeyTreeNode;
 
 
 public class MultiPageEnvironmentsEditor extends FormEditor {
