@@ -2,26 +2,26 @@ package org.mule.tooling.incubator.utils.environments.editor;
 
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -45,10 +45,20 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		
 		Composite panel = toolkit.createComposite(section);
 		
-		panel.setLayout(new FillLayout());
+		Composite searchBarPanel = toolkit.createComposite(panel);
+		Composite treePanel = toolkit.createComposite(panel);
 		
-		//createsearchBox(tb, toolkit);
-		createTree(panel);
+		GridLayoutFactory.swtDefaults().equalWidth(true).applyTo(panel);
+		panel.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		searchBarPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		treePanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		searchBarPanel.setLayout(new FillLayout());
+		treePanel.setLayout(new FillLayout());
+		
+		createToolbar(searchBarPanel, toolkit);
+		createTree(treePanel);
 		
 		createPopupMenu();
 		
@@ -56,16 +66,38 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		section.setClient(panel);
 	}
 
-	private void createsearchBox(Composite panel, FormToolkit toolkit) {
-		Text searchBox = toolkit.createText(panel, "", SWT.SEARCH);
-		searchBox.setMessage("Search for keys");
-		searchBox.addModifyListener(new ModifyListener() {
+	private void createToolbar(Composite panel, FormToolkit toolkit) {
+		ToolBar toolbar = new ToolBar(panel, SWT.HORIZONTAL | SWT.RIGHT);
+		
+		
+		ToolItem addKeyItem = new ToolItem(toolbar, SWT.PUSH);
+		addKeyItem.setImage(PlatformUI.getWorkbench().getSharedImages()
+				.getImage(ISharedImages.IMG_OBJ_ADD));
+		addKeyItem.setText("New Key");
+		addKeyItem.setToolTipText("Add new top-level key");
+		addKeyItem.addSelectionListener(new SelectionListener() {
 			
 			@Override
-			public void modifyText(ModifyEvent e) {
-				String keyPart = ((Text)e.getSource()).getText();
-				//try and select the given key
-				selectKey(keyPart);
+			public void widgetSelected(SelectionEvent e) {
+				AddKeyDialog dialog = new AddKeyDialog(Display.getDefault().getActiveShell());
+				int status = dialog.open();
+				if (status == AddKeyDialog.CANCEL) {
+					return;
+				}
+				
+				String resultingKey = dialog.getResultingKey();
+				
+				if (StringUtils.isEmpty(resultingKey)) {
+					return;
+				}
+				
+				keyModel.storeKey(resultingKey);
+				keysViewer.refresh();
+				selectKey(resultingKey);
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 		
@@ -123,7 +155,9 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 	}
 
 	private void createTree(Composite panel) {
-		keysViewer = new TreeViewer(panel);
+		
+		FilteredTree ft = new FilteredTree(panel, SWT.BORDER, new PatternFilter(), false);		
+		keysViewer = ft.getViewer();
 		MuleEnvironmentsTreeProvider environmentsProvider = new MuleEnvironmentsTreeProvider();
 		keysViewer.setContentProvider(environmentsProvider);
 		keysViewer.setLabelProvider(environmentsProvider);
