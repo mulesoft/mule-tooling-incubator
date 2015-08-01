@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-public class EnvironmentConfiguration {
+public class EnvironmentsConfiguration {
 	
 	private HashMap<String, Properties> environmentsConfiguration;
 	
-	public EnvironmentConfiguration() {
+	public EnvironmentsConfiguration() {
 		environmentsConfiguration = new HashMap<String, Properties>();
 	}
 	
@@ -19,12 +19,12 @@ public class EnvironmentConfiguration {
 		environmentsConfiguration.put(name, values);
 	}
 	
-	public List<EnvironmentConfigurationElement> elementsForKey(String key) {
-		ArrayList<EnvironmentConfigurationElement> ret = new ArrayList<EnvironmentConfigurationElement>(environmentsConfiguration.size());
+	public List<EnvironmentSettingElement> elementsForKey(String key) {
+		ArrayList<EnvironmentSettingElement> ret = new ArrayList<EnvironmentSettingElement>(environmentsConfiguration.size());
 		
 		for(String envName : environmentsConfiguration.keySet()) {
 			Properties props = environmentsConfiguration.get(envName);
-			ret.add(new EnvironmentConfigurationElement(key, props.getProperty(key, ""), envName));
+			ret.add(new EnvironmentSettingElement(key, props.getProperty(key, ""), envName));
 		}
 		
 		return ret;
@@ -48,8 +48,8 @@ public class EnvironmentConfiguration {
 		return node;
 	}
 
-	public void updateConfigParts(List<EnvironmentConfigurationElement> currentConfiguration) {
-		for(EnvironmentConfigurationElement elm : currentConfiguration) {
+	public void updateConfigParts(List<EnvironmentSettingElement> currentConfiguration) {
+		for(EnvironmentSettingElement elm : currentConfiguration) {
 			Properties p = environmentsConfiguration.get(elm.getEnvironment());
 			if (p == null) {
 				System.out.println("Need to define what to do in this siutation");

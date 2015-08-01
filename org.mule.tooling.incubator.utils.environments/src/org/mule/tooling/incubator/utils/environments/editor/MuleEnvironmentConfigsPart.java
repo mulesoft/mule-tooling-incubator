@@ -14,17 +14,17 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.mule.tooling.incubator.utils.environments.model.EnvironmentConfigurationElement;
+import org.mule.tooling.incubator.utils.environments.model.EnvironmentSettingElement;
 
 public class MuleEnvironmentConfigsPart extends SectionPart {
 	
 	private FormToolkit toolkit;
 	
-	private List<EnvironmentConfigurationElement> currentConfiguration;
+	private List<EnvironmentSettingElement> currentConfiguration;
 	private HashMap<String, Text> textsTable;
 	private MuleEnvironmentsEditor editor;
 	
-	public MuleEnvironmentConfigsPart(Composite parent, FormToolkit toolkit, List<EnvironmentConfigurationElement> initialConfiguration) {
+	public MuleEnvironmentConfigsPart(Composite parent, FormToolkit toolkit, List<EnvironmentSettingElement> initialConfiguration) {
 		super(parent, toolkit, Section.TITLE_BAR);
 		getSection().setText("Environment Configuration");		
 		this.toolkit = toolkit;
@@ -44,7 +44,7 @@ public class MuleEnvironmentConfigsPart extends SectionPart {
 		
 		textsTable = new HashMap<String, Text>();
 		
-		for(EnvironmentConfigurationElement elm : currentConfiguration) {
+		for(EnvironmentSettingElement elm : currentConfiguration) {
 			
 			Section sectionPanel = toolkit.createSection(globalPanel, Section.TITLE_BAR);
 			Composite sectionContent = toolkit.createComposite(sectionPanel);
@@ -69,7 +69,7 @@ public class MuleEnvironmentConfigsPart extends SectionPart {
 				
 				@Override
 				public void modifyText(ModifyEvent e) {
-					for(EnvironmentConfigurationElement config : currentConfiguration) {
+					for(EnvironmentSettingElement config : currentConfiguration) {
 						if (config.getEnvironment().equals(environment)) {
 							String originalValue = config.getValue();
 							String newValue = ((Text)e.getSource()).getText();
@@ -99,9 +99,9 @@ public class MuleEnvironmentConfigsPart extends SectionPart {
 		refresh();
 	}
 
-	public List<EnvironmentConfigurationElement> getCurrentConfiguration() {
+	public List<EnvironmentSettingElement> getCurrentConfiguration() {
 		
-		for(EnvironmentConfigurationElement elm : currentConfiguration) {
+		for(EnvironmentSettingElement elm : currentConfiguration) {
 			elm.setValue(textsTable.get(elm.getEnvironment()).getText());
 		}
 		
@@ -109,11 +109,11 @@ public class MuleEnvironmentConfigsPart extends SectionPart {
 	}
 
 	public void setCurrentConfiguration(
-			List<EnvironmentConfigurationElement> currentConfiguration) {
+			List<EnvironmentSettingElement> currentConfiguration) {
 
 		this.currentConfiguration = currentConfiguration;
 		
-		for(EnvironmentConfigurationElement config : currentConfiguration) {
+		for(EnvironmentSettingElement config : currentConfiguration) {
 			if (!textsTable.containsKey(config.getEnvironment())) {
 				//this is a different set of environments!!
 				System.out.println("Had to repaint!!");

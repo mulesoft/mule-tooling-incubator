@@ -12,7 +12,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.mule.tooling.incubator.utils.environments.model.EnvironmentConfiguration;
+import org.mule.tooling.incubator.utils.environments.model.EnvironmentsConfiguration;
 import org.mule.tooling.incubator.utils.environments.model.PropertyKeyTreeNode;
 import org.mule.tooling.ui.MuleImages;
 
@@ -21,14 +21,14 @@ public class MuleEnvironmentsEditor extends FormPage implements ISelectionChange
 	public static final String FORM_PAGE_ID = "org.mule.tooling.environments.environmentsPage";
 	
 	private final PropertyKeyTreeNode rootNode;
-	private final EnvironmentConfiguration configuration;
+	private final EnvironmentsConfiguration configuration;
 	
 	private MuleEnvironmentConfigsPart configsPart;
 	private MuleEnvironmentKeysTreePart treePart;
 	
 	private boolean dirty = false;
 	
-	public MuleEnvironmentsEditor(FormEditor editor, String title, EnvironmentConfiguration configuration) {
+	public MuleEnvironmentsEditor(FormEditor editor, String title, EnvironmentsConfiguration configuration) {
 		super(editor, FORM_PAGE_ID, title);
 		this.configuration = configuration; 
 		this.rootNode = configuration.buildCombinedKeySet();

@@ -1,16 +1,16 @@
 package org.mule.tooling.incubator.utils.environments.model;
 
-public class EnvironmentConfigurationElement {
+public class EnvironmentSettingElement {
 	
 	private String key;
 	private String value;
 	private String environment;
 	
-	public EnvironmentConfigurationElement() {
+	public EnvironmentSettingElement() {
 	}
 	
 	
-	public EnvironmentConfigurationElement(String key, String value, String environment) {
+	public EnvironmentSettingElement(String key, String value, String environment) {
 		super();
 		this.key = key;
 		this.value = value;

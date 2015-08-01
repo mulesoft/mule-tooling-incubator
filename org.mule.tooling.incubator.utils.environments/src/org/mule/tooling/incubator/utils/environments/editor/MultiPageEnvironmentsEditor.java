@@ -13,14 +13,14 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.part.MultiPageEditorPart;
-import org.mule.tooling.incubator.utils.environments.model.EnvironmentConfiguration;
+import org.mule.tooling.incubator.utils.environments.model.EnvironmentsConfiguration;
 import org.mule.tooling.incubator.utils.environments.model.PropertyKeyTreeNode;
 
 
 public class MultiPageEnvironmentsEditor extends FormEditor {
 	
 	
-	private EnvironmentConfiguration envConfig;
+	private EnvironmentsConfiguration envConfig;
 	
 	MuleEnvironmentsEditor editor;
 	
@@ -48,7 +48,7 @@ public class MultiPageEnvironmentsEditor extends FormEditor {
 		File[] files = dir.toFile().listFiles();
 
 		//this is the root node
-		envConfig = new EnvironmentConfiguration();
+		envConfig = new EnvironmentsConfiguration();
 		
 		for(File props : files) {
 			if (props.getName().startsWith(fileName) && props.getName().endsWith(".properties")) {
