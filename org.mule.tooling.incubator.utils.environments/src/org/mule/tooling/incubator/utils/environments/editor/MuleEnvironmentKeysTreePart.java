@@ -2,11 +2,15 @@ package org.mule.tooling.incubator.utils.environments.editor;
 
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -14,6 +18,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.SectionPart;
@@ -41,12 +47,28 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		
 		panel.setLayout(new FillLayout());
 		
+		//createsearchBox(tb, toolkit);
 		createTree(panel);
 		
 		createPopupMenu();
 		
 		toolkit.paintBordersFor(panel);
 		section.setClient(panel);
+	}
+
+	private void createsearchBox(Composite panel, FormToolkit toolkit) {
+		Text searchBox = toolkit.createText(panel, "", SWT.SEARCH);
+		searchBox.setMessage("Search for keys");
+		searchBox.addModifyListener(new ModifyListener() {
+			
+			@Override
+			public void modifyText(ModifyEvent e) {
+				String keyPart = ((Text)e.getSource()).getText();
+				//try and select the given key
+				selectKey(keyPart);
+			}
+		});
+		
 	}
 
 	private void createPopupMenu() {
@@ -96,7 +118,7 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		
+
 		keysViewer.getControl().setMenu(popupMenu);
 	}
 
@@ -132,7 +154,6 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 	public void selectKey(String key) {
 		PropertyKeyTreeNode node = keyModel.findItem(key);
 		if (node == null) {
-			System.out.println("Could not find key: " + key);
 			return;
 		}
 		
