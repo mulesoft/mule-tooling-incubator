@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Mule Environments Editor"
+            extensions="properties"
+            icon="icons/properties.png"
+            contributorClass="org.mule.tooling.incubator.utils.environments.editor.MultiPageEnvironmentsEditorContributor"
+            class="org.mule.tooling.incubator.utils.environments.editor.MultiPageEnvironmentsEditor"
+            id="org.mule.tooling.properties.editors.MultiPagePropertiesEditor">
+      </editor>
+   </extension>
+
+</plugin>
