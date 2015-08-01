@@ -104,4 +104,12 @@ public class MuleEnvironmentsEditor extends FormPage implements ISelectionChange
 		configuration.updateConfigParts(configsPart.getCurrentConfiguration());
 	}
 	
+	public void refreshValues() {
+		treePart.setKeyModel(configuration.buildCombinedKeySet());
+	}
+
+	public void addEnvironment(String resultingKey) {
+		System.out.println("Called actually the method to add an environment");
+	}
+	
 }

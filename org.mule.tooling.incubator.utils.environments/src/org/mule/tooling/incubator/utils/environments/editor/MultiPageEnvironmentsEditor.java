@@ -97,6 +97,7 @@ public class MultiPageEnvironmentsEditor extends FormEditor {
 		try {
 			doSaveModel(monitor);
 			editor.setDirty(false);
+			editor.refreshValues();
 		} catch (Exception ex) {
 			//TODO - display dialog
 		}
