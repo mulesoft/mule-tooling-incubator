@@ -78,7 +78,6 @@ public class MultiPageEnvironmentsEditor extends FormEditor implements IResource
 				watchedFiles.add(props);
 			}
 		}
-		
 	}
 
 	private String guessPrefix(String fileName) {
@@ -149,6 +148,7 @@ public class MultiPageEnvironmentsEditor extends FormEditor implements IResource
 			if (!f.createNewFile()) {
 				throw new IllegalStateException("Could not create additional environment file!");
 			}
+			watchedFiles.add(f);
 		}
 		//we have taken care of creating them
 		envConfig.clearNewEnvironments();
@@ -209,16 +209,28 @@ public class MultiPageEnvironmentsEditor extends FormEditor implements IResource
 		try {
 			event.getDelta().accept(visitor);
 			if (visitor.isFound() && !performingSave) {
-				System.out.println("Reload configuration");
-				builEnvironmentsModel();
-				refreshEditor();
+				
+				//refresh the display.
+				Display.getDefault().asyncExec(new RefreshProjectRunnable());
 			}
-		} catch (Exception e) {
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 		
 		
 	}
 	
+	private class RefreshProjectRunnable implements Runnable {
+		@Override
+		public void run() {
+			try {
+				System.out.println("Reload configuration");
+				builEnvironmentsModel();
+				refreshEditor();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
 	
 }

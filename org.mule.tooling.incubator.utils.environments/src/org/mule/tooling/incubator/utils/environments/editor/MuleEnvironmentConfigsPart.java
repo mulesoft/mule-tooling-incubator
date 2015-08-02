@@ -169,6 +169,13 @@ public class MuleEnvironmentConfigsPart extends SectionPart {
 		this.topSection.setText(buildTopSectionText());
 		this.configureSection.setSelection(currentConfiguration.isPresent());
 		
+		//easiest indicator that this needs to be repainted.
+		if (currentConfiguration.getEnvironmentNames().size() != textsTable.size()) {
+			System.out.println("Had to repaint!!");
+			repaintPanels();
+			return;
+		}
+		
 		for(String env : currentConfiguration.getEnvironmentNames()) {
 			if (!textsTable.containsKey(env)) {
 				//this is a different set of environments!!
