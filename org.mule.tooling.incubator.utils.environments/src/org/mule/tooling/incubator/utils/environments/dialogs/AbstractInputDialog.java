@@ -12,12 +12,11 @@ import org.eclipse.swt.widgets.Text;
 
 public abstract class AbstractInputDialog extends TitleAreaDialog {
 	
-	private Text keyText;
+	protected Text dialogInputText;
 	private String text;
 	
 	public AbstractInputDialog(Shell parentShell) {
 		super(parentShell);
-		
 	}
 
 	@Override
@@ -47,15 +46,15 @@ public abstract class AbstractInputDialog extends TitleAreaDialog {
 		labelDataFactory.applyTo(label);
 		
 		
-		keyText = new Text(controlArea, SWT.BORDER);		
-		textDataFactory.applyTo(keyText);
+		dialogInputText = new Text(controlArea, SWT.BORDER);		
+		textDataFactory.applyTo(dialogInputText);
 		
 		return parent;
 	}
 	
 	@Override
 	protected void okPressed() {
-		this.text = keyText.getText();
+		this.text = dialogInputText.getText();
 		super.okPressed();
 	}
 	

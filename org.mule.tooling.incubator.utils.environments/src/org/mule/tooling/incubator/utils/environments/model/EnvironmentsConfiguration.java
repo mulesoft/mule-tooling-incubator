@@ -13,12 +13,15 @@ public class EnvironmentsConfiguration {
 	private final boolean malformed;
 	private HashMap<String, Properties> environmentsConfiguration;
 	private Set<String> newEnvironments;
+	private Set<String> newKeys;
+	
 	
 	public EnvironmentsConfiguration(String environmentsPrefix, boolean malformed) {
 		this.environmentsPrefix = environmentsPrefix;
 		this.malformed = malformed;
 		environmentsConfiguration = new HashMap<String, Properties>();
 		newEnvironments = new HashSet<String>();
+		newKeys = new HashSet<String>();
 	}
 	
 	public void addEnvironment(String name, Properties values) {
@@ -39,12 +42,18 @@ public class EnvironmentsConfiguration {
 			
 		}
 		
-		return new EnvironmentsSetting(key, !values.isEmpty(), values, new ArrayList<String>(environmentsConfiguration.keySet()));
+		boolean present = !values.isEmpty();
+		
+		if (newKeys.contains(key)) {
+			present = true;
+		}
+		
+		return new EnvironmentsSetting(key, present, values, new ArrayList<String>(environmentsConfiguration.keySet()));
 	}
 	
 	public PropertyKeyTreeNode buildCombinedKeySet() {
 		
-		Set<String> buffer = new HashSet<String>();
+		Set<String> buffer = new HashSet<String>(newKeys);
 		
 		PropertyKeyTreeNode node = new PropertyKeyTreeNode(null, null);
 		
@@ -78,6 +87,11 @@ public class EnvironmentsConfiguration {
 			
 		}
 		
+		//if the key is new, it should get removed given now it has some history
+		if (newKeys.contains(setting.getKey())) {
+			newKeys.remove(setting.getKey());
+		}
+		
 	}
 
 	public HashMap<String, Properties> getEnvironmentsConfiguration() {
@@ -99,6 +113,12 @@ public class EnvironmentsConfiguration {
 				if (props.containsKey(dk)) {
 					props.remove(dk);
 				}
+			}
+		}
+		//the key might be a new key.
+		for (String dk : toDeleteKeys) {
+			if (newKeys.contains(dk)) {
+				newKeys.remove(dk);
 			}
 		}
 	}
@@ -138,5 +158,13 @@ public class EnvironmentsConfiguration {
 
 	public void clearNewEnvironments() {
 		newEnvironments.clear();
+	}
+	
+	public void createNewKey(String key) {
+		newKeys.add(key);
+	}
+	
+	public void clearNewKeys() {
+		newKeys.clear();
 	}
 }

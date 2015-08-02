@@ -6,6 +6,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -81,31 +82,7 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 				.getImage(ISharedImages.IMG_OBJ_ADD));
 		addKeyItem.setText("New Key");
 		addKeyItem.setToolTipText("Add new top-level key");
-		addKeyItem.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				AddKeyDialog dialog = new AddKeyDialog(Display.getDefault().getActiveShell());
-				int status = dialog.open();
-				if (status == AddKeyDialog.CANCEL) {
-					return;
-				}
-				
-				String resultingKey = dialog.getResultingKey();
-				
-				if (StringUtils.isEmpty(resultingKey)) {
-					return;
-				}
-				
-				keyModel.storeKey(resultingKey);
-				keysViewer.refresh();
-				selectKey(resultingKey);
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
+		addKeyItem.addSelectionListener(new AddNodeSelectionListener());
 		
 		deleteKeyItem = new ToolItem(toolbar, SWT.PUSH);
 		deleteKeyItem.setImage(PlatformUI.getWorkbench().getSharedImages()
@@ -124,45 +101,7 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		createKeyCommand.setImage(PlatformUI.getWorkbench().getSharedImages()
 				.getImage(ISharedImages.IMG_OBJ_ADD));
 		
-		createKeyCommand.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				TreeSelection selection = (TreeSelection) keysViewer.getSelection();
-				
-				String key = null;
-				
-				AddKeyDialog dialog = new AddKeyDialog(Display.getDefault().getActiveShell());
-				int status = dialog.open();
-				if (status == AddKeyDialog.CANCEL) {
-					return;
-				}
-				
-				String resultingKey = dialog.getResultingKey();
-				
-				if (StringUtils.isEmpty(resultingKey)) {
-					//this should not happen
-					return;
-				}
-				
-				if (selection.getFirstElement() == null) {
-					System.out.println("Completely new key");
-					key = resultingKey;
-				} else {
-					System.out.println("Partially specified key");
-					PropertyKeyTreeNode node = (PropertyKeyTreeNode) selection.getFirstElement();
-					System.out.println(node.buildCompleteKey());
-					key = node.buildCompleteKey() + "." + resultingKey;
-				}
-				keyModel.storeKey(key);
-				keysViewer.refresh();
-				selectKey(key);
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
+		createKeyCommand.addSelectionListener(new AddNodeSelectionListener());
 		
 		MenuItem deleteKeyCommand = new MenuItem(popupMenu, SWT.NONE);
 		deleteKeyCommand.setText("Remove Key");
@@ -175,7 +114,7 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 
 	private void createTree(Composite panel) {
 		
-		FilteredTree ft = new FilteredTree(panel, SWT.BORDER, new PatternFilter(), true);		
+		FilteredTree ft = new FilteredTree(panel, SWT.BORDER, new PropertyKeyFilter(), true);		
 		keysViewer = ft.getViewer();
 		MuleEnvironmentsTreeProvider environmentsProvider = new MuleEnvironmentsTreeProvider();
 		keysViewer.setContentProvider(environmentsProvider);
@@ -213,6 +152,11 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		keysViewer.setSelection(new StructuredSelection(node));
 	}
 	
+	/**
+	 * Listener for deleting a particular node or set of nodes.
+	 * @author juancavallotti
+	 *
+	 */
 	private class DeleteNodeSelectionListener implements SelectionListener {
 
 		@Override
@@ -234,6 +178,57 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 			
 		}
 		
+	}
+	
+	private class AddNodeSelectionListener implements SelectionListener {
+
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			TreeSelection selection = (TreeSelection) keysViewer.getSelection();
+			
+			String prefix = null;
+			
+			if (selection.getFirstElement() != null) {
+				PropertyKeyTreeNode node = (PropertyKeyTreeNode) selection.getFirstElement();
+				prefix = node.buildCompleteKey();
+			}
+			
+			AddKeyDialog dialog = new AddKeyDialog(Display.getDefault().getActiveShell(), prefix);
+			int status = dialog.open();
+			if (status == AddKeyDialog.CANCEL) {
+				return;
+			}
+			
+			String resultingKey = dialog.getResultingKey();
+			
+			if (StringUtils.isEmpty(resultingKey)) {
+				//this should not happen
+				return;
+			}
+			
+			//create the key
+			configuration.createNewKey(resultingKey);
+			
+			//update the system
+			setKeyModel(configuration.buildCombinedKeySet());
+			selectKey(resultingKey);
+			
+			editor.setDirty(true);
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent e) {
+			
+		}
+		
+	}
+	
+	private static class PropertyKeyFilter extends PatternFilter {
+		@Override
+		protected boolean isLeafMatch(Viewer viewer, Object element) {
+			PropertyKeyTreeNode node = (PropertyKeyTreeNode) element;
+			return wordMatches(node.buildCompleteKey());
+		}
 	}
 	
 }
