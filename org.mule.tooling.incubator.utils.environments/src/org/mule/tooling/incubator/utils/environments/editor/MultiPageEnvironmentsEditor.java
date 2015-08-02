@@ -4,10 +4,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -16,14 +23,23 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.mule.tooling.incubator.utils.environments.model.EnvironmentsConfiguration;
+import org.mule.tooling.incubator.utils.environments.util.FileListResourceDeltaVisitor;
 
 
-public class MultiPageEnvironmentsEditor extends FormEditor {
+public class MultiPageEnvironmentsEditor extends FormEditor implements IResourceChangeListener {
 	
 	
 	private EnvironmentsConfiguration envConfig;
 	
-	MuleEnvironmentsEditor editor;
+	private MuleEnvironmentsEditor editor;
+	
+	private Set<File> watchedFiles;
+	
+	private boolean performingSave;
+	
+	public MultiPageEnvironmentsEditor() {
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+	}
 	
 	@Override
 	protected void addPages() {
@@ -47,17 +63,19 @@ public class MultiPageEnvironmentsEditor extends FormEditor {
 		IPath dir = input.getFile().getLocation().removeLastSegments(1);
 		
 		File[] files = dir.toFile().listFiles();
-
+		
+		watchedFiles = new HashSet<File>();
+		
 		//this is the root node
 		envConfig = new EnvironmentsConfiguration(fileName, fileName.endsWith(".properties"));
 		
 		for(File props : files) {
 			if (props.getName().startsWith(fileName) && props.getName().endsWith(".properties")) {
 				Properties contents = new Properties();
-				
 				FileInputStream fis = new FileInputStream(props);
 				contents.load(fis);
 				envConfig.addEnvironment(props.getName(), contents);
+				watchedFiles.add(props);
 			}
 		}
 		
@@ -81,7 +99,7 @@ public class MultiPageEnvironmentsEditor extends FormEditor {
 	}
 
 	private void addAdditionalPages() {
-
+		
 	}
 
 	private void createEnvironmentsPage() {
@@ -98,6 +116,7 @@ public class MultiPageEnvironmentsEditor extends FormEditor {
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		try {
+			performingSave = true;
 			createNewFilesIfNeeded(monitor);
 			doSaveModel(monitor);
 			editor.setDirty(false);
@@ -113,6 +132,8 @@ public class MultiPageEnvironmentsEditor extends FormEditor {
 			
 			//TODO - LOG
 			ex.printStackTrace();
+		} finally {
+			performingSave = false;
 		}
 		
 	}
@@ -158,7 +179,11 @@ public class MultiPageEnvironmentsEditor extends FormEditor {
 		
 		input.getFile().getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 	}
-
+	
+	private void refreshEditor() {
+		editor.refreshConfiguration(envConfig);
+	}
+	
 	@Override
 	public void doSaveAs() {
 		// TODO Auto-generated method stub
@@ -169,5 +194,31 @@ public class MultiPageEnvironmentsEditor extends FormEditor {
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
+	
+	@Override
+	public void dispose() {
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		super.dispose();
+	}
 
+	@Override
+	public void resourceChanged(IResourceChangeEvent event) {
+
+		FileListResourceDeltaVisitor visitor = new FileListResourceDeltaVisitor(watchedFiles);
+		
+		try {
+			event.getDelta().accept(visitor);
+			if (visitor.isFound() && !performingSave) {
+				System.out.println("Reload configuration");
+				builEnvironmentsModel();
+				refreshEditor();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	
 }

@@ -22,7 +22,7 @@ public class MuleEnvironmentsEditor extends FormPage implements ISelectionChange
 	
 	public static final String FORM_PAGE_ID = "org.mule.tooling.environments.environmentsPage";
 	
-	private final EnvironmentsConfiguration configuration;
+	private EnvironmentsConfiguration configuration;
 	
 	private MuleEnvironmentConfigsPart configsPart;
 	private MuleEnvironmentKeysTreePart treePart;
@@ -135,6 +135,15 @@ public class MuleEnvironmentsEditor extends FormPage implements ISelectionChange
 			
 			md.open();			
 		}
+	}
+	
+	public void refreshConfiguration(EnvironmentsConfiguration config) {
+
+		this.configuration = config;
+		refreshValues();
+		
+		//once the configuration is reloaded, we're no longer dirty
+		setDirty(false);
 	}
 	
 }
