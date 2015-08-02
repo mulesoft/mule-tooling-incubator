@@ -7,21 +7,23 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.core.resources.IProject;
+
 public class EnvironmentsConfiguration {
 	
 	private final String environmentsPrefix;
 	private final boolean malformed;
 	private HashMap<String, Properties> environmentsConfiguration;
 	private Set<String> newEnvironments;
-	private Set<String> newKeys;
+	private final IProject project;
 	
 	
-	public EnvironmentsConfiguration(String environmentsPrefix, boolean malformed) {
+	public EnvironmentsConfiguration(String environmentsPrefix, boolean malformed, IProject project) {
 		this.environmentsPrefix = environmentsPrefix;
 		this.malformed = malformed;
 		environmentsConfiguration = new HashMap<String, Properties>();
 		newEnvironments = new HashSet<String>();
-		newKeys = new HashSet<String>();
+		this.project = project;
 	}
 	
 	public void addEnvironment(String name, Properties values) {
@@ -44,16 +46,12 @@ public class EnvironmentsConfiguration {
 		
 		boolean present = !values.isEmpty();
 		
-		if (newKeys.contains(key)) {
-			present = true;
-		}
-		
 		return new EnvironmentsSetting(key, present, values, new ArrayList<String>(environmentsConfiguration.keySet()));
 	}
 	
 	public PropertyKeyTreeNode buildCombinedKeySet() {
 		
-		Set<String> buffer = new HashSet<String>(newKeys);
+		Set<String> buffer = new HashSet<String>();
 		
 		PropertyKeyTreeNode node = new PropertyKeyTreeNode(null, null);
 		
@@ -87,11 +85,6 @@ public class EnvironmentsConfiguration {
 			
 		}
 		
-		//if the key is new, it should get removed given now it has some history
-		if (newKeys.contains(setting.getKey())) {
-			newKeys.remove(setting.getKey());
-		}
-		
 	}
 
 	public HashMap<String, Properties> getEnvironmentsConfiguration() {
@@ -113,12 +106,6 @@ public class EnvironmentsConfiguration {
 				if (props.containsKey(dk)) {
 					props.remove(dk);
 				}
-			}
-		}
-		//the key might be a new key.
-		for (String dk : toDeleteKeys) {
-			if (newKeys.contains(dk)) {
-				newKeys.remove(dk);
 			}
 		}
 	}
@@ -160,11 +147,31 @@ public class EnvironmentsConfiguration {
 		newEnvironments.clear();
 	}
 	
-	public void createNewKey(String key) {
-		newKeys.add(key);
+	public void createNewKey(String key, String defaultValue) {
+		EnvironmentsSetting setting = elementsForKey(key);
+		
+		if (setting.isPresent()) {
+			System.err.println("Setting already exists, will not override");
+			return;
+		}
+		
+		setting.setPresent(true);
+		
+		for(String envName : setting.getEnvironmentNames()) {
+			setting.setForEnvironment(envName, defaultValue);
+		}
+		
+		updateConfigParts(setting);
 	}
 	
-	public void clearNewKeys() {
-		newKeys.clear();
+	public void createNewKey(String key) {
+		createNewKey(key, "");
 	}
+	
+
+
+	public IProject getProject() {
+		return project;
+	}
+	
 }

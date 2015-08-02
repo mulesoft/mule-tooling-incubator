@@ -66,7 +66,7 @@ public class MultiPageEnvironmentsEditor extends FormEditor implements IResource
 		watchedFiles = new HashSet<File>();
 		
 		//this is the root node
-		envConfig = new EnvironmentsConfiguration(fileName, fileName.endsWith(".properties"));
+		envConfig = new EnvironmentsConfiguration(fileName, fileName.endsWith(".properties"), input.getFile().getProject());
 		
 		for(File props : files) {
 			if (props.getName().startsWith(fileName) && props.getName().endsWith(".properties")) {

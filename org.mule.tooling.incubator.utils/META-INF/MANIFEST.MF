@@ -16,6 +16,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text,
  org.eclipse.ui.editors,
  org.mule.tooling.incubator.utils.properties,
+ org.mule.tooling.incubator.utils.environments,
  org.eclipse.ui.workbench,
  org.eclipse.ui.ide
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

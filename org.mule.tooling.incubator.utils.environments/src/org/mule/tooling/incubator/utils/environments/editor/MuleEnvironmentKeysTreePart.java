@@ -1,5 +1,7 @@
 package org.mule.tooling.incubator.utils.environments.editor;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -26,9 +28,12 @@ import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.mule.tooling.incubator.utils.environments.api.EnvironmentsEditorToolbarExtension;
+import org.mule.tooling.incubator.utils.environments.api.IEnvironmentsEditorContext;
 import org.mule.tooling.incubator.utils.environments.dialogs.AddKeyDialog;
 import org.mule.tooling.incubator.utils.environments.model.EnvironmentsConfiguration;
 import org.mule.tooling.incubator.utils.environments.model.PropertyKeyTreeNode;
+import org.mule.tooling.incubator.utils.environments.utils.EnvironmentEditorUtils;
 
 public class MuleEnvironmentKeysTreePart extends SectionPart {
 	
@@ -90,6 +95,13 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		deleteKeyItem.setText("Delete Key");
 		deleteKeyItem.setToolTipText("Delete Selected Key");
 		deleteKeyItem.addSelectionListener(new DeleteNodeSelectionListener());
+		
+		//execute extension points
+		List<EnvironmentsEditorToolbarExtension> exts = EnvironmentEditorUtils.loadInternalToolbarExtensions();
+		PartEnvironmentsEditorContext context = new PartEnvironmentsEditorContext();
+		for(EnvironmentsEditorToolbarExtension ext : exts) {
+			ext.performCustomizeToolbar(toolbar, context);
+		}
 		
 	}
 
@@ -219,6 +231,25 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			
+		}
+		
+	}
+	
+	private class PartEnvironmentsEditorContext implements IEnvironmentsEditorContext {
+
+		@Override
+		public void setDirty(boolean dirty) {
+			editor.setDirty(dirty);
+		}
+
+		@Override
+		public void refreshUi() {
+			setKeyModel(configuration.buildCombinedKeySet());
+		}
+
+		@Override
+		public EnvironmentsConfiguration getCurrentConfiguration() {
+			return configuration;
 		}
 		
 	}

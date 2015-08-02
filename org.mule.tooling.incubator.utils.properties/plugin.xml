@@ -4,7 +4,7 @@
    <extension-point id="editortoolbar" name="EditorToolbar" schema="schema/editortoolbar.exsd"/>
    <extension-point id="keycompletion" name="Key Completions" schema="schema/keycompletion.exsd"/>
    
-   <extension
+   <!--extension
          point="org.eclipse.ui.editors">
       <editor
             name="Mule Properties Editor"
@@ -14,6 +14,6 @@
             class="org.mule.tooling.properties.editors.MultiPagePropertiesEditor"
             id="org.mule.tooling.properties.editors.MultiPagePropertiesEditor">
       </editor>
-   </extension>
+   </extension -->
 
 </plugin>

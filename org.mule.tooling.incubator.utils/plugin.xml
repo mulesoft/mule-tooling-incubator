@@ -65,5 +65,11 @@
       <completionContributor
             class="org.mule.tooling.incubator.utils.placeholder.PropertyKeysContributor">
       </completionContributor>
+   </extension>
+   <extension
+         point="org.mule.tooling.incubator.utils.environments.internalToolbar">
+      <InternalToolbarExtension
+            class="org.mule.tooling.incubator.utils.placeholder.EnvironmentEditorToolbarCustomizer">
+      </InternalToolbarExtension>
    </extension> 
 </plugin>
