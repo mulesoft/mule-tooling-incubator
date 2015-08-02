@@ -1,6 +1,5 @@
 package org.mule.tooling.incubator.utils.environments.editor;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -12,6 +11,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -26,6 +26,7 @@ import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.mule.tooling.incubator.utils.environments.dialogs.AddKeyDialog;
+import org.mule.tooling.incubator.utils.environments.model.EnvironmentsConfiguration;
 import org.mule.tooling.incubator.utils.environments.model.PropertyKeyTreeNode;
 
 public class MuleEnvironmentKeysTreePart extends SectionPart {
@@ -33,10 +34,15 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 	private PropertyKeyTreeNode keyModel;
 	
 	private TreeViewer keysViewer;
+	private ToolItem deleteKeyItem;
+	private EnvironmentsConfiguration configuration;
+	private MuleEnvironmentsEditor editor;
 	
-	public MuleEnvironmentKeysTreePart(Composite parent, FormToolkit toolkit, PropertyKeyTreeNode keyModel) {
+	public MuleEnvironmentKeysTreePart(Composite parent, FormToolkit toolkit, EnvironmentsConfiguration configuration, MuleEnvironmentsEditor editor) {
 		super(parent, toolkit, Section.TITLE_BAR);
-		this.keyModel = keyModel;
+		this.keyModel = configuration.buildCombinedKeySet();
+		this.configuration = configuration;
+		this.editor = editor;
 		configurePanel(getSection(), toolkit);
 	}
 
@@ -45,19 +51,19 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		
 		Composite panel = toolkit.createComposite(section);
 		
-		Composite searchBarPanel = toolkit.createComposite(panel);
+		Composite toolBarPanel = toolkit.createComposite(panel);
 		Composite treePanel = toolkit.createComposite(panel);
 		
 		GridLayoutFactory.swtDefaults().equalWidth(true).applyTo(panel);
 		panel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		searchBarPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		toolBarPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		treePanel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		searchBarPanel.setLayout(new FillLayout());
+		toolBarPanel.setLayout(new RowLayout());
 		treePanel.setLayout(new FillLayout());
 		
-		createToolbar(searchBarPanel, toolkit);
+		createToolbar(toolBarPanel, toolkit);
 		createTree(treePanel);
 		
 		createPopupMenu();
@@ -100,6 +106,13 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		
+		deleteKeyItem = new ToolItem(toolbar, SWT.PUSH);
+		deleteKeyItem.setImage(PlatformUI.getWorkbench().getSharedImages()
+				.getImage(ISharedImages.IMG_ETOOL_DELETE));
+		deleteKeyItem.setText("Delete Key");
+		deleteKeyItem.setToolTipText("Delete Selected Key");
+		deleteKeyItem.addSelectionListener(new DeleteNodeSelectionListener());
 		
 	}
 
@@ -150,13 +163,19 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-
+		
+		MenuItem deleteKeyCommand = new MenuItem(popupMenu, SWT.NONE);
+		deleteKeyCommand.setText("Remove Key");
+		deleteKeyCommand.setImage(PlatformUI.getWorkbench().getSharedImages()
+				.getImage(ISharedImages.IMG_ETOOL_DELETE));
+		deleteKeyCommand.addSelectionListener(new DeleteNodeSelectionListener());
+		
 		keysViewer.getControl().setMenu(popupMenu);
 	}
 
 	private void createTree(Composite panel) {
 		
-		FilteredTree ft = new FilteredTree(panel, SWT.BORDER, new PatternFilter(), false);		
+		FilteredTree ft = new FilteredTree(panel, SWT.BORDER, new PatternFilter(), true);		
 		keysViewer = ft.getViewer();
 		MuleEnvironmentsTreeProvider environmentsProvider = new MuleEnvironmentsTreeProvider();
 		keysViewer.setContentProvider(environmentsProvider);
@@ -192,6 +211,29 @@ public class MuleEnvironmentKeysTreePart extends SectionPart {
 		}
 		
 		keysViewer.setSelection(new StructuredSelection(node));
+	}
+	
+	private class DeleteNodeSelectionListener implements SelectionListener {
+
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			TreeSelection selection = (TreeSelection) keysViewer.getSelection();
+			if (selection.getFirstElement() == null) {
+				return; //no node selected
+			}
+			
+			PropertyKeyTreeNode node = (PropertyKeyTreeNode) selection.getFirstElement();
+			configuration.deleteKeys(node);
+			setKeyModel(configuration.buildCombinedKeySet());
+			keysViewer.refresh();
+			editor.setDirty(true);
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent e) {
+			
+		}
+		
 	}
 	
 }

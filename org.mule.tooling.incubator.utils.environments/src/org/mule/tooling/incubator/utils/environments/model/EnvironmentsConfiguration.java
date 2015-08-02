@@ -84,6 +84,29 @@ public class EnvironmentsConfiguration {
 		return environmentsConfiguration;
 	}
 	
+	/**
+	 * Deletes a given key and children keys
+	 * @param prefix
+	 */
+	public void deleteKeys(PropertyKeyTreeNode key) {
+		
+		//generate the expansion of the keys
+		Set<String> toDeleteKeys = key.collectKeys(new HashSet<String>());
+		
+		
+		for(Properties props : environmentsConfiguration.values()) {
+			for(String dk : toDeleteKeys) {
+				if (props.containsKey(dk)) {
+					props.remove(dk);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Create a new environment in this configuration and will be saved in a new file.
+	 * @param suffix
+	 */
 	public void createNewEnvironment(String suffix) {
 		if (malformed) {
 			return;

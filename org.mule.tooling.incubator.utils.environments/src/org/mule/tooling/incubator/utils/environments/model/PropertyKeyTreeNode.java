@@ -1,6 +1,7 @@
 package org.mule.tooling.incubator.utils.environments.model;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
@@ -149,7 +150,26 @@ public class PropertyKeyTreeNode {
 			return false;
 		return true;
 	}
+	
+	/**
+	 * Collects into the target set my key from the root and my children's keys.
+	 * @param targetSet the set where to place the keys
+	 * @return the exact same set provided as input, for convenience.
+	 */
+	public Set<String> collectKeys(Set<String> targetSet) {
+		
+		String mykey = buildCompleteKey();
+		
+		targetSet.add(mykey);
+		
+		for(PropertyKeyTreeNode node: children.values()) {
+			node.collectKeys(targetSet);
+		}
+		
+		return targetSet;
+	}
 
+	
 
 	
 }

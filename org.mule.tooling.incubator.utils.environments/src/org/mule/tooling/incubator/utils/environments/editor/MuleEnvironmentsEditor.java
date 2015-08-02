@@ -22,7 +22,6 @@ public class MuleEnvironmentsEditor extends FormPage implements ISelectionChange
 	
 	public static final String FORM_PAGE_ID = "org.mule.tooling.environments.environmentsPage";
 	
-	private final PropertyKeyTreeNode rootNode;
 	private final EnvironmentsConfiguration configuration;
 	
 	private MuleEnvironmentConfigsPart configsPart;
@@ -32,8 +31,7 @@ public class MuleEnvironmentsEditor extends FormPage implements ISelectionChange
 	
 	public MuleEnvironmentsEditor(FormEditor editor, String title, EnvironmentsConfiguration configuration) {
 		super(editor, FORM_PAGE_ID, title);
-		this.configuration = configuration; 
-		this.rootNode = configuration.buildCombinedKeySet();
+		this.configuration = configuration;
 	}
 
 	@Override
@@ -54,7 +52,7 @@ public class MuleEnvironmentsEditor extends FormPage implements ISelectionChange
 		form.getBody().setLayout(layout);
 		
 		//add a tree view.
-		treePart = new MuleEnvironmentKeysTreePart(form.getBody(), toolkit, rootNode);
+		treePart = new MuleEnvironmentKeysTreePart(form.getBody(), toolkit, configuration, this);
 		configsPart = new MuleEnvironmentConfigsPart(form.getBody(), toolkit, configuration.elementsForKey(""));
 		
 		treePart.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
