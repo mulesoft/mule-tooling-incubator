@@ -18,3 +18,5 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.ui.forms,
  org.mule.tooling.ui,
  org.apache.commons.lang
+Export-Package: org.mule.tooling.incubator.utils.environments.api,
+ org.mule.tooling.incubator.utils.environments.model
