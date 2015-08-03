@@ -14,6 +14,7 @@ public abstract class AbstractInputDialog extends TitleAreaDialog {
 	
 	protected Text dialogInputText;
 	private String text;
+	protected Composite controlArea;
 	
 	public AbstractInputDialog(Shell parentShell) {
 		super(parentShell);
@@ -26,7 +27,7 @@ public abstract class AbstractInputDialog extends TitleAreaDialog {
 		
 		//draw the dialog
 		
-		Composite controlArea = new Composite(parent, SWT.NONE);
+		controlArea = new Composite(parent, SWT.NONE);
 		
 		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(controlArea);
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).applyTo(controlArea);
@@ -49,6 +50,8 @@ public abstract class AbstractInputDialog extends TitleAreaDialog {
 		dialogInputText = new Text(controlArea, SWT.BORDER);		
 		textDataFactory.applyTo(dialogInputText);
 		
+		addAdditionalFields(controlArea, labelDataFactory, textDataFactory);
+		
 		return parent;
 	}
 	
@@ -60,6 +63,10 @@ public abstract class AbstractInputDialog extends TitleAreaDialog {
 	
 	public String getResultingKey() {
 		return text;
+	}
+	
+	protected void addAdditionalFields(Composite controlArea, GridDataFactory labelDataFactory, GridDataFactory fieldDataFactory) {
+		//NO OP but we don't want users to force implementing it.
 	}
 	
 	protected abstract String getInputLabel();

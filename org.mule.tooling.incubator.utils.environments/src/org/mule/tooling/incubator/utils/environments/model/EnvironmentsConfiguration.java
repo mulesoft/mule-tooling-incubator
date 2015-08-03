@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IProject;
 
 public class EnvironmentsConfiguration {
@@ -114,7 +115,7 @@ public class EnvironmentsConfiguration {
 	 * Create a new environment in this configuration and will be saved in a new file.
 	 * @param suffix
 	 */
-	public void createNewEnvironment(String suffix) {
+	public void createNewEnvironment(String suffix, String copyFromEnv) {
 		if (malformed) {
 			return;
 		}
@@ -126,6 +127,12 @@ public class EnvironmentsConfiguration {
 		}
 		
 		Properties props = new Properties();
+		
+		if (!StringUtils.isEmpty(copyFromEnv) && environmentsConfiguration.containsKey(copyFromEnv)) {
+			Properties sourceEnv = environmentsConfiguration.get(copyFromEnv);
+			props.putAll(sourceEnv);
+		}
+		
 		environmentsConfiguration.put(propsFileName, props);
 		newEnvironments.add(propsFileName);
 		

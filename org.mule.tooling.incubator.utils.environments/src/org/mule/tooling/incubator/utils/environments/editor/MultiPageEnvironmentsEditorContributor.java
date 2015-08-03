@@ -5,6 +5,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.mule.tooling.incubator.utils.environments.actions.AddEnvironmentAction;
+import org.mule.tooling.incubator.utils.environments.model.EnvironmentsConfiguration;
 
 public class MultiPageEnvironmentsEditorContributor extends
 		MultiPageEditorActionBarContributor {
@@ -20,6 +21,20 @@ public class MultiPageEnvironmentsEditorContributor extends
 			public MuleEnvironmentsEditor getMuleEnvironmentsEditor() {
 				return getEnvironmentsEditor();
 			}
+
+			@Override
+			public EnvironmentsConfiguration getEditorModel() {
+				
+				MuleEnvironmentsEditor editor = getEnvironmentsEditor();
+				
+				if(editor == null) {
+					return null;
+				}
+				
+				return editor.getConfiguration();
+			}
+			
+			
 		});		
 	}
 	

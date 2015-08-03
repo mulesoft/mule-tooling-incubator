@@ -110,10 +110,10 @@ public class MuleEnvironmentsEditor extends FormPage implements ISelectionChange
 		configsPart.setCurrentConfiguration(configuration.elementsForKey(selectedKey));
 	}
 
-	public void addEnvironment(String resultingKey) {
+	public void addEnvironment(String environmentName, String copyFromEnv) {
 		try {
 			if (configuration.canAddEnvironments()) {
-				configuration.createNewEnvironment(resultingKey);
+				configuration.createNewEnvironment(environmentName, copyFromEnv);
 				refreshValues();
 				setDirty(true);
 			} else {
@@ -144,6 +144,10 @@ public class MuleEnvironmentsEditor extends FormPage implements ISelectionChange
 		
 		//once the configuration is reloaded, we're no longer dirty
 		setDirty(false);
+	}
+
+	public EnvironmentsConfiguration getConfiguration() {
+		return configuration;
 	}
 	
 }
