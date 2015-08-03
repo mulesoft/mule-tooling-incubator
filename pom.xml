@@ -30,6 +30,8 @@
         <module>org.mule.tooling.incubator.replay.extension</module>
         <module>org.mule.tooling.incubator.maven.ui.contribution</module>
         <module>org.mule.tooling.incubator.maven.extension</module>
+        <module>org.mule.tooling.incubator.utils.properties</module>
+        <module>org.mule.tooling.incubator.utils.environments</module>
         <module>org.mule.tooling.incubator.utils</module>
         <module>org.mule.tooling.incubator.utils.extension</module>
         <module>org.mule.tooling.incubator.updatesite</module>

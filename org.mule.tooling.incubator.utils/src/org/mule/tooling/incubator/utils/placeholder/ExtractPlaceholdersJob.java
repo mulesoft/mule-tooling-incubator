@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentInformationMapping;
 import org.eclipse.jface.text.IRegion;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.model.IMuleProject;

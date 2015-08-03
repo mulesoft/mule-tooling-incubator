@@ -51,5 +51,25 @@
             class="org.mule.tooling.incubator.utils.placeholder.PlaceholderExtractorHandler"
             commandId="org.mule.tooling.incubator.utils.placeholder.PlaceholderExtractorHandler">
       </handler>
+   </extension>
+   <extension
+         point="org.mule.tooling.incubator.utils.properties.editortoolbar">
+      <button
+            class="org.mule.tooling.incubator.utils.placeholder.RefreshPropertiesAction"
+            text="Update from Project"
+            tooltip="Update this properties file with properties found in the project.">
+      </button>
+   </extension>
+   <extension
+         point="org.mule.tooling.incubator.utils.properties.keycompletion">
+      <completionContributor
+            class="org.mule.tooling.incubator.utils.placeholder.PropertyKeysContributor">
+      </completionContributor>
+   </extension>
+   <extension
+         point="org.mule.tooling.incubator.utils.environments.internalToolbar">
+      <InternalToolbarExtension
+            class="org.mule.tooling.incubator.utils.placeholder.EnvironmentEditorToolbarCustomizer">
+      </InternalToolbarExtension>
    </extension> 
 </plugin>
