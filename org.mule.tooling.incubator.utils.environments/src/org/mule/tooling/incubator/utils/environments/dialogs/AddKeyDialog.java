@@ -23,6 +23,7 @@ public class AddKeyDialog extends AbstractInputDialog {
 		
 		if (keyPrefix != null) {
 			dialogInputText.setText(keyPrefix + ".");
+			dialogInputText.setSelection(dialogInputText.getText().length());
 		}
 		
 		return ret;
