@@ -13,6 +13,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
@@ -29,6 +30,7 @@ public class MuleEnvironmentConfigsPart extends SectionPart {
 	private MuleEnvironmentsEditor editor;
 	private Button configureSection;
 	private Section topSection;
+	private Control focusControl;
 	
 	public MuleEnvironmentConfigsPart(Composite parent, FormToolkit toolkit, EnvironmentsSetting initialConfiguration) {
 		super(parent, toolkit, Section.TITLE_BAR);
@@ -96,6 +98,8 @@ public class MuleEnvironmentConfigsPart extends SectionPart {
 
 	private void buildEnvironmentsPanels(FormToolkit toolkit, Composite globalPanel) {
 		
+		focusControl = null;
+		
 		for(String envName : currentConfiguration.getEnvironmentNames()) {
 			
 			Section sectionPanel = toolkit.createSection(globalPanel, Section.TITLE_BAR);
@@ -136,6 +140,10 @@ public class MuleEnvironmentConfigsPart extends SectionPart {
 					}
 				}
 			});
+			
+			if (focusControl == null) {
+				focusControl = text;
+			}
 			
 			textsTable.put(environment, text);
 		}
@@ -192,8 +200,20 @@ public class MuleEnvironmentConfigsPart extends SectionPart {
 			
 		}
 		updateFieldsEnablement();
+		focusControl();
 	}
 	
+	private void focusControl() {
+		if (focusControl == null) {
+			return;
+		}
+		if (focusControl instanceof Text) {
+			Text fc = (Text) focusControl;
+			fc.setSelection(fc.getText().length());
+		}
+		focusControl.setFocus();
+	}
+
 	private void updateFieldsEnablement() {
 		
 		for(Text t : textsTable.values()) {
