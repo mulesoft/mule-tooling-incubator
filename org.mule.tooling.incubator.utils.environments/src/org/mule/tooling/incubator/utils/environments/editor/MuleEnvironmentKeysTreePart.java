@@ -33,7 +33,7 @@ import org.mule.tooling.incubator.utils.environments.api.IEnvironmentsEditorCont
 import org.mule.tooling.incubator.utils.environments.dialogs.AddKeyDialog;
 import org.mule.tooling.incubator.utils.environments.model.EnvironmentsConfiguration;
 import org.mule.tooling.incubator.utils.environments.model.PropertyKeyTreeNode;
-import org.mule.tooling.incubator.utils.environments.utils.EnvironmentEditorUtils;
+import org.mule.tooling.incubator.utils.environments.util.EnvironmentEditorUtils;
 
 public class MuleEnvironmentKeysTreePart extends SectionPart {
 	

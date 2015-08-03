@@ -1,4 +1,4 @@
-package org.mule.tooling.incubator.utils.environments.utils;
+package org.mule.tooling.incubator.utils.environments.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
