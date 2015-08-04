@@ -20,10 +20,6 @@
     </properties>
     <modules>
         <module>org.mule.tooling.incubator.targets</module>
-        <module>org.mule.tooling.devkit.templates</module>
-        <module>org.mule.tooling.devkit.apt</module>
-        <module>org.mule.tooling.devkit</module>
-        <module>org.mule.tooling.incubator.devkit.extension</module>
         <module>org.mule.tooling.incubator.gradle</module>
         <module>org.mule.tooling.incubator.gradle.extension</module>
         <module>org.mule.tooling.incubator.replay</module>
@@ -36,7 +32,6 @@
         <module>org.mule.tooling.incubator.utils.extension</module>
         <module>org.mule.tooling.incubator.updatesite</module>
         <module>org.mule.tooling.incubator.test.parent</module>
-        <module>org.mule.tooling.incubator.devkit.test</module>
     </modules>
     <profiles>
         <profile>
