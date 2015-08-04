@@ -19,3 +19,8 @@ bin
 **/build.log
 
 *.log
+org.mule.tooling.devkit
+org.mule.tooling.devkit.apt
+org.mule.tooling.devkit.templates
+org.mule.tooling.incubator.devkit.extension
+org.mule.tooling.incubator.devkit.test
