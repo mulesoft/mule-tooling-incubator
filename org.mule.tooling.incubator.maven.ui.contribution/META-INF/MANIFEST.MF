@@ -21,8 +21,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.workbench.texteditor,
  org.apache.commons.lang,
  org.mule.tooling.runtime.ui,
- org.apache.maven.model;bundle-version="3.0.4",
- org.codehaus.plexus.utils;bundle-version="3.0.8",
  org.eclipse.jdt.debug.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -56,3 +54,7 @@ Bundle-ClassPath: .,
  lib/wagon-http-shared.jar,
  lib/wagon-provider-api.jar,
  lib/xercesMinimal.jar
+Import-Package: org.apache.maven.model,
+ org.apache.maven.model.io.xpp3,
+ org.codehaus.plexus.util,
+ org.codehaus.plexus.util.xml.pull 
