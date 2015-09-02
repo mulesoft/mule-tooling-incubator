@@ -1,0 +1,10 @@
+update.id=org.mule.tooling.incubator.devkit.extension
+update.range=0.0.0
+update.severity=0
+update.description=Update Anypoint DevKit Plugin feature with old ID.
+properties.0.name=image.url
+properties.0.value=http://www.mulesoft.org/documentation/download/thumbnails/94110945/connector.png?version=1&modificationDate=1372094304960
+properties.1.name=doc.url
+properties.1.value=https://github.com/mulesoft/mule-tooling-devkit#mule-tooling-devkit
+properties.2.name=tutorial.url
+properties.2.value=http://mulesoft.github.io/mule-cookbook-tutorial/

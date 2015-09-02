@@ -1,0 +1,121 @@
+package ${project.package};
+
+#if(${project.dataSenseEnabled} == true )
+import java.util.Map;
+#if(${project.hasQuery} == true )
+import java.util.ArrayList;
+import java.util.List;
+
+import org.mule.api.annotations.Query;
+#end
+#end
+import org.mule.api.annotations.Config;
+import org.mule.api.annotations.Connector;
+#if(${project.dataSenseEnabled} == true )
+import org.mule.api.annotations.param.MetaDataKeyParam;
+import org.mule.api.annotations.MetaDataScope;
+#end
+import org.mule.api.annotations.Processor;
+#if($project.authenticationType == 'OAUTH_V2')
+import org.mule.api.annotations.oauth.OAuthProtected;
+import org.mule.api.annotations.ReconnectOn;
+#end
+#if(${project.dataSenseEnabled} == true )
+import org.mule.api.annotations.param.Default;
+#end
+
+import ${project.package}.config.${project.configClassName};
+
+@Connector(name="${project.moduleName}", friendlyName="${project.connectorName}")
+#if(${project.dataSenseEnabled} == true )
+@MetaDataScope( DataSenseResolver.class )
+#end
+public class ${project.connectorClassName} {
+
+    @Config
+    ${project.configClassName} config;
+
+#if(${project.generateDefaultBody} == true )
+    /**
+     * Custom processor
+     *
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:greet}
+     *
+     * @param friend Name to be used to generate a greeting message.
+     * @return A greeting message
+#if($project.authenticationType == 'OAUTH_V2' )
+     * @throws Exception Comment for Exception     
+#end
+     */
+    @Processor
+#if($project.authenticationType == 'OAUTH_V2' )
+    @OAuthProtected
+    @ReconnectOn(exceptions = { Exception.class })
+    public String greet(String friend) throws Exception {
+#else
+    public String greet(String friend) {
+#end
+        /*
+         * MESSAGE PROCESSOR CODE GOES HERE
+         */
+        return config.getGreeting() + " " + friend + ". " + config.getReply();
+    }
+
+#if(${project.hasQuery} == true )
+    
+    /**
+     * Description for query
+     *
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:query-processor}
+     *
+     *  @param query The dsql query
+     *  @return List of elements that match the criteria
+     */
+    @Processor
+    public List<Object> queryProcessor(@Query String query) {
+        //TODO
+        /*
+         * MESSAGE PROCESSOR CODE GOES HERE
+         */
+        return new ArrayList<Object>();
+    }
+
+#end
+#if(${project.dataSenseEnabled} == true )
+    /**
+     * DataSense processor
+     *
+     * {@sample.xml ../../../doc/${project.moduleName}-connector.xml.sample ${project.moduleName}:add-entity}
+
+     * @param key Key to be used to populate the entity
+     * @param entity Map that represents the entity
+     * @return Some string
+     */
+    @Processor
+    public Map<String,Object> addEntity( @MetaDataKeyParam String key, @Default("#[payload]") Map<String,Object> entity) {
+        /*
+         * USE THE KEY AND THE MAP TO DO SOMETHING
+         */
+        return entity;
+    }
+
+#end
+#else
+    /**
+     * Dummy operation to avoid compilation issues since @Connector need at least on @Processor, @Transformer or @Source
+     */
+    @Processor
+    public void foo() {
+        // TODO REMOVE THIS
+    }
+#end
+
+    public ${project.configClassName} getConfig() {
+        return config;
+    }
+
+    public void setConfig(${project.configClassName} config) {
+        this.config = config;
+    }
+
+}

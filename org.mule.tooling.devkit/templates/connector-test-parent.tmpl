@@ -1,0 +1,39 @@
+package ${project.package}.automation;
+
+import org.junit.Before;
+import ${project.package}.${project.connectorClassName};
+import org.mule.tools.devkit.ctf.mockup.ConnectorDispatcher;
+import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
+
+public abstract class AbstractTestCase {
+	
+	private ${project.connectorClassName} connector;
+	private ConnectorDispatcher<${project.connectorClassName}> dispatcher;
+	
+	
+	protected ${project.connectorClassName} getConnector() {
+		return connector;
+	}
+
+
+	protected ConnectorDispatcher<${project.connectorClassName}> getDispatcher() {
+		return dispatcher;
+	}
+
+	@Before
+	public void init() throws Exception {
+		
+		//Initialization for single-test run
+        ConnectorTestContext.initialize(${project.connectorClassName}.class, false);
+		
+		//Context instance
+		ConnectorTestContext<${project.connectorClassName}> context = ConnectorTestContext.getInstance(${project.connectorClassName}.class);
+		
+		//Connector dispatcher
+		dispatcher = context.getConnectorDispatcher();
+		
+		connector = dispatcher.createMockup();
+		
+	}
+
+}

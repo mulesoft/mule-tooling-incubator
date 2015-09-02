@@ -1,0 +1,21 @@
+package ${project.package};
+
+import org.mule.api.annotations.Config;
+import org.mule.api.annotations.Connector;
+import ${project.package}.config.${project.configClassName};
+
+@Connector(name="${project.moduleName}", friendlyName="${project.connectorName}", minMuleVersion = "3.7")
+public class ${project.connectorClassName} {
+
+    @Config
+    ${project.configClassName} config;
+
+    public ${project.configClassName} getConfig() {
+        return config;
+    }
+
+    public void setConfig(${project.configClassName} config) {
+        this.config = config;
+    }
+
+}

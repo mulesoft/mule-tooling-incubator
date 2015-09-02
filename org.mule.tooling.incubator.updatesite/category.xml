@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
+  <feature id="org.mule.tooling.devkit.extension">
+     <category name="org.mule.tooling.category.devkit"/>
+  </feature>
    <feature id="org.mule.tooling.incubator.replay.extension">
       <category name="org.mule.tooling.incubator.developer.category"/>
    </feature>
@@ -12,6 +15,11 @@
    <feature id="org.mule.tooling.incubator.utils.extension">
       <category name="org.mule.tooling.incubator.category.utils"/>
    </feature>
+   <category-def name="org.mule.tooling.category.devkit" label="Anypoint DevKit Plugin">
+      <description>
+         Anypoint Devkit Plugin
+      </description>
+   </category-def>
    <category-def name="org.mule.tooling.incubator.developer.category" label="Mule Developer Tools Extra">
       <description>
          Mule Replay Project
