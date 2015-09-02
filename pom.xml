@@ -19,6 +19,7 @@
         <target-platform.version>1.0.6-SNAPSHOT</target-platform.version>
     </properties>
     <modules>
+        <module>org.mule.tooling.incubator.targets</module>
         <module>org.mule.tooling.devkit.templates</module>
         <module>org.mule.tooling.devkit.apt</module>
         <module>org.mule.tooling.devkit</module>
