@@ -18,7 +18,7 @@
 		<aws.secret>${settings.servers.mulesoft-s3.password}</aws.secret>
 		<incubators.endpoint>s3.amazonaws.com</incubators.endpoint>
 		<incubators.bucket>mule-tooling-incubator</incubators.bucket>
-		<incubators.dir>lhotse</incubators.dir>
+		<incubators.dir>joy</incubators.dir>
 	</properties>
 	<profiles>
 		<profile>
