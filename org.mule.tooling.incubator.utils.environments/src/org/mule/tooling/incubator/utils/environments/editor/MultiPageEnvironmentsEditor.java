@@ -23,6 +23,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.mule.tooling.incubator.utils.environments.model.EnvironmentsConfiguration;
 import org.mule.tooling.incubator.utils.environments.util.FileListResourceDeltaVisitor;
+import org.mule.tooling.incubator.utils.environments.util.SortedProperties;
 
 
 public class MultiPageEnvironmentsEditor extends FormEditor implements IResourceChangeListener {
@@ -70,7 +71,7 @@ public class MultiPageEnvironmentsEditor extends FormEditor implements IResource
 		
 		for(File props : files) {
 			if (props.getName().startsWith(fileName) && props.getName().endsWith(".properties")) {
-				Properties contents = new Properties();
+				Properties contents = new SortedProperties();
 				FileInputStream fis = new FileInputStream(props);
 				contents.load(fis);
 				envConfig.addEnvironment(props.getName(), contents);

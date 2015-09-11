@@ -9,6 +9,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IProject;
+import org.mule.tooling.incubator.utils.environments.util.SortedProperties;
 
 public class EnvironmentsConfiguration {
 	
@@ -126,7 +127,7 @@ public class EnvironmentsConfiguration {
 			throw new IllegalStateException("The environment already has settings for the given suffix: " + suffix);
 		}
 		
-		Properties props = new Properties();
+		Properties props = new SortedProperties();
 		
 		if (!StringUtils.isEmpty(copyFromEnv) && environmentsConfiguration.containsKey(copyFromEnv)) {
 			Properties sourceEnv = environmentsConfiguration.get(copyFromEnv);
