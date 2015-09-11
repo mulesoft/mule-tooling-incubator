@@ -6,18 +6,18 @@ Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: org.mule.tooling.incubator.replay.ReplayPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.mule.tooling.ui.contribution.debugger;bundle-version="[5.0.0,6.0.0)",
- org.mule.tooling.core;bundle-version="[5.0.0,6.0.0)",
- org.mule.tooling.messageflow;bundle-version="[5.0.0,6.0.0)",
- org.mule.tooling.ui;bundle-version="[5.0.0,6.0.0)",
+ org.mule.tooling.ui.contribution.debugger;bundle-version="[5.3.0,5.4.0)",
+ org.mule.tooling.core;bundle-version="[5.3.0,5.4.0)",
+ org.mule.tooling.messageflow;bundle-version="[5.3.0,5.4.0)",
+ org.mule.tooling.ui;bundle-version="[5.3.0,5.4.0)",
  org.codehaus.groovy;bundle-version="1.8.6",
  org.eclipse.gef,
  org.eclipse.ui.ide,
  org.eclipse.core.resources,
  org.eclipse.ui.forms,
- org.mule.tooling.ui.widgets;bundle-version="[5.0.0,6.0.0)",
- org.mule.tooling.metadata;bundle-version="[5.0.0,6.0.0)",
- org.mule.tooling.utils;bundle-version="[5.0.0,6.0.0)"
+ org.mule.tooling.ui.widgets;bundle-version="[5.3.0,5.4.0)",
+ org.mule.tooling.metadata;bundle-version="[5.3.0,5.4.0)",
+ org.mule.tooling.utils;bundle-version="[5.3.0,5.4.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
