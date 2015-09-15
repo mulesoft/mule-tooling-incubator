@@ -14,28 +14,8 @@
             icon="icons/small/sap-endpoint-24x16.png"
             minimumVersion="3.5.0"
             name="SAP"
-            path="sap.EE.xml"
+            path="messaging.xml"
             version="2.2.7">
       </externalContribution>
-   </extension>
-   <extension
-         point="org.mule.tooling.maven.populate">
-      <contribution-jar
-            jar="mule-transport-sap-2.2.7.jar">
-      </contribution-jar>
-   </extension>
-   <extension
-         point="org.mule.tooling.ui.modules.core.metadataresolver">
-      <metadataresolver
-            class="org.mule.tooling.ui.contribution.sap.resolver.SAPEndpointNodeMetaDataResolver"
-            type="http://www.mulesoft.org/schema/mule/sap/endpoint">
-      </metadataresolver>
-   </extension>
-   <extension
-         point="org.mule.tooling.ui.modules.core.editorMetadataStrategy">
-      <editorMetadataStrategy
-            class="org.mule.tooling.ui.contribution.sap.metadata.SAPMetadataStrategy"
-            id="http://www.mulesoft.org/schema/mule/sap/endpoint">
-      </editorMetadataStrategy>
    </extension>
 </plugin>

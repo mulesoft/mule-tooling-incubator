@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.mule.tooling.ui.extension.sap.3.5.0"
-      label="MuleSoft Enterprise Java Connector for SAP (3.5+)"
-      version="5.3.0.qualifier"
+      id="org.mule.tooling.incubator.messaging.extension"
+      label="MuleSoft Messaging Connector (3.5+)"
+      version="1.0.0.qualifier"
       provider-name="MuleSoft Inc."
-      plugin="org.mule.tooling.ui.contribution.sap.3.5.0"
+      plugin="org.mule.tooling.incubator.messaging.extension"
       exclusive="true">
 
    <description url="http://www.mulesoft.com">
@@ -109,7 +109,7 @@ BY CLICKING ON THE &quot;I Agree&quot; BUTTON OR INSTALLING OR USING ALL OR ANY 
    </license>
 
    <plugin
-         id="org.mule.tooling.ui.contribution.sap.3.5.0"
+         id="org.mule.tooling.incubator.messaging.contribution"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

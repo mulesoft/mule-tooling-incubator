@@ -5,13 +5,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.mule.tooling</groupId>
-	<artifactId>org.mule.tooling.timestamp.parent</artifactId>
-    <version>5.3.0-SNAPSHOT</version>
-    <relativePath>../org.mule.tooling.timestamp.parent/pom.xml</relativePath>
+    <groupId>org.mule.tooling.incubator</groupId>
+    <artifactId>org.mule.tooling.incubator.parent</artifactId>
+    <version>1.0.6-SNAPSHOT</version>
   </parent>
-  <artifactId>org.mule.tooling.ui.extension.sap.3.5.0</artifactId>
-  <version>5.3.0-SNAPSHOT</version>
+  <artifactId>org.mule.tooling.incubator.messaging.extension</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
   
 </project>
