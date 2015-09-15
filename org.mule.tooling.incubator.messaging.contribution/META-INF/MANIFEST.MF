@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Anypoint Messaging Connector
+Bundle-SymbolicName: org.mule.tooling.incubator.messaging.contribution;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.mule.tooling.ui.contribution.messaging.Activator
+Bundle-Vendor: MuleSoft Inc.
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.mule.tooling.core;bundle-version="[5.0.0,6.0.0)",
+ org.mule.tooling.ui.modules.core;bundle-version="[5.0.0,6.0.0)",
+ org.mule.tooling.maven;bundle-version="[5.0.0,6.0.0)",
+ org.mule.tooling.metadata;bundle-version="[5.0.0,6.0.0)",
+ org.mule.tooling.messageflow;bundle-version="[5.0.0,6.0.0)",
+ org.mule.tooling.ui;bundle-version="[5.0.0,6.0.0)",
+ org.mule.tooling.ui.widgets;bundle-version="[5.0.0,6.0.0)",
+ org.apache.commons.io,
+ org.apache.commons.lang,
+ org.eclipse.jdt.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Export-Package: org.mule.tooling.ui.contribution.sap.widgets.meta
+Eclipse-BundleShape: dir
+Bundle-ClassPath: .,
+ mule-commons-sap.jar
