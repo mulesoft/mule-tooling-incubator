@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:${project.moduleName}="http://www.mulesoft.org/schema/mule/${project.moduleName}"
+      xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/${project.moduleName} http://www.mulesoft.org/schema/mule/${project.moduleName}/1.0/mule-${project.moduleName}.xsd">
+
+#if($project.authenticationType == 'NONE' )
+    <${project.moduleName}:config-type name="config" greeting="Hi"/>
+#end
+#if($project.authenticationType == 'CONNECTION_MANAGEMENT' )
+    <${project.moduleName}:config-type name="config" greeting="Hi" username="foo" password="foo"/>
+#end
+#if($project.authenticationType == 'OAUTH_V2' )
+    <${project.moduleName}:config-type name="config" consumerKey="my-key" consumerSecret="my-secret">
+        <${project.moduleName}:oauth-callback-config domain="localhost" localPort="8082" path="callback"/>
+    </${project.moduleName}:config-type>
+#end
+
+    <flow name="testFlow">
+        <${project.moduleName}:greet config-ref="config" friend="Foo"/>
+    </flow>
+#if(${project.hasQuery} == true )
+    <flow name="testQueryFlow">
+        <${project.moduleName}:query-processor config-ref="config" query="My Query"/>
+    </flow>
+#end
+#if(${project.dataSenseEnabled} == true )
+    <flow name="testAddEntiy">
+        <${project.moduleName}:add-entity config-ref="config" key="id1">
+            <${project.moduleName}:entity>
+                <${project.moduleName}:entity key="Tittle">My Foo</${project.moduleName}:entity>
+                <${project.moduleName}:entity key="Author">Foo</${project.moduleName}:entity>
+            </${project.moduleName}:entity>
+        </${project.moduleName}:add-entity>
+    </flow>
+#end
+</mule>

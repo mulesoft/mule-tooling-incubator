@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <!-- Forces startup of this plugin -->
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="org.mule.tooling.devkit.DevkitUIPlugin"></startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.mule.tooling.ui.muleWizards"
+            class="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard"
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard"
+            name="Anypoint Connector Project"
+            project="true">
+      </wizard>
+      <wizard
+            category="org.mule.tooling.ui.muleWizards"
+            class="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard"
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard"
+            name="Anypoint Connector Component"
+            project="false">
+      </wizard>
+	  </extension>
+	  <extension	
+        point="org.eclipse.ui.perspectives">
+        <perspective name="DevKit"
+                icon="icons/icon.png"
+                class="org.mule.tooling.devkit.perspective.DevkitPerspectiveFactory"
+                id="org.mule.tooling.devkit.perspective">
+		</perspective>
+ 	  </extension>
+      <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+	      <perspectiveExtension
+	            targetID="*">
+	            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard" />
+	            <newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard"/>		
+	      </perspectiveExtension>
+	      <perspectiveExtension targetID="org.mule.tooling.devkit.perspective">
+				<newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.mule.tooling.devkit.wizards.NewDevkitComponentWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.JavaProjectWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewPackageCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewClassCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewEnumCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewAnnotationCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewSourceFolderCreationWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewJavaWorkingSetWizard">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.ui.wizards.new.folder">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.ui.wizards.new.file">
+				</newWizardShortcut>
+				<newWizardShortcut id="org.eclipse.ui.editors.wizards.UntitledTextFileWizard">
+				</newWizardShortcut>
+			</perspectiveExtension>
+	  </extension>
+      <extension
+            id="devkitBuilder"
+            name="DevKit Project Builder"
+            point="org.eclipse.core.resources.builders">
+         <builder hasNature="true">
+            <run class="org.mule.tooling.devkit.builder.DevkitBuilder">
+            </run>
+         </builder>
+      </extension>
+      
+      <extension
+            id="devkitNature"
+            name="DevKit Project Nature"
+            point="org.eclipse.core.resources.natures">
+         <runtime>
+            <run
+                  class="org.mule.tooling.devkit.builder.DevkitNature">
+            </run>
+         </runtime>
+         <builder
+               id="org.mule.tooling.devkit.devkitBuilder">
+         </builder>
+      </extension>
+      <extension
+            id="xmlProblem"
+            name="XML Problem"
+            point="org.eclipse.core.resources.markers">
+         <super
+               type="org.eclipse.core.resources.problemmarker">
+         </super>
+         <persistent
+               value="true">
+         </persistent>
+      </extension>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <wizard
+            category="org.mule.tooling.ui.muleExportCategory"
+            class="org.mule.tooling.devkit.export.UpdateSiteExportWizard"
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.export.updateSiteExportWizard"
+            name="Anypoint Connector Update Site">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.mule.tooling.ui.views"
+            class="org.mule.tooling.devkit.treeview.DevkitView"
+            icon="icons/icon.png"
+            id="org.mule.tooling.devkit.treeview.DevkitView"
+            name="DevKit">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Sample XML Editor"
+            extensions="sample"
+            icon="icons/sample.gif"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="org.mule.tooling.devkit.sample.editor.XMLEditor"
+            id="org.mule.tooling.devkit.sample.editor.editors.XMLEditor">
+      </editor>
+   </extension>
+   
+	<extension point="org.eclipse.ui.commands">
+		<command id="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
+			name="Enable/Disable Javadoc Check">
+		</command>
+		<command id="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
+			name="Generate Sources">
+		</command>
+		<command id="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand"
+			name="Generate Testdata">
+		</command>
+		<command id="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
+			name="Run Interop Tests">
+		</command>
+		<command id="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
+			name="Create documentation">
+		</command>
+		<command id="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector"
+			name="Install Or Update Connector">
+		</command>
+        <command id="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand"
+			name="Generate Tests">
+        </command>
+        <command id="org.mule.tooling.devkit.popup.actions.Uninstall"
+			name="Uninstall">
+        </command>
+    </extension>
+	<extension point="org.eclipse.core.expressions.propertyTesters">
+		<propertyTester
+			id="org.mule.tooling.devkit.javadoc.check.tester"
+			type="org.eclipse.core.resources.IProject"
+			namespace="org.mule.tooling.devkit"
+			properties="enabled"
+			class="org.mule.tooling.devkit.popup.actions.JavadocCheckPropertyTester">
+		</propertyTester>
+		<propertyTester
+			id="org.mule.tooling.devkit.connector.installed.tester"
+			type="org.eclipse.core.resources.IProject"
+			namespace="org.mule.tooling.devkit"
+			properties="isConnectorInstalled"
+			class="org.mule.tooling.devkit.popup.actions.IsConnectorInstalledPropertyTester">
+		</propertyTester>
+	</extension>
+    <extension point="org.eclipse.ui.menus">
+        <menuContribution
+                locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+            <menu icon="icons/icon.png" label="Anypoint Connector">
+                <visibleWhen>
+                    <with variable="activeMenuSelection">
+                        <iterate >
+                        <adapt type="org.eclipse.core.resources.IProject">
+	             			<test property="org.eclipse.core.resources.projectNature"
+	                   				value="org.mule.tooling.devkit.devkitNature">
+	             			</test>
+         				</adapt>
+                        </iterate>
+                        <count value="1"></count>
+                    </with>
+                </visibleWhen>
+                <separator name="group">
+                </separator>
+
+                <separator name="testing" visible="true">
+                </separator>
+                <command commandId="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand"
+                         label="Generate Tests"
+                         icon="icons/tsuite.png"
+                         style="push">
+                </command>
+                <!--<command commandId="org.mule.tooling.devkit.popup.actions.GenerateInteropTestDataCommand"
+                    label="Generate TestData"
+                    icon="icons/tsuite.png"
+                    style="push">
+                </command>-->
+                <command commandId="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector"
+                         label="Install or Update"
+                         icon="icons/install.gif"
+                         style="push">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
+                    label="Run Interop Tests"
+                    icon="icons/run.png"
+                    style="push">
+                </command>
+                <separator name="middleSection" visible="true">
+                </separator>
+                <command commandId="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
+                         label="Preview Documentation"
+                         icon="icons/generate_doc.gif"
+                         style="push">
+                </command>
+                <separator name="javadoc" visible="true">
+                </separator>
+                <command commandId="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
+                         label="Generate Sources"
+                         icon="icons/generate_sources.gif"
+                         style="push">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
+                         label="Enable Javadoc check"
+                         icon="icons/javadoc.gif"
+                         style="push">
+                    <visibleWhen checkEnabled="false">
+                        <with variable="selection">
+                            <count value="1"/>
+                            <iterate>
+                                <and>
+                                    <with variable="activeMenuSelection">
+                                        <iterate>
+                                            <adapt type="org.eclipse.core.resources.IProject">
+                                                <test value="true" property="org.mule.tooling.devkit.enabled" forcePluginActivation="true">
+                                                </test>
+                                            </adapt>
+                                        </iterate>
+                                    </with>
+                                </and>
+                            </iterate>
+                        </with>
+                    </visibleWhen>
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
+                         label="Disable Javadoc check"
+                         icon="icons/javadoc.gif"
+                         style="push">
+                    <visibleWhen checkEnabled="false">
+                        <with variable="selection">
+                            <count value="1"/>
+                            <iterate>
+                                <not>
+                                    <with variable="activeMenuSelection">
+                                        <iterate>
+                                            <adapt type="org.eclipse.core.resources.IProject">
+                                                <test value="true" property="org.mule.tooling.devkit.enabled" forcePluginActivation="true">
+                                                </test>
+                                            </adapt>
+                                        </iterate>
+                                    </with>
+                                </not>
+                            </iterate>
+                        </with>
+                    </visibleWhen>
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.Uninstall"
+                         label="Uninstall"
+                         icon="icons/uninstall.png"
+                         style="push">
+                </command>
+            </menu>
+        </menuContribution>
+    </extension>
+	<extension point="org.eclipse.ui.ide.markerResolution">
+		<markerResolutionGenerator
+			markerType="org.eclipse.jdt.apt.pluggable.core.compileProblem"
+			class="org.mule.tooling.devkit.quickfix.QuickFixer"/>
+   	</extension>
+   	<extension point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+  		<hyperlinkDetector
+    		id="org.mule.tooling.devkit.links.DevkitSampleHyperlinkDetector"
+    		targetId="org.eclipse.jdt.ui.javaCode"
+    		class="org.mule.tooling.devkit.links.DevkitSampleHyperlinkDetector"
+    		name="DevKit Sample Link Detector">
+		</hyperlinkDetector>
+	</extension>
+	
+	<extension 
+       point="org.eclipse.ui.importWizards"> 
+      <wizard 
+      	 category="org.mule.tooling.ui.muleImportCategory"
+         id="org.mule.tooling.devkit.wizards.ConnectorImportWizzard" 
+         name="Anypoint Connector Project from External Location" 
+         class="org.mule.tooling.devkit.wizards.ConnectorImportWizzard" 
+         icon="icons/icon.png">
+      </wizard> 
+      <wizard 
+      	 category="org.mule.tooling.ui.muleImportCategory"
+         id="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportWizard" 
+         name="Anypoint Connector Project from External Location (.zip)" 
+         class="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportWizard" 
+         icon="icons/importzip.gif">
+      </wizard>
+   </extension>
+	
+	<extension
+         point="org.eclipse.ui.menus">
+         
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.mule.tooling.ui.import">
+         <command
+               commandId="org.eclipse.ui.file.import"
+               style="push">
+            <parameter
+                  name="importWizardId"
+                  value="org.mule.tooling.devkit.wizards.ConnectorImportWizzard">
+            </parameter>
+         </command>
+         <command
+               commandId="org.eclipse.ui.file.import"
+               style="push">
+            <parameter
+                  name="importWizardId"
+                  value="org.mule.tooling.devkit.wizards.ConnectorZippedProjectImportWizard">
+            </parameter>
+         </command>
+      </menuContribution>
+   </extension>
+   
+   <extension point="org.eclipse.ui.decorators">
+     <decorator
+           adaptable="true"
+           icon="icons/devkit-8x8.png"
+           id="org.mule.tooling.ui.devkitDecorator"
+           label="Anypoint project"
+           lightweight="true"
+           location="BOTTOM_RIGHT"
+           state="true">
+       <description>Anypoint project icon decorator</description>
+       <enablement>
+            <objectState name="nature" value="org.mule.tooling.devkit.devkitNature"/>
+       </enablement>
+     </decorator>
+   </extension>
+   
+   <!-- TOOL BAR -->
+   <extension point="org.eclipse.core.expressions.definitions">
+		<definition id="org.mule.tooling.devkit.hasDevkitNature">
+			<with variable="selection">
+                <iterate >
+                    <adapt type="org.eclipse.core.resources.IResource">
+             			<test property="org.eclipse.core.resources.projectNature"
+                   				value="org.mule.tooling.devkit.devkitNature">
+             			</test>
+     				</adapt>
+                </iterate>
+                <count value="1"></count>
+			</with>
+	   </definition>
+	   <definition id="org.mule.tooling.devkit.isConnectorInstalled">
+			<with variable="selection">
+                <iterate >
+                    <adapt type="org.eclipse.core.resources.IProject">
+             			<test property="org.mule.tooling.devkit.isConnectorInstalled" forcePluginActivation="true">
+                        </test>
+     				</adapt>
+                </iterate>
+                <count value="1"></count>
+			</with>
+	   </definition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+         <handler commandId="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand"
+ 			class="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector"
+         	class="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
+         	class="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
+         	class="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
+         	class="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
+			class="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand">
+         	<activeWhen>
+	             <reference definitionId="org.mule.tooling.devkit.hasDevkitNature"/>
+         	</activeWhen>
+         </handler>
+         <handler commandId="org.mule.tooling.devkit.popup.actions.Uninstall"
+			class="org.mule.tooling.devkit.popup.actions.Uninstall">
+         	<activeWhen>
+         		<reference definitionId="org.mule.tooling.devkit.isConnectorInstalled"/>
+         	</activeWhen>
+         </handler>
+	</extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+			<toolbar id="org.mule.tooling.devkit.toolbar" label="DevKit Studio Toolbar">
+				<command commandId="org.mule.tooling.devkit.popup.actions.GenerateTestsCommand"
+                         tooltip="Generate Tests"
+                         icon="icons/tsuite.png">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.InstallOrUpdateConnector"
+                         tooltip="Install or Update"
+                         icon="icons/install.gif"
+                         id="org.mule.tooling.devkit.toolbar.InstallOrUpdateConnector">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.CreateDocumentationCommand"
+                         tooltip="Preview Documentation"
+                         icon="icons/generate_doc.gif">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.RunAsRemoteInteropCommand"
+                    tooltip="Run Interop Tests"
+                    icon="icons/run.png">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.GenerateSourcesCommand"
+                         tooltip="Generate Sources"
+                         icon="icons/generate_sources.gif">
+                </command>
+                <command commandId="org.mule.tooling.devkit.popup.actions.ToggleJavadocCheckCommand"
+                         tooltip="Enable/Disable Javadoc check"
+                         icon="icons/javadoc.gif">
+				</command>
+				<command commandId="org.mule.tooling.devkit.popup.actions.Uninstall"
+                         tooltip="Uninstall"
+                         icon="icons/uninstall.png">
+				</command>
+            </toolbar>
+      </menuContribution>
+   </extension>
+   <extension point="org.eclipse.ui.bindings">
+   		<key
+            sequence="M1+M3+M D"
+			commandId="org.eclipse.ui.newWizard"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+            <parameter
+                  id="newWizardId"
+                  value="org.mule.tooling.devkit.wizards.NewDevkitProjectWizard">
+            </parameter>
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+      		category="org.mule.tooling.ui.messageflowpage"
+            class="org.mule.tooling.devkit.preferences.WorkbenchPreferencePage"
+            id="org.mule.tooling.devkit.preferences"
+            name="DevKit">
+      </page>
+   </extension>
+</plugin>

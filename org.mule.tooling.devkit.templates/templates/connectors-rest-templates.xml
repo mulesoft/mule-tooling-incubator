@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates>
+	<template id="org.mule.tooling.devkit.templates.rest-conf-uri" autoinsert="true" context="java-members"  description="Add Configurable uri param elements" enabled="true" name="restconf">${imp:import(org.mule.api.annotations.rest.RestUriParam,org.mule.api.annotations.Configurable)}
+	/**
+	* Description for uri param ${fieldName}
+	*/
+	@Configurable
+	@RestUriParam("${fieldName}")
+	private String ${fieldName};${cursor}
+	</template>
+	<template id="org.mule.tooling.devkit.templates.rest-conf-query" autoinsert="true" context="java-members"  description="Add Configurable query param elements" enabled="true" name="restconf">${imp:import(org.mule.api.annotations.Configurable,org.mule.api.annotations.rest.RestQueryParam)}
+	/**
+	* Description for query param ${fieldName}
+	*/
+	@Configurable
+	@RestQueryParam("${fieldName}")
+	private String ${fieldName};${cursor}
+
+	</template>
+	<template id="org.mule.tooling.devkit.templates.rest-conf-header" autoinsert="true" context="java-members"  description="Add Configurable header param elements" enabled="true" name="restconf">${imp:import(org.mule.api.annotations.Configurable,org.mule.api.annotations.rest.RestHeaderParam)}
+
+	/**
+	* Description for header param ${fieldName}
+	*/
+	@Configurable
+	@RestHeaderParam("${fieldName}")
+	private String ${fieldName};${cursor}
+	</template>
+	<template id="org.mule.tooling.devkit.templates.restprocessor" autoinsert="true" context="java-members"  description="A GET processor with no parameter" enabled="true" name="restprocessor">${imp:import(java.io.IOException,org.mule.api.annotations.Processor,org.mule.api.annotations.rest.RestUriParam,org.mule.api.annotations.rest.RestCall,org.mule.api.annotations.rest.HttpMethod)}
+	/**
+	* Description for ${name}
+	*
+	* 	{@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:${name}}
+	*
+	*	@param ${uriParam} The comment for ${uriParam}
+	*	@return return comment
+	*	@throws IOException Comment for Exception 
+	*/
+	@Processor
+    @RestCall(uri = "${uri}/${uriParam}", method = HttpMethod.GET)
+    public abstract Object ${name}(@RestUriParam("${uriParam}") String ${uriParam}) throws IOException;${cursor}
+	</template>
+</templates>

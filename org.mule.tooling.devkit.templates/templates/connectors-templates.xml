@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates>
+	<template id="org.mule.tooling.devkit.templates.configurable" autoinsert="true" context="java-members"  description="Add Configurable elements to processor" enabled="true" name="configurable">${imp:import(org.mule.api.annotations.Configurable)}
+	/**
+	* Description for ${fieldName}
+	*/
+	@Configurable
+	private ${type} ${fieldName};${cursor}
+
+	</template>
+	<template id="org.mule.tooling.devkit.templates.configurabledefault" autoinsert="true" context="java-members"  description="Configurable element with default value" enabled="true" name="configurable">${imp:import(org.mule.api.annotations.Configurable,
+			org.mule.api.annotations.param.Default)}
+	/**
+	* Description for ${fieldName}
+	*/
+	@Configurable
+	@Default("${defaultValue}")
+	private ${type} ${fieldName};${cursor}
+
+	</template>
+	<template id="org.mule.tooling.devkit.templates.metadata" autoinsert="true" context="java-members"  description="Add Datasense basic operation" enabled="true" name="datasense">${imp:import (java.util.List,
+	java.util.ArrayList,
+	org.mule.api.annotations.MetaDataKeyRetriever,
+	org.mule.api.annotations.MetaDataRetriever,
+	org.mule.common.metadata.datatype.DataType,
+	org.mule.common.metadata.DefaultMetaData,
+	org.mule.common.metadata.DefaultMetaDataKey,
+	org.mule.common.metadata.MetaData,
+	org.mule.common.metadata.MetaDataKey,
+	org.mule.common.metadata.MetaDataModel,
+	org.mule.common.metadata.builder.DefaultMetaDataBuilder,
+	org.mule.common.metadata.builder.DynamicObjectBuilder)}
+
+    /**
+     * Retrieves the list of keys
+     */
+	@MetaDataKeyRetriever
+	public List&lt;MetaDataKey&gt; getMetaDataKeys() throws Exception {
+		List&lt;MetaDataKey&gt; keys = new ArrayList&lt;MetaDataKey&gt;();
+		
+		//Generate the keys
+		keys.add(new DefaultMetaDataKey("id1", "User"));
+		keys.add(new DefaultMetaDataKey("id2", "Book"));
+		
+		return keys;
+	}
+
+	/**
+	 * Get MetaData given the Key the user selects
+	 * 
+	 * @param key The key selected from the list of valid keys
+	 * @return The MetaData model of that corresponds to the key
+	 * @throws Exception If anything fails
+	 */
+    @MetaDataRetriever
+    public MetaData getMetaData(MetaDataKey key) throws Exception {
+		DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
+		//If you have a Pojo class
+		//PojoMetaDataBuilder&lt;?&gt;  pojoObject=builder.createPojo(Pojo.class);
+		
+		//If your build uses Maps as input
+		DynamicObjectBuilder&lt;?&gt; dynamicObject = builder.createDynamicObject(key.getId());
+		
+		if(key.getId().equals("id1")){
+			dynamicObject.addSimpleField("Username", DataType.STRING);
+			dynamicObject.addSimpleField("age", DataType.INTEGER);
+		}else{
+			dynamicObject.addSimpleField("Author", DataType.STRING);
+			dynamicObject.addSimpleField("Tittle", DataType.STRING);
+		}
+		MetaDataModel model = builder.build();
+		MetaData metaData = new DefaultMetaData(model);
+
+		return metaData;	
+    }
+	</template>
+	<template id="org.mule.tooling.devkit.templates.processordefaultpayload" autoinsert="true" context="java-members"  description="A simple processor that takes by default the payload as input" enabled="true" name="processor">${imp:import(org.mule.api.annotations.Processor,org.mule.api.annotations.param.Default)}
+	/**
+	* Description for ${name}
+	*
+	* {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:${name}}
+	*
+	*	@param param The comment for param
+	*	@return return comment
+	*/
+	@Processor
+	public ${return_type}  ${name}(@Default("#[payload]") ${type} param) {
+		//${todo}
+		${cursor}
+		return null;
+	}</template>
+	<template id="org.mule.tooling.devkit.templates.processorpaginated" autoinsert="true" context="java-members"  description="Create a paginated processor" enabled="true" name="processor">${imp:import(org.mule.api.annotations.Processor,org.mule.api.annotations.Paged,org.mule.api.annotations.Query,org.mule.streaming.PagingConfiguration,org.mule.streaming.ProviderAwarePagingDelegate)}
+		/**
+	* Description for queryPaginated
+	*
+	* {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:query-paginated}
+	*
+	*	@param query The query
+	*	@param pagingConfiguration the paging configuration
+	*	@return return comment
+	*/
+    @Processor
+    @Paged
+    public ProviderAwarePagingDelegate&lt;Object,Object&gt; queryPaginated(@Query String query, PagingConfiguration pagingConfiguration){
+		return null;
+	}</template>
+	<template id="org.mule.tooling.devkit.templates.processorquery" autoinsert="true" context="java-members"  description="Creates a processor that uses @Query" enabled="true" name="processor">${imp:import(java.util.List,org.mule.api.annotations.Processor,org.mule.api.annotations.Query)}
+	/**
+	* Description for ${name}
+	*
+	* {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:${name}}
+	*
+	*	@param query The dsql query
+	*	@return return comment
+	*/
+	@Processor
+	public List&lt;Object&gt;  ${name}(@Query String query) {
+		//${todo}
+		${cursor}
+		return null;
+	}
+	</template>
+	<template id="org.mule.tooling.devkit.templates.processorbasic" autoinsert="true" context="java-members"  description="Creates a simple processor" enabled="true" name="processor">${imp:import(org.mule.api.annotations.Processor)}
+	/**
+	* Description for ${name}
+	*
+	* {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:${name}}
+	*
+	*/
+	@Processor
+	public void ${name}(${}) {
+		//${todo}
+		${cursor}
+	}
+	</template>
+	<template id="org.mule.tooling.devkit.templates.processormetadata" autoinsert="true" context="java-members"  description="Processor with MetaDataKeyParam" enabled="true" name="processor">${imp:import(org.mule.api.annotations.Processor,
+			org.mule.api.annotations.param.Default,
+			org.mule.api.annotations.param.MetaDataKeyParam)}
+	/**
+	* Description for ${name}
+	*
+	* {@sample.xml ../../../doc/${moduleName}-connector.xml.sample ${moduleName}:${name}}
+	*
+	*	@param key Key that will be used to populate the record
+	*	@param param The Object or Map&lt;String,Object&gt; that will be used in the request
+	*	@return return comment
+	*/
+	@Processor
+	public Object  ${name}(@MetaDataKeyParam String key, @Default("#[payload]") Object param) {
+		//${todo}
+		${cursor}
+		return null;
+	}
+	</template>
+</templates>

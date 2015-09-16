@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${project.artifactId}</artifactId>
+    <version>${project.version}</version>
+    <packaging>mule-module</packaging>
+    <name>Mule ${project.connectorName} Anypoint Connector</name>
+
+#set( $devkitVersion = '3.7.1' )
+#set( $connectorGeneratorVersion = '2.0.6' )
+    <parent>
+        <groupId>org.mule.tools.devkit</groupId>
+        <artifactId>mule-devkit-parent</artifactId>
+        <version>${devkitVersion}</version>
+    </parent>
+
+    <properties>
+#if( ${project.apiType} == 'SOAP' )
+#if( $project.wsdlPath.contains("http") )
+#set( $wsdlUrl = ${project.wsdlPath} )
+#else
+#set( $wsdlUrl = '${basedir}/src/main/resources/wsdl/'+${project.wsdlPath} )
+#end
+        <cxf.version>2.7.15</cxf.version>
+        <cxf.version.boolean>2.7.0</cxf.version.boolean>
+#if(${project.generateDefaultBody} == true )
+        <connector.generator.version>${connectorGeneratorVersion}</connector.generator.version>
+#end
+#end
+        <category>${project.category}</category>
+        <licensePath>LICENSE.md</licensePath>
+        <devkit.studio.package.skip>false</devkit.studio.package.skip>
+    </properties>
+#if( ${project.apiType} == 'SOAP' )
+    <build>
+        <plugins>
+            <!-- CXF Code generation -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/target/generated-sources/cxf</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>cxf-generate</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- CXF Code generation -->
+                    <plugin>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-codegen-plugin</artifactId>
+                        <version>${cxf.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase> <!-- This is so it work with the Devkit -->
+                                <goals>
+                                    <goal>wsdl2java</goal>
+                                </goals>
+                                <configuration>
+                                    <wsdlOptions>
+                                        <wsdlOption>
+                                            <wsdl>${wsdlUrl}</wsdl>
+                                            <autoNameResolution>true</autoNameResolution>
+                                            <extendedSoapHeaders>false</extendedSoapHeaders>
+                                            <extraargs>
+                                                <extraarg>-xjc-Xbg</extraarg>
+                                                <extraarg>-xjc-Xcollection-setter-injector</extraarg>
+                                                <extraarg>-b</extraarg>
+                                                <extraarg>${basedir}/src/main/resources/wsdl/binding.xml</extraarg>
+                                                <extraarg>-p</extraarg>
+                                                <extraarg>${project.package}.api</extraarg>
+                                            </extraargs>
+                                        </wsdlOption>
+                                    </wsdlOptions>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <!-- Boolean getters -->
+                            <dependency>
+                                <groupId>org.apache.cxf.xjcplugins</groupId>
+                                <artifactId>cxf-xjc-boolean</artifactId>
+                                <version>${cxf.version.boolean}</version>
+                            </dependency>
+                            <!-- Collection Setters -->
+                            <dependency>
+                                <groupId>net.java.dev.vcc.thirdparty</groupId>
+                                <artifactId>collection-setter-injector</artifactId>
+                                <version>0.5.0-1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+#if(${project.generateDefaultBody} == true )        
+        <!-- USE THIS PROFILE ONLY TO GENERATE THE BASE CODE -->
+        <profile>
+            <id>connector-generator</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.mule.tools.devkit</groupId>
+                        <artifactId>connector-generator-wsdl2connector-maven-plugin</artifactId>
+                        <version>${connector.generator.version}</version>
+                        <configuration>
+                            <name>${project.connectorName}</name>
+                            <namespace>${project.moduleName}</namespace>
+                            <connectorProperties>
+                                <friendlyName>${project.connectorName}</friendlyName>
+                                <schemaVersion>1.0</schemaVersion>
+                            </connectorProperties>
+                            <outputDirectory>${basedir}/src/main/java/</outputDirectory>
+                            <connectorPackage>${project.package}</connectorPackage>
+                            <sourceRootDir>${basedir}/target/generated-sources/cxf</sourceRootDir>
+                            <skipGeneration>false</skipGeneration>
+                            <overrideXmlHolder>false</overrideXmlHolder>
+                            <expandLvl>1</expandLvl>
+                            <wsdlFile>${wsdlUrl}</wsdlFile>
+                            <bindingFiles>
+                                <bindingFile>${basedir}/src/main/resources/wsdl/binding.xml</bindingFile>
+                            </bindingFiles>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>connector-generator</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.mule.tools.devkit</groupId>
+                        <artifactId>connector-sample-generator-maven-plugin</artifactId>
+                        <version>${connector.generator.version}</version>
+                        <configuration>
+                            <inputFile>${basedir}/target/generated-sources/mule/META-INF/mule-${project.moduleName}.xsd</inputFile>
+                            <outputFile>${basedir}/doc/</outputFile>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>sample-generator</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+#end
+    </profiles>
+#end
+#if( ${project.apiType} == 'SOAP' )
+    <dependencies>
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-cxf</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+#end
+    <repositories>
+        <repository>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Releases Repository</name>
+            <url>http://repository.mulesoft.org/releases/</url>
+            <layout>default</layout>
+        </repository>
+#if($devkitVersion.contains('SNAPSHOT'))
+        <repository>
+            <id>mulesoft-snapshots</id>
+            <name>MuleSoft Snapshots Repository</name>
+            <url>http://repository.mulesoft.org/snapshots/</url>
+            <layout>default</layout>
+        </repository>
+#end
+    </repositories>
+#if( $project.addGitInformation == true )        
+    <scm>
+        <connection>${project.gitConnection}</connection>
+        <developerConnection>${project.gitDevConnection}</developerConnection>
+        <url>${project.gitUrl}</url>
+    </scm>
+#end
+</project>
