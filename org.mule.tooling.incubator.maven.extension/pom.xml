@@ -5,11 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mule.tooling</groupId>
 	<artifactId>org.mule.tooling.incubator.maven.extension</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.4-SNAPSHOT</version>
 	<packaging>eclipse-feature</packaging>
 	<parent>
 		<groupId>org.mule.tooling.incubator</groupId>
 		<artifactId>org.mule.tooling.incubator.parent</artifactId>
-		<version>1.0.6-SNAPSHOT</version>
+		<version>1.0.8-SNAPSHOT</version>
 	</parent>
 </project>
