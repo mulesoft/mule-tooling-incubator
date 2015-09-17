@@ -242,7 +242,7 @@ public class ProjectBuilder {
                 throw new IllegalArgumentException("Cannot process WSDL");
             }
         }
-        AnalyticsRecordsFactory.single("NEW_DEVKIT_PROJECT_WIZARD", "API_TYPE", getApiType().toString()).track();
+        AnalyticsRecordsFactory.single("NEW_DEVKIT_PROJECT_WIZARD", "API_TYPE", getApiType().getMetricValue(),"AUTHENTICATION_TYPE",authenticationType.label()).track();
         monitor.subTask("Creating project folders.");
         createProjectFolders(project, monitor);
     }
@@ -266,7 +266,7 @@ public class ProjectBuilder {
 
         currentProject = project;
 
-        AnalyticsRecordsFactory.single("NEW_DEVKIT_PROJECT_WIZARD", "API_TYPE", getApiType().toString()).track();
+        AnalyticsRecordsFactory.single("NEW_DEVKIT_PROJECT_WIZARD", "API_TYPE", getApiType().getMetricValue(),"AUTHENTICATION_TYPE",authenticationType.label()).track();
         createProjectFolders(project, monitor);
 
         List<IClasspathEntry> entries = generateProjectEntries(project, monitor);
