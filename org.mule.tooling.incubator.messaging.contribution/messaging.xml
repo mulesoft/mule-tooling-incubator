@@ -1,636 +1,123 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes" prefix="sap" url="http://www.mulesoft.org/schema/mule/sap">
-	<connector metadata="dynamic" connectivityTesting="on" abstract="true" caption="SAP Connector Type"
-		localId="sapConnectorType" description="SAP connector type."
-		extends="http://www.mulesoft.org/schema/mule/core/connectorType"
-		icon="icons/small/sap-endpoint-24x16.png"
-		image="icons/large/sap-endpoint-48x32.png">
-		
-		<attribute-category caption="General" description="General properties">
-			<group caption="DataSense" id="dataSenseAttributes">
-				<useMetaData caption="useMetaData" name="useMetaData"></useMetaData>
-			</group>
-			<group caption="Connection" id="connectionAttributes">
-				<string caption="AS Host" requiredForDataSense="true"
-					description="Identifies the SAP application server. Host name or IP address of a specific SAP application server (such as sap.mulesoft.com, localhost, or 192.168.0.1) that will be used as the jco.client.ashost JCO logon property."
-					name="jcoAsHost" xsdType="string"/>
-				<string caption="User" requiredForDataSense="true"
-					description="Specifies the login user ID for logging in to the SAP system. This is a string representing the user id that will be used as the jco.client.user JCO logon property."
-					name="jcoUser" xsdType="string"/>
-				<password caption="Password" requiredForDataSense="true"
-					description="Password for logging in to the SAP system. This is a string representing the password that will be used as the jco.client.passwd JCO logon property."
-					name="jcoPasswd" xsdType="string"/>
-				<string caption="SAP System Number"
-					description="Indicates the SAP system number. This is a string (such as 00, 01, etc.) representing the SAP system number that will be used as the jco.client.sysnr JCO logon property."
-					name="jcoSysnr" xsdType="string"/>
-				<string caption="SAP Client"
-					description="Specifies the SAP client. Three-digit client number; preserve leading zeros if they appear in the number. This is a string (such as 100, 001, etc.) representing the JCO client id that will be used as the jco.client.client JCO logon property."
-					name="jcoClient" xsdType="string"/>
-				<string caption="Login Language"
-					description="Specifies a login language. ISO two-character language code (for example, EN, DE, FR), or SAP-specific single-character language code. This is a string (such as EN, ES ,etc.) representing the language that will be used as the jco.client.lang JCO property. Default value is EN."
-					name="jcoLang" xsdType="string" default="EN"/>
-			</group>
-		</attribute-category>
-		<attribute-category caption="Advanced" description="Advanced properties">
-			<group caption="Connection Settings" id="settings">
-				<integer caption="Pool Capacity"
-					description="Maximum number of idle connections kept open by the destination. A value of 0 has the effect that there is no connection pooling. This will be used as the jco.client.poolCapacity JCO property."
-					name="jcoPoolCapacity" xsdType="substitutableInt"/>
-				<integer caption="Peak Limit"
-					description="Maximum number of active connections that can be created for a destination simultaneously. This will be used as the jco.destination.peak_limit JCO property."
-					name="jcoPeakLimit" xsdType="substitutableInt"/>
-				<boolean
-					description="Whether JCO function templates are cached or not. Setting this flag to true is not recommended as it affects performance (Recommended for development if BAPIs are getting changed in SAP)" 
-					caption="Disable Function Template Cache"
-					name="disableFunctionTemplateCache" default="false"/>					
-			</group>
-			<group caption="Trace Settings" id="traceSettings">
-				<boolean
-					description="A boolean representing whether trace will be enabled that will be used as the jco.client.trace JCO property. Default value is false." 
-					caption="JCo Trace"
-					name="jcoTrace" default="false"/>					
-				<boolean
-					description="A boolean representing whether JCO trace will be sent to Mule ESB log files or to its own trace files. Setting this to true will override the behaviour of -Djco.trace_path=/path/to/trace." 
-					caption="JCo Trace to Mule Log"
-					name="jcoTraceToLog" default="false"/>					
-			</group>			
-			<group caption="Extended Properties" id="additionalProperties">
-				<globalRef caption="Extended Properties"
-					description="Reference to a Map that contains additional JCO client properties. This can be any of jco.client.* or jco.destination.*, etc. Check JCo documentation to find out a complete list of properties."
-					name="jcoClientExtendedProperties-ref to Map"
-					requiredType="http://www.springframework.org/schema/beans/bean"
-					xsdType="string" saveAs="jcoClientExtendedProperties-ref"/>
-			</group>
-		</attribute-category>
-	</connector>
-	
-	<connector caption="SAP" localId="connector"
-		description="Connector configuration for SAP endpoints."
-		extends="http://www.mulesoft.org/schema/mule/sap/sapConnectorType"
-		icon="icons/small/sap-endpoint-24x16.png"
-		image="icons/large/sap-endpoint-48x32.png"
-		metaData="dynamic" usesMetadataTypes="false" connectivityTesting="on"
-		paletteCategory="org.mule.tooling.globalCategory.cloudconnectors"> 
-		<require>
-			<jar name="SAP Java Connector (sapjco3.jar)" fileName="sapjco(.*)\.jar" targetFolder="lib/jco"/>
-			<jar name="SAP Java IDoc Class Library (sapidoc3.jar)" fileName="sapidoc(.*)\.jar" targetFolder="lib/jco"/>
-			<or name="SAP Java Connector Native Library">
-				<nativeLib name="sapjco3.dll"/>
-				<nativeLib name="libsapjco3.jnilib"/>
-				<nativeLib name="libsapjco3.so"/>
-			</or>
-		</require>
-	</connector>
-		
-	<endpoint caption="SAP" 
-		description="The SAP Endpoint allows Mule applications to execute BAPI calls, receive BAPI calls send and receive IDocs"
-		localId="endpoint"
-		extends="http://www.mulesoft.org/schema/mule/core/endPointTypeWithoutExchangePattern"
-		icon="icons/small/sap-endpoint-24x16.png"
-		image="icons/large/sap-endpoint-48x32.png"
-		doNotInherit="ref,connector-ref,transformer-refs,responseTransformer-refs"
-		forceMetadataRefreshAtrributes="xmlVersion,connector-ref,outputXml,type,functionName,org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"
-		metaData="dynamic"
-		paletteCategory="org.mule.tooling.category.cloudconnectors">
-		<required-set-alternatives>
-			<alternative value="type"/>
-			<alternative value="address"/>
-			<alternative value="ref"/>
-		</required-set-alternatives>		
-       <keywords>
-            <keyword value="sap" weight="1"/>
-            <keyword value="abap" weight="1"/>
-            <keyword value="bapi" weight="1"/>
-            <keyword value="function" weight="1"/>
-            <keyword value="rfc" weight="1"/>
-            <keyword value="idoc" weight="1"/>
-            <keyword value="jco" weight="1"/>
-            <keyword value="mcapurro" weight="2"/>
-        </keywords>
+<namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes" prefix="mq" url="http://www.mulesoft.org/schema/mule/mq">
 
+	<endpoint inboundLocalName="subscriber" outboundLocalName="publish"
+		localId="subscriber-publish" caption="Anypoint MQ" image="icons/large/messaging-48x32.png" icon="icons/small/messaging-24x16.png"
+        abstract="false" versions="[3.7.0,10.0.0]"
+		metaData="static"
+		paletteCategory="org.mule.tooling.category.cloudconnectors"
+		description="The Anypoint MQ Connector provides a single interface for messaging">
+		<keywords>
+			<keyword value="mq" weight="1" />
+			<keyword value="messaging" weight="1" />
+			<keyword value="publish" weight="1" />
+			<keyword value="subscrive" weight="1" />
+			<keyword value="queue" weight="1" />
+			<keyword value="fifo" weight="1" />
+		</keywords>
 		<attribute-category caption="General" description="General properties">
-			<group caption="Basic Settings" id="basicSettings">
-				<label name="topLabelMsg" caption="Remember to upload and configure SAP JCo libraries. Check documentation for more details." topAnchor="$"/>
-				<enum description="" name="exchange-pattern" caption="Exchange Pattern"
-					defaultValue="one-way" xsdType="" asRadioGroup="true" horizontal="true" removeEmptyOption="true">
-					<option value="one-way" />
-					<option value="request-response" />
+
+			<group caption="General Settings" id="generalSettings">
+				<globalRef caption="Connector Configuration" required="true"
+					description="The name of the global configuration to be used."
+					requiredType="http://www.mulesoft.org/schema/mule/mq/config"
+					name="config-ref" saveAs="config-ref"/>
+			</group>
+
+			<group caption="Subscriber Settings" id="basicPublishSettings" mode="inbound">
+				<string caption="Destination" description="Destination from where to retrieve messages."
+					name="publish-destination" saveAs="destination" mode="inbound" required="true" />
+
+				<enum description="Acknowledge mode to use for the messages retrieved from this subscriber." name="ackMode" caption="ACK Mode" mode="inbound"
+					defaultValue="AUTO" removeEmptyOption="true" allowsCustom="true">
+					<option value="NONE" />
+					<option value="AUTO" />
+					<option value="MANUAL" />
 				</enum>
-				<globalRef caption="Connector Configuration" name="connector-ref"
-					requiredType="http://www.mulesoft.org/schema/mule/sap/connector"
-					description="The name of the connector associated with this endpoint. This must be specified if more than one connector is defined for this transport."/>
-				<horizontal name="sapObjectTypeSelectionOutbound" equalWidth="false" caption="Type" fillHorizontal="type" mode="outbound">					
-					<enum caption="" description="Type" requiredForDataSense="true"
-						name="type" autoSort="false" allowsCustom="false">
-						<option caption="Function / BAPI (Default)" value="function"/>
-						<option caption="IDoc" value="idoc"/>
-						<option caption="Function Metadata" value="function-metadata"/>
-						<option caption="IDoc Metadata" value="idoc-metadata"/>
-					</enum>				
-					<button name="searchSapObjectButton" caption="Select ..." class="org.mule.tooling.ui.contribution.sap.widgets.SearchSapObjectAction"/>
-				</horizontal>
-				<horizontal name="sapObjectTypeSelectionInbound" equalWidth="false" caption="Type" fillHorizontal="type" mode="inbound">					
-					<enum caption="" description="Type" requiredForDataSense="true"
-						name="type" autoSort="false" allowsCustom="false">
-						<option caption="Function / BAPI (Default)" value="function"/>
-						<option caption="IDoc" value="idoc"/>
-					</enum>				
-					<button name="searchSapObjectButton" caption="Select ..." class="org.mule.tooling.ui.contribution.sap.widgets.SearchSapObjectAction"/>
-				</horizontal>					
-				<horizontal name="sapObjectSelection" equalWidth="false" caption="Object Name" fillHorizontal="functionName">					
-					<type-chooser caption="" requiredForDataSense="true"
-						description="For inbound endpoints, this is the name of the function or IDoc that this server handles. If no value is provided then all functions will be handled. For outbound endpoints this is the name of the SAP object (IDoc or Function/BAPI). This value is not required if the BAPI names cames in the payload or in the nested element."
-						name="functionName" xsdType="string" disableButton="true"/>
-					<button name="exportXmlTemplateButton" caption="Details ..." controlled="!functionName=$" class="org.mule.tooling.ui.contribution.sap.widgets.ViewSapObjectAction"/>
-				</horizontal>
-				<enum caption="RFC Type" description="The type of RFC the endpoint used to receive a function or IDoc. The available options are srfc (which is sync with no TID handler), trfc and qrfc (both of which are async, with a TID handler)."
-					name="rfcType" defaultValue="srfc" autoSort="false" allowsCustom="false" alwaysFill="false">
-					<option caption="Queued RFC (qRFC)" value="qrfc"/>
-					<option caption="Synchronous RFC (sRFC)" value="srfc"/>
-					<option caption="Transactional RFC (tRFC)" value="trfc"/>
-				</enum>	
-				<string caption="Queue Name"
-					description="If RFC Type is set to qrfc, then this will be used with this as the Queue Name."
-					name="queueName" xsdType="string" controlled="rfcType=qrfc" mode="outbound"/>
-				<enum caption="XML Version" description="The version of the output/input XML. IDocs only support Version 1, while for functions you have Version 1 (default) and Version 2 (DataMapper friendly)"
-						name="xmlVersion" defaultValue="2" xsdType="string" alwaysFill="true">
-					<option caption="Version 1" value="1"/>
-					<option caption="Version 2 [DataMapper]" value="2"/>
-				</enum>	
-				<boolean
-					description="If set to true, then the result will be automatically converted to the XML string representing the Function or IDoc."
-					caption="Output XML" name="outputXml" defaultValue="true" alwaysFill="true"/>
-				<boolean
-					description="If set to true, then the function response will be parsed and if the answer has exceptions or executed with errors in SAP, then an exception will be thrown in Mule ESB."
-					caption="Evaluate Function Response"
-					name="evaluateFunctionResponse" controlled="type=function" mode="outbound"/>
-				<boolean
-					description="Whether BAPI_TRANSACTION_COMMIT or BAPI_TRANSACTION_ROLLBACK should be called after executing the BAPI. If used in an endpoint inside of a transactional block the it is called at the end of the transaction."
-					caption="Is BAPI Transaction" default="false" supportsExpressions="true"
-					name="bapiTransaction" controlled="type=function" mode="outbound"/>
-			</group>
-			<group caption="JCo Server" id="sapJCoServer" mode="inbound">
-				<string caption="Gateway Host"
-					description="Gateway host on which the server should be registered. This represents jco.server.gwhost the JCo server property."
-					name="jcoGwHost" xsdType="string"/>
-				<string caption="Gateway Service"
-					description="Gateway service, i.e. the port on which a registration can be done. This represents the jco.server.gwserv JCo server property."
-					name="jcoGwService" xsdType="string"/>			
-				<string caption="Program ID"
-					description="The program ID with which the registration is done. This represents the jco.server.progid JCo server property."
-					name="jcoProgramId" xsdType="string"/>		
-				<integer caption="Connection Count"
-					description="The number of connections that should be registered at the gateway. This represents the jco.server.connection_count JCo server property."
-					name="jcoConnectionCount" xsdType="substitutableInt"/>	
-			</group>
-			<group caption="Transaction" id="transactionProperties" description="Transaction" mode="outbound">
-				<childElement 
-					name="http://www.mulesoft.org/schema/mule/sap/transaction2"
-					description="Standard Mule transaction configuration."
-					caption="Transaction" inplace="true" valuePersistence="org.mule.tooling.ui.contribution.sap.widgets.meta.SAPTransactionValuePersistence"/>
-				<childElement
-					name="http://www.mulesoft.org/schema/mule/core/abstract-transaction"
-					description="Standard Mule transaction configuration."
-					caption="Transaction" allowSubTypes="true"
-					visibleInDialog="false"
-					allowedSubTypes="http://www.mulesoft.org/schema/mule/sap/transaction"/>
-			</group>		
-			<!-- in the future add: ,http://www.mulesoft.org/schema/mule/ee/core/multi-transaction -->			
-			<group caption="TID Store" id="tidStoreProperties" description="Transaction ID (TID) stores are used for tRFC and qRFC inbound connections to keep track of current transactions" mode="inbound">
-				<childElement 
-					name="http://www.mulesoft.org/schema/mule/sap/tid-store"
-					description="TID store configuration."
-					caption="TID Store" inplace="true" valuePersistence="org.mule.tooling.ui.contribution.sap.widgets.meta.TIdStoreValuePersistence"/>
-				<childElement
-					name="http://www.mulesoft.org/schema/mule/sap/abstract-tid-store"
-					description="TID store configuration."
-					caption="TID Store" allowSubTypes="true"
-					visibleInDialog="false"
-					allowedSubTypes="http://www.mulesoft.org/schema/mule/sap/mule-object-store-tid-store,http://www.mulesoft.org/schema/mule/sap/default-in-memory-tid-store"/>
-			</group>		
-		</attribute-category>
-		
-		<attribute-category caption="XML Definition" description="Connection properties" mode="outbound">
-			<group caption="XML Definition" id="xmlDefinition" mode="outbound">
-				<radioBoolean fillLine="true" description="Use this if the representation of the SAP Object (function call/BAPI or IDoc) comes in the input payload" caption="Payload contains XML definition" name="payloadXML" persistenceTransformer="org.mule.tooling.ui.contribution.sap.widgets.meta.XmlDefinitionPersistenceTransformer"/>
-				<radioBoolean fillLine="true" description="Use to embed XML definition XML for BAPIs or IDOCs." caption="Embed XML definition" name="embedXML"/>
-				<childElement controlled="embedXML" name="http://www.mulesoft.org/schema/mule/sap/definition" description="" caption="" allowMultiple="false" inplace="true" alwaysFill="false" valuePersistence="org.mule.tooling.ui.contribution.sap.widgets.meta.XmlDefinitionValuePersistence"/>
-				<radioBoolean fillLine="true" description="Use this to use an external file with XML definition XML for BAPIs or IDOCs." caption="File XML definition" name="fileXML"/>
-				<file caption="Definition File" name="definitionFile" required="false" controlled="fileXML"
-			         description="The definition file for the Function or IDoc. The file can be on the classpath or local file system."/>		
-			</group>	
-		</attribute-category>
-
-		<attribute-category caption="Advanced" description="Advanced properties">
-			<group caption="" id="advancedSettings">
-				<globalRef name="ref"
-					requiredType="http://www.mulesoft.org/schema/mule/sap/endpoint"
-					caption="Connector Endpoint"
-					description="A reference to a global endpoint, which is used as a template to construct this endpoint. A template fixes the address (protocol, path, host, etc.), and may specify initial values for various properties. Additional properties can be defined locally as long as they do not change the address."/>
-			</group>
-			<group caption="Connection Settings" id="settings">
-				<string caption="AS Host"
-					description="Identifies the SAP application server. Host name or IP address of a specific SAP application server (such as sap.mulesoft.com, localhost, or 192.168.0.1) that will be used as the jco.client.ashost JCO logon property."
-					name="jcoAsHost" xsdType="string"/>
-				<string caption="User"
-					description="Specifies the login user ID for logging in to the SAP system. This is a string representing the user id that will be used as the jco.client.user JCO logon property."
-					name="jcoUser" xsdType="string"/>
-				<password caption="Password"
-					description="Password for logging in to the SAP system. This is a string representing the password that will be used as the jco.client.passwd JCO logon property."
-					name="jcoPasswd" xsdType="string"/>
-				<string caption="SAP System Number"
-					description="Indicates the SAP system number. This is a string (such as 00, 01, etc.) representing the SAP system number that will be used as the jco.client.sysnr JCO logon property."
-					name="jcoSysnr" xsdType="string"/>
-				<string caption="SAP Client"
-					description="Specifies the SAP client. Three-digit client number; preserve leading zeros if they appear in the number. This is a string (such as 100, 001, etc.) representing the JCO client id that will be used as the jco.client.client JCO logon property."
-					name="jcoClient" xsdType="string"/>
-				<string caption="Login Language"
-					description="Specifies a login language. ISO two-character language code (for example, EN, DE, FR), or SAP-specific single-character language code. This is a string (such as EN, ES ,etc.) representing the language that will be used as the jco.client.lang JCO property. Default value is EN."
-					name="jcoLang" xsdType="string" default="EN"/>			
-				<integer caption="Pool Capacity"
-					description="Maximum number of idle connections kept open by the destination. A value of 0 has the effect that there is no connection pooling. This will be used as the jco.client.poolCapacity JCO property."
-					name="jcoPoolCapacity" xsdType="substitutableInt"/>
-				<integer caption="Peak Limit"
-					description="Maximum number of active connections that can be created for a destination simultaneously. This will be used as the jco.destination.peak_limit JCO property."
-					name="jcoPeakLimit" xsdType="substitutableInt"/>
 			</group>
 
-			<group caption="Endpoint Settings" id="advancedClientSettings">
-				<string caption="Name"
-					description="The name for the endpoint."
-					name="name" xsdType="string"/>
-					<enum caption="IDoc Version" description="The IDoc version will be used to send the IDoc document to SAP. Possible values are 0 (IDOC_VERSION_DEFAULT), 2 (IDOC_VERSION_2), 3 (IDOC_VERSION_3) or 8 (IDOC_VERSION_QUEUED)	"
-						name="idocVersion" xsdType="" controlled="type=idoc">
-						<option caption="IDOC_VERSION_DEFAULT" value="0"/>
-						<option caption="IDOC_VERSION_2" value="2"/>
-						<option caption="IDOC_VERSION_3" value="3"/>
-						<option caption="IDOC_VERSION_QUEUED" value="8"/>
-					</enum>
-					<globalRef caption="Client Extended Properties"
-						description="Reference to a Map that contains additional JCO client properties. This can be any jco.client.* or jco.destination.*, etc. Chech JCo documentation to find out a complete list of properties."
-						name="jcoClientExtendedProperties-ref to Map"
-						requiredType="http://www.springframework.org/schema/beans/bean"
-						xsdType="string" saveAs="jcoClientExtendedProperties-ref"/>
-					<globalRef caption="Server Extended Properties"  mode="inbound"
-							description="Reference to a Map that contains additional JCO server properties. This can be any of jco.server.* properties. Check JCo documentation to find out a complete list of properties."
-							name="jcoServerExtendedProperties-ref to Map"
-							requiredType="http://www.springframework.org/schema/beans/bean"
-							xsdType="string" saveAs="jcoServerExtendedProperties-ref"/>					
-			</group>			
-		</attribute-category>		
-		<attribute-category caption="Transformers" description="Transformers">
-			<group caption="Global References" id="abstractConnectorReferences">
-				<list groupIn="Transformer References/Request" caption="Request"
-					description="A list of the transformers that will be applied (in order) to the message before it is delivered to the component."
-					name="transformer-refs"/>
-				<list groupIn="Transformer References/Response" caption="Response"
-					description="A list of the transformers that will be applied (in order) to the synchronous response before it is returned via the transport."
-					name="responseTransformer-refs"/>
+			<group caption="Publisher Settings" id="basicSubscriberSettings" mode="outbound">
+				<string caption="Destination" description="Destination from where to retrieve messages."
+					name="subscriber-destination" saveAs="destination" mode="outbound" required="true" />
+				
+				<childElement name="http://www.mulesoft.org/schema/mule/mq/property" description="Properties" caption="Properties" allowMultiple="true" inplace="true" mode="outbound"/>
 			</group>
 		</attribute-category>
 	</endpoint>
-	
-	<global-endpoint caption="SAP"
-		description="The SAP Endpoint allows Mule applications to execute BAPI calls, receive BAPI calls send and receive IDocs"
-		localId="endpoint"
-		metaData="dynamic"
-		extends="http://www.mulesoft.org/schema/mule/core/endPointTypeWithoutExchangePattern"
-		icon="icons/small/sap-endpoint-24x16.png"
-		image="icons/large/sap-endpoint-48x32.png">
-		<attribute-category caption="General" description="General properties">
-			<group caption="Generic" id="endpointGeneric" topAnchor="$">
-				<name caption="Name" description="Endpoint name." name="name"
-					required="true"/>
+		
+	<nested localId="property" versions="[3.7.0,10.0.0]">		
+		<string name="propertyName" description="The name of the property." caption="Name"/>
+		<string name="value" description="The value of the property." caption="Value"/>
+	</nested>
+			
+	<global-cloud-connector
+		metaData="off" usesMetadataTypes="false" connectivityTesting="off" abstract="false"
+		image="icons/large/messaging-48x32.png" icon="icons/small/messaging-24x16.png"
+		localId="config" description="Configuration information."
+		paletteCategory="org.mule.tooling.globalCategory.conponentConfigurations"
+		category="org.mule.tooling.globalCategory.cloudconnectors"
+		caption="Anypoint MQ Configuration" versions="[3.7.0,10.0.0]">
+
+		<attribute-category description="Anypoint MQ configuration parameters" caption="General">
+			<group caption="Generic" id="messagingGenericProperties">
+				<name required="true"
+					description="Give a name to this configuration so it can be later referenced by config-ref."
+					caption="Name" name="name">
+				</name>
 			</group>
-			<group caption="Basic Settings" id="basicSettings">
-				<enum description="" name="exchange-pattern" topAnchor="$" caption="Exchange Pattern"
-					defaultValue="one-way" xsdType="" asRadioGroup="true" horizontal="true" removeEmptyOption="true">
-					<option value="one-way" />
-					<option value="request-response" />
-				</enum>			
-				<globalRef caption="Connector Configuration" name="connector-ref" bottomAnchor="$"
-					requiredType="http://www.mulesoft.org/schema/mule/sap/connector"
-					description="The name of the connector associated with this endpoint. This must be specified if more than one connector is defined for this transport."/>
-			</group>		
-			<group caption="Client Settings" id="sapEndpointType">
-				<label caption="Remember to upload and configure SAP JCo libraries. Check documentation for more details."/>
-				<enum caption="Type" description="Type" requiredForDataSense="true"
-					name="type" autoSort="false" allowsCustom="false">
-					<option caption="Function / BAPI (Default)" value="function"/>
-					<option caption="IDoc" value="idoc"/>
-				</enum>	
-				<horizontal name="sapObjectSelection" equalWidth="false">
-					<type-chooser caption="Object Name" requiredForDataSense="true"
-						description="For inbound endpoints, this is the name of the function or IDoc that this server handles. If no value is provided then all functions will be handled. For outbound endpoints this is the name of the SAP object. If executing a function this will be the name of the BAPI. This value is not required if the BAPI names cames in the payload or in the nested element."
-						name="functionName" xsdType="string" disableButton="true"/>
-					<!--button name="exportXmlTemplateButton" caption="Export..." controlled="outputXml" class="org.mule.tooling.ui.contribution.sap.widgets.ExportXmlTemplateAction"/-->
-					<button name="exportXmlTemplateButton" caption="Search..." class="org.mule.tooling.ui.contribution.sap.widgets.SearchSapObjectAction"/>
-				</horizontal>
-				<enum caption="RFC Type" description="The type of RFC the endpoint used to receive a function or IDoc. The available options are srfc (which is sync with no TID handler), trfc and qrfc (both of which are async, with a TID handler)."
-					name="rfcType" defaultValue="srfc" autoSort="false" allowsCustom="false" alwaysFill="true">
-					<option caption="Queued RFC (qRFC)" value="qrfc"/>
-					<option caption="Synchronous RFC (sRFC)" value="srfc"/>
-					<option caption="Transactional RFC (tRFC)" value="trfc"/>
-				</enum>	
-				<string caption="Queue Name" mode="outbound"
-					description="If RFC Type is set to qrfc, then this will be used with this as the Queue Name."
-					name="queueName" xsdType="string" controlled="rfcType=qrfc"/>
-				<enum caption="XML Version" description="The version of the output/input XML. IDocs only support Version 1, while for functions you have Version 1 (default) and Version 2 (DataMapper friendly)"
-						name="xmlVersion" defaultValue="2" xsdType="string" alwaysFill="true">
-					<option caption="Version 1" value="1"/>
-					<option caption="Version 2 [DataMapper]" value="2"/>
-				</enum>	
+			<group caption="Basic Settings" id="basicSettingsConfigGroup">
+				<string caption="API URL" 
+					description=""
+					required="true"
+					name="apiUrl" xsdType="string"/>
+
+				<string caption="Client ID" 
+					description="The Client Identifier to be used to authorize the connection."
+					required="true"
+					name="clientId" xsdType="string"/>
+
+				<string caption="Client Secret" 
+					description="The Client Secret to be used to authorize the connection."
+					required="true"
+					name="clientSecret" xsdType="string"/>
+			
+				<integer caption="Max Redelivery"
+					description="Number of re-deliveries in case of the message processing fails. In order to avoid poisson message, default value is 0."
+					defaultValue="0"
+					name="maxRedelivery" xsdType="substitutableInt"/>
+			
 				<boolean
-					description="If set to true, then the result will be automatically converted to the XML string representing the Function or IDoc."
-					caption="Output XML" name="outputXml" default="false"/>				
-				<boolean
-					description="If set to true, then the function response will be parsed and if the answer has exceptions or executed with errors in SAP, then an exception will be thrown in Mule ESB."
-					caption="Evaluate Function Response"
-					name="evaluateFunctionResponse" controlled="type=function"/>	
-				<boolean
-					description="Whether BAPI_TRANSACTION_COMMIT or BAPI_TRANSACTION_ROLLBACK should be called after executing the BAPI. If used in an endpoint inside of a transactional block the it is called at the end of the transaction."
-					caption="Is BAPI Transaction" default="false" mode="outbound"
-					name="bapiTransaction" controlled="type=function"/>										
-	        </group>
-			<group caption="JCo Server" id="sapJCoServer" mode="inbound">
-				<string caption="Gateway Host"
-					description="Gateway host on which the server should be registered. This represents jco.server.gwhost the JCo server property."
-					name="jcoGwHost" xsdType="string"/>
-				<string caption="Gateway Service"
-					description="Gateway service, i.e. the port on which a registration can be done. This represents the jco.server.gwserv JCo server property."
-					name="jcoGwService" xsdType="string"/>			
-				<string caption="Program ID"
-					description="The program ID with which the registration is done. This represents the jco.server.progid JCo server property."
-					name="jcoProgramId" xsdType="string"/>		
-				<integer caption="Connection Count"
-					description="The number of connections that should be registered at the gateway. This represents the jco.server.connection_count JCo server property."
-					name="jcoConnectionCount" xsdType="substitutableInt"/>	
-			</group>
-			<group caption="Transaction" id="transactionProperties" description="Transaction" mode="outbound">
-				<childElement 
-					name="http://www.mulesoft.org/schema/mule/sap/transaction2"
-					description="Standard Mule transaction configuration."
-					caption="Transaction" inplace="true" valuePersistence="org.mule.tooling.ui.contribution.sap.widgets.meta.SAPTransactionValuePersistence"/>
-				<childElement
-					name="http://www.mulesoft.org/schema/mule/core/abstract-transaction"
-					description="Standard Mule transaction configuration."
-					caption="Transaction" allowSubTypes="true"
-					visibleInDialog="false"
-					allowedSubTypes="http://www.mulesoft.org/schema/mule/sap/transaction"/>
-	
-			</group>		
-			<!-- in the future add: ,http://www.mulesoft.org/schema/mule/ee/core/multi-transaction -->			
-			<group caption="TID Store" id="tidStoreProperties" description="Transaction ID (TID) stores are used for tRFC and qRFC inbound connections to keep track of current transactions" mode="inbound">
-				<childElement 
-					name="http://www.mulesoft.org/schema/mule/sap/tid-store"
-					description="TID store configuration."
-					caption="TID Store" inplace="true" valuePersistence="org.mule.tooling.ui.contribution.sap.widgets.meta.TIdStoreValuePersistence"/>
-				<childElement
-					name="http://www.mulesoft.org/schema/mule/sap/abstract-tid-store"
-					description="TID store configuration."
-					caption="TID Store" allowSubTypes="true"
-					visibleInDialog="false"
-					allowedSubTypes="http://www.mulesoft.org/schema/mule/sap/mule-object-store-tid-store,http://www.mulesoft.org/schema/mule/sap/default-in-memory-tid-store"/>
-			</group>		
-		</attribute-category>
-		
-		<attribute-category caption="XML Definition" description="Connection properties" mode="outbound">
-			<group caption="XML Definition" id="xmlDefinition" mode="outbound">
-				<radioBoolean fillLine="true" description="Use this if the representation of the SAP Object (function call/BAPI or IDoc) comes in the input payload" caption="Payload contains XML definition" name="payloadXML" persistenceTransformer="org.mule.tooling.ui.contribution.sap.widgets.meta.XmlDefinitionPersistenceTransformer"/>
-				<radioBoolean fillLine="true" description="Use to embed XML definition XML for BAPIs or IDOCs." caption="Embed XML definition" name="embedXML"/>
-				<childElement controlled="embedXML" name="http://www.mulesoft.org/schema/mule/sap/definition" description="" caption="" allowMultiple="false" inplace="true" alwaysFill="false" valuePersistence="org.mule.tooling.ui.contribution.sap.widgets.meta.XmlDefinitionValuePersistence"/>
-				<radioBoolean fillLine="true" description="Use this to use an external file with XML definition XML for BAPIs or IDOCs." caption="File XML definition" name="fileXML"/>
-				<file caption="Definition File" name="definitionFile" required="false" controlled="fileXML"
-			         description="The definition file for the Function or IDoc. The file can be on the classpath or local file system."/>		
+					description="If true provides a mock configuration to perform testing." 
+					caption="Mock"
+					name="mock" default="false"/>					
 			</group>
 		</attribute-category>
+		<attribute-category description="TLS/SSL Properties"
+			caption="TLS/SSL" id="tlsSettings">
 
-		<attribute-category caption="Advanced" description="Advanced properties">
-			<group caption="Connection Settings" id="settings">
-				<string caption="AS Host"
-					description="Identifies the SAP application server. Host name or IP address of a specific SAP application server (such as sap.mulesoft.com, localhost, or 192.168.0.1) that will be used as the jco.client.ashost JCO logon property."
-					name="jcoAsHost" xsdType="string"/>
-				<string caption="User"
-					description="Specifies the login user ID for logging in to the SAP system. This is a string representing the user id that will be used as the jco.client.user JCO logon property."
-					name="jcoUser" xsdType="string"/>
-				<password caption="Password"
-					description="Password for logging in to the SAP system. This is a string representing the password that will be used as the jco.client.passwd JCO logon property."
-					name="jcoPasswd" xsdType="string"/>
-				<string caption="SAP System Number"
-					description="Indicates the SAP system number. This is a string (such as 00, 01, etc.) representing the SAP system number that will be used as the jco.client.sysnr JCO logon property."
-					name="jcoSysnr" xsdType="string"/>
-				<string caption="SAP Client"
-					description="Specifies the SAP client. Three-digit client number; preserve leading zeros if they appear in the number. This is a string (such as 100, 001, etc.) representing the JCO client id that will be used as the jco.client.client JCO logon property."
-					name="jcoClient" xsdType="string"/>
-				<string caption="Login Language"
-					description="Specifies a login language. ISO two-character language code (for example, EN, DE, FR), or SAP-specific single-character language code. This is a string (such as EN, ES ,etc.) representing the language that will be used as the jco.client.lang JCO property. Default value is EN."
-					name="jcoLang" xsdType="string" default="EN"/>			
-				<integer caption="Pool Capacity"
-					description="Maximum number of idle connections kept open by the destination. A value of 0 has the effect that there is no connection pooling. This will be used as the jco.client.poolCapacity JCO property."
-					name="jcoPoolCapacity" xsdType="substitutableInt"/>
-				<integer caption="Peak Limit"
-					description="Maximum number of active connections that can be created for a destination simultaneously. This will be used as the jco.destination.peak_limit JCO property."
-					name="jcoPeakLimit" xsdType="substitutableInt"/>
-			</group>
+			<radioBoolean fillLine="true"
+				description="For MQ Configuration no TLS config is required."
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.TlsLoadedValueModifier"
+				group="tls-listener" caption="No TLS Config" name="include-nothing" />
 
-			<group caption="Endpoint Settings" id="advancedClientSettings">
-					<enum caption="IDoc Version" description="The IDoc version will be used to send the IDoc document to SAP. Possible values are 0 (IDOC_VERSION_DEFAULT), 2 (IDOC_VERSION_2), 3 (IDOC_VERSION_3) or 8 (IDOC_VERSION_QUEUED)	"
-						name="idocVersion" xsdType="" controlled="type=idoc">
-						<option caption="IDOC_VERSION_DEFAULT" value="0"/>
-						<option caption="IDOC_VERSION_2" value="2"/>
-						<option caption="IDOC_VERSION_3" value="3"/>
-						<option caption="IDOC_VERSION_QUEUED" value="8"/>
-					</enum>
-					<globalRef caption="Client Extended Properties"
-						description="Reference to a Map that contains additional JCO client properties. This can be any jco.client.* or jco.destination.*, etc. Chech JCo documentation to find out a complete list of properties."
-						name="jcoClientExtendedProperties-ref to Map"
-						requiredType="http://www.springframework.org/schema/beans/bean"
-						xsdType="string" saveAs="jcoClientExtendedProperties-ref"/>
-					<globalRef caption="Server Extended Properties"  mode="inbound"
-							description="Reference to a Map that contains additional JCO server properties. This can be any of jco.server.* properties. Check JCo documentation to find out a complete list of properties."
-							name="jcoServerExtendedProperties-ref to Map"
-							requiredType="http://www.springframework.org/schema/beans/bean"
-							xsdType="string" saveAs="jcoServerExtendedProperties-ref"/>					
-			</group>			
-		</attribute-category>		
-		<attribute-category caption="Transformers" description="Transformers">
-			<group caption="Global References" id="abstractConnectorReferences">
-				<globalRef name="ref"
-					requiredType="http://www.mulesoft.org/schema/mule/sap/endpoint"
-					caption="Connector Endpoint"
-					description="A reference to a global endpoint, which is used as a template to construct this endpoint. A template fixes the address (protocol, path, host, etc.), and may specify initial values for various properties. Additional properties can be defined locally as long as they do not change the address."/>
-				<list groupIn="Transformer References/Request" caption="Request"
-					description="A list of the transformers that will be applied (in order) to the message before it is delivered to the component."
-					name="transformer-refs"/>
-				<list groupIn="Transformer References/Response" caption="Response"
-					description="A list of the transformers that will be applied (in order) to the synchronous response before it is returned via the transport."
-					name="responseTransformer-refs"/>
-			</group>
-		</attribute-category>	
-	</global-endpoint>
+			<radioBoolean fillLine="true" description="Define a Nested TLS Context"
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.TlsLoadedValueModifier"
+				group="tls-listener" caption="Use TLS Config" name="nested" />
 
-	<nested localId="definition" caption="XML Definition" description="">
-		<text name="definition-xml"
-			description="Use this to embed XML definition XML for BAPIs or IDOCs." 
-			caption="Function / IDoc XML" isToElement="true"
-			wrapWithCDATA="true" required="false"/>
-	</nested>
-	
-	<!-- TID Stores -->
-	<nested localId="abstract-tid-store" caption="TID Store"
-		icon="icons/small/GenericTransaction-16x16.png"
-		image="icons/large/GenericTransaction-16x16.png" abstract="true"
-		description="">
-	</nested>
-		
-	<nested localId="default-in-memory-tid-store" caption="Default in memory TID store"
-		extends="http://www.mulesoft.org/schema/mule/sap/abstract-tid-store"
-		icon="icons/small/GenericTransaction-16x16.png"
-		image="icons/large/GenericTransaction-16x16.png"
-		description="The default in memory object store offers a simple volatile implementation that can be used for testing purposes.">
-	</nested>
+			<childElement indented="true" controlled="nested"
+				xmlOrder="10"
+				valuePersistence="org.mule.tooling.messaging.editor.global.TlsValuePersistence"
+				inplace="true" name="http://www.mulesoft.org/schema/mule/tls/context" />
 
-	<nested localId="mule-object-store-tid-store" caption="Object store based TID store"
-		extends="http://www.mulesoft.org/schema/mule/sap/abstract-tid-store"
-		icon="icons/small/GenericTransaction-16x16.png"
-		image="icons/large/GenericTransaction-16x16.png"
-		description="This TID store is based on the different options Mule ESB offers for its own object stores (JDBC, default volatile, default in memory)">
-		<childElement
-			name="http://www.mulesoft.org/schema/mule/core/abstract-object-store"
-			description="Configure one of Mule Object Stores to store TIDs"
-			caption="TID Object Store" allowSubTypes="true"/>		
-	</nested>
+			<radioBoolean fillLine="true"
+				description="Use a global TLS configuration reference"
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.TlsLoadedValueModifier"
+				group="tls-listener" caption="Use Global TLS Config" name="reference" />
 
-	<nested localId="tid-store" caption="TID Store" abstract="true">
-		<enum caption="Type"
-			description="The type of TID Store."
-			name="tidStoreType" required="true" defaultValue="none"
-			allowsCustom="false" alwaysFill="false" default="none" refreshCommand="sendValueTo http://www.mulesoft.org/schema/mule/core/abstract-object-store">
-			<option caption="None" value="none"/>
-			<option caption="Default in Memory TID Store" value="memory-store"/>
-			<option caption="Object Store TID Store" value="mule-object-store"/>
-		</enum>
-		<childElement
-			description="Object store that can be used to store TIDs."
-			caption="TID Object Store"
-			controlled="tidStoreType=mule-object-store"
-			name="http://www.mulesoft.org/schema/mule/core/abstract-object-store"
-			allowSubTypes="true"/>
-	</nested>		
-		
-	<!-- Transactions -->	
-	<nested localId="transaction" caption="Transaction"
-		extends="http://www.mulesoft.org/schema/mule/core/abstract-transaction"
-		icon="icons/small/GenericTransaction-16x16.png"
-		image="icons/large/GenericTransaction-16x16.png"
-		description="The transaction element configures a transaction. Transactions allow a series of operations to be grouped together so that they can be rolled back if a failure occurs. Set the action (such as ALWAYS_BEGIN or JOIN_IF_POSSIBLE) and the timeout setting for the transaction.">
-	</nested>
-		
-		
-	<nested localId="transaction2" caption="Transaction" abstract="true">
-		<enum caption="Type"
-			description="The type of action the transaction."
-			name="txType" required="true" defaultValue="none"
-			allowsCustom="false" alwaysFill="false" default="none">
-			<option caption="No Transaction" value="none"/>
-			<option caption="Transaction" value="sap"/>
-			<!--option caption="Multi-resource Transaction" value="mr" versions="1.0.EE"/-->
-		</enum>
-		<enum caption="Action"
-			description="The type of action the transaction."
-			name="action" required="false" defaultValue="NONE"
-			allowsCustom="false" alwaysFill="true"
-			controlled="!txType=none">
-			<option value="NONE"/>
-			<option value="ALWAYS_BEGIN"/>
-			<option value="BEGIN_OR_JOIN"/>
-			<option value="ALWAYS_JOIN"/>
-			<option value="JOIN_IF_POSSIBLE"/>
-		</enum>
-		<integer caption="Timeout"
-			description="Timeout for the transaction (in milliseconds)."
-			name="timeout" min="1" max="2147483647" step="1"
-			controlled="!txType=none"/>				
-	</nested>	
+			<globalRef caption="TLS Context" indented="true"
+				controlled="reference" description="Name of the global TLS context to be used."
+				requiredType="http://www.mulesoft.org/schema/mule/tls/globalContext" name="tlsContext-ref" />
 
-<!-- TRANSFORMERS -->
-	<transformer localId="abstractSAPTransformerType"
-		caption="abstractSAPTransformerType" abstract="true"
-		extends="http://www.mulesoft.org/schema/mule/core/abstractTransformerType"
-		description=""
-		image="icons/large/Transformer-48x32.png"
-		icon="icons/small/Transformer-24x16.png">
-		<attribute-category caption="General" description="General properties">
-			<group caption="Generic" id="abstractTransformerGeneric">
-				<enum caption="XML Version" description="The version of the output/input XML. IDocs only support Version 1, while for functions you have Version 1 (default) and Version 2 (DataMapper friendly)"
-						name="xmlVersion" defaultValue="2" xsdType="string" alwaysFill="true">
-					<option caption="Version 1" value="1"/>
-					<option caption="Version 2 [DataMapper]" value="2"/>
-				</enum>	
-			</group>
 		</attribute-category>
-	</transformer>
-	<!-- object-to-xml -->
-	<transformer localId="object-to-xml" caption="SAP Object to XML"
-		extends="http://www.mulesoft.org/schema/mule/sap/abstractSAPTransformerType"
-		description="The object-to-xml element configures a transformer that transforms a Sap Object representing a JCo function or IDoc document into its XML representation."
-		image="icons/large/Transformer-48x32.png"
-		icon="icons/small/Transformer-24x16.png">
-	</transformer>
-	<global-transformer localId="object-to-xml"
-		caption="SAP Object to XML"
-		extends="http://www.mulesoft.org/schema/mule/sap/object-to-xml"
-		description="The object-to-xml element configures a transformer that transforms a Sap Object representing a JCo function or IDoc document into its XML representation."
-		image="icons/large/Transformer-48x32.png"
-		icon="icons/small/Transformer-24x16.png">
-		<attribute-category caption="General" description="General properties">
-			<group caption="Generic" id="abstractTransformerGeneric" topAnchor="$">
-				<name name="name" caption="Name" topAnchor="$"
-					description="Identifies the transformer so that other elements can reference it. This is required if the transformer is defined at the global level."
-					xsdType="substitutableClass"/>
-			</group>
-		</attribute-category>
-	</global-transformer>
-	<!-- xml-to-function -->
-	<transformer localId="xml-to-function" caption="XML to SAP Function (BAPI)"
-		extends="http://www.mulesoft.org/schema/mule/sap/abstractSAPTransformerType"
-		description="The xml-to-function element configures a transformer that reads the XML representing a JCo function from java.io.InputStream, java.lang.String or byte[] to build the Sap Object expected by the SAP transport."
-		image="icons/large/Transformer-48x32.png"
-		icon="icons/small/Transformer-24x16.png">
-	</transformer>
-	<global-transformer localId="xml-to-function"
-		caption="XML to SAP Function (BAPI)"
-		extends="http://www.mulesoft.org/schema/mule/sap/xml-to-function"
-		description="The xml-to-function element configures a transformer that reads the XML representing a JCo function from java.io.InputStream, java.lang.String or byte[] to build the Sap Object expected by the SAP transport."
-		image="icons/large/Transformer-48x32.png"
-		icon="icons/small/Transformer-24x16.png">
-		<attribute-category caption="General" description="General properties">
-			<group caption="Generic" id="abstractTransformerGeneric" topAnchor="$">
-				<name name="name" caption="Name" topAnchor="$"
-					description="Identifies the transformer so that other elements can reference it. This is required if the transformer is defined at the global level."
-					xsdType="substitutableClass"/>
-			</group>
-		</attribute-category>
-	</global-transformer>
-	<!-- xml-to-idoc -->
-	<transformer localId="xml-to-idoc" caption="XML to SAP IDoc"
-		extends="http://www.mulesoft.org/schema/mule/sap/abstractSAPTransformerType"
-		description="The xml-to-idoc element configures a transformer that reads the XML representing a IDoc document from java.io.InputStream, java.lang.String or byte[] to build the Sap Object expected by the SAP transport."
-		image="icons/large/Transformer-48x32.png"
-		icon="icons/small/Transformer-24x16.png">
-	</transformer>
-	<global-transformer localId="xml-to-idoc"
-		caption="XML to SAP IDoc"
-		extends="http://www.mulesoft.org/schema/mule/sap/xml-to-idoc"
-		description="The xml-to-idoc element configures a transformer that reads the XML representing a IDoc document from java.io.InputStream, java.lang.String or byte[] to build the Sap Object expected by the SAP transport."
-		image="icons/large/Transformer-48x32.png"
-		icon="icons/small/Transformer-24x16.png">
-		<attribute-category caption="General" description="General properties">
-			<group caption="Generic" id="abstractTransformerGeneric" topAnchor="$">
-				<name name="name" caption="Name" topAnchor="$"
-					description="Identifies the transformer so that other elements can reference it. This is required if the transformer is defined at the global level."
-					xsdType="substitutableClass"/>
-			</group>
-		</attribute-category>
-	</global-transformer>
+	</global-cloud-connector>		
 </namespace>

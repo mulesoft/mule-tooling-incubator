@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Anypoint Messaging Connector
+Bundle-Name: Anypoint MQ
 Bundle-SymbolicName: org.mule.tooling.incubator.messaging.contribution;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.mule.tooling.ui.contribution.messaging.Activator
@@ -20,7 +20,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: org.mule.tooling.ui.contribution.sap.widgets.meta
 Eclipse-BundleShape: dir
-Bundle-ClassPath: .,
- mule-commons-sap.jar
+Bundle-ClassPath: .

@@ -1,4 +1,4 @@
-package org.mule.tooling.ui.contribution.sap;
+package org.mule.tooling.ui.contribution.messaging;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

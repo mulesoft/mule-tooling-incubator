@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.mule.tooling.incubator.messaging.extension"
-      label="MuleSoft Messaging Connector (3.5+)"
+      label="Anypoint MQ Connector (3.7+)"
       version="1.0.0.qualifier"
       provider-name="MuleSoft Inc."
       plugin="org.mule.tooling.incubator.messaging.extension"

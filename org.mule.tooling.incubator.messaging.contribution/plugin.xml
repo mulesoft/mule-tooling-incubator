@@ -4,16 +4,16 @@
    <extension
          point="org.mule.tooling.core.contribution">
       <externalContribution
-            contributionJar="mule-transport-sap-2.2.7.jar"
+            contributionJar="bundled-mq-connector-3.7.0.jar"
             contributionLibPathInMule="/lib"
-            contributionLibs="mule-transport-sap-2.2.7.jar"
-            contributionNamespace="http://www.mulesoft.org/schema/mule/sap"
-            contributionNamespaceFile="http://www.mulesoft.org/schema/mule/sap/current/mule-sap.xsd"
-            contributionNamespacePrefix="sap"
+            contributionLibs="bundled-mq-connector-3.7.0.jar"
+            contributionNamespace="http://www.mulesoft.org/schema/mule/mq"
+            contributionNamespaceFile="http://www.mulesoft.org/schema/mule/mq/current/mule-mq.xsd"
+            contributionNamespacePrefix="mq"
             contributionType="cloud-connector"
-            icon="icons/small/sap-endpoint-24x16.png"
-            minimumVersion="3.5.0"
-            name="SAP"
+            icon="icons/small/messaging-24x16.png"
+            minimumVersion="3.7.0"
+            name="Anypoint MQ"
             path="messaging.xml"
             version="2.2.7">
       </externalContribution>
