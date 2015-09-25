@@ -61,8 +61,8 @@
 	</nested>
 
 	<nested localId="access" versions="[3.7.0,10.0.0]">
-		<string caption="Broker URL" description="" required="true" name="brokerUrl"
-			xsdType="string" />
+		<string caption="Broker URL" description="" required="true"
+			name="brokerUrl" xsdType="string" />
 
 		<string caption="Client ID"
 			description="The Client Identifier to be used to authorize the connection."
@@ -86,10 +86,16 @@
 					caption="Name" name="name"></name>
 			</group>
 			<group caption="Settings" id="accessSettings">
-				<childElement inplace="true" 
-					xmlOrder="10"
-					valuePersistence="org.mule.tooling.messaging.editor.global.AccessValuePersistence"
-					name="http://www.mulesoft.org/schema/mule/mq/access" />
+				<string caption="Broker URL" description="" required="true"
+					name="brokerUrl" xsdType="string" />
+
+				<string caption="Client ID"
+					description="The Client Identifier to be used to authorize the connection."
+					required="true" name="clientId" xsdType="string" />
+
+				<string caption="Client Secret"
+					description="The Client Secret to be used to authorize the connection."
+					required="true" name="clientSecret" xsdType="string" />
 			</group>
 		</attribute-category>
 	</global>
