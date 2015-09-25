@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes" prefix="mq" url="http://www.mulesoft.org/schema/mule/mq">
+<namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes"
+	prefix="mq" url="http://www.mulesoft.org/schema/mule/mq">
 
 	<endpoint inboundLocalName="subscriber" outboundLocalName="publish"
-		localId="subscriber-publish" caption="Anypoint MQ" image="icons/large/messaging-48x32.png" icon="icons/small/messaging-24x16.png"
-        abstract="false" versions="[3.7.0,10.0.0]"
-		metaData="static"
-		paletteCategory="org.mule.tooling.category.cloudconnectors"
+		localId="subscriber-publish" caption="Anypoint MQ" image="icons/large/messaging-48x32.png"
+		icon="icons/small/messaging-24x16.png" abstract="false" versions="[3.7.0,10.0.0]"
+		metaData="static" paletteCategory="org.mule.tooling.category.cloudconnectors"
 		description="The Anypoint MQ Connector provides a single interface for messaging">
 		<keywords>
 			<keyword value="mq" weight="1" />
 			<keyword value="messaging" weight="1" />
 			<keyword value="publish" weight="1" />
-			<keyword value="subscrive" weight="1" />
+			<keyword value="subscribe" weight="1" />
 			<keyword value="queue" weight="1" />
 			<keyword value="fifo" weight="1" />
 		</keywords>
@@ -20,45 +20,90 @@
 			<group caption="General Settings" id="generalSettings">
 				<globalRef caption="Connector Configuration" required="true"
 					description="The name of the global configuration to be used."
-					requiredType="http://www.mulesoft.org/schema/mule/mq/config"
-					name="config-ref" saveAs="config-ref"/>
+					requiredType="http://www.mulesoft.org/schema/mule/mq/config" name="config-ref"
+					saveAs="config-ref" />
 			</group>
 
-			<group caption="Subscriber Settings" id="basicPublishSettings" mode="inbound">
-				<string caption="Destination" description="Destination from where to retrieve messages."
-					name="publish-destination" saveAs="destination" mode="inbound" required="true" />
+			<group caption="Subscriber Settings" id="basicPublishSettings"
+				mode="inbound">
+				<string caption="Destination"
+					description="Destination from where to retrieve messages." name="publish-destination"
+					saveAs="destination" mode="inbound" required="true" />
 
-				<enum description="Acknowledge mode to use for the messages retrieved from this subscriber." name="ackMode" caption="ACK Mode" mode="inbound"
-					defaultValue="AUTO" removeEmptyOption="true" allowsCustom="true">
+				<enum
+					description="Acknowledge mode to use for the messages retrieved from this subscriber."
+					name="ackMode" caption="ACK Mode" mode="inbound" defaultValue="AUTO"
+					removeEmptyOption="true" allowsCustom="true">
 					<option value="NONE" />
 					<option value="AUTO" />
 					<option value="MANUAL" />
 				</enum>
 			</group>
 
-			<group caption="Publisher Settings" id="basicSubscriberSettings" mode="outbound">
-				<string caption="Destination" description="Destination from where to retrieve messages."
-					name="subscriber-destination" saveAs="destination" mode="outbound" required="true" />
-				
-				<childElement name="http://www.mulesoft.org/schema/mule/mq/property" description="Properties" caption="Properties" allowMultiple="true" inplace="true" mode="outbound"/>
+			<group caption="Publisher Settings" id="basicSubscriberSettings"
+				mode="outbound">
+				<string caption="Destination"
+					description="Destination from where to retrieve messages." name="subscriber-destination"
+					saveAs="destination" mode="outbound" required="true" />
+
+				<childElement name="http://www.mulesoft.org/schema/mule/mq/property"
+					description="Properties" caption="Properties" allowMultiple="true"
+					inplace="true" mode="outbound" />
 			</group>
 		</attribute-category>
 	</endpoint>
-		
-	<nested localId="property" versions="[3.7.0,10.0.0]">		
-		<string name="propertyName" description="The name of the property." caption="Name"/>
-		<string name="value" description="The value of the property." caption="Value"/>
+
+	<nested localId="property" versions="[3.7.0,10.0.0]">
+		<string name="propertyName" description="The name of the property."
+			caption="Name" />
+		<string name="value" description="The value of the property."
+			caption="Value" />
 	</nested>
-			
-	<global-cloud-connector
-		metaData="off" usesMetadataTypes="false" connectivityTesting="off" abstract="false"
+
+	<nested localId="access" versions="[3.7.0,10.0.0]">
+		<string caption="Broker URL" description="" required="true" name="brokerUrl"
+			xsdType="string" />
+
+		<string caption="Client ID"
+			description="The Client Identifier to be used to authorize the connection."
+			required="true" name="clientId" xsdType="string" />
+
+		<string caption="Client Secret"
+			description="The Client Secret to be used to authorize the connection."
+			required="true" name="clientSecret" xsdType="string" />
+	</nested>
+
+	<global localId="access" versions="[3.7.0,10.0.0]"
+		xmlname="context" category="org.mule.tooling.globalCategory.conponentConfigurations"
+		description="Global Access Configuration" caption="Access Settings"
+		image="icons/large/messaging-48x32.png" icon="icons/small/messaging-24x16.png">
+
+		<attribute-category description="General Settings"
+			caption="General">
+			<group caption="Generic" id="name">
+				<name required="true"
+					description="Give a name to this configuration so it can be later referenced by builder ref."
+					caption="Name" name="name"></name>
+			</group>
+			<group caption="Settings" id="accessSettings">
+				<childElement inplace="true" 
+					xmlOrder="10"
+					valuePersistence="org.mule.tooling.messaging.editor.global.AccessValuePersistence"
+					name="http://www.mulesoft.org/schema/mule/mq/access" />
+			</group>
+		</attribute-category>
+	</global>
+
+	<global-cloud-connector metaData="off"
+		usesMetadataTypes="false" connectivityTesting="off" abstract="false"
 		image="icons/large/messaging-48x32.png" icon="icons/small/messaging-24x16.png"
 		localId="config" description="Configuration information."
 		paletteCategory="org.mule.tooling.globalCategory.conponentConfigurations"
-		category="org.mule.tooling.globalCategory.cloudconnectors"
-		caption="Anypoint MQ Configuration" versions="[3.7.0,10.0.0]">
+		category="org.mule.tooling.globalCategory.cloudconnectors" caption="Anypoint MQ Configuration"
+		versions="[3.7.0,10.0.0]">
 
-		<attribute-category description="Anypoint MQ configuration parameters" caption="General">
+		<attribute-category description="Anypoint MQ configuration parameters"
+			caption="General">
 			<group caption="Generic" id="messagingGenericProperties">
 				<name required="true"
 					description="Give a name to this configuration so it can be later referenced by config-ref."
@@ -66,30 +111,12 @@
 				</name>
 			</group>
 			<group caption="Basic Settings" id="basicSettingsConfigGroup">
-				<string caption="API URL" 
-					description=""
-					required="true"
-					name="apiUrl" xsdType="string"/>
-
-				<string caption="Client ID" 
-					description="The Client Identifier to be used to authorize the connection."
-					required="true"
-					name="clientId" xsdType="string"/>
-
-				<string caption="Client Secret" 
-					description="The Client Secret to be used to authorize the connection."
-					required="true"
-					name="clientSecret" xsdType="string"/>
-			
 				<integer caption="Max Redelivery"
 					description="Number of re-deliveries in case of the message processing fails. In order to avoid poisson message, default value is 0."
-					defaultValue="0"
-					name="maxRedelivery" xsdType="substitutableInt"/>
-			
-				<boolean
-					description="If true provides a mock configuration to perform testing." 
-					caption="Mock"
-					name="mock" default="false"/>					
+					defaultValue="0" name="maxRedelivery" xsdType="substitutableInt" />
+
+				<boolean description="If true provides a mock configuration to perform testing."
+					caption="Mock" name="mock" default="false" />
 			</group>
 		</attribute-category>
 		<attribute-category description="TLS/SSL Properties"
@@ -116,8 +143,58 @@
 
 			<globalRef caption="TLS Context" indented="true"
 				controlled="reference" description="Name of the global TLS context to be used."
-				requiredType="http://www.mulesoft.org/schema/mule/tls/globalContext" name="tlsContext-ref" />
+				requiredType="http://www.mulesoft.org/schema/mule/tls/globalContext"
+				name="tlsContext-ref" />
 
 		</attribute-category>
-	</global-cloud-connector>		
+		<attribute-category description="Proxy Properties"
+			caption="Proxy" id="proxySettings">
+
+			<radioBoolean fillLine="true"
+				description="For MQ Configuration no Proxy config is required."
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProxyLoadedValueModifier"
+				group="proxy-listener" caption="No Proxy Config" name="include-nothing" />
+
+			<radioBoolean fillLine="true" description="Define a Nested Proxy"
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProxyLoadedValueModifier"
+				group="proxy-listener" caption="Use Proxy Config" name="nested" />
+
+			<childElement indented="true" controlled="nested"
+				xmlOrder="10"
+				valuePersistence="org.mule.tooling.messaging.editor.global.ProxyValuePersistence"
+				inplace="true" name="http://www.mulesoft.org/schema/mule/http/proxy" />
+
+			<radioBoolean fillLine="true"
+				description="Use a global Proxy configuration reference"
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProxyLoadedValueModifier"
+				group="proxy-listener" caption="Use Global Proxy Config" name="reference" />
+
+			<globalRef caption="Proxy" indented="true" controlled="reference"
+				description="Name of the global Proxy to be used." requiredType="http://www.mulesoft.org/schema/mule/http/proxy"
+				name="proxy-ref" />
+
+		</attribute-category>
+		<attribute-category description="Access Properties"
+			caption="Access" id="accessSettings">
+
+			<radioBoolean fillLine="true" description="Define a Nested Access"
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.AccessLoadedValueModifier"
+				group="access-listener" caption="Use Access Config" name="nested" />
+
+			<childElement indented="true" controlled="nested"
+				xmlOrder="10"
+				valuePersistence="org.mule.tooling.messaging.editor.global.AccessValuePersistence"
+				inplace="true" name="http://www.mulesoft.org/schema/mule/mq/access" />
+
+			<radioBoolean fillLine="true"
+				description="Use a global Access configuration reference"
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.AccessLoadedValueModifier"
+				group="access-listener" caption="Use Global Access Config" name="reference" />
+
+			<globalRef caption="Access" indented="true" controlled="reference"
+				description="Name of the global Access to be used." requiredType="http://www.mulesoft.org/schema/mule/mq/access"
+				name="access-ref" />
+
+		</attribute-category>
+	</global-cloud-connector>
 </namespace>
