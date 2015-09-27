@@ -1,5 +1,6 @@
 package org.mule.tooling.incubator.gradle;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,10 +15,12 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,10 +36,13 @@ import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.GradleTask;
 import org.mule.tooling.core.model.IMuleProject;
+import org.mule.tooling.incubator.gradle.model.GradleSettings;
 import org.mule.tooling.incubator.gradle.model.StudioDependencies;
 import org.mule.tooling.incubator.gradle.model.StudioDependency;
 import org.mule.tooling.incubator.gradle.parser.GradleMuleBuildModelProvider;
 import org.mule.tooling.incubator.gradle.parser.GradleMulePlugin;
+import org.mule.tooling.incubator.gradle.parser.ast.GradleScriptASTParser;
+import org.mule.tooling.incubator.gradle.parser.ast.GradleSettingsASTVisitor;
 import org.mule.tooling.incubator.gradle.parser.ast.ScriptDependency;
 import org.mule.tooling.incubator.gradle.preferences.WorkbenchPreferencePage;
 import org.mule.tooling.incubator.gradle.template.TemplateFileWriter;
@@ -52,6 +58,9 @@ public class GradlePluginUtils {
 	
 	
 	public static final String STUDIO_DEPS_FILE = "studio-deps.xml";
+	
+	public static final String GRADLE_SETTINGS_FILE = "settings.gradle";
+	
 	public static final String[] TASK_BLACKLIST = {"studio", "eclipse", "cleanEclipse", "eclipseClasspath", "eclipseJdt", "eclipseProject", 
 		"cleanEclipseClasspath", "cleanEclipseJdt", "cleanEclipseProject", "muleDeps" , "unpackClover", "configureInstall"}; 
 	
@@ -231,7 +240,56 @@ public class GradlePluginUtils {
 		
 		return null;
 	}
+	
+	public static GradleSettings parseGradleSettings(IProject project) {
+		
+		IFile inputFile = project.getFile(GRADLE_SETTINGS_FILE);
+		GradleSettings settings = new GradleSettings();
+		settings.setProject(project);
+		
+		if (!inputFile.exists()) {
+			settings.setModules(new ArrayList<String>());
+			return settings;
+		}
+		
+		try {
+			GradleScriptASTParser parser = new GradleScriptASTParser(inputFile.getContents());
+			GradleSettingsASTVisitor visitor = new GradleSettingsASTVisitor();
+			parser.walkScript(visitor);
+			
+			settings.setModules(visitor.getModules());
+			return settings;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public static String readOrCreateGradleSettingsFile(IProject project) throws CoreException, IOException {
+		IFile inputFile = project.getFile(GRADLE_SETTINGS_FILE);
+		
+		if (!inputFile.exists()) {
+			ByteArrayInputStream bis = new ByteArrayInputStream(new byte[0]);
+			inputFile.create(bis, true, new NullProgressMonitor());
+		}
+		
+		return IOUtils.toString(inputFile.getContents(), "UTF-8");
+	}
+	
+	public static void updateGradleSettingsFile(IProject project, String contents) throws CoreException {
+		
+		IFile inputFile = project.getFile(GRADLE_SETTINGS_FILE);
+		ByteArrayInputStream bis = new ByteArrayInputStream(contents.getBytes());
+		if (inputFile.exists()) {
+			inputFile.setContents(bis, IResource.REPLACE, new NullProgressMonitor());
+		} else {
+			inputFile.create(bis, true, new NullProgressMonitor());
+		}
+		
+	}
 
+	
 	public static void saveStudioDependencies(IProject project,
 			StudioDependencies studioDependencies) {
 		

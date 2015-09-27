@@ -54,7 +54,7 @@ public class GradleScriptASTParser {
         walkScript(visitor);
         return visitor;
     }
-    
+        
     /**
      * Walks the script with the given visitor.
      * @param visitor

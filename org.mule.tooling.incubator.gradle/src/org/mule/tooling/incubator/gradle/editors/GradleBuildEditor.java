@@ -20,6 +20,9 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.mule.tooling.core.utils.CoreUtils;
+import org.mule.tooling.incubator.gradle.GradlePluginUtils;
+import org.mule.tooling.incubator.gradle.editors.domain.GradleDomainSettingsEditor;
+import org.mule.tooling.incubator.gradle.model.GradleSettings;
 
 /**
  * An example showing how to create a multi-page editor.
@@ -88,13 +91,36 @@ public class GradleBuildEditor extends FormEditor implements IResourceChangeList
 		setPageText(index, "Additional Libraries");
 		
 	}
+	
+	void addStudioDomainEditor() throws CoreException {
+		//second would be conditional to the project having the studio nature.
+		IFileEditorInput input = (IFileEditorInput) getEditorInput();
+		
+		if (!CoreUtils.hasMuleNature(input.getFile().getProject())) {
+			return;
+		}
+		
+		//only for domains
+		if (!CoreUtils.hasMuleDomainNature(input.getFile().getProject())) {
+			return;
+		}
+		
+		GradleSettings settings = GradlePluginUtils.parseGradleSettings(input.getFile().getProject());
+		
+		
+		GradleDomainSettingsEditor page = new GradleDomainSettingsEditor(this, "Domain Settings", settings);
+		
+		int index = addPage(page);
+		setPageText(index, "Domain Settings");
+	}
 
 	@Override
 	protected void addPages() {
 		
 	    try {
 			
-		//two pages
+		//add pages
+	    addStudioDomainEditor();
 		createBuildScriptEditor();
 		addStudioDependenciesEditor();
 		
