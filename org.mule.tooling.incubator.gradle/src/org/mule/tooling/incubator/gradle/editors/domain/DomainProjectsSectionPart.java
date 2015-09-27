@@ -26,6 +26,7 @@ import org.eclipse.ui.ide.IDE.SharedImages;
 import org.mule.tooling.incubator.gradle.dialog.AddModuleDialog;
 import org.mule.tooling.incubator.gradle.jobs.AddDomainModuleJob;
 import org.mule.tooling.incubator.gradle.jobs.InitProjectJob;
+import org.mule.tooling.incubator.gradle.jobs.SynchronizeProjectGradleBuildJob;
 
 public class DomainProjectsSectionPart extends SectionPart {
 	
@@ -103,7 +104,7 @@ public class DomainProjectsSectionPart extends SectionPart {
 				.getImage(ISharedImages.IMG_ELCL_SYNCED));
 		updateModuleItem.setText("Refresh");
 		updateModuleItem.setToolTipText("Rebuilds the Project's metadata for Studio");
-		
+		updateModuleItem.addSelectionListener(new RefreshModuleListener());
 		
 	}
 
@@ -158,6 +159,7 @@ public class DomainProjectsSectionPart extends SectionPart {
 			
 			new AddDomainModuleJob(dialog.getDialogInput(), currentProject).schedule();
 			
+			//TODO - ADD with refresh from filesystem.
 			modules.add(dialog.getDialogInput());
 			refreshItems();
 		}
@@ -170,4 +172,39 @@ public class DomainProjectsSectionPart extends SectionPart {
 		
 	}
 	
+	private class RefreshModuleListener implements SelectionListener {
+
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			if (modulesList.getSelectionCount() == 0) {
+				MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", "Please select a subproject in the list to run this action.");
+				return;
+			}
+			
+			String value = modulesList.getSelection()[0];
+			
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(value);
+			
+			if (!project.exists() || !project.isOpen()) {
+				MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", "The module is not open in the workspace and thus it cannot be refreshed.");
+				return;
+			}
+			
+			SynchronizeProjectGradleBuildJob job = new SynchronizeProjectGradleBuildJob(project) {
+				
+				@Override
+				protected void handleException(Exception ex) {
+					MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", "Could not refresh project.");
+				}
+			};
+			
+			job.doSchedule();
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent e) {
+			
+		}
+		
+	}
 }
