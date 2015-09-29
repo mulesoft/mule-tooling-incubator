@@ -15,7 +15,7 @@
             minimumVersion="3.7.0"
             name="Anypoint MQ"
             path="messaging.xml"
-            version="2.2.7">
+            version="1.0.0">
       </externalContribution>
    </extension>
 </plugin>

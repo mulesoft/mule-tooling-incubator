@@ -13,7 +13,8 @@ public class PrefetchLoadedValueModifier extends Abstract3WayLoadedValueModifier
     public static final String PREFETCH_REFERENCE_PROPERTY_ID = "prefetch-ref";
     public static final String PREFETCH_REFERENCE_BE_ID = "reference";
     public static final String PREFETCH_NESTED_BE_ID = "nested";
-    
+    public static final String PREFETCH_NONE_BE_ID = "include-nothing";
+
     protected Boolean haveNestedConfiguration(PropertyCollectionMap props) {
         Set<String> keySet = props.getPropertyCollections().keySet();
         for (String propertyCollectionName : keySet) {
@@ -41,7 +42,7 @@ public class PrefetchLoadedValueModifier extends Abstract3WayLoadedValueModifier
 
     @Override
     protected String getNoneConfigurationRadioBooleanId() {
-        return null;
+        return PREFETCH_NONE_BE_ID;
     }
 
 }
