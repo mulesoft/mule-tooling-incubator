@@ -2,8 +2,6 @@ package org.mule.tooling.messaging.editor.global.booleanloaders;
 
 import org.mule.tooling.model.messageflow.decorator.PropertyCollectionMap;
 
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 
 public class AccessLoadedValueModifier extends Abstract3WayLoadedValueModifierTemplate {
@@ -15,13 +13,7 @@ public class AccessLoadedValueModifier extends Abstract3WayLoadedValueModifierTe
     public static final String ACCESS_NESTED_BE_ID = "nested";
     
     protected Boolean haveNestedConfiguration(PropertyCollectionMap props) {
-        Set<String> keySet = props.getPropertyCollections().keySet();
-        for (String propertyCollectionName : keySet) {
-            if (propertyCollectionName.startsWith(ACCESS_STORE_ID_PREFIX)) {
-                return true;
-            }
-        }
-        return false;
+        return !haveGlobalRefConfiguration(props);
     }
 
     protected Boolean haveGlobalRefConfiguration(PropertyCollectionMap props) {
@@ -42,7 +34,7 @@ public class AccessLoadedValueModifier extends Abstract3WayLoadedValueModifierTe
     @Override
     protected String getNoneConfigurationRadioBooleanId()
     {
-        return null;
+        return getNestedRadioBooleanId();
     }
 
 }

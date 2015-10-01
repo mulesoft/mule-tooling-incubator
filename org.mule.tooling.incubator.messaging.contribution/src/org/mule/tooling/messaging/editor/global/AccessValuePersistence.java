@@ -6,23 +6,21 @@ import org.mule.tooling.ui.modules.core.widgets.meta.AbstractValuePersistence;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
 public final class AccessValuePersistence extends AbstractValuePersistence {
+
     public static final String AUXILIARY_PROPERTY_PREFIX = "auxiliary;";
     public static final String ACCESS_NAMESPACE = "http://www.mulesoft.org/schema/mule/mq/access";
     public static final String ACCESS_STORE_ID_PREFIX = "@" + ACCESS_NAMESPACE + ";";
-    
+
     @Override
     public String getId(final PropertyCollectionMap newProperties, PropertyCollectionMap parentProperties, String id) {
-        Map<String, PropertyCollectionMap> propertyCollections = newProperties.getPropertyCollections();
-        for (PropertyCollectionMap propertyCollection : propertyCollections.values()) {
-            if (!getPersistenceProperties(propertyCollection).isEmpty()) {
-                return getStoreId(id);
-            }
+
+        if (!getPersistenceProperties(newProperties).isEmpty()) {
+            return getStoreId(id);
         }
         return null;
     }
@@ -56,7 +54,7 @@ public final class AccessValuePersistence extends AbstractValuePersistence {
         }
         return null;
     }
-    
+
     @Override
     public String convertModelToXML(final String str) {
         return null;

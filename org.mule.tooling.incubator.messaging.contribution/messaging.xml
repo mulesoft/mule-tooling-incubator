@@ -55,12 +55,12 @@
 		<attribute-category description="Prefetch Properties"
 			caption="Prefetch" id="prefetchSettings" mode="inbound">
 
-			<radioBoolean fillLine="true"
-				description="No prefetch config is required."
+			<radioBoolean fillLine="true" description="No prefetch config is required."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
 				group="prefetch-config" caption="No Prefetch Config" name="include-nothing" />
 
-			<radioBoolean fillLine="true" description="Define a Nested Prefetch Configuration"
+			<radioBoolean fillLine="true"
+				description="Define a Nested Prefetch Configuration"
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
 				group="prefetch-config" caption="Use Prefetch Config" name="nested" />
 
@@ -74,12 +74,12 @@
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
 				group="prefetch-config" caption="Use Global Prefetch Config" name="reference" />
 
-			<globalRef caption="Prefetch" indented="true"
-				controlled="reference" description="Name of the global prefetch configuration to be used."
+			<globalRef caption="Prefetch" indented="true" controlled="reference"
+				description="Name of the global prefetch configuration to be used."
 				requiredType="http://www.mulesoft.org/schema/mule/mq/mqPrefetchType"
 				name="prefetch-ref" />
 
-		</attribute-category>		
+		</attribute-category>
 	</endpoint>
 
 	<nested localId="property" versions="[3.7.0,10.0.0]">
@@ -130,13 +130,17 @@
 	</global>
 
 	<nested localId="prefetch" versions="[3.7.0,10.0.0]">
-		<long caption="Retrieve Period" description="Amount of milliseconds to execute the retrieve operation when the prefetch queue is not empty." required="false"
-			name="retrievePeriod" defaultValue="5000" xsdType="substitutableLong" />
+		<long caption="Retrieve Period"
+			description="Amount of milliseconds to execute the retrieve operation when the prefetch queue is not empty."
+			required="false" name="retrievePeriod" defaultValue="5000"
+			xsdType="substitutableLong" />
 
-		<long caption="Min Retrieve Interval" description="Minimal amount of milliseconds to wait between retrieve operations. If the prefetch queue is emptied very often, this value avoid executing excessive calls to the broker." required="false"
-			name="minRetrieveInterval" defaultValue="1000" xsdType="substitutableLong" />
+		<long caption="Min Retrieve Interval"
+			description="Minimal amount of milliseconds to wait between retrieve operations. If the prefetch queue is emptied very often, this value avoid executing excessive calls to the broker."
+			required="false" name="minRetrieveInterval" defaultValue="1000"
+			xsdType="substitutableLong" />
 	</nested>
-	
+
 	<global localId="mqPrefetchType" versions="[3.7.0,10.0.0]"
 		xmlname="prefetch" category="org.mule.tooling.globalCategory.conponentConfigurations"
 		description="Global Prefetch Configuration" caption="Prefetch Settings"
@@ -150,15 +154,19 @@
 					caption="Name" name="name"></name>
 			</group>
 			<group caption="Settings" id="prefetchSettings">
-				<long caption="Retrieve Period" description="Amount of milliseconds to execute the retrieve operation when the prefetch queue is not empty." required="false"
-					name="retrievePeriod" defaultValue="5000" xsdType="substitutableLong" />
-		
-				<long caption="Min Retrieve Interval" description="Minimal amount of milliseconds to wait between retrieve operations. If the prefetch queue is emptied very often, this value avoid executing excessive calls to the broker." required="false"
-					name="minRetrieveInterval" defaultValue="1000" xsdType="substitutableLong" />
+				<long caption="Retrieve Period"
+					description="Amount of milliseconds to execute the retrieve operation when the prefetch queue is not empty."
+					required="false" name="retrievePeriod" defaultValue="5000"
+					xsdType="substitutableLong" />
+
+				<long caption="Min Retrieve Interval"
+					description="Minimal amount of milliseconds to wait between retrieve operations. If the prefetch queue is emptied very often, this value avoid executing excessive calls to the broker."
+					required="false" name="minRetrieveInterval" defaultValue="1000"
+					xsdType="substitutableLong" />
 			</group>
 		</attribute-category>
 	</global>
-	
+
 	<global-cloud-connector metaData="off"
 		usesMetadataTypes="false" connectivityTesting="off" abstract="false"
 		image="icons/large/messaging-48x32.png" icon="icons/small/messaging-24x16.png"
@@ -175,11 +183,30 @@
 					caption="Name" name="name">
 				</name>
 			</group>
+			<group caption="Access" id="accessProperties">
+				<radioBoolean fillLine="true" description="Define a Nested Access"
+					loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.AccessLoadedValueModifier"
+					group="access-listener" caption="Use Access Config" name="nested" />
+
+				<childElement indented="true" controlled="nested"
+					xmlOrder="30"
+					valuePersistence="org.mule.tooling.messaging.editor.global.AccessValuePersistence"
+					inplace="true" name="http://www.mulesoft.org/schema/mule/mq/access" />
+
+				<radioBoolean fillLine="true"
+					description="Use a global Access configuration reference"
+					loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.AccessLoadedValueModifier"
+					group="access-listener" caption="Use Global Access Config" name="reference" />
+
+				<globalRef caption="Access" indented="true" controlled="reference"
+					description="Name of the global Access to be used." requiredType="http://www.mulesoft.org/schema/mule/mq/mqAccessType"
+					name="access-ref" />
+			</group>
 			<group caption="Basic Settings" id="basicSettingsConfigGroup">
 				<integer caption="Max Redelivery"
 					description="Number of re-deliveries in case of the message processing fails. In order to avoid poisson message, default value is 0."
 					defaultValue="0" name="maxRedelivery" xsdType="substitutableInt" />
-			
+
 				<long caption="Pooling Time"
 					description="Maximum time in milliseconds to wait for the required amount of messages. If this time is elapsed, the response will be sent with as many messages as taken during the period."
 					defaultValue="10000" name="poolingTime" xsdType="substitutableLong" />
@@ -224,52 +251,40 @@
 				name="tlsContext-ref" />
 
 		</attribute-category>
-		<attribute-category description="Proxy Properties"
+		<attribute-category description="Proxy Configuration"
 			caption="Proxy" id="proxySettings">
 
-			<radioBoolean fillLine="true"
-				description="For MQ Configuration no Proxy config is required."
-				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProxyLoadedValueModifier"
-				group="proxy-listener" caption="No Proxy Config" name="include-nothing" />
+			<radioBoolean fillLine="true" caption="No Proxy Config"
+				description="Don't Use a Proxy Configuration"
+				loadedValueModifier="org.mule.tooling.rest.consumer.editor.global.booleanloaders.ProxyLoadedValueModifier"
+				group="proxy-req" name="none" />
 
-			<radioBoolean fillLine="true" description="Define a Nested Proxy"
-				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProxyLoadedValueModifier"
-				group="proxy-listener" caption="Use Proxy Config" name="nested" />
+			<radioBoolean caption="Use Proxy Config"
+				description="Define an nested Proxy Configuration" group="proxy-req"
+				loadedValueModifier="org.mule.tooling.rest.consumer.editor.global.booleanloaders.ProxyLoadedValueModifier"
+				name="nested" fillLine="true" />
 
 			<childElement indented="true" controlled="nested"
-				xmlOrder="20"
-				valuePersistence="org.mule.tooling.messaging.editor.global.ProxyValuePersistence"
-				inplace="true" name="http://www.mulesoft.org/schema/mule/http/proxy" />
+				valuePersistence="org.mule.tooling.ui.modules.core.widgets.editors.dynamic.DynamicEditorValuesPreProcessor"
+				persistenceTransformer="org.mule.tooling.rest.consumer.editor.global.ProxyPersistenceTransformer"
+				name="http://www.mulesoft.org/schema/mule/http/proxy-config"
+				inplace="true" xmlOrder="50" />
 
-			<radioBoolean fillLine="true"
-				description="Use a global Proxy configuration reference"
-				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProxyLoadedValueModifier"
-				group="proxy-listener" caption="Use Global Proxy Config" name="reference" />
+			<childElement visibleInDialog="false" xmlOrder="50"
+				name="http://www.mulesoft.org/schema/mule/http/proxy" />
 
-			<globalRef caption="Proxy" indented="true" controlled="reference"
-				description="Name of the global Proxy to be used." requiredType="http://www.mulesoft.org/schema/mule/http/proxy"
+			<childElement visibleInDialog="false" xmlOrder="50"
+				name="http://www.mulesoft.org/schema/mule/http/ntlm-proxy" />
+
+			<radioBoolean fillLine="true" caption="Use Global Proxy Config"
+				description="Use a global configuration reference"
+				loadedValueModifier="org.mule.tooling.rest.consumer.editor.global.booleanloaders.ProxyLoadedValueModifier"
+				group="proxy-req" name="reference" />
+
+			<globalRef caption="Proxy Ref" indented="true" controlled="reference"
+				description="Name of the global Proxy Configuration to be used."
+				requiredType="$http://www.mulesoft.org/schema/mule/http/proxy,http://www.mulesoft.org/schema/mule/http/ntlm-proxy"
 				name="proxy-ref" />
-
-		</attribute-category>
-		<attribute-category description="Access Properties" caption="Access" id="accessSettings">
-
-			<radioBoolean fillLine="true" description="Define a Nested Access"
-				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.AccessLoadedValueModifier"
-				group="access-listener" caption="Use Access Config" name="nested" />
-
-			<childElement indented="true" controlled="nested"
-				xmlOrder="30"
-				valuePersistence="org.mule.tooling.messaging.editor.global.AccessValuePersistence"
-				inplace="true" name="http://www.mulesoft.org/schema/mule/mq/access" />
-
-			<radioBoolean fillLine="true"
-				description="Use a global Access configuration reference"
-				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.AccessLoadedValueModifier"
-				group="access-listener" caption="Use Global Access Config" name="reference" />
-
-			<globalRef caption="Access" indented="true" controlled="reference"
-				description="Name of the global Access to be used." requiredType="http://www.mulesoft.org/schema/mule/mq/mqAccessType"
-				name="access-ref" />
 
 		</attribute-category>
 	</global-cloud-connector>
