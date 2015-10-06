@@ -2,7 +2,7 @@
 <feature
       id="org.mule.tooling.incubator.maven.extension"
       label="Maven extension"
-      version="1.0.3.qualifier">
+      version="1.0.4.qualifier">
 
    <description url="http://www.mulesoft.org/">
        Anypoint Maven Plugin.
