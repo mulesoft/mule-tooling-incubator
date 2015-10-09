@@ -91,7 +91,7 @@
 
 	<nested localId="access" versions="[3.7.0,10.0.0]">
 		<string caption="Broker URL" description="" required="true"
-			name="brokerUrl" xsdType="string" />
+			name="brokerUrl" xsdType="string" defaultValue="https://mq-qa-us-east-1.anypoint.mulesoft.com/api/v1"/>
 
 		<string caption="Client ID"
 			description="The Client Identifier to be used to authorize the connection."
@@ -116,7 +116,7 @@
 			</group>
 			<group caption="Settings" id="accessSettings">
 				<string caption="Broker URL" description="" required="true"
-					name="brokerUrl" xsdType="string" />
+					name="brokerUrl" xsdType="string" defaultValue="https://mq-qa-us-east-1.anypoint.mulesoft.com/api/v1"/>
 
 				<string caption="Client ID"
 					description="The Client Identifier to be used to authorize the connection."
