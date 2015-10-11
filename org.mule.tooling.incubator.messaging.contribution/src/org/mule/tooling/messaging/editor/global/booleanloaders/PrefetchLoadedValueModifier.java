@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class PrefetchLoadedValueModifier extends Abstract3WayLoadedValueModifierTemplate {
     // Prefetched
-    public static final String PREFETCH_NAMESPACE = "http://www.mulesoft.org/schema/mule/mq/prefetched";
+    public static final String PREFETCH_NAMESPACE = "http://www.mulesoft.org/schema/mule/anypoint-mq/prefetched";
     public static final String PREFETCH_STORE_ID_PREFIX = "@" + PREFETCH_NAMESPACE + ";";
     public static final String PREFETCH_REFERENCE_PROPERTY_ID = "prefetch-ref";
     public static final String PREFETCH_REFERENCE_BE_ID = "reference";
