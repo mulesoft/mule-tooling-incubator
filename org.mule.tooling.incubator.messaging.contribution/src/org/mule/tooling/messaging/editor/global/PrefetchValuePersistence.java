@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 public final class PrefetchValuePersistence extends AbstractValuePersistence {
     public static final String AUXILIARY_PROPERTY_PREFIX = "auxiliary;";
-    public static final String PREFETCH_NAMESPACE = "http://www.mulesoft.org/schema/mule/mq/prefetched";
+    public static final String PREFETCH_NAMESPACE = "http://www.mulesoft.org/schema/mule/anypoint-mq/prefetch";
     public static final String PREFETCH_STORE_ID_PREFIX = "@" + PREFETCH_NAMESPACE + ";";
     
     @Override

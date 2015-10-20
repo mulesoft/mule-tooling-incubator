@@ -10,11 +10,11 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-public final class AccessValuePersistence extends AbstractValuePersistence {
+public final class ProviderValuePersistence extends AbstractValuePersistence {
 
     public static final String AUXILIARY_PROPERTY_PREFIX = "auxiliary;";
-    public static final String ACCESS_NAMESPACE = "http://www.mulesoft.org/schema/mule/mq/access";
-    public static final String ACCESS_STORE_ID_PREFIX = "@" + ACCESS_NAMESPACE + ";";
+    public static final String PROVIDER_NAMESPACE = "http://www.mulesoft.org/schema/mule/anypoint-mq/provider";
+    public static final String PROVIDER_STORE_ID_PREFIX = "@" + PROVIDER_NAMESPACE + ";";
 
     @Override
     public String getId(final PropertyCollectionMap newProperties, PropertyCollectionMap parentProperties, String id) {
@@ -39,7 +39,7 @@ public final class AccessValuePersistence extends AbstractValuePersistence {
     @Override
     public PropertyCollection adjust(final List<PropertyCollection> defs2, String id) {
         for (PropertyCollection propertyCollection : defs2) {
-            if (propertyCollection.getName().startsWith(ACCESS_STORE_ID_PREFIX)) {
+            if (propertyCollection.getName().startsWith(PROVIDER_STORE_ID_PREFIX)) {
                 return propertyCollection;
             }
         }
