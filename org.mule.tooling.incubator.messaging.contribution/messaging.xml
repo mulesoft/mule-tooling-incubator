@@ -104,12 +104,16 @@
 						modeLabel="publish"></mode>
 					<mode modeId="http://www.mulesoft.org/schema/mule/anypoint-mq/consume"
 						modeLabel="consume"></mode>
+					<mode modeId="http://www.mulesoft.org/schema/mule/anypoint-mq/ack"
+						modeLabel="ack"></mode>
+					<mode modeId="http://www.mulesoft.org/schema/mule/anypoint-mq/nack"
+						modeLabel="nack"></mode>
 				</modeSwitch>
 			</group>
 		</attribute-category>
 	</cloud-connector>
-	<cloud-connector returnType="java.util.List&lt;java.lang.Object&gt;"
-		caption="Consume" icon="icons/small/messaging-24x16.png" localId="consume"
+	<cloud-connector caption="Consume"
+		icon="icons/small/messaging-24x16.png" localId="consume"
 		image="icons/large/messaging-48x32.png" abstract="true"
 		extends="http://www.mulesoft.org/schema/mule/anypoint-mq/abstractAnypointMQConnectorGeneric"
 		metaData="static">
@@ -132,7 +136,7 @@
 			</group>
 		</attribute-category>
 	</cloud-connector>
-	<cloud-connector returnType="java.lang.String" caption="Publish"
+	<cloud-connector caption="Publish"
 		icon="icons/small/messaging-24x16.png" localId="publish"
 		image="icons/large/messaging-48x32.png" abstract="true"
 		extends="http://www.mulesoft.org/schema/mule/anypoint-mq/abstractAnypointMQConnectorGeneric"
@@ -149,6 +153,18 @@
 
 			</group>
 		</attribute-category>
+	</cloud-connector>
+	<cloud-connector caption="ACK"
+		icon="icons/small/messaging-24x16.png" localId="ack"
+		image="icons/large/messaging-48x32.png" abstract="true"
+		extends="http://www.mulesoft.org/schema/mule/anypoint-mq/abstractAnypointMQConnectorGeneric"
+		metaData="static">
+	</cloud-connector>
+	<cloud-connector caption="NACK"
+		icon="icons/small/messaging-24x16.png" localId="nack"
+		image="icons/large/messaging-48x32.png" abstract="true"
+		extends="http://www.mulesoft.org/schema/mule/anypoint-mq/abstractAnypointMQConnectorGeneric"
+		metaData="static">
 	</cloud-connector>
 	<nested localId="property" versions="[3.7.0,10.0.0]">
 		<string name="propertyName" description="The name of the property."
