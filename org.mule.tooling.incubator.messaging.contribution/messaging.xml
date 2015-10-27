@@ -31,7 +31,7 @@
 
 				<enum
 					description="Acknowledge mode to use for the messages retrieved from this subscriber."
-					name="ackMode" caption="ACK Mode" mode="inbound" defaultValue="AUTO"
+					name="acknowledgementMode" caption="Acknowledgement Mode" mode="inbound" defaultValue="AUTO"
 					removeEmptyOption="true" allowsCustom="true">
 					<option value="NONE" />
 					<option value="AUTO" />
@@ -130,15 +130,15 @@
 					required="true" javaType="java.lang.String"></string>
 				<enum
 					description="Acknowledge mode to use for the messages retrieved from this subscriber."
-					name="ackMode" caption="ACK Mode" defaultValue="MANUAL"
+					name="acknowledgementMode" caption="Acknowledgement Mode" defaultValue="MANUAL"
 					removeEmptyOption="true" allowsCustom="true">
 					<option value="NONE" />
 					<option value="AUTO" />
 					<option value="MANUAL" />
 				</enum>
-				<long caption="ACK Timeout"
+				<long caption="Acknowledgement Timeout"
 					description="Time a message will be hold by the broker waiting for an ack or nack. After that time period it will be available again to any subscriber."
-					defaultValue="0" name="ackTimeout" xsdType="substitutableLong" />
+					defaultValue="0" name="acknowledgementTimeout" xsdType="substitutableLong" />
 			</group>
 		</attribute-category>
 	</cloud-connector>
@@ -330,9 +330,9 @@
 					description="Number of re-deliveries in case of the message processing fails. In order to avoid poisson message, default value is 0."
 					defaultValue="0" name="maxRedelivery" xsdType="substitutableInt" />
 
-				<long caption="ACK Timeout"
+				<long caption="Acknowledgement Timeout"
 					description="Time a message will be hold by the broker waiting for an ack or nack. After that time period it will be available again to any subscriber."
-					defaultValue="0" name="ackTimeout" xsdType="substitutableLong" />
+					defaultValue="0" name="acknowledgementTimeout" xsdType="substitutableLong" />
 
 				<boolean description="If true provides a mock configuration to perform testing."
 					caption="Mock" name="mock" default="false" />
