@@ -16,14 +16,8 @@
 			<keyword value="queue" weight="1" />
 			<keyword value="fifo" weight="1" />
 		</keywords>
-					
 		<attribute-category caption="General" description="General properties">
-			<group id="abstractAnypointMQConnectorGeneric" caption="Basic Settings">
-				<globalRef caption="Connector Configuration" required="true"
-					description="The name of the global configuration to be used."
-					requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/config"
-					name="config-ref" saveAs="config-ref" />
-			</group>
+
 			<group caption="Subscriber Settings" id="basicPublishSettings">
 				<string caption="Destination"
 					description="Destination from where to retrieve messages." name="publish-destination"
@@ -82,6 +76,12 @@
 			<keyword value="fifo" weight="1" />
 		</keywords>
 		<attribute-category caption="General" description="General.">
+			<group id="abstractAnypointMQConnectorGeneric" caption="Basic Settings">
+				<globalRef caption="Connector Configuration" required="true"
+					description="The name of the global configuration to be used."
+					requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/config"
+					name="config-ref" saveAs="config-ref" />
+			</group>
 		</attribute-category>
 	</cloud-connector>
 
@@ -118,12 +118,6 @@
 		extends="http://www.mulesoft.org/schema/mule/anypoint-mq/abstractAnypointMQConnectorGeneric"
 		metaData="static">
 		<attribute-category caption="General" description="General.">
-			<group id="abstractAnypointMQConnectorGeneric" caption="Basic Settings">
-				<globalRef caption="Connector Configuration" required="true"
-					description="The name of the global configuration to be used."
-					requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/config"
-					name="config-ref" saveAs="config-ref" />
-			</group>
 			<group id="basicConsumerSettings" caption="Consumer Settings">
 				<string defaultValue="" name="destination" caption="Destination"
 					description="Destination to where the messages will be sent."
@@ -148,12 +142,6 @@
 		extends="http://www.mulesoft.org/schema/mule/anypoint-mq/abstractAnypointMQConnectorGeneric"
 		metaData="static">
 		<attribute-category caption="General" description="General.">
-			<group id="abstractAnypointMQConnectorGeneric" caption="Basic Settings">
-				<globalRef caption="Connector Configuration" required="true"
-					description="The name of the global configuration to be used."
-					requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/config"
-					name="config-ref" saveAs="config-ref" />
-			</group>
 			<group caption="Publisher Settings" id="basicSubscriberSettings">
 				<string caption="Destination"
 					description="Destination from where to retrieve messages." name="subscriber-destination"
