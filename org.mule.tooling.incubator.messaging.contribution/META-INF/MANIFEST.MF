@@ -22,4 +22,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Bundle-ClassPath: .,
- lib/bundled-mq-connector.jar
+ bundled-mq-connector.jar
