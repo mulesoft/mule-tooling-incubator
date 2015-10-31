@@ -15,6 +15,9 @@
    <feature id="org.mule.tooling.incubator.utils.extension">
       <category name="org.mule.tooling.incubator.category.utils"/>
    </feature>
+   <feature id="org.mule.tooling.incubator.messaging.extension">
+      <category name="org.mule.tooling.incubator.category.messaging"/>
+   </feature>
    <category-def name="org.mule.tooling.category.devkit" label="Anypoint DevKit Plugin">
       <description>
          Anypoint Devkit Plugin
@@ -39,5 +42,10 @@
    	  <description>
    	  	Anypoint Studio Utils Plugin
    	  </description>
+   </category-def>
+   <category-def name="org.mule.tooling.incubator.category.messaging" label="Anypoint Messaging Connector">
+      <description>
+         Anypoint Messaging Connector
+      </description>
    </category-def>
 </site>
