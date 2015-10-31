@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<lib-dir>lib</lib-dir>
+		<lib-dir>${project.basedir}</lib-dir>
 	</properties>
 
 	<description>This pom exists because of the limitation on including dependencies when building with Tycho.
@@ -35,9 +35,9 @@
 	            <configuration>
 	                <filesets>
 	                    <fileset>
-	                        <directory>${lib-dir}</directory>
+							<directory>${lib-dir}</directory>
 	                        <includes>
-	                            <include>**/*</include>
+	                            <include>**/*.jar</include>
 	                        </includes>
 	                        <followSymlinks>false</followSymlinks>
 	                    </fileset>
