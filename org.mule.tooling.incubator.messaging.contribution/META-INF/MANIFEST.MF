@@ -22,4 +22,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Bundle-ClassPath: .,
- bundled-mq-connector.jar
+ mule-module-anypoint-mq-ee.jar

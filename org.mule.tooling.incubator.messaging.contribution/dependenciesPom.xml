@@ -20,9 +20,9 @@
 
 	<dependencies>
         <dependency>
-            <groupId>com.mulesoft.messaging</groupId>
-            <artifactId>bundled-mq-connector</artifactId>
-            <version>3.7.0-SNAPSHOT</version>
+			<groupId>com.mulesoft.muleesb.modules</groupId>
+			<artifactId>mule-module-anypoint-mq-ee</artifactId>
+			<version>1.0.0-RC3</version>
         </dependency>
 	</dependencies>
 
