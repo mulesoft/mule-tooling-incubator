@@ -74,6 +74,10 @@
 			<url>http://repository-master.mulesoft.org/releases/</url>
 		</repository>
 		<repository>
+			<id>mulesoft-releases-ee</id>
+			<url>https://repository-master.mulesoft.org/nexus/content/repositories/releases-ee</url>
+		</repository>
+		<repository>
 			<id>mulesoft-snapshots</id>
 			<url>http://repository-master.mulesoft.org/snapshots</url>
 		</repository>
