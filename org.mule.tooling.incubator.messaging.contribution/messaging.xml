@@ -176,7 +176,7 @@
 	<nested localId="provider" versions="[3.7.0,10.0.0]">
 		<string caption="URL" description="" required="true"
 			alwaysFill="true" name="url" xsdType="string"
-			defaultValue="https://mq-qa-us-east-1.anypoint.mulesoft.com/api/v1" />
+			defaultValue="https://mq-us-east-1.anypoint.mulesoft.com/api/v1" />
 
 		<string caption="Client ID"
 			description="The Client Identifier to be used to authorize the connection."
@@ -235,7 +235,7 @@
 			<group caption="Settings" id="providerSettings">
 				<string caption="URL" description="" required="true"
 					alwaysFill="true" name="url" xsdType="string"
-					defaultValue="https://mq-qa-us-east-1.anypoint.mulesoft.com/api/v1" />
+					defaultValue="https://mq-us-east-1.anypoint.mulesoft.com/api/v1" />
 
 				<string caption="Client ID"
 					description="The Client Identifier to be used to authorize the connection."
