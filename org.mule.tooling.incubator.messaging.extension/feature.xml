@@ -8,7 +8,7 @@
       exclusive="true">
 
    <description url="http://www.mulesoft.com">
-      Inbound and Outbound integration with SAP systems using JCO libraries. Supports both RFCs and IDOCs.
+      Inbound and Outbound integration with Anypoint MQ broker services.
    </description>
 
    <copyright url="http://www.mulesoft.com">
