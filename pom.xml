@@ -32,6 +32,9 @@
         <module>org.mule.tooling.incubator.utils.extension</module>
         <module>org.mule.tooling.incubator.messaging.contribution</module>
         <module>org.mule.tooling.incubator.messaging.extension</module>
+        <module>org.mule.tooling.incubator.editor.model</module>
+        <module>org.mule.tooling.incubator.editor.ui</module>
+        <module>org.mule.tooling.incubator.editor.extension</module>
         <module>org.mule.tooling.incubator.updatesite</module>
         <module>org.mule.tooling.incubator.test.parent</module>
     </modules>

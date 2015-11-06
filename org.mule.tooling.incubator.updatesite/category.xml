@@ -15,6 +15,9 @@
    <feature id="org.mule.tooling.incubator.messaging.extension">
       <category name="org.mule.tooling.incubator.category.messaging"/>
    </feature>
+   <feature id="org.mule.tooling.incubator.editor.extension">
+       <category name="org.mule.tooling.incubator.category.studio.editor"/>
+   </feature>
    <category-def name="org.mule.tooling.incubator.developer.category" label="Mule Developer Tools Extra">
       <description>
          Mule Replay Project
@@ -39,5 +42,10 @@
       <description>
          Anypoint Messaging Connector
       </description>
+   </category-def>
+   <category-def name="org.mule.tooling.incubator.category.studio.editor" label="Anypoint Studio UI Editor">
+       <description>
+           This extension will allow users to edit the xml files that define the UI for their mule extension.
+       </description>
    </category-def>
 </site>

@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Studio UI XML Editor
+Bundle-SymbolicName: org.mule.tooling.incubator.editor.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.mule.tooling.studio.ui.StudioUIEditorPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.forms,
+ org.eclipse.ui.workbench,
+ org.eclipse.core.resources,
+ org.mule.tooling.incubator.editor.model,
+ org.apache.commons.lang,
+ org.eclipse.jface,
+ org.eclipse.jdt.ui,
+ org.eclipse.jdt.core,
+ org.mule.tooling.core,
+ org.eclipse.swt
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Import-Package: com.google.common.base

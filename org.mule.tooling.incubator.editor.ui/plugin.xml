@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+         <content-type
+               base-type="org.eclipse.core.runtime.xml"
+               file-extensions="xml"
+               id="org.mule.tooling.editor.contentType"
+               name="Editors Xml ContentType"
+               priority="high">
+            <describer
+                  class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2">
+               <parameter
+                     name="element"
+                     value="{http://www.mulesoft.org/schema/mule/tooling.attributes}namespace">
+               </parameter>
+            </describer>
+         </content-type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="Studio UI XML Editor"
+            default="true"
+            icon="icons/file_obj.gif"
+            class="org.mule.tooling.studio.ui.editor.StudioUIFormEditor"
+            id="org.eclipse.ui.forms.article.base-editor">
+            <contentTypeBinding
+                  contentTypeId="org.mule.tooling.editor.contentType">
+            </contentTypeBinding>
+      </editor>
+   </extension>
+</plugin>

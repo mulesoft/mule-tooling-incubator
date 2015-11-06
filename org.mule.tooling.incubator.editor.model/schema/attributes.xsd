@@ -1,0 +1,1519 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="qualified" version="1.0" targetNamespace="http://www.mulesoft.org/schema/mule/tooling.attributes" xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes" xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:tns="http://www.mulesoft.org/schema/mule/tooling.attributes" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="abstractBaseLibrary" type="abstractBaseLibrary"/>
+
+  <xs:element name="abstractEditorElement" type="abstractEditorElement"/>
+
+  <xs:element name="abstractRef" type="abstractRef"/>
+
+  <xs:element name="alternative" type="alternative"/>
+
+  <xs:element name="attribute-category" nillable="true" type="xs:anyType"/>
+
+  <xs:element name="baseStringEditor" type="baseStringEditor"/>
+
+  <xs:element name="case" type="case"/>
+
+  <xs:element name="childElement" type="childElement"/>
+
+  <xs:element name="classname" type="classNameEditor"/>
+
+  <xs:element name="cloud-connector" type="cloudConnector"/>
+
+  <xs:element name="cloud-connector-message-source" type="cloudConnectorMessageSource"/>
+
+  <xs:element name="component" type="component"/>
+
+  <xs:element name="connector" type="connector"/>
+
+  <xs:element name="container" type="container"/>
+
+  <xs:element name="containerRef" type="containerRef"/>
+
+  <xs:element name="custom" type="custom"/>
+
+  <xs:element name="dummy" type="dummy"/>
+
+  <xs:element name="dynamicEditors" type="dynamicEditor"/>
+
+  <xs:element name="editor-ref" type="editorRef"/>
+
+  <xs:element name="element-controller-list" type="elementControllerList"/>
+
+  <xs:element name="element-controller-list-no-expression" type="elementControllerListNoExpression"/>
+
+  <xs:element name="element-controller-listOfMap" type="elementControllerListOfMap"/>
+
+  <xs:element name="element-controller-map" type="elementControllerMap"/>
+
+  <xs:element name="element-controller-map-no-expression" type="elementControllerMapNoExpression"/>
+
+  <xs:element name="element-query" type="elementQuery"/>
+
+  <xs:element name="encoding" type="encodingEditor"/>
+
+  <xs:element name="endpoint" type="endpoint"/>
+
+  <xs:element name="enum" type="enumEditor"/>
+
+  <xs:element name="file" type="fileEditor"/>
+
+  <xs:element name="filter" type="filter"/>
+
+  <xs:element name="fixedAttribute" type="fixedAttribute"/>
+
+  <xs:element name="flow" type="flow"/>
+
+  <xs:element name="flowRef" type="flowRef"/>
+
+  <xs:element name="global" type="global"/>
+
+  <xs:element name="global-cloud-connector" type="globalCloudConnector"/>
+
+  <xs:element name="global-endpoint" type="globalEndpoint"/>
+
+  <xs:element name="global-filter" type="globalFilter"/>
+
+  <xs:element name="global-transformer" type="globalTransformer"/>
+
+  <xs:element name="globalRef" type="globalRef"/>
+
+  <xs:element name="graphical-container" type="graphicalContainer"/>
+
+  <xs:element name="group" type="group"/>
+
+  <xs:element name="horizontal" type="horizontal"/>
+
+  <xs:element name="integer" type="integerEditor"/>
+
+  <xs:element name="jar" type="jar"/>
+
+  <xs:element name="keyword" type="keyword"/>
+
+  <xs:element name="keywords" type="keywordSet"/>
+
+  <xs:element name="label" type="labelElement"/>
+
+  <xs:element name="list" type="listEditor"/>
+
+  <xs:element name="localRef" type="localRef"/>
+
+  <xs:element name="mode" type="mode"/>
+
+  <xs:element name="modeSwitch" type="modeSwitch"/>
+
+  <xs:element name="multi-source" type="multiSource"/>
+
+  <xs:element name="name" type="nameEditor"/>
+
+  <xs:element name="namespace" type="namespace"/>
+
+  <xs:element name="nativeLib" type="nativeLibrary"/>
+
+  <xs:element name="nested" type="nested"/>
+
+  <xs:element name="nested-container" type="nestedContainer"/>
+
+  <xs:element name="no-operation" type="noOperation"/>
+
+  <xs:element name="option" type="option"/>
+
+  <xs:element name="or" type="librarySet"/>
+
+  <xs:element name="password" type="passwordEditor"/>
+
+  <xs:element name="path" type="pathEditor"/>
+
+  <xs:element name="pattern" type="pattern"/>
+
+  <xs:element name="radio" type="radio"/>
+
+  <xs:element name="radioBoolean" type="radioBoolean"/>
+
+  <xs:element name="regexp" type="regexp"/>
+
+  <xs:element name="require" type="requiredLibraries"/>
+
+  <xs:element name="required-set-alternatives" type="requiredSetAlternatives"/>
+
+  <xs:element name="resource" type="resourceEditor"/>
+
+  <xs:element name="reverseGlobalRef" type="reverseGlobalRef"/>
+
+  <xs:element name="soapInterceptor" type="soapInterceptor"/>
+
+  <xs:element name="string" type="stringEditor"/>
+
+  <xs:element name="string-map" type="stringMap"/>
+
+  <xs:element name="switchCase" type="switchCase"/>
+
+  <xs:element name="text" type="textEditor"/>
+
+  <xs:element name="transformer" type="transformer"/>
+
+  <xs:element name="type-chooser" type="typeChooser"/>
+
+  <xs:element name="url" type="urlEditor"/>
+
+  <xs:element name="useMetaData" type="useMetaData"/>
+
+  <xs:element name="wizard" type="wizard"/>
+
+  <xs:complexType name="namespace">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="nested-container"/>
+            <xs:element ref="graphical-container"/>
+            <xs:element ref="global"/>
+            <xs:element ref="global-cloud-connector"/>
+            <xs:element ref="cloud-connector-message-source"/>
+            <xs:element ref="global-endpoint"/>
+            <xs:element ref="global-filter"/>
+            <xs:element ref="global-transformer"/>
+            <xs:element ref="cloud-connector"/>
+            <xs:element ref="connector"/>
+            <xs:element ref="container"/>
+            <xs:element ref="endpoint"/>
+            <xs:element ref="flow"/>
+            <xs:element ref="filter"/>
+            <xs:element ref="pattern"/>
+            <xs:element ref="transformer"/>
+            <xs:element ref="wizard"/>
+            <xs:element ref="component"/>
+            <xs:element ref="nested"/>
+            <xs:element ref="multi-source"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="prefix" type="xs:string"/>
+        <xs:attribute name="url" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="abstractEditorElement" abstract="true">
+    <xs:sequence/>
+    <xs:attribute name="deprecatedMessage" type="xs:string"/>
+    <xs:attribute name="deprecatedVersions" type="xs:string"/>
+    <xs:attribute name="versions" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="editorElement" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence>
+          <xs:element ref="attribute-category" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="xmlname" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="aliasId" type="xs:string"/>
+        <xs:attribute name="caption" type="xs:string"/>
+        <xs:attribute name="componentValidator" type="xs:string"/>
+        <xs:attribute name="defaultDocName" type="xs:string"/>
+        <xs:attribute name="description" type="xs:string"/>
+        <xs:attribute name="doNotInherit" type="xs:boolean"/>
+        <xs:attribute name="extends" type="xs:string"/>
+        <xs:attribute name="hiddenFromXML" type="xs:boolean"/>
+        <xs:attribute name="icon" type="xs:string"/>
+        <xs:attribute name="image" type="xs:string"/>
+        <xs:attribute name="abstract" type="xs:boolean"/>
+        <xs:attribute name="localId" type="xs:string" use="required"/>
+        <xs:attribute name="showProposalInXML" type="xs:boolean"/>
+        <xs:attribute name="supportsInbound" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="attributeCategory">
+    <xs:complexContent>
+      <xs:extension base="baseChildEditorElement">
+        <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="attribute-category"/>
+            <xs:element ref="element-controller-list"/>
+            <xs:element ref="element-controller-list-no-expression"/>
+            <xs:element ref="element-controller-map"/>
+            <xs:element ref="element-controller-map-no-expression"/>
+            <xs:element ref="element-controller-listOfMap"/>
+            <xs:element ref="string-map"/>
+            <xs:element ref="abstractRef"/>
+            <xs:element ref="containerRef"/>
+            <xs:element ref="flowRef"/>
+            <xs:element ref="globalRef"/>
+            <xs:element ref="localRef"/>
+            <xs:element ref="reverseGlobalRef"/>
+            <xs:element ref="baseStringEditor"/>
+            <xs:element ref="string"/>
+            <xs:element ref="file"/>
+            <xs:element ref="password"/>
+            <xs:element ref="path"/>
+            <xs:element ref="url"/>
+            <xs:element ref="childElement"/>
+            <xs:element ref="classname"/>
+            <xs:element ref="custom"/>
+            <xs:element ref="dummy"/>
+            <xs:element ref="dynamicEditors"/>
+            <xs:element ref="encoding"/>
+            <xs:element ref="enum"/>
+            <xs:element ref="fixedAttribute"/>
+            <xs:element ref="integer"/>
+            <xs:element ref="label"/>
+            <xs:element ref="list"/>
+            <xs:element ref="modeSwitch"/>
+            <xs:element ref="name"/>
+            <xs:element ref="element-query"/>
+            <xs:element ref="radio"/>
+            <xs:element ref="radioBoolean"/>
+            <xs:element ref="regexp"/>
+            <xs:element ref="resource"/>
+            <xs:element ref="soapInterceptor"/>
+            <xs:element ref="text"/>
+            <xs:element ref="type-chooser"/>
+            <xs:element ref="attribute-category"/>
+            <xs:element ref="group"/>
+            <xs:element ref="horizontal"/>
+            <xs:element ref="switchCase"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="topAnchor" type="xs:string"/>
+        <xs:attribute name="versions" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="baseChildEditorElement" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="caption" type="xs:string"/>
+        <xs:attribute name="description" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="abstractElementController" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="baseChildEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="itemName" type="xs:string"/>
+        <xs:attribute name="javaType" type="xs:string"/>
+        <xs:attribute name="localName" type="xs:string"/>
+        <xs:attribute name="required" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="elementControllerList">
+    <xs:complexContent>
+      <xs:extension base="abstractElementController">
+        <xs:sequence/>
+        <xs:attribute name="listName" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="elementControllerListNoExpression">
+    <xs:complexContent>
+      <xs:extension base="abstractElementController">
+        <xs:sequence/>
+        <xs:attribute name="listName" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="elementControllerMap">
+    <xs:complexContent>
+      <xs:extension base="abstractElementController">
+        <xs:sequence/>
+        <xs:attribute name="defaultValue" type="xs:string"/>
+        <xs:attribute name="mapName" type="xs:string"/>
+        <xs:attribute name="metaDataStaticKey" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="elementControllerMapNoExpression">
+    <xs:complexContent>
+      <xs:extension base="abstractElementController">
+        <xs:sequence/>
+        <xs:attribute name="defaultValue" type="xs:string"/>
+        <xs:attribute name="mapName" type="xs:string"/>
+        <xs:attribute name="metaDataStaticKey" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="elementControllerListOfMap">
+    <xs:complexContent>
+      <xs:extension base="abstractElementController">
+        <xs:sequence/>
+        <xs:attribute name="innerName" type="xs:string"/>
+        <xs:attribute name="listName" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="stringMap">
+    <xs:complexContent>
+      <xs:extension base="abstractElementController">
+        <xs:sequence/>
+        <xs:attribute name="listName" type="xs:string"/>
+        <xs:attribute name="ref" type="xs:string"/>
+        <xs:attribute name="ref1" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="baseFieldEditorElement" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="baseChildEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="actionListener" type="xs:string"/>
+        <xs:attribute name="alternativeTo" type="xs:string"/>
+        <xs:attribute name="alwaysFill" type="xs:boolean"/>
+        <xs:attribute name="bottomAnchor" type="xs:string"/>
+        <xs:attribute name="controlled" type="xs:string"/>
+        <xs:attribute name="customValidator" type="xs:string"/>
+        <xs:attribute name="editable" type="xs:boolean"/>
+        <xs:attribute name="fillLine" type="xs:boolean"/>
+        <xs:attribute name="fillWhenNotEmpty" type="xs:boolean"/>
+        <xs:attribute name="groupIn" type="xs:string"/>
+        <xs:attribute name="hiddenForUser" type="xs:boolean"/>
+        <xs:attribute name="hideDisabled" type="xs:boolean"/>
+        <xs:attribute name="hideInChild" type="xs:boolean"/>
+        <xs:attribute name="indented" type="xs:boolean"/>
+        <xs:attribute name="javaType" type="xs:string"/>
+        <xs:attribute name="loadLater" type="xs:boolean"/>
+        <xs:attribute name="mode" type="modeType"/>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="persistenceTransformer" type="xs:string"/>
+        <xs:attribute name="priority" type="xs:int"/>
+        <xs:attribute name="recalcWhen" type="xs:string"/>
+        <xs:attribute name="required" type="xs:boolean"/>
+        <xs:attribute name="requiredForDataSense" type="xs:boolean"/>
+        <xs:attribute name="saveAs" type="xs:string"/>
+        <xs:attribute name="span" type="xs:int"/>
+        <xs:attribute name="storeIndependently" type="xs:boolean"/>
+        <xs:attribute name="supportsExpressions" type="xs:boolean"/>
+        <xs:attribute name="tiny" type="xs:boolean"/>
+        <xs:attribute name="topAnchor" type="xs:string"/>
+        <xs:attribute name="transient" type="xs:boolean"/>
+        <xs:attribute name="unchangeable" type="xs:boolean"/>
+        <xs:attribute name="valuePersistence" type="xs:string"/>
+        <xs:attribute name="valuePersistenceRequires" type="xs:string"/>
+        <xs:attribute name="visibleInDialog" type="xs:boolean"/>
+        <xs:attribute name="xsdType" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="abstractRef" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="allowsCustom" type="xs:boolean"/>
+        <xs:attribute name="defaultValue" type="xs:string"/>
+        <xs:attribute name="removeEmptyOption" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="containerRef">
+    <xs:complexContent>
+      <xs:extension base="abstractRef">
+        <xs:sequence/>
+        <xs:attribute name="acceptedOptionsTypes" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="flowRef">
+    <xs:complexContent>
+      <xs:extension base="abstractRef">
+        <xs:sequence/>
+        <xs:attribute name="supportFlow" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="globalRef">
+    <xs:complexContent>
+      <xs:extension base="abstractRef">
+        <xs:sequence/>
+        <xs:attribute name="additionalCheckbox" type="xs:string"/>
+        <xs:attribute name="attrName" type="xs:string"/>
+        <xs:attribute name="hideToolBar" type="xs:boolean"/>
+        <xs:attribute name="requiredType" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="localRef">
+    <xs:complexContent>
+      <xs:extension base="abstractRef">
+        <xs:sequence/>
+        <xs:attribute name="allowConnector" type="xs:boolean"/>
+        <xs:attribute name="refKey" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="reverseGlobalRef">
+    <xs:complexContent>
+      <xs:extension base="abstractRef">
+        <xs:sequence/>
+        <xs:attribute name="cells" type="xs:string"/>
+        <xs:attribute name="childrenType" type="xs:string"/>
+        <xs:attribute name="fieldWithLink" type="xs:string"/>
+        <xs:attribute name="fieldWithParentName" type="xs:string"/>
+        <xs:attribute name="parentType" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="baseStringEditor" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="defaultValue" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="stringEditor">
+    <xs:complexContent>
+      <xs:extension base="baseStringEditor">
+        <xs:sequence/>
+        <xs:attribute name="acceptsEmptyValue" type="xs:boolean"/>
+        <xs:attribute name="class" type="xs:string"/>
+        <xs:attribute name="max" type="xs:string"/>
+        <xs:attribute name="min" type="xs:string"/>
+        <xs:attribute name="prompt" type="xs:string"/>
+        <xs:attribute name="setHeight" type="xs:int"/>
+        <xs:attribute name="singeLineForExpressions" type="xs:boolean"/>
+        <xs:attribute name="step" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="fileEditor">
+    <xs:complexContent>
+      <xs:extension base="baseStringEditor">
+        <xs:sequence/>
+        <xs:attribute name="relativeToProject" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="passwordEditor">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="alwaysFillSimple" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="pathEditor">
+    <xs:complexContent>
+      <xs:extension base="baseStringEditor">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="urlEditor">
+    <xs:complexContent>
+      <xs:extension base="baseStringEditor">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="childElement">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="additionalPriorities" type="xs:string"/>
+        <xs:attribute name="allowMultiple" type="xs:boolean"/>
+        <xs:attribute name="allowSubTypes" type="xs:string"/>
+        <xs:attribute name="allowedSubTypes" type="xs:string"/>
+        <xs:attribute name="groupLabel" type="xs:string"/>
+        <xs:attribute name="inplace" type="xs:boolean"/>
+        <xs:attribute name="localId" type="xs:string"/>
+        <xs:attribute name="positional" type="xs:boolean"/>
+        <xs:attribute name="removeBorder" type="xs:boolean"/>
+        <xs:attribute name="tableUI" type="xs:boolean"/>
+        <xs:attribute name="xmlOrder" type="xs:int"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="classNameEditor">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="extends" type="xs:string"/>
+        <xs:attribute name="implements" type="xs:string"/>
+        <xs:attribute name="isSupportsImport" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="custom">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="bottomAnchor" type="xs:string"/>
+        <xs:attribute name="class" type="xs:string"/>
+        <xs:attribute name="javaType" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="dummy">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="hiddenForUser" type="xs:boolean"/>
+        <xs:attribute name="loadLater" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="dynamicEditor">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence>
+          <xs:element ref="editor-ref" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="class" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="editorRef">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="versions" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="encodingEditor">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="enumEditor">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence>
+          <xs:element ref="option" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="allowsCustom" type="xs:boolean"/>
+        <xs:attribute name="asRadioGroup" type="xs:boolean"/>
+        <xs:attribute name="autoSort" type="xs:boolean"/>
+        <xs:attribute name="class" type="xs:string"/>
+        <xs:attribute name="default" type="xs:string"/>
+        <xs:attribute name="defaultValue" type="xs:string"/>
+        <xs:attribute name="horizontal" type="xs:boolean"/>
+        <xs:attribute name="isChildElementChooser" type="xs:boolean"/>
+        <xs:attribute name="modelUpdater" type="xs:string"/>
+        <xs:attribute name="optionsProvider" type="xs:string"/>
+        <xs:attribute name="removeEmptyOption" type="xs:boolean"/>
+        <xs:attribute name="transformer" type="xs:string"/>
+        <xs:attribute name="valueCalculator" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="option">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="caption" type="xs:string"/>
+        <xs:attribute name="value" type="xs:string"/>
+        <xs:attribute name="versions" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="fixedAttribute">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="value" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="integerEditor">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="defaultValue" type="xs:int"/>
+        <xs:attribute name="max" type="xs:int"/>
+        <xs:attribute name="min" type="xs:int"/>
+        <xs:attribute name="step" type="xs:int"/>
+        <xs:attribute name="xmlns:xsi" type="xs:string"/>
+        <xs:attribute name="xsi:type" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="labelElement">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="listEditor">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="modeSwitch">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="mode"/>
+            <xs:element ref="no-operation"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="alwaysCombo" type="xs:boolean"/>
+        <xs:attribute name="asRadioGroup" type="xs:boolean"/>
+        <xs:attribute name="changesVisibility" type="xs:boolean"/>
+        <xs:attribute name="defaultValue" type="xs:string"/>
+        <xs:attribute name="sort" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="abstractMode" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="mode">
+    <xs:complexContent>
+      <xs:extension base="abstractMode">
+        <xs:sequence/>
+        <xs:attribute name="modeId" type="xs:string"/>
+        <xs:attribute name="modeLabel" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="noOperation">
+    <xs:complexContent>
+      <xs:extension base="abstractMode">
+        <xs:sequence/>
+        <xs:attribute name="abstractElement" type="xs:string"/>
+        <xs:attribute name="connector-name" type="xs:string"/>
+        <xs:attribute name="versions" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="nameEditor">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="appearsAsRequired" type="xs:boolean"/>
+        <xs:attribute name="defaultValue" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="elementQuery">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="andOperator" type="status"/>
+        <xs:attribute name="associatedConfig" type="xs:string"/>
+        <xs:attribute name="limit" type="status"/>
+        <xs:attribute name="nativeQuery" type="status"/>
+        <xs:attribute name="offset" type="status"/>
+        <xs:attribute name="orOperator" type="status"/>
+        <xs:attribute name="orderBy" type="status"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="radio">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence>
+          <xs:element ref="option" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="defaultValue" type="xs:string"/>
+        <xs:attribute name="horizontal" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="radioBoolean">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="defaultValue" type="xs:boolean"/>
+        <xs:attribute name="group" type="xs:string"/>
+        <xs:attribute name="loadedValueModifier" type="xs:string"/>
+        <xs:attribute name="margin" type="xs:int"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="regexp">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="resourceEditor">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="containerLevel" type="xs:string"/>
+        <xs:attribute name="initialPattern" type="xs:string"/>
+        <xs:attribute name="resourceTypes" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="soapInterceptor">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="allowMultiple" type="xs:boolean"/>
+        <xs:attribute name="inplace" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="textEditor">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence>
+          <xs:element name="customTextViewerCreator" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="isToElement" type="xs:boolean"/>
+        <xs:attribute name="language" type="xs:string"/>
+        <xs:attribute name="nestedName" type="xs:string"/>
+        <xs:attribute name="textAreaHeight" type="xs:int"/>
+        <xs:attribute name="textAreaWidth" type="xs:int"/>
+        <xs:attribute name="wrapWithCDATA" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="typeChooser">
+    <xs:complexContent>
+      <xs:extension base="baseFieldEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="affects" type="metaDataKeyParamAffectsType"/>
+        <xs:attribute name="associatedConfig" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="button">
+    <xs:complexContent>
+      <xs:extension base="baseChildEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="align" type="align"/>
+        <xs:attribute name="class" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="group">
+    <xs:complexContent>
+      <xs:extension base="baseChildEditorElement">
+        <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="abstractRef"/>
+            <xs:element ref="containerRef"/>
+            <xs:element ref="flowRef"/>
+            <xs:element ref="globalRef"/>
+            <xs:element ref="localRef"/>
+            <xs:element ref="reverseGlobalRef"/>
+            <xs:element ref="baseStringEditor"/>
+            <xs:element ref="string"/>
+            <xs:element ref="file"/>
+            <xs:element ref="password"/>
+            <xs:element ref="path"/>
+            <xs:element ref="url"/>
+            <xs:element ref="childElement"/>
+            <xs:element ref="classname"/>
+            <xs:element ref="custom"/>
+            <xs:element ref="dummy"/>
+            <xs:element ref="dynamicEditors"/>
+            <xs:element ref="encoding"/>
+            <xs:element ref="enum"/>
+            <xs:element ref="fixedAttribute"/>
+            <xs:element ref="integer"/>
+            <xs:element ref="label"/>
+            <xs:element ref="list"/>
+            <xs:element ref="modeSwitch"/>
+            <xs:element ref="name"/>
+            <xs:element ref="element-query"/>
+            <xs:element ref="radio"/>
+            <xs:element ref="radioBoolean"/>
+            <xs:element ref="regexp"/>
+            <xs:element ref="resource"/>
+            <xs:element ref="soapInterceptor"/>
+            <xs:element ref="text"/>
+            <xs:element ref="type-chooser"/>
+          </xs:choice>
+          <xs:element ref="useMetaData" minOccurs="0"/>
+          <xs:element name="userMetaData" type="useMetaData" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="bottomAnchor" type="xs:string"/>
+        <xs:attribute name="collapsable" type="xs:boolean"/>
+        <xs:attribute name="collapsed" type="xs:boolean"/>
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="mode" type="modeType"/>
+        <xs:attribute name="topAnchor" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="useMetaData">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence>
+          <xs:element name="caption" type="xs:string" minOccurs="0"/>
+          <xs:element name="name" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="horizontal">
+    <xs:complexContent>
+      <xs:extension base="baseChildEditorElement">
+        <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="abstractRef"/>
+            <xs:element ref="containerRef"/>
+            <xs:element ref="flowRef"/>
+            <xs:element ref="globalRef"/>
+            <xs:element ref="localRef"/>
+            <xs:element ref="reverseGlobalRef"/>
+            <xs:element ref="baseStringEditor"/>
+            <xs:element ref="string"/>
+            <xs:element ref="file"/>
+            <xs:element ref="password"/>
+            <xs:element ref="path"/>
+            <xs:element ref="url"/>
+            <xs:element ref="childElement"/>
+            <xs:element ref="classname"/>
+            <xs:element ref="custom"/>
+            <xs:element ref="dummy"/>
+            <xs:element ref="dynamicEditors"/>
+            <xs:element ref="encoding"/>
+            <xs:element ref="enum"/>
+            <xs:element ref="fixedAttribute"/>
+            <xs:element ref="integer"/>
+            <xs:element ref="label"/>
+            <xs:element ref="list"/>
+            <xs:element ref="modeSwitch"/>
+            <xs:element ref="name"/>
+            <xs:element ref="element-query"/>
+            <xs:element ref="radio"/>
+            <xs:element ref="radioBoolean"/>
+            <xs:element ref="regexp"/>
+            <xs:element ref="resource"/>
+            <xs:element ref="soapInterceptor"/>
+            <xs:element ref="text"/>
+            <xs:element ref="type-chooser"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="equalWidth" type="xs:boolean"/>
+        <xs:attribute name="fillHorizontal" type="xs:boolean"/>
+        <xs:attribute name="marginWidth" type="xs:int"/>
+        <xs:attribute name="name" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="switchCase">
+    <xs:complexContent>
+      <xs:extension base="baseChildEditorElement">
+        <xs:sequence>
+          <xs:element ref="case" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="controlled" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="case">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="attribute-category"/>
+            <xs:element ref="element-controller-list"/>
+            <xs:element ref="element-controller-list-no-expression"/>
+            <xs:element ref="element-controller-map"/>
+            <xs:element ref="element-controller-map-no-expression"/>
+            <xs:element ref="element-controller-listOfMap"/>
+            <xs:element ref="string-map"/>
+            <xs:element ref="abstractRef"/>
+            <xs:element ref="containerRef"/>
+            <xs:element ref="flowRef"/>
+            <xs:element ref="globalRef"/>
+            <xs:element ref="localRef"/>
+            <xs:element ref="reverseGlobalRef"/>
+            <xs:element ref="baseStringEditor"/>
+            <xs:element ref="string"/>
+            <xs:element ref="file"/>
+            <xs:element ref="password"/>
+            <xs:element ref="path"/>
+            <xs:element ref="url"/>
+            <xs:element ref="childElement"/>
+            <xs:element ref="classname"/>
+            <xs:element ref="custom"/>
+            <xs:element ref="dummy"/>
+            <xs:element ref="dynamicEditors"/>
+            <xs:element ref="encoding"/>
+            <xs:element ref="enum"/>
+            <xs:element ref="fixedAttribute"/>
+            <xs:element ref="integer"/>
+            <xs:element ref="label"/>
+            <xs:element ref="list"/>
+            <xs:element ref="modeSwitch"/>
+            <xs:element ref="name"/>
+            <xs:element ref="element-query"/>
+            <xs:element ref="radio"/>
+            <xs:element ref="radioBoolean"/>
+            <xs:element ref="regexp"/>
+            <xs:element ref="resource"/>
+            <xs:element ref="soapInterceptor"/>
+            <xs:element ref="text"/>
+            <xs:element ref="type-chooser"/>
+            <xs:element ref="attribute-category"/>
+            <xs:element ref="group"/>
+            <xs:element ref="horizontal"/>
+            <xs:element ref="switchCase"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="abstractContainer" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="editorElement">
+        <xs:sequence/>
+        <xs:attribute name="acceptsElements" type="xs:string"/>
+        <xs:attribute name="collapsable" type="xs:boolean"/>
+        <xs:attribute name="rowNumber" type="xs:int"/>
+        <xs:attribute name="showsResponse" type="xs:boolean"/>
+        <xs:attribute name="xmlOrder" type="xs:int"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="nestedContainer">
+    <xs:complexContent>
+      <xs:extension base="abstractContainer">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="graphicalContainer">
+    <xs:complexContent>
+      <xs:extension base="abstractContainer">
+        <xs:sequence/>
+        <xs:attribute name="childrenCreatorId" type="xs:string"/>
+        <xs:attribute name="contributesToPath" type="xs:boolean"/>
+        <xs:attribute name="editPolicyFactoryId" type="xs:string"/>
+        <xs:attribute name="layoutFactoryId" type="xs:string"/>
+        <xs:attribute name="pathExpression" type="xs:string"/>
+        <xs:attribute name="prompt" type="xs:string"/>
+        <xs:attribute name="updateParticipantId" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="abstractGlobalElement" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="editorElement">
+        <xs:sequence/>
+        <xs:attribute name="category" type="xs:string"/>
+        <xs:attribute name="paletteCategory" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="global">
+    <xs:complexContent>
+      <xs:extension base="abstractGlobalElement">
+        <xs:sequence/>
+        <xs:attribute name="wrapIn" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="globalCloudConnector">
+    <xs:complexContent>
+      <xs:extension base="abstractGlobalElement">
+        <xs:sequence>
+          <xs:element name="required" type="requiredLibraries" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="connectivityTesting" type="connectivityTesting"/>
+        <xs:attribute name="connectivityTestingLabel" type="xs:string"/>
+        <xs:attribute name="metaData" type="metaDataBehaviour"/>
+        <xs:attribute name="metaDataKeyDisplay" type="xs:string"/>
+        <xs:attribute name="supportsUserDefinedMetaData" type="xs:boolean"/>
+        <xs:attribute name="usesMetadataTypes" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="requiredLibraries">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="abstractBaseLibrary"/>
+            <xs:element ref="jar"/>
+            <xs:element ref="nativeLib"/>
+            <xs:element ref="or"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="abstractLibrary" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="abstractBaseLibrary" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="abstractLibrary">
+        <xs:sequence/>
+        <xs:attribute name="externalPluginDependency" type="xs:boolean" use="required"/>
+        <xs:attribute name="name" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="jar">
+    <xs:complexContent>
+      <xs:extension base="abstractBaseLibrary">
+        <xs:sequence/>
+        <xs:attribute name="className" type="xs:string"/>
+        <xs:attribute name="emptyLocationLabel" type="xs:string"/>
+        <xs:attribute name="fileName" type="xs:string"/>
+        <xs:attribute name="targetFolder" type="xs:string"/>
+        <xs:attribute name="targetRuntimeFolder" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="nativeLibrary">
+    <xs:complexContent>
+      <xs:extension base="abstractBaseLibrary">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="librarySet">
+    <xs:complexContent>
+      <xs:extension base="abstractLibrary">
+        <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="abstractBaseLibrary"/>
+            <xs:element ref="jar"/>
+            <xs:element ref="nativeLib"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="cloudConnectorMessageSource">
+    <xs:complexContent>
+      <xs:extension base="abstractGlobalElement">
+        <xs:sequence/>
+        <xs:attribute name="inboundLocalName" type="xs:string"/>
+        <xs:attribute name="supportsOutbound" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="globalEndpoint">
+    <xs:complexContent>
+      <xs:extension base="abstractGlobalElement">
+        <xs:sequence/>
+        <xs:attribute name="defaultMep" type="messageExchangePattern"/>
+        <xs:attribute name="supportsOutbound" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="globalFilter">
+    <xs:complexContent>
+      <xs:extension base="abstractGlobalElement">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="globalTransformer">
+    <xs:complexContent>
+      <xs:extension base="abstractGlobalElement">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="abstractPaletteComponent" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="editorElement">
+        <xs:sequence>
+          <xs:element ref="keywords" minOccurs="0"/>
+          <xs:element ref="required-set-alternatives" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="category" type="xs:string"/>
+        <xs:attribute name="completionProposalDocName" type="xs:string"/>
+        <xs:attribute name="metaData" type="metaDataBehaviour"/>
+        <xs:attribute name="paletteCategory" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="keywordSet">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence>
+          <xs:element ref="keyword" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="keyword">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="isTopHit" type="xs:boolean"/>
+        <xs:attribute name="value" type="xs:string"/>
+        <xs:attribute name="weight" type="xs:int"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="requiredSetAlternatives">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence>
+          <xs:element ref="alternative" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="exclusive" type="xs:boolean"/>
+        <xs:attribute name="message" type="xs:string"/>
+        <xs:attribute name="messageProvider" type="xs:string"/>
+        <xs:attribute name="requiredForDataSense" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="alternative">
+    <xs:complexContent>
+      <xs:extension base="abstractEditorElement">
+        <xs:sequence/>
+        <xs:attribute name="value" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="cloudConnector">
+    <xs:complexContent>
+      <xs:extension base="abstractPaletteComponent">
+        <xs:sequence/>
+        <xs:attribute name="categories" type="xs:string"/>
+        <xs:attribute name="forceMetadataRefreshAtrributes" type="xs:string"/>
+        <xs:attribute name="metaDataStaticKey" type="xs:string"/>
+        <xs:attribute name="returnType" type="xs:string"/>
+        <xs:attribute name="supportsUserDefinedMetaData" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="connector">
+    <xs:complexContent>
+      <xs:extension base="abstractPaletteComponent">
+        <xs:sequence/>
+        <xs:attribute name="connectivityTesting" type="connectivityTesting"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="container">
+    <xs:complexContent>
+      <xs:extension base="abstractPaletteComponent">
+        <xs:sequence/>
+        <xs:attribute name="acceptedByElements" type="xs:string"/>
+        <xs:attribute name="acceptsElements" type="xs:string"/>
+        <xs:attribute name="allowMulipleChildren" type="xs:boolean"/>
+        <xs:attribute name="allowsAllExceptInbounds" type="xs:boolean"/>
+        <xs:attribute name="containerBehavior" type="xs:string"/>
+        <xs:attribute name="defaultNestedContainer" type="xs:string"/>
+        <xs:attribute name="displayNameAttribute" type="xs:string"/>
+        <xs:attribute name="elementMatcher" type="xs:string"/>
+        <xs:attribute name="forcesResponse" type="xs:boolean"/>
+        <xs:attribute name="inbound" type="xs:boolean"/>
+        <xs:attribute name="location" type="xs:string"/>
+        <xs:attribute name="pathExpression" type="xs:string"/>
+        <xs:attribute name="returnType" type="xs:string"/>
+        <xs:attribute name="titleColor" type="xs:string"/>
+        <xs:attribute name="visibleInPalette" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="endpoint">
+    <xs:complexContent>
+      <xs:extension base="abstractPaletteComponent">
+        <xs:sequence/>
+        <xs:attribute name="defaultMep" type="messageExchangePattern"/>
+        <xs:attribute name="inboundLocalName" type="xs:string"/>
+        <xs:attribute name="outboundLocalName" type="xs:string"/>
+        <xs:attribute name="supportsOutbound" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="flow">
+    <xs:complexContent>
+      <xs:extension base="abstractPaletteComponent">
+        <xs:sequence/>
+        <xs:attribute name="causesSplit" type="xs:boolean"/>
+        <xs:attribute name="modelGenerator" type="xs:string"/>
+        <xs:attribute name="processesResponse" type="xs:boolean"/>
+        <xs:attribute name="returnType" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="filter">
+    <xs:complexContent>
+      <xs:extension base="abstractPaletteComponent">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="pattern">
+    <xs:complexContent>
+      <xs:extension base="abstractPaletteComponent">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="transformer">
+    <xs:complexContent>
+      <xs:extension base="abstractPaletteComponent">
+        <xs:sequence/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="wizard">
+    <xs:complexContent>
+      <xs:extension base="abstractPaletteComponent">
+        <xs:sequence/>
+        <xs:attribute name="onFinish" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="component">
+    <xs:complexContent>
+      <xs:extension base="editorElement">
+        <xs:sequence/>
+        <xs:attribute name="processesResponse" type="xs:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="nested">
+    <xs:complexContent>
+      <xs:extension base="editorElement">
+        <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="attribute-category"/>
+            <xs:element ref="element-controller-list"/>
+            <xs:element ref="element-controller-list-no-expression"/>
+            <xs:element ref="element-controller-map"/>
+            <xs:element ref="element-controller-map-no-expression"/>
+            <xs:element ref="element-controller-listOfMap"/>
+            <xs:element ref="string-map"/>
+            <xs:element ref="abstractRef"/>
+            <xs:element ref="containerRef"/>
+            <xs:element ref="flowRef"/>
+            <xs:element ref="globalRef"/>
+            <xs:element ref="localRef"/>
+            <xs:element ref="reverseGlobalRef"/>
+            <xs:element ref="baseStringEditor"/>
+            <xs:element ref="string"/>
+            <xs:element ref="file"/>
+            <xs:element ref="password"/>
+            <xs:element ref="path"/>
+            <xs:element ref="url"/>
+            <xs:element ref="childElement"/>
+            <xs:element ref="classname"/>
+            <xs:element ref="custom"/>
+            <xs:element ref="dummy"/>
+            <xs:element ref="dynamicEditors"/>
+            <xs:element ref="encoding"/>
+            <xs:element ref="enum"/>
+            <xs:element ref="fixedAttribute"/>
+            <xs:element ref="integer"/>
+            <xs:element ref="label"/>
+            <xs:element ref="list"/>
+            <xs:element ref="modeSwitch"/>
+            <xs:element ref="name"/>
+            <xs:element ref="element-query"/>
+            <xs:element ref="radio"/>
+            <xs:element ref="radioBoolean"/>
+            <xs:element ref="regexp"/>
+            <xs:element ref="resource"/>
+            <xs:element ref="soapInterceptor"/>
+            <xs:element ref="text"/>
+            <xs:element ref="type-chooser"/>
+            <xs:element ref="attribute-category"/>
+            <xs:element ref="group"/>
+            <xs:element ref="horizontal"/>
+            <xs:element ref="switchCase"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="additionalNamespaces" type="xs:string"/>
+        <xs:attribute name="allowAny" type="xs:boolean"/>
+        <xs:attribute name="childPrefix" type="xs:string"/>
+        <xs:attribute name="childURI" type="xs:string"/>
+        <xs:attribute name="required" type="xs:boolean"/>
+        <xs:attribute name="windowHeight" type="xs:int"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="multiSource">
+    <xs:complexContent>
+      <xs:extension base="editorElement">
+        <xs:sequence/>
+        <xs:attribute name="allowsInbound" type="xs:boolean"/>
+        <xs:attribute name="allowsMessageProcessors" type="xs:boolean"/>
+        <xs:attribute name="allowsMultipleChildren" type="xs:boolean"/>
+        <xs:attribute name="allowsOutbound" type="xs:boolean"/>
+        <xs:attribute name="categoryId" type="category"/>
+        <xs:attribute name="forcesResponse" type="xs:boolean"/>
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="propertiesEditable" type="xs:boolean"/>
+        <xs:attribute name="scopeLabel" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name="modeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="outbound"/>
+      <xs:enumeration value="inbound"/>
+      <xs:enumeration value="both"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="status">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="enabled"/>
+      <xs:enumeration value="disabled"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="metaDataKeyParamAffectsType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="INPUT"/>
+      <xs:enumeration value="OUTPUT"/>
+      <xs:enumeration value="BOTH"/>
+      <xs:enumeration value="AUTO"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="align">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="left"/>
+      <xs:enumeration value="right"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="connectivityTesting">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="disabled"/>
+      <xs:enumeration value="on"/>
+      <xs:enumeration value="off"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="metaDataBehaviour">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="off"/>
+      <xs:enumeration value="static"/>
+      <xs:enumeration value="dynamic"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="messageExchangePattern">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OneWay"/>
+      <xs:enumeration value="RequestResponse"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="category">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="org.mule.tooling.category.scopes"/>
+      <xs:enumeration value="org.mule.tooling.category.cloudconnectors"/>
+      <xs:enumeration value="org.mule.tooling.category.flowControl"/>
+      <xs:enumeration value="org.mule.tooling.category.endpoints"/>
+      <xs:enumeration value="org.mule.tooling.category.core"/>
+      <xs:enumeration value="category:org.mule.tooling.ui.modules.core.exceptions"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+
