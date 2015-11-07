@@ -24,7 +24,7 @@
 					saveAs="destination" mode="inbound" required="true" />
 
 				<enum
-					description="Acknowledge mode to use for the messages retrieved from this subscriber."
+					description="Acknowledgement mode to use for the messages retrieved from this subscriber."
 					name="acknowledgementMode" caption="Acknowledgement Mode" mode="inbound" defaultValue="AUTO"
 					removeEmptyOption="true" allowsCustom="true">
 					<option value="NONE" />
@@ -123,7 +123,7 @@
 					description="Destination to where the messages will be sent."
 					required="true" javaType="java.lang.String"></string>
 				<enum
-					description="Acknowledge mode to use for the messages retrieved from this subscriber."
+					description="Acknowledgement mode to use for the messages retrieved from this subscriber."
 					name="acknowledgementMode" caption="Acknowledgement Mode" defaultValue="MANUAL"
 					removeEmptyOption="true" allowsCustom="true">
 					<option value="NONE" />
