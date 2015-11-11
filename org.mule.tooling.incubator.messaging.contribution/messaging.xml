@@ -24,7 +24,7 @@
 					saveAs="destination" mode="inbound" required="true" />
 
 				<enum
-					description="Acknowledge mode to use for the messages retrieved from this subscriber."
+					description="Acknowledgement mode to use for the messages retrieved from this subscriber."
 					name="acknowledgementMode" caption="Acknowledgement Mode" mode="inbound" defaultValue="AUTO"
 					removeEmptyOption="true" allowsCustom="true">
 					<option value="NONE" />
@@ -123,7 +123,7 @@
 					description="Destination to where the messages will be sent."
 					required="true" javaType="java.lang.String"></string>
 				<enum
-					description="Acknowledge mode to use for the messages retrieved from this subscriber."
+					description="Acknowledgement mode to use for the messages retrieved from this subscriber."
 					name="acknowledgementMode" caption="Acknowledgement Mode" defaultValue="MANUAL"
 					removeEmptyOption="true" allowsCustom="true">
 					<option value="NONE" />
@@ -176,7 +176,7 @@
 	<nested localId="provider" versions="[3.7.0,10.0.0]">
 		<string caption="URL" description="" required="true"
 			alwaysFill="true" name="url" xsdType="string"
-			defaultValue="https://mq-qa-us-east-1.anypoint.mulesoft.com/api/v1" />
+			defaultValue="https://mq-us-east-1.anypoint.mulesoft.com/api/v1" />
 
 		<string caption="Client ID"
 			description="The Client Identifier to be used to authorize the connection."
@@ -235,7 +235,7 @@
 			<group caption="Settings" id="providerSettings">
 				<string caption="URL" description="" required="true"
 					alwaysFill="true" name="url" xsdType="string"
-					defaultValue="https://mq-qa-us-east-1.anypoint.mulesoft.com/api/v1" />
+					defaultValue="https://mq-us-east-1.anypoint.mulesoft.com/api/v1" />
 
 				<string caption="Client ID"
 					description="The Client Identifier to be used to authorize the connection."

@@ -20,9 +20,9 @@
 
 	<dependencies>
         <dependency>
-            <groupId>com.mulesoft.messaging</groupId>
-            <artifactId>bundled-mq-connector</artifactId>
-            <version>3.7.0-M1</version>
+			<groupId>com.mulesoft.muleesb.modules</groupId>
+			<artifactId>mule-module-anypoint-mq-ee</artifactId>
+			<version>1.0.0-RC3b</version>
         </dependency>
 	</dependencies>
 
@@ -72,6 +72,10 @@
 		<repository>
 			<id>mulesoft-releases</id>
 			<url>http://repository-master.mulesoft.org/releases/</url>
+		</repository>
+		<repository>
+			<id>mulesoft-releases-ee</id>
+			<url>https://repository-master.mulesoft.org/nexus/content/repositories/releases-ee</url>
 		</repository>
 		<repository>
 			<id>mulesoft-snapshots</id>
