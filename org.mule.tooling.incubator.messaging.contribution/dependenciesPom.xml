@@ -22,7 +22,7 @@
         <dependency>
 			<groupId>com.mulesoft.muleesb.modules</groupId>
 			<artifactId>mule-module-anypoint-mq-ee</artifactId>
-			<version>1.0.0-RC3b</version>
+			<version>1.0.0-RC3c</version>
         </dependency>
 	</dependencies>
 
