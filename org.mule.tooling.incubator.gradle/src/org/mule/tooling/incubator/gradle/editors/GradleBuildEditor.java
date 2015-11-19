@@ -142,7 +142,11 @@ public class GradleBuildEditor extends FormEditor implements IResourceChangeList
 	 * Saves the multi-page editor's document.
 	 */
 	public void doSave(IProgressMonitor monitor) {
-		getEditor(0).doSave(monitor);
+		
+		if (getEditor(getActivePage()) != null) {
+			getEditor(getActivePage()).doSave(monitor);
+		}
+		
 	}
 	/**
 	 * Saves the multi-page editor's document as another file.
