@@ -8,9 +8,10 @@ import org.mule.tooling.editor.model.Radio;
 import org.mule.tooling.editor.model.reference.AbstractRef;
 import org.mule.tooling.editor.model.ModeType;
 
-@XmlSeeAlso({ AbstractRef.class, BaseStringEditor.class, ChildElement.class, ClassNameEditor.class, Custom.class, Dummy.class, DynamicEditor.class, EncodingEditor.class,
-        EnumEditor.class, FixedAttribute.class, IntegerEditor.class, LabelElement.class, ListEditor.class, LongEditor.class, ModeSwitch.class, NameEditor.class,
-        ElementQuery.class, Radio.class, RadioBoolean.class, Regexp.class, ResourceEditor.class, SoapInterceptor.class, TextEditor.class, TypeChooser.class })
+@XmlSeeAlso({ AbstractRef.class, BaseStringEditor.class, BooleanEditor.class, ChildElement.class, ClassNameEditor.class, Custom.class, DateTimeEditor.class, Dummy.class,
+        DynamicEditor.class, EncodingEditor.class, EnumEditor.class, FixedAttribute.class, IntegerEditor.class, LabelElement.class, ListEditor.class, LongEditor.class,
+        ModeSwitch.class, NameEditor.class, ElementQuery.class, Radio.class, RadioBoolean.class, Regexp.class, ResourceEditor.class, SoapInterceptor.class, TextEditor.class,
+        TypeChooser.class })
 public abstract class BaseFieldEditorElement extends BaseChildEditorElement {
 
     private String name;

@@ -11,7 +11,7 @@ import org.mule.tooling.editor.annotation.ClassPicker;
 import org.mule.tooling.editor.model.element.AttributeCategory;
 import org.mule.tooling.editor.model.global.AbstractGlobalElement;
 
-@XmlSeeAlso({ AbstractContainer.class, AbstractGlobalElement.class, AbstractPaletteComponent.class, Component.class, Nested.class, MultiSource.class, Radio.class })
+@XmlSeeAlso({ AbstractContainer.class, AbstractGlobalElement.class, AbstractPaletteComponent.class, Component.class, Nested.class, MultiSource.class})
 public abstract class EditorElement extends AbstractEditorElement {
 
     private String caption;
@@ -89,7 +89,7 @@ public abstract class EditorElement extends AbstractEditorElement {
         this.attributeCategories = attributeCategories;
     }
 
-    @XmlElement
+    @XmlAttribute
     public String getXmlname() {
         return xmlname;
     }

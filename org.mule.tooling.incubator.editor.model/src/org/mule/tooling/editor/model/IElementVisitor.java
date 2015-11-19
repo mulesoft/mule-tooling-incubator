@@ -7,6 +7,7 @@ import org.mule.tooling.editor.model.element.Case;
 import org.mule.tooling.editor.model.element.ChildElement;
 import org.mule.tooling.editor.model.element.ClassNameEditor;
 import org.mule.tooling.editor.model.element.Custom;
+import org.mule.tooling.editor.model.element.DateTimeEditor;
 import org.mule.tooling.editor.model.element.Dummy;
 import org.mule.tooling.editor.model.element.DynamicEditor;
 import org.mule.tooling.editor.model.element.EditorRef;
@@ -76,6 +77,7 @@ public interface IElementVisitor {
     void visit(ChildElement childElement);
     void visit(ClassNameEditor classNameEditor);
     void visit(Custom custom);
+    void visit(DateTimeEditor datetimeEditor);
     void visit(Dummy dummy);
     void visit(DynamicEditor dynamicEditor);
     void visit(EditorRef editorRef);
