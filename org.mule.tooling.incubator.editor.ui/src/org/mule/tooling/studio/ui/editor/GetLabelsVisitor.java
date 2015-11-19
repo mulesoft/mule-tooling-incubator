@@ -33,6 +33,7 @@ import org.mule.tooling.editor.model.element.Case;
 import org.mule.tooling.editor.model.element.ChildElement;
 import org.mule.tooling.editor.model.element.ClassNameEditor;
 import org.mule.tooling.editor.model.element.Custom;
+import org.mule.tooling.editor.model.element.DateTimeEditor;
 import org.mule.tooling.editor.model.element.Dummy;
 import org.mule.tooling.editor.model.element.DynamicEditor;
 import org.mule.tooling.editor.model.element.EditorRef;
@@ -607,6 +608,12 @@ public class GetLabelsVisitor implements IElementVisitor {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    @Override
+    public void visit(DateTimeEditor datetimeEditor) {
+        label = doGetLabel(datetimeEditor);
+        
     }
 
 }
