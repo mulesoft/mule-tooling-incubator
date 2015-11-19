@@ -37,12 +37,12 @@
 		<attribute-category description="Prefetch Properties"
 			caption="Prefetch" id="prefetchSettings">
 
-			<radioBoolean fillLine="true" description="No prefetch config is required."
+			<radioBoolean fillLine="true" description="MQ does not require a prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
 				group="prefetch-config" caption="No Prefetch Config" name="include-nothing" />
 
 			<radioBoolean fillLine="true"
-				description="Define a Nested Prefetch Configuration"
+				description="Defines a nested prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
 				group="prefetch-config" caption="Use Prefetch Config" name="nested" />
 
@@ -52,12 +52,12 @@
 				inplace="true" name="http://www.mulesoft.org/schema/mule/anypoint-mq/prefetch" />
 
 			<radioBoolean fillLine="true"
-				description="Use a global TLS configuration reference"
+				description="Use a global TLS configuration reference."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
 				group="prefetch-config" caption="Use Global Prefetch Config" name="reference" />
 
 			<globalRef caption="Prefetch" indented="true" controlled="reference"
-				description="Name of the global prefetch configuration to be used."
+				description="Name of the global prefetch configuration to use."
 				requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/mqPrefetchType"
 				name="prefetch-ref" />
 
@@ -78,7 +78,7 @@
 		<attribute-category caption="General" description="General.">
 			<group id="abstractAnypointMQConnectorGeneric" caption="Basic Settings">
 				<globalRef caption="Connector Configuration" required="true"
-					description="The name of the global configuration to be used."
+					description="The name of the global configuration to use."
 					requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/config"
 					name="config-ref" saveAs="config-ref" />
 			</group>
@@ -88,7 +88,7 @@
 	<cloud-connector versions="[3.7.0,10.0.0]"
 		aliasId="org.mule.tooling.ui.modules.core.pattern.anypoint-mq"
 		caption="Anypoint MQ"
-		description="The Anypoint MQ Connector provides a single interface for messaging"
+		description="The Anypoint MQ Connector provides a single interface for messaging."
 		localId="anypoint-mq-connector" image="icons/large/messaging-48x32.png"
 		icon="icons/small/messaging-24x16.png"
 		extends="http://www.mulesoft.org/schema/mule/anypoint-mq/abstractAnypointMQConnectorGeneric">
@@ -120,7 +120,7 @@
 		<attribute-category caption="General" description="General.">
 			<group id="basicConsumerSettings" caption="Consumer Settings">
 				<string defaultValue="" name="destination" caption="Destination"
-					description="Destination to where the messages will be sent."
+					description="Destination for where to send the messages."
 					required="true" javaType="java.lang.String"></string>
 				<enum
 					description="Acknowledgement mode to use for the messages retrieved from this subscriber."
@@ -131,7 +131,7 @@
 					<option value="MANUAL" />
 				</enum>
 				<long caption="Acknowledgement Timeout"
-					description="Time a message will be hold by the broker waiting for an ack or nack. After that time period it will be available again to any subscriber."
+					description="Duration that a message is held by a broker waiting for an ack or nack. After that duration expires, the message is again available to any subscriber."
 					defaultValue="0" name="acknowledgementTimeout" xsdType="substitutableLong" />
 			</group>
 		</attribute-category>
@@ -179,38 +179,38 @@
 			defaultValue="https://mq-us-east-1.anypoint.mulesoft.com/api/v1" />
 
 		<string caption="Client ID"
-			description="The Client Identifier to be used to authorize the connection."
+			description="The Client ID to use to authorize the connection."
 			required="true" name="clientId" xsdType="string" />
 
 		<string caption="Client Secret"
-			description="The Client Secret to be used to authorize the connection."
+			description="The Client Secret to use to authorize the connection."
 			required="true" name="clientSecret" xsdType="string" />
 	</nested>
 
 	<nested localId="prefetch" versions="[3.7.0,10.0.0]">
 		<long caption="Fetch Size"
-			description="Number of messages to receive at once when asking for messages. The response could contain less messages than this number depending of the poolingTime set."
+			description="Number of messages to receive when asking for messages. The response can contain fewer messages than this number depending on the poolingTime set."
 			required="false" name="fetchSize" defaultValue="10" xsdType="substitutableLong" />
 
 		<long caption="Fetch Timeout"
-			description="Maximum time in milliseconds to wait for the required amount of messages. If this time is elapsed, the response will be sent with as many messages as taken during the period."
+			description="Maximum time in milliseconds to wait for the required amount of messages. If this duration elapses, the response is sent with as many messages as received during the period."
 			required="false" name="fetchTimeout" defaultValue="1000" xsdType="substitutableLong" />
 
 		<long caption="Frequency"
-			description="Amount of milliseconds to execute the retrieve operation when the prefetch queue is not empty."
+			description="Duration in milliseconds to execute the retrieve operation when the prefetch queue is not empty."
 			required="false" name="frequency" defaultValue="5000" xsdType="substitutableLong" />
 	</nested>
 
 	<nested localId="message-builder" versions="[3.7.0,10.0.0]">
-		<string caption="Message Id"
-			description="Expresion resolving to a unique identifier for the message. The default value is a random generated UUID."
+		<string caption="Message ID"
+			description="Expression that resolves to a unique identifier for the message. The default Message ID is a random generated UUID."
 			required="false" name="messageId" xsdType="string" />
 		<boolean
-			description="Copy the mule message outbound properties as properties in the Anypoint MQ message."
+			description="Copy the Mule Message outbound properties as properties in the Anypoint MQ message."
 			caption="Send Outbound Properties" name="sendOutboundProperties"
 			defaultValue="true" />
 		<boolean
-			description="Send the mule message content type as a property in the Anypoint MQ message."
+			description="Send the Mule Message content type as a property in the Anypoint MQ message."
 			caption="Send Content Type" name="sendContentType" defaultValue="true" />
 
 		<childElement
@@ -228,7 +228,7 @@
 			caption="General">
 			<group caption="Generic" id="name">
 				<name required="true"
-					description="Give a name to this provider configuration so it can be later referenced by builder ref."
+					description="Give a name to this provider configuration so it can be later referenced by the builder ref."
 					caption="Name" name="name"></name>
 			</group>
 
@@ -238,11 +238,11 @@
 					defaultValue="https://mq-us-east-1.anypoint.mulesoft.com/api/v1" />
 
 				<string caption="Client ID"
-					description="The Client Identifier to be used to authorize the connection."
+					description="The Client ID to use to authorize the connection."
 					required="true" name="clientId" xsdType="string" />
 
 				<string caption="Client Secret"
-					description="The Client Secret to be used to authorize the connection."
+					description="The Client Secret to use to authorize the connection."
 					required="true" name="clientSecret" xsdType="string" />
 			</group>
 		</attribute-category>
@@ -257,21 +257,21 @@
 			caption="General">
 			<group caption="Generic" id="name">
 				<name required="true"
-					description="Give a name to this prefetch configuration so it can be later referenced by builder ref."
+					description="Give a name to this prefetch configuration so it can be later referenced by the builder ref."
 					caption="Name" name="name"></name>
 			</group>
 			<group caption="Settings" id="prefetchSettings">
 				<long caption="Fetch Size"
-					description="Number of messages to receive at once when asking for messages. The response could contain less messages than this number depending of the poolingTime set.."
+					description="Number of messages to receive when asking for messages. The response can contain fewer messages than this number depending on the poolingTime set."
 					required="false" name="fetchSize" defaultValue="10" xsdType="substitutableLong" />
 
 				<long caption="Fetch Timeout"
-					description="Maximum time in milliseconds to wait for the required amount of messages. If this time is elapsed, the response will be sent with as many messages as taken during the period."
+					description="Maximum time in milliseconds to wait for the required amount of messages. If this duration elapses, the response is sent with as many messages as received during the period."
 					required="false" name="fetchTimeout" defaultValue="1000"
 					xsdType="substitutableLong" />
 
 				<long caption="Frequency"
-					description="Amount of milliseconds to execute the retrieve operation when the prefetch queue is not empty."
+					description="Duration in milliseconds to execute the retrieve operation when the prefetch queue is not empty."
 					required="false" name="frequency" defaultValue="5000" xsdType="substitutableLong" />
 			</group>
 		</attribute-category>
@@ -293,7 +293,7 @@
 				</name>
 			</group>
 			<group caption="Provider" id="providerProperties">
-				<radioBoolean fillLine="true" description="Define a Nested Provider"
+				<radioBoolean fillLine="true" description="Defines a nested provider."
 					loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProviderLoadedValueModifier"
 					group="provider-listener" caption="Use Provider Config" name="nested" />
 
@@ -303,26 +303,26 @@
 					inplace="true" name="http://www.mulesoft.org/schema/mule/anypoint-mq/provider" />
 
 				<radioBoolean fillLine="true"
-					description="Use a global Provider configuration reference"
+					description="Use a Global Provider configuration reference."
 					loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProviderLoadedValueModifier"
 					group="provider-listener" caption="Use Global Provider Config"
 					name="reference" />
 
 				<globalRef caption="Provider" indented="true" controlled="reference"
-					description="Name of the global Provider to be used."
+					description="Name of the Global Provider to use."
 					requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/anypointMqProviderType"
 					name="provider-ref" />
 			</group>
 			<group caption="Basic Settings" id="basicSettingsConfigGroup">
 				<integer caption="Max Redelivery"
-					description="Number of re-deliveries in case of the message processing fails. In order to avoid poisson message, default value is 0."
+					description="Number of redeliveries to try in case message processing fails. To avoid a poison message, the default value is set to 0."
 					defaultValue="0" name="maxRedelivery" xsdType="substitutableInt" />
 
 				<long caption="Acknowledgement Timeout"
-					description="Time a message will be hold by the broker waiting for an ack or nack. After that time period it will be available again to any subscriber."
+					description="Duration that a message is held by a broker waiting for an ack or nack. After that duration elapses, the message is again available to any subscriber."
 					defaultValue="0" name="acknowledgementTimeout" xsdType="substitutableLong" />
 
-				<boolean description="If true provides a mock configuration to perform testing."
+				<boolean description="If true, MQ provides a mock configuration that you can use for testing."
 					caption="Mock" name="mock" default="false" />
 			</group>
 		</attribute-category>
@@ -330,11 +330,11 @@
 			caption="TLS/SSL" id="tlsSettings">
 
 			<radioBoolean fillLine="true"
-				description="For MQ Configuration no TLS config is required."
+				description="MQ does not require a TLS configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.TlsLoadedValueModifier"
 				group="tls-listener" caption="No TLS Config" name="include-nothing" />
 
-			<radioBoolean fillLine="true" description="Define a Nested TLS Context"
+			<radioBoolean fillLine="true" description="Defines a nested TLS context."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.TlsLoadedValueModifier"
 				group="tls-listener" caption="Use TLS Config" name="nested" />
 
@@ -344,12 +344,12 @@
 				inplace="true" name="http://www.mulesoft.org/schema/mule/tls/context" />
 
 			<radioBoolean fillLine="true"
-				description="Use a global TLS configuration reference"
+				description="Use a global TLS configuration reference."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.TlsLoadedValueModifier"
 				group="tls-listener" caption="Use Global TLS Config" name="reference" />
 
 			<globalRef caption="TLS Context" indented="true"
-				controlled="reference" description="Name of the global TLS context to be used."
+				controlled="reference" description="Name of the global TLS context to use."
 				requiredType="http://www.mulesoft.org/schema/mule/tls/globalContext"
 				name="tlsContext-ref" />
 
@@ -358,12 +358,12 @@
 			caption="Proxy" id="proxySettings">
 
 			<radioBoolean fillLine="true" caption="No Proxy Config"
-				description="Don't Use a Proxy Configuration"
+				description="Don't use a Proxy Configuration"
 				loadedValueModifier="org.mule.tooling.rest.consumer.editor.global.booleanloaders.ProxyLoadedValueModifier"
 				group="proxy-req" name="none" />
 
 			<radioBoolean caption="Use Proxy Config"
-				description="Define an nested Proxy Configuration" group="proxy-req"
+				description="Defines a nested Proxy Configuration." group="proxy-req"
 				loadedValueModifier="org.mule.tooling.rest.consumer.editor.global.booleanloaders.ProxyLoadedValueModifier"
 				name="nested" fillLine="true" />
 
@@ -380,12 +380,12 @@
 				name="http://www.mulesoft.org/schema/mule/http/ntlm-proxy" />
 
 			<radioBoolean fillLine="true" caption="Use Global Proxy Config"
-				description="Use a global configuration reference"
+				description="Use a global configuration reference."
 				loadedValueModifier="org.mule.tooling.rest.consumer.editor.global.booleanloaders.ProxyLoadedValueModifier"
 				group="proxy-req" name="reference" />
 
 			<globalRef caption="Proxy Ref" indented="true" controlled="reference"
-				description="Name of the global Proxy Configuration to be used."
+				description="Name of the global proxy configuration to use."
 				requiredType="$http://www.mulesoft.org/schema/mule/http/proxy,http://www.mulesoft.org/schema/mule/http/ntlm-proxy"
 				name="proxy-ref" />
 
@@ -393,12 +393,12 @@
 		<attribute-category description="Prefetch Properties"
 			caption="Prefetch" id="prefetchSettings" mode="inbound">
 
-			<radioBoolean fillLine="true" description="No prefetch config is required."
+			<radioBoolean fillLine="true" description="MQ does not require a prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
 				group="prefetch-config" caption="No Prefetch Config" name="include-nothing" />
 
 			<radioBoolean fillLine="true"
-				description="Define a Nested Prefetch Configuration"
+				description="Defines a nested prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
 				group="prefetch-config" caption="Use Prefetch Config" name="nested" />
 
@@ -408,12 +408,12 @@
 				inplace="true" name="http://www.mulesoft.org/schema/mule/anypoint-mq/prefetch" />
 
 			<radioBoolean fillLine="true"
-				description="Use a global Prefetch configuration reference"
+				description="Use a global prefetch configuration reference."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
 				group="prefetch-config" caption="Use Global Prefetch Config" name="reference" />
 
 			<globalRef caption="Prefetch" indented="true" controlled="reference"
-				description="Name of the global prefetch configuration to be used."
+				description="Name of the global prefetch configuration to use."
 				requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/mqPrefetchType"
 				name="prefetch-ref" />
 
