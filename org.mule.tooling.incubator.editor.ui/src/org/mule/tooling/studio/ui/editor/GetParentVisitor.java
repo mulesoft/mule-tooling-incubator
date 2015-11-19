@@ -32,6 +32,7 @@ import org.mule.tooling.editor.model.element.Case;
 import org.mule.tooling.editor.model.element.ChildElement;
 import org.mule.tooling.editor.model.element.ClassNameEditor;
 import org.mule.tooling.editor.model.element.Custom;
+import org.mule.tooling.editor.model.element.DateTimeEditor;
 import org.mule.tooling.editor.model.element.Dummy;
 import org.mule.tooling.editor.model.element.DynamicEditor;
 import org.mule.tooling.editor.model.element.EditorRef;
@@ -515,5 +516,10 @@ public class GetParentVisitor implements IElementVisitor {
     @Override
     public void visit(Wizard wizard) {
         checkIfIsParent(wizard);
+    }
+
+    @Override
+    public void visit(DateTimeEditor datetimeEditor) {
+        checkIfIsParent(datetimeEditor);
     }
 }
