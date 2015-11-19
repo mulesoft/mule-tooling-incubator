@@ -36,8 +36,7 @@
 
 		<attribute-category description="Prefetch Properties"
 			caption="Prefetch" id="prefetchSettings">
-
-			<radioBoolean fillLine="true" description="MQ does not require a prefetch configuration."
+			<radioBoolean fillLine="true" description="Anypoint MQ does not require a prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
 				group="prefetch-config" caption="No Prefetch Config" name="include-nothing" />
 
@@ -193,7 +192,7 @@
 			required="false" name="fetchSize" defaultValue="10" xsdType="substitutableLong" />
 
 		<long caption="Fetch Timeout"
-			description="Maximum time in milliseconds to wait for the required amount of messages. If this duration elapses, the response is sent with as many messages as received during the period."
+			description="Maximum duration in milliseconds to wait for the required amount of messages. If this duration elapses, the response is sent with as many messages as received during the period."
 			required="false" name="fetchTimeout" defaultValue="1000" xsdType="substitutableLong" />
 
 		<long caption="Frequency"
@@ -266,7 +265,7 @@
 					required="false" name="fetchSize" defaultValue="10" xsdType="substitutableLong" />
 
 				<long caption="Fetch Timeout"
-					description="Maximum time in milliseconds to wait for the required amount of messages. If this duration elapses, the response is sent with as many messages as received during the period."
+					description="Maximum duration in milliseconds to wait for the required amount of messages. If this duration elapses, the response is sent with as many messages as received during the period."
 					required="false" name="fetchTimeout" defaultValue="1000"
 					xsdType="substitutableLong" />
 
@@ -284,7 +283,7 @@
 		paletteCategory="org.mule.tooling.globalCategory.conponentConfigurations"
 		category="org.mule.tooling.globalCategory.cloudconnectors" caption="Anypoint MQ Configuration"
 		versions="[3.7.0,10.0.0]">
-		<attribute-category description="Anypoint MQ configuration parameters"
+		<attribute-category description="Anypoint MQ configuration parameters."
 			caption="General">
 			<group caption="Generic" id="messagingGenericProperties">
 				<name required="true"
@@ -321,8 +320,7 @@
 				<long caption="Acknowledgement Timeout"
 					description="Duration that a message is held by a broker waiting for an ack or nack. After that duration elapses, the message is again available to any subscriber."
 					defaultValue="0" name="acknowledgementTimeout" xsdType="substitutableLong" />
-
-				<boolean description="If true, MQ provides a mock configuration that you can use for testing."
+				<boolean description="If true, Anypoint MQ provides a mock configuration that you can use for testing."
 					caption="Mock" name="mock" default="false" />
 			</group>
 		</attribute-category>
@@ -330,7 +328,7 @@
 			caption="TLS/SSL" id="tlsSettings">
 
 			<radioBoolean fillLine="true"
-				description="MQ does not require a TLS configuration."
+				description="Anypoint MQ does not require a TLS configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.TlsLoadedValueModifier"
 				group="tls-listener" caption="No TLS Config" name="include-nothing" />
 
@@ -393,7 +391,7 @@
 		<attribute-category description="Prefetch Properties"
 			caption="Prefetch" id="prefetchSettings" mode="inbound">
 
-			<radioBoolean fillLine="true" description="MQ does not require a prefetch configuration."
+			<radioBoolean fillLine="true" description="Anypoint MQ does not require a prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
 				group="prefetch-config" caption="No Prefetch Config" name="include-nothing" />
 
