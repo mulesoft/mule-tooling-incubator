@@ -126,7 +126,6 @@
 					name="acknowledgementMode" caption="Acknowledgement Mode" defaultValue="MANUAL"
 					removeEmptyOption="true" allowsCustom="true">
 					<option value="NONE" />
-					<option value="AUTO" />
 					<option value="MANUAL" />
 				</enum>
 				<long caption="Acknowledgement Timeout"
