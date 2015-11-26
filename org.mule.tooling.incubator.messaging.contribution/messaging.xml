@@ -41,14 +41,14 @@
 			caption="Prefetch" id="prefetchSettings">
 			<radioBoolean fillLine="true" description="Anypoint MQ does not require a prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="No Prefetch Config" name="include-nothing" />
+				group="prefetch-config" caption="No Prefetch Config" name="pf-include-nothing" />
 
 			<radioBoolean fillLine="true"
 				description="Defines a nested prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="Use Prefetch Config" name="nested" />
+				group="prefetch-config" caption="Use Prefetch Config" name="pf-nested" />
 
-			<childElement indented="true" controlled="nested"
+			<childElement indented="true" controlled="pf-nested"
 				xmlOrder="10"
 				valuePersistence="org.mule.tooling.messaging.editor.global.PrefetchValuePersistence"
 				inplace="true" name="http://www.mulesoft.org/schema/mule/anypoint-mq/prefetch" />
@@ -56,12 +56,12 @@
 			<radioBoolean fillLine="true"
 				description="Use a global TLS configuration reference."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="Use Global Prefetch Config" name="reference" />
+				group="prefetch-config" caption="Use Global Prefetch Config" name="pf-reference" />
 
-			<globalRef caption="Prefetch" indented="true" controlled="reference"
+			<globalRef caption="Prefetch" indented="true" controlled="pf-reference"
 				description="Name of the global prefetch configuration to use."
 				requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/mqPrefetchType"
-				name="prefetch-ref" />
+				name="prefetch-ref"/>
 
 		</attribute-category>
 	</cloud-connector-message-source>
@@ -148,7 +148,7 @@
 					description="Destination from where to retrieve messages." name="subscriber-destination"
 					saveAs="destination" required="true" />
 
-				<childElement indented="false" controlled="nested"
+				<childElement indented="false"
 					inplace="true"
 					name="http://www.mulesoft.org/schema/mule/anypoint-mq/message-builder" />
 
@@ -301,9 +301,9 @@
 			<group caption="Provider" id="providerProperties">
 				<radioBoolean fillLine="true" description="Defines a nested provider."
 					loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProviderLoadedValueModifier"
-					group="provider-listener" caption="Use Provider Config" name="nested" />
+					group="provider-listener" caption="Use Provider Config" name="p-nested" />
 
-				<childElement indented="true" controlled="nested"
+				<childElement indented="true" controlled="p-nested"
 					xmlOrder="30"
 					valuePersistence="org.mule.tooling.messaging.editor.global.ProviderValuePersistence"
 					inplace="true" name="http://www.mulesoft.org/schema/mule/anypoint-mq/provider" />
@@ -312,9 +312,9 @@
 					description="Use a Global Provider configuration reference."
 					loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProviderLoadedValueModifier"
 					group="provider-listener" caption="Use Global Provider Config"
-					name="reference" />
+					name="p-reference" />
 
-				<globalRef caption="Provider" indented="true" controlled="reference"
+				<globalRef caption="Provider" indented="true" controlled="p-reference"
 					description="Name of the Global Provider to use."
 					requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/anypointMqProviderType"
 					name="provider-ref" />
@@ -374,15 +374,15 @@
 
 			<radioBoolean fillLine="true" caption="No Proxy Config"
 				description="Don't use a Proxy Configuration"
-				loadedValueModifier="org.mule.tooling.rest.consumer.editor.global.booleanloaders.ProxyLoadedValueModifier"
-				group="proxy-req" name="none" />
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProxyLoadedValueModifier"
+				group="proxy-req" name="px-include-nothing" />
 
 			<radioBoolean caption="Use Proxy Config"
 				description="Defines a nested Proxy Configuration." group="proxy-req"
-				loadedValueModifier="org.mule.tooling.rest.consumer.editor.global.booleanloaders.ProxyLoadedValueModifier"
-				name="nested" fillLine="true" />
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProxyLoadedValueModifier"
+				name="px-nested" fillLine="true" />
 
-			<childElement indented="true" controlled="nested"
+			<childElement indented="true" controlled="px-nested"
 				valuePersistence="org.mule.tooling.ui.modules.core.widgets.editors.dynamic.DynamicEditorValuesPreProcessor"
 				persistenceTransformer="org.mule.tooling.rest.consumer.editor.global.ProxyPersistenceTransformer"
 				name="http://www.mulesoft.org/schema/mule/http/proxy-config"
@@ -396,10 +396,10 @@
 
 			<radioBoolean fillLine="true" caption="Use Global Proxy Config"
 				description="Use a global configuration reference."
-				loadedValueModifier="org.mule.tooling.rest.consumer.editor.global.booleanloaders.ProxyLoadedValueModifier"
-				group="proxy-req" name="reference" />
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.ProxyLoadedValueModifier"
+				group="proxy-req" name="px-reference" />
 
-			<globalRef caption="Proxy Ref" indented="true" controlled="reference"
+			<globalRef caption="Proxy Ref" indented="true" controlled="px-reference"
 				description="Name of the global proxy configuration to use."
 				requiredType="$http://www.mulesoft.org/schema/mule/http/proxy,http://www.mulesoft.org/schema/mule/http/ntlm-proxy"
 				name="proxy-ref" />
@@ -410,14 +410,14 @@
 
 			<radioBoolean fillLine="true" description="Anypoint MQ does not require a prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="No Prefetch Config" name="include-nothing" />
+				group="prefetch-config" caption="No Prefetch Config" name="pf-include-nothing" />
 
 			<radioBoolean fillLine="true"
 				description="Defines a nested prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="Use Prefetch Config" name="nested" />
+				group="prefetch-config" caption="Use Prefetch Config" name="pf-nested" />
 
-			<childElement indented="true" controlled="nested"
+			<childElement indented="true" controlled="pf-nested"
 				xmlOrder="10"
 				valuePersistence="org.mule.tooling.messaging.editor.global.PrefetchValuePersistence"
 				inplace="true" name="http://www.mulesoft.org/schema/mule/anypoint-mq/prefetch" />
@@ -425,12 +425,12 @@
 			<radioBoolean fillLine="true"
 				description="Use a global prefetch configuration reference."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="Use Global Prefetch Config" name="reference" />
+				group="prefetch-config" caption="Use Global Prefetch Config" name="pf-reference" />
 
-			<globalRef caption="Prefetch" indented="true" controlled="reference"
+			<globalRef caption="Prefetch" indented="true" controlled="pf-reference"
 				description="Name of the global prefetch configuration to use."
 				requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/mqPrefetchType"
-				name="prefetch-ref" />
+				name="prefetch-ref"/>
 
 		</attribute-category>
 	</global-cloud-connector>

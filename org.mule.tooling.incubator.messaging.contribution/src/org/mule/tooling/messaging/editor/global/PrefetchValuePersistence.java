@@ -1,15 +1,13 @@
 package org.mule.tooling.messaging.editor.global;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.mule.tooling.model.messageflow.Property;
 import org.mule.tooling.model.messageflow.PropertyCollection;
 import org.mule.tooling.model.messageflow.decorator.PropertyCollectionMap;
 import org.mule.tooling.ui.modules.core.widgets.meta.AbstractValuePersistence;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
 
 public final class PrefetchValuePersistence extends AbstractValuePersistence {
     public static final String AUXILIARY_PROPERTY_PREFIX = "auxiliary;";
@@ -18,21 +16,18 @@ public final class PrefetchValuePersistence extends AbstractValuePersistence {
     
     @Override
     public String getId(final PropertyCollectionMap newProperties, PropertyCollectionMap parentProperties, String id) {
-        Map<String, PropertyCollectionMap> propertyCollections = newProperties.getPropertyCollections();
-        for (PropertyCollectionMap propertyCollection : propertyCollections.values()) {
-            if (!getPersistenceProperties(propertyCollection).isEmpty()) {
-                return getStoreId(id);
-            }
+        List<Property> properties = newProperties.getPropertiesMap().asPropertyList();
+        if (!getPersistenceProperties(properties).isEmpty()) {
+            return getStoreId(id);
         }
         return null;
     }
 
-    private List<String> getPersistenceProperties(PropertyCollectionMap propertyCollection) {
+    private List<String> getPersistenceProperties(List<Property> properties) {
         List<String> persistenceProperties = new ArrayList<>();
-        final Set<String> collectionNames = propertyCollection.getPropertiesMap().keySet();
-        for (String name : collectionNames) {
-            if (!name.startsWith(AUXILIARY_PROPERTY_PREFIX)) {
-                persistenceProperties.add(name);
+        for (Property property : properties) {
+            if (!property.getName().startsWith(AUXILIARY_PROPERTY_PREFIX)) {
+                persistenceProperties.add(property.getName());
             }
         }
         return persistenceProperties;

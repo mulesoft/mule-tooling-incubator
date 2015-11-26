@@ -8,12 +8,12 @@ import org.apache.commons.lang.StringUtils;
 
 public class PrefetchLoadedValueModifier extends Abstract3WayLoadedValueModifierTemplate {
     // Prefetched
-    public static final String PREFETCH_NAMESPACE = "http://www.mulesoft.org/schema/mule/anypoint-mq/prefetched";
+    public static final String PREFETCH_NAMESPACE = "http://www.mulesoft.org/schema/mule/anypoint-mq/prefetch";
     public static final String PREFETCH_STORE_ID_PREFIX = "@" + PREFETCH_NAMESPACE + ";";
     public static final String PREFETCH_REFERENCE_PROPERTY_ID = "prefetch-ref";
-    public static final String PREFETCH_REFERENCE_BE_ID = "reference";
-    public static final String PREFETCH_NESTED_BE_ID = "nested";
-    public static final String PREFETCH_NONE_BE_ID = "include-nothing";
+    public static final String PREFETCH_REFERENCE_BE_ID = "pf-reference";
+    public static final String PREFETCH_NESTED_BE_ID = "pf-nested";
+    public static final String PREFETCH_NONE_BE_ID = "pf-include-nothing";
 
     protected Boolean haveNestedConfiguration(PropertyCollectionMap props) {
         Set<String> keySet = props.getPropertyCollections().keySet();
@@ -26,8 +26,8 @@ public class PrefetchLoadedValueModifier extends Abstract3WayLoadedValueModifier
     }
 
     protected Boolean haveGlobalRefConfiguration(PropertyCollectionMap props) {
-        String tlsContextRef = props.getProperty(PREFETCH_REFERENCE_PROPERTY_ID, "");
-        return StringUtils.isNotBlank(tlsContextRef);
+        String preFetchRef = props.getProperty(PREFETCH_REFERENCE_PROPERTY_ID, "");
+        return StringUtils.isNotBlank(preFetchRef);
     }
 
     @Override

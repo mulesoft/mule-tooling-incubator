@@ -11,9 +11,9 @@ public class ProxyLoadedValueModifier extends Abstract3WayLoadedValueModifierTem
     public static final String PROXY_NAMESPACE = "http://www.mulesoft.org/schema/mule/http/proxy";
     public static final String PROXY_STORE_ID_PREFIX = "@" + PROXY_NAMESPACE + ";";
     public static final String PROXY_REFERENCE_PROPERTY_ID = "proxy-ref";
-    public static final String PROXY_REFERENCE_BE_ID = "reference";
-    public static final String PROXY_NESTED_BE_ID = "nested";
-    public static final String PROXY_NONE_BE_ID = "include-nothing";
+    public static final String PROXY_REFERENCE_BE_ID = "px-reference";
+    public static final String PROXY_NESTED_BE_ID = "px-nested";
+    public static final String PROXY_NONE_BE_ID = "px-include-nothing";
     
     protected Boolean haveNestedConfiguration(PropertyCollectionMap props) {
         Set<String> keySet = props.getPropertyCollections().keySet();

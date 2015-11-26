@@ -9,16 +9,16 @@ public class ProviderLoadedValueModifier extends Abstract3WayLoadedValueModifier
     public static final String PROVIDER_NAMESPACE = "http://www.mulesoft.org/schema/mule/anypoint-mq/provider";
     public static final String PROVIDER_STORE_ID_PREFIX = "@" + PROVIDER_NAMESPACE + ";";
     public static final String PROVIDER_REFERENCE_PROPERTY_ID = "provider-ref";
-    public static final String PROVIDER_REFERENCE_BE_ID = "reference";
-    public static final String PROVIDER_NESTED_BE_ID = "nested";
+    public static final String PROVIDER_REFERENCE_BE_ID = "p-reference";
+    public static final String PROVIDER_NESTED_BE_ID = "p-nested";
     
     protected Boolean haveNestedConfiguration(PropertyCollectionMap props) {
         return !haveGlobalRefConfiguration(props);
     }
 
     protected Boolean haveGlobalRefConfiguration(PropertyCollectionMap props) {
-        String tlsContextRef = props.getProperty(PROVIDER_REFERENCE_PROPERTY_ID, "");
-        return StringUtils.isNotBlank(tlsContextRef);
+        String providerRef = props.getProperty(PROVIDER_REFERENCE_PROPERTY_ID, "");
+        return StringUtils.isNotBlank(providerRef);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ProviderLoadedValueModifier extends Abstract3WayLoadedValueModifier
     @Override
     protected String getNoneConfigurationRadioBooleanId()
     {
-        return getNestedRadioBooleanId();
+        return "***invalid-option***";
     }
 
 }
