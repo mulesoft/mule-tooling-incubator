@@ -31,6 +31,9 @@
 					<option value="AUTO" />
 					<option value="MANUAL" />
 				</enum>
+				<long caption="Acknowledgement Timeout"
+					description="Duration that a message is held by a broker waiting for an Acknowledgement or Not Acknowledgement. After that duration elapses, the message is again available to any subscriber."
+					defaultValue="0" name="acknowledgementTimeout" xsdType="substitutableLong" />
 			</group>
 		</attribute-category>
 
@@ -212,11 +215,16 @@
 			caption="Send Content Type" name="sendContentType" defaultValue="true" />
 
 		<childElement
-			name="http://www.mulesoft.org/schema/mule/anypoint-mq/property"
-			description="Properties" caption="Properties" allowMultiple="true"
+			name="http://www.mulesoft.org/schema/mule/anypoint-mq/properties"
+			description="Properties" caption="Properties" allowMultiple="false"
 			inplace="true" />
 	</nested>
-
+	<nested localId="properties" versions="[3.7.0,10.0.0]">
+		<childElement
+			name="http://www.mulesoft.org/schema/mule/anypoint-mq/property"
+			description="" caption="" allowMultiple="true"
+			inplace="true" />
+	</nested>
 	<global localId="anypointMqProviderType" versions="[3.7.0,10.0.0]"
 		xmlname="provider" category="org.mule.tooling.globalCategory.conponentConfigurations"
 		description="Global Provider Configuration" caption="Provider Settings"
@@ -315,11 +323,22 @@
 				<integer caption="Max Redelivery"
 					description="Number of redeliveries to try in case message processing fails. To avoid a poison message, the default value is set to 0."
 					defaultValue="0" name="maxRedelivery" xsdType="substitutableInt" />
-
+				<enum
+					description="Default acknowledge mode to use for the messages retrieved by the subscribers using this configuration."
+					name="acknowledgementMode" caption="Acknowledgement Mode" mode="inbound" defaultValue="AUTO"
+					removeEmptyOption="true" allowsCustom="true">
+					<option value="NONE" />
+					<option value="AUTO" />
+					<option value="MANUAL" />
+				</enum>
 				<long caption="Acknowledgement Timeout"
 					description="Duration that a message is held by a broker waiting for an Acknowledgement or Not Acknowledgement. After that duration elapses, the message is again available to any subscriber."
 					defaultValue="0" name="acknowledgementTimeout" xsdType="substitutableLong" />
 				<!--<boolean description="If true, Anypoint MQ provides a mock configuration that you can use for testing." caption="Mock" name="mock" default="false" />-->
+			</group>
+			<group caption="Threading Profile Settings">
+				<childElement xmlOrder="20" inplace="true" name="http://www.mulesoft.org/schema/mule/http/threadingProfileElement" caption="" description="" valuePersistence="org.mule.tooling.rest.consumer.editor.global.ThreadingProfileValuePersistence"/>
+				<childElement xmlOrder="20" allowSubTypes="true" allowedSubTypes="http://www.mulesoft.org/schema/mule/http/worker-threading-profile" name="http://www.mulesoft.org/schema/mule/http/abstractThreadingProfile" caption="" description="" visibleInDialog="false"/>
 			</group>
 		</attribute-category>
 		<attribute-category description="TLS/SSL Properties"
