@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.mule.tooling.incubator</groupId>
         <artifactId>org.mule.tooling.incubator.parent</artifactId>
-        <version>1.0.8-SNAPSHOT</version>
+        <version>1.0.9-SNAPSHOT</version>
     </parent>
     <artifactId>org.mule.tooling.incubator.test.parent</artifactId>
     <packaging>pom</packaging>
