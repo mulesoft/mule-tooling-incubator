@@ -26,7 +26,7 @@ public final class PrefetchValuePersistence extends AbstractValuePersistence {
     private List<String> getPersistenceProperties(List<Property> properties) {
         List<String> persistenceProperties = new ArrayList<>();
         for (Property property : properties) {
-            if (!property.getName().startsWith(AUXILIARY_PROPERTY_PREFIX)) {
+            if (!property.getName().startsWith(AUXILIARY_PROPERTY_PREFIX) && !property.getName().equals("exchange-pattern")) {
                 persistenceProperties.add(property.getName());
             }
         }

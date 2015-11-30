@@ -40,28 +40,28 @@
 		<attribute-category description="Prefetch Properties"
 			caption="Prefetch" id="prefetchSettings">
 			<radioBoolean fillLine="true" description="Anypoint MQ does not require a prefetch configuration."
-				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="No Prefetch Config" name="pf-include-nothing" />
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.SourcePrefetchLoadedValueModifier"
+				group="spf-prefetch-config" caption="No Prefetch Config" name="spf-include-nothing" />
 
 			<radioBoolean fillLine="true"
 				description="Defines a nested prefetch configuration."
-				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="Use Prefetch Config" name="pf-nested" />
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.SourcePrefetchLoadedValueModifier"
+				group="spf-prefetch-config" caption="Use Prefetch Config" name="spf-nested" />
 
-			<childElement indented="true" controlled="pf-nested"
+			<childElement indented="true" controlled="spf-nested"
 				xmlOrder="10"
 				valuePersistence="org.mule.tooling.messaging.editor.global.PrefetchValuePersistence"
 				inplace="true" name="http://www.mulesoft.org/schema/mule/anypoint-mq/prefetch" />
 
 			<radioBoolean fillLine="true"
 				description="Use a global TLS configuration reference."
-				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="Use Global Prefetch Config" name="pf-reference" />
+				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.SourcePrefetchLoadedValueModifier"
+				group="spf-prefetch-config" caption="Use Global Prefetch Config" name="spf-reference" />
 
-			<globalRef caption="Prefetch" indented="true" controlled="pf-reference"
+			<globalRef caption="Prefetch" indented="true" controlled="spf-reference"
 				description="Name of the global prefetch configuration to use."
 				requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/mqPrefetchType"
-				name="prefetch-ref"/>
+				name="spf-prefetch-ref" saveAs="prefetch-ref"/>
 
 		</attribute-category>
 	</cloud-connector-message-source>
@@ -406,16 +406,16 @@
 
 		</attribute-category>
 		<attribute-category description="Prefetch Properties"
-			caption="Prefetch" id="prefetchSettings" mode="inbound">
+			caption="Prefetch" id="configPrefetchSettings" mode="inbound">
 
 			<radioBoolean fillLine="true" description="Anypoint MQ does not require a prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="No Prefetch Config" name="pf-include-nothing" />
+				group="pf-prefetch-config" caption="No Prefetch Config" name="pf-include-nothing" />
 
 			<radioBoolean fillLine="true"
 				description="Defines a nested prefetch configuration."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="Use Prefetch Config" name="pf-nested" />
+				group="pf-prefetch-config" caption="Use Prefetch Config" name="pf-nested" />
 
 			<childElement indented="true" controlled="pf-nested"
 				xmlOrder="10"
@@ -425,12 +425,12 @@
 			<radioBoolean fillLine="true"
 				description="Use a global prefetch configuration reference."
 				loadedValueModifier="org.mule.tooling.messaging.editor.global.booleanloaders.PrefetchLoadedValueModifier"
-				group="prefetch-config" caption="Use Global Prefetch Config" name="pf-reference" />
+				group="pf-prefetch-config" caption="Use Global Prefetch Config" name="pf-reference" />
 
 			<globalRef caption="Prefetch" indented="true" controlled="pf-reference"
 				description="Name of the global prefetch configuration to use."
 				requiredType="http://www.mulesoft.org/schema/mule/anypoint-mq/mqPrefetchType"
-				name="prefetch-ref"/>
+				name="pf-prefetch-ref" saveAs="prefetch-ref"/>
 
 		</attribute-category>
 	</global-cloud-connector>

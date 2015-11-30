@@ -10,7 +10,7 @@ public class PrefetchLoadedValueModifier extends Abstract3WayLoadedValueModifier
     // Prefetched
     public static final String PREFETCH_NAMESPACE = "http://www.mulesoft.org/schema/mule/anypoint-mq/prefetch";
     public static final String PREFETCH_STORE_ID_PREFIX = "@" + PREFETCH_NAMESPACE + ";";
-    public static final String PREFETCH_REFERENCE_PROPERTY_ID = "prefetch-ref";
+    public static final String PREFETCH_REFERENCE_PROPERTY_ID = "pf-prefetch-ref";
     public static final String PREFETCH_REFERENCE_BE_ID = "pf-reference";
     public static final String PREFETCH_NESTED_BE_ID = "pf-nested";
     public static final String PREFETCH_NONE_BE_ID = "pf-include-nothing";
