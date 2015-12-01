@@ -25,8 +25,9 @@
 
 				<enum
 					description="Acknowledgement mode to use for the messages retrieved from this subscriber."
-					name="acknowledgementMode" caption="Acknowledgement Mode" mode="inbound" defaultValue="AUTO"
+					name="acknowledgementMode" caption="Acknowledgement Mode" mode="inbound" defaultValue="FROM_CONFIG"
 					removeEmptyOption="true" allowsCustom="true">
+					<option value="FROM_CONFIG" caption="From configuration"/>
 					<option value="NONE" />
 					<option value="AUTO" />
 					<option value="MANUAL" />
