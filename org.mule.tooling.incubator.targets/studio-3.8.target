@@ -61,12 +61,15 @@
 <unit id="org.mockito" version="0.0.0"/>
 <unit id="org.objenesis" version="0.0.0"/>
 <unit id="com.thoughtworks.qdox" version="0.0.0"/>
-<unit id="com.google.guava" version="0.0.0"/>
 <unit id="javax.wsdl" version="1.6.2.v201012040545"/>
 <unit id="javax.ws.rs" version="0.0.0"/>
 <unit id="com.google.gson" version="0.0.0"/>
 <unit id="org.apache.xalan" version="0.0.0"/>
 <repository location="http://studio-repository.mulesoft.org:8081/nexus/content/unzip/orbit/org/mule/tooling/orbit/5.2.0/orbit-5.2.0.zip-unzip/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="com.google.guava" version="15.0.0.v201403281430"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.codehaus.groovy" version="2.0.7.xx-201407142131-e42-RELEASE"/>
