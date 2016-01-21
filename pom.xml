@@ -12,10 +12,10 @@
     <properties>
         <tycho.groupid>org.eclipse.tycho</tycho.groupid>
         <tycho-extras.groupid>org.eclipse.tycho.extras</tycho-extras.groupid>
-        <tycho-version>0.21.0</tycho-version>
-        <tycho-extras.version>0.21.0</tycho-extras.version>
+        <tycho-version>0.24.0</tycho-version>
+        <tycho-extras.version>0.24.0</tycho-extras.version>
         <maven.clean.plugin.version>2.4.1</maven.clean.plugin.version>
-        <target-platform>studio-3.8</target-platform>
+        <target-platform>studio-4.x</target-platform>
         <target-platform.version>1.0.9-SNAPSHOT</target-platform.version>
     </properties>
     <modules>
@@ -30,8 +30,6 @@
         <module>org.mule.tooling.incubator.utils.environments</module>
         <module>org.mule.tooling.incubator.utils</module>
         <module>org.mule.tooling.incubator.utils.extension</module>
-        <module>org.mule.tooling.incubator.messaging.contribution</module>
-        <module>org.mule.tooling.incubator.messaging.extension</module>
         <module>org.mule.tooling.incubator.editor.model</module>
         <module>org.mule.tooling.incubator.editor.ui</module>
         <module>org.mule.tooling.incubator.editor.extension</module>

@@ -9,11 +9,11 @@
   		 <artifactId>org.mule.tooling.incubator.parent</artifactId>
   		<version>1.0.9-SNAPSHOT</version>
 	</parent>
-	
+
 	<name>Mule Studio Incubator Target Definition</name>
 
 	<groupId>org.mule.tooling.incubator.targets</groupId>
-	<artifactId>studio-3.8</artifactId>
+	<artifactId>studio-4.x</artifactId>
 	<packaging>eclipse-target-definition</packaging>
 
 	<build>
