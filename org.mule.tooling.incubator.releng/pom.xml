@@ -27,7 +27,7 @@
 				<aws.secret>${settings.servers.studio-s3-releases.password}</aws.secret>
 				<incubators.endpoint>s3.amazonaws.com</incubators.endpoint>
 				<incubators.bucket>studio.mulesoft.org</incubators.bucket>
-				<incubators.dir>r5/addons/beta</incubators.dir>
+				<incubators.dir>beta/r5/addons/beta</incubators.dir>
 			</properties>
 			<activation>
 				<property>
