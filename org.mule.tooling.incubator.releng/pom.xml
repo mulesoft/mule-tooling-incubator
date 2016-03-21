@@ -10,14 +10,14 @@
 	<parent>
 		<groupId>org.mule.tooling.incubator</groupId>
 		<artifactId>org.mule.tooling.incubator.parent</artifactId>
-		<version>1.0.9-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 	<properties>
 		<aws.key>${settings.servers.mulesoft-s3.username}</aws.key>
 		<aws.secret>${settings.servers.mulesoft-s3.password}</aws.secret>
 		<incubators.endpoint>s3.amazonaws.com</incubators.endpoint>
 		<incubators.bucket>mule-tooling-incubator</incubators.bucket>
-		<incubators.dir>mckinley</incubators.dir>
+		<incubators.dir>nero</incubators.dir>
 	</properties>
 	<profiles>
 		<profile>
@@ -27,7 +27,7 @@
 				<aws.secret>${settings.servers.studio-s3-releases.password}</aws.secret>
 				<incubators.endpoint>s3.amazonaws.com</incubators.endpoint>
 				<incubators.bucket>studio.mulesoft.org</incubators.bucket>
-				<incubators.dir>beta/r5/addons/beta</incubators.dir>
+				<incubators.dir>r5/addons/beta</incubators.dir>
 			</properties>
 			<activation>
 				<property>
