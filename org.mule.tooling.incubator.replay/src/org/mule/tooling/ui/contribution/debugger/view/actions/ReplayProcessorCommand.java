@@ -11,7 +11,7 @@ import org.mule.tooling.messageflow.editor.MessageFlowEditor;
 import org.mule.tooling.messageflow.editor.MultiPageMessageFlowEditor;
 import org.mule.tooling.messageflow.editpart.EntityEditPart;
 import org.mule.tooling.messageflow.util.MessageFlowUtils;
-import org.mule.tooling.messageflow.util.MulePath;
+import org.mule.tooling.model.messageflow.path.MulePath;
 import org.mule.tooling.model.messageflow.MuleConfiguration;
 import org.mule.tooling.ui.contribution.debugger.service.MuleDebuggerService;
 
