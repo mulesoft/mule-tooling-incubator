@@ -95,7 +95,7 @@
 <unit id="org.mule.tooling.templatesrepo" version="0.0.0"/>
 <unit id="org.mule.tooling.feature.group" version="0.0.0"/>
 <unit id="org.mule.apiplatform.api-platform-j-client" version="0.0.0"/>
-<repository location="http://studio-nightly-update.s3.amazonaws.com/nero"/>
+<repository location="http://studio-nightly-update.s3.amazonaws.com/olympus"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.apache.maven.model" version="3.0.4"/>
