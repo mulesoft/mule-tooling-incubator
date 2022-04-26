@@ -61,7 +61,7 @@ public class GradlePluginUtils {
 	
 	public static final String GRADLE_SETTINGS_FILE = "settings.gradle";
 	
-	public static final String[] TASK_BLACKLIST = {"studio", "eclipse", "cleanEclipse", "eclipseClasspath", "eclipseJdt", "eclipseProject", 
+	public static final String[] TASK_BLOCKLIST = {"studio", "eclipse", "cleanEclipse", "eclipseClasspath", "eclipseJdt", "eclipseProject", 
 		"cleanEclipseClasspath", "cleanEclipseJdt", "cleanEclipseProject", "muleDeps" , "unpackClover", "configureInstall"}; 
 	
 	/**
@@ -210,7 +210,7 @@ public class GradlePluginUtils {
 		List<GradleTask> callableTasks = new ArrayList<GradleTask>();
 		
 		for (GradleTask task : tasks) {
-			if (!ArrayUtils.contains(TASK_BLACKLIST, task.getName())) {
+			if (!ArrayUtils.contains(TASK_BLOCKLIST, task.getName())) {
 				callableTasks.add(task);
 			}
 		}
